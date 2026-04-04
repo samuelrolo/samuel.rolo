@@ -201,6 +201,7 @@ function getAnalysisType(a) {
     if (a.analysis_type === 'bundle') return 'paid';
     if (a.analysis_type === 'career_intelligence_pro') return 'paid';
     if (a.analysis_type === 'career_intelligence_full') return 'paid';
+    if (a.analysis_type === 'career_intelligence') return 'paid';
     if (a.payment_method === 'voucher') return 'voucher';
     if (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) return 'paid';
     if (a.analysis_type === 'paid') return 'paid';
@@ -260,6 +261,7 @@ function getProductBadge(a) {
     if (a._source === 'linkedin_roaster') return '<span class="badge" style="background:#0077B5;color:#fff;">LinkedIn Roaster</span>';
     if (a.analysis_type === 'career_intelligence_pro') return '<span class="badge" style="background:#7C3AED;color:#fff;font-weight:600;">CI PRO</span>';
     if (a.analysis_type === 'career_intelligence_full') return '<span class="badge" style="background:#5B21B6;color:#fff;font-weight:600;">CI Full</span>';
+    if (a.analysis_type === 'career_intelligence') return '<span class="badge" style="background:#7C3AED;color:#fff;font-weight:600;">Career Intelligence</span>';
     if (a.analysis_type === 'bundle') return '<span class="badge" style="background:var(--gold);color:#1a1a1a;font-weight:600;">Bundle</span>';
     if (a.analysis_type === 'career_path') return '<span class="badge badge-career">Career Path</span>';
     return '<span class="badge badge-cv">CV Analyser</span>';
@@ -341,6 +343,7 @@ function switchCrmSubtab(name, btn) {
     if (name === 'campaigns') renderNurturingSegments();
     if (name === 'history') renderEmailHistory();
     if (name === 'messages') renderContactMessages();
+    if (name === 'welcome-emails') loadWelcomeEmailsDashboard();
 }
 
 function switchMarketSubtab(name, btn) {
@@ -523,7 +526,9 @@ function updateDashboard() {
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const ciPro = data.filter(a => a.analysis_type === 'career_intelligence_pro');
     const ciFull = data.filter(a => a.analysis_type === 'career_intelligence_full');
-    const ciAll = [...ciPro, ...ciFull];
+    // Include Career Intelligence from user_analyses table (analysis_type='career_intelligence')
+    const ciFromUserAnalyses = filterByPeriod(allUserAnalyses.filter(a => a.analysis_type === 'career_intelligence' || a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full'), dashPeriodDays);
+    const ciAll = [...ciPro, ...ciFull, ...ciFromUserAnalyses];
     const ciRevenue = ciAll.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.voucher_type === 'career_intelligence_pro' || v.voucher_type === 'career_intelligence_full')).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
 
@@ -903,7 +908,8 @@ function renderFunnel() {
     const freeCount   = data.filter(a => getAnalysisType(a) === 'free').length;
     const paidCount   = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').length;
     const cpCount     = data.filter(a => a.analysis_type === 'career_path').length;
-    const ciCount     = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length;
+    const ciFromUA = filterByPeriod(allUserAnalyses.filter(a => a.analysis_type === 'career_intelligence' || a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full'), funnelPeriodDays);
+    const ciCount     = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length + ciFromUA.length;
 
     setText('funnelLR', lrTotal);
     setText('funnelLRConv', `${lrPaidCount} pagas`);
@@ -1191,7 +1197,7 @@ function renderCRM() {
     if (!tbody) return;
     if (!page.length) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`; return; }
 
-    const productNameMap = t => t === 'career_path' ? 'Career Path' : t === 'career_intelligence_pro' ? 'CI PRO' : t === 'career_intelligence_full' ? 'CI Full' : t === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser';
+    const productNameMap = t => t === 'career_path' ? 'Career Path' : t === 'career_intelligence_pro' ? 'CI PRO' : t === 'career_intelligence_full' ? 'CI Full' : t === 'career_intelligence' ? 'Career Intelligence' : t === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser';
     tbody.innerHTML = page.map(p => {
         const initials = (p.name || p.email).slice(0, 2).toUpperCase();
         const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
@@ -1293,7 +1299,7 @@ function renderAnalyses() {
         if (type === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
         else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
         else if (type === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
-        else if (type === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
+        else if (type === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full' || a.analysis_type === 'career_intelligence');
         else data = data.filter(a => getAnalysisType(a) === type);
     }
     if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
@@ -1540,22 +1546,12 @@ async function sendBrevoEmail(to, subject, htmlContent) {
     if (!key) return false;
     // Wrap content in professional template if not already wrapped
     const finalHtml = htmlContent.includes('f4f4f7') ? htmlContent : wrapEmailTemplate(htmlContent);
-    try {
-        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-            method: 'POST',
-            headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
-            body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent: finalHtml })
-        });
-        if (!res.ok) {
-            const err = await res.json();
-            console.error('Brevo API Error:', err);
-            return false;
-        }
-        return true;
-    } catch (e) {
-        console.error('Brevo Fetch Error:', e);
-        return false;
-    }
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
+        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent: finalHtml })
+    });
+    return res.ok;
 }
 
 async function sendSingleEmail() {
@@ -1568,26 +1564,11 @@ async function sendSingleEmail() {
     const ok = await sendBrevoEmail(to, subject, htmlBody);
     if (ok) {
         showToast('Email enviado com sucesso!', 'success');
+        try { await supaInsert('email_history', { recipient_email: to, subject, body: htmlBody, email_type: 'manual', sent_at: new Date().toISOString(), status: 'sent' }); } catch(e) { console.warn('Email sent but failed to log in history:', e); }
         closeEmailModal();
-        
-        // Try to log to history, but don't block if it fails (e.g. RLS issues)
-        try {
-            await supaInsert('email_history', { 
-                recipient_email: to, 
-                subject, 
-                body: htmlBody, 
-                email_type: 'manual', 
-                sent_at: new Date().toISOString(), 
-                status: 'sent' 
-            });
-            await loadEmailHistory();
-            renderEmailHistory();
-        } catch (e) {
-            console.warn('Email sent but failed to log in history:', e.message);
-        }
-    } else { 
-        showToast('Erro ao enviar email (Brevo API)', 'danger'); 
-    }
+        await loadEmailHistory();
+        renderEmailHistory();
+    } else { showToast('Erro ao enviar email', 'danger'); }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1728,7 +1709,7 @@ async function sendBulkEmail() {
             const ok = await sendBrevoEmail(email, subject, htmlBody);
             if (ok) {
                 sent++;
-                await supaInsert('email_history', { recipient_email: email, subject, body: htmlBody, email_type: 'campaign', sent_at: new Date().toISOString(), status: 'sent' });
+                try { await supaInsert('email_history', { recipient_email: email, subject, body: htmlBody, email_type: 'campaign', sent_at: new Date().toISOString(), status: 'sent' }); } catch(e) { console.warn('Campaign email sent but failed to log:', e); }
             } else { failed++; }
         } catch (e) { failed++; }
         if (sent % 5 === 0) showToast(`Enviados: ${sent}/${recipients.length}`, 'info');
@@ -2024,7 +2005,7 @@ function exportCECSV() {
 //  SYSTEM: EBOOK DOWNLOADS
 // ═══════════════════════════════════════════════════════════════
 function renderEbookDownloads() {
-    let data = [...allEbookDownloads].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    let data = [...allEbookDownloads].sort((a, b) => new Date(b.subscribed_at || b.created_at) - new Date(a.subscribed_at || a.created_at));
     const period = document.getElementById('filterEbookPeriod')?.value || 'all';
     const search = (document.getElementById('filterEbookSearch')?.value || '').toLowerCase();
     if (period !== 'all') data = filterByPeriod(data, parseInt(period));
@@ -2034,14 +2015,14 @@ function renderEbookDownloads() {
     if (!tbody) return;
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">Sem downloads</td></tr>`; return; }
     tbody.innerHTML = data.slice(0, 50).map(e => {
-        const date = new Date(e.created_at).toLocaleDateString('pt-PT');
+        const date = new Date(e.subscribed_at || e.created_at).toLocaleDateString('pt-PT');
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.name || '—'}</td><td style="font-size:12px;">${e.email || '—'}</td><td style="font-size:12px;">${e.source || '—'}</td></tr>`;
     }).join('');
 }
 
 function exportEbookCSV() {
     const rows = [['Data','Nome','Email','Fonte']];
-    allEbookDownloads.forEach(e => rows.push([e.created_at?.slice(0,10), e.name||'', e.email||'', e.source||'']));
+    allEbookDownloads.forEach(e => rows.push([(e.subscribed_at || e.created_at)?.slice(0,10), e.name||'', e.email||'', e.source||'']));
     downloadCSV(rows, 'ebook_downloads.csv');
 }
 
@@ -2071,6 +2052,7 @@ function getStatusLabel(status) {
 
 function getRecommendation(entry) {
     if (entry.status === 'down') {
+        if (entry.error_message?.includes('Bundle JS em falta')) return { text: 'PÁGINA EM BRANCO: O bundle JavaScript não existe no servidor (404). A app não renderiza. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
         if (entry.error_message?.includes('timed out')) return { text: 'Timeout detetado. Verificar se o serviço está a correr e se não há cold starts excessivos.', severity: 'critical' };
         return { text: 'Serviço indisponível. Verificar logs do servidor e reiniciar se necessário.', severity: 'critical' };
     }
@@ -2252,7 +2234,7 @@ async function refreshHealthCheck() {
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
-        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
+        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/rest/v1/', category: 'edge_function' }
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
@@ -2261,12 +2243,38 @@ async function refreshHealthCheck() {
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
-            const res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+            const res = await fetch(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', signal: controller.signal });
             clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
-            const status = elapsed > 2000 ? 'warning' : 'healthy';
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: null, checked_at: new Date().toISOString() });
+            let status = elapsed > 2000 ? 'warning' : 'healthy';
+            let errorMsg = null;
+
+            // Deep check for frontend React apps: verify JS bundle exists
+            if (ep.category === 'frontend' && res.type !== 'opaque') {
+                try {
+                    const html = await res.text();
+                    const scriptMatch = html.match(/src="([^"]*assets\/index-[^"]+\.js)"/);
+                    if (scriptMatch) {
+                        const bundlePath = scriptMatch[1];
+                        const bundleUrl = bundlePath.startsWith('http') ? bundlePath : new URL(bundlePath, ep.url).href;
+                        const bundleRes = await fetch(bundleUrl, { method: 'HEAD' });
+                        if (bundleRes.status === 404) {
+                            status = 'down';
+                            errorMsg = `Bundle JS em falta (404): ${bundlePath}`;
+                        }
+                    }
+                    // Also check if root div has content (basic render check)
+                    if (!errorMsg && html.includes('id="root"') && !html.includes('<div id="root">')) {
+                        // HTML loads but root is empty - this is expected for SPA, bundle check is more reliable
+                    }
+                } catch (deepErr) {
+                    // Deep check failed, keep original status
+                    console.warn('Deep check failed for', ep.name, deepErr.message);
+                }
+            }
+
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
@@ -2489,7 +2497,14 @@ function renderCoupons() {
         return true;
     });
     const active = allCoupons.filter(c => c.is_active);
-    const totalUses = allCoupons.reduce((s, c) => s + (c.current_uses || 0), 0);
+    // Count real uses: max between current_uses and transaction_id matches in cv_analysis
+    const totalUses = allCoupons.reduce((s, c) => {
+        const dbUses = c.current_uses || 0;
+        const codeUpper = (c.code || '').toUpperCase();
+        const txUses = allAnalyses.filter(a => (a.transaction_id || '').toUpperCase().includes('COUPON-' + codeUpper)).length
+                     + allVouchers.filter(v => (v.payment_method || '').toUpperCase().includes(codeUpper)).length;
+        return s + Math.max(dbUses, txUses);
+    }, 0);
     setText('couponKpiActive', active.length);
     setText('couponKpiUses', totalUses);
 
@@ -2506,7 +2521,11 @@ function renderCoupons() {
     if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum cupão encontrado</td></tr>'; return; }
     tbody.innerHTML = filtered.map(c => {
         const products = (c.applicable_products || []).map(p => productLabels[p] || esc(p)).join(' ');
-        const uses = c.current_uses || 0;
+        const dbUses = c.current_uses || 0;
+        const codeUpper = (c.code || '').toUpperCase();
+        const txUses = allAnalyses.filter(a => (a.transaction_id || '').toUpperCase().includes('COUPON-' + codeUpper)).length
+                     + allVouchers.filter(v => (v.payment_method || '').toUpperCase().includes(codeUpper)).length;
+        const uses = Math.max(dbUses, txUses);
         const maxUses = c.max_uses ? c.max_uses : '∞';
         const validUntil = c.valid_until ? new Date(c.valid_until).toLocaleDateString('pt-PT') : 'Sem limite';
         const isExpired = c.valid_until && new Date(c.valid_until) < new Date();
@@ -2617,7 +2636,7 @@ function getMergedUsers() {
             analyses_count: analyses.length,
             cv_analyser_count: analyses.filter(a => a.analysis_type === 'cv_analyser').length,
             career_path_count: analyses.filter(a => a.analysis_type === 'career_path').length,
-            career_intelligence_count: analyses.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length,
+            career_intelligence_count: analyses.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full' || a.analysis_type === 'career_intelligence').length,
             linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster').length,
             profile_complete: !!(profile && profile.first_name && profile.last_name && profile.phone)
         };
@@ -2946,4 +2965,208 @@ function renderPendingLeads() {
         const typeBadge = p.type === 'Upsell 2h' ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
         return `<tr><td style="font-size:12px;">${p.email}</td><td style="font-size:12px;">${p.name}</td><td>${typeBadge}</td><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${p.elapsed}</td></tr>`;
     }).join('');
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   WELCOME EMAILS DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+
+let allWelcomeEmails = [];
+let welcomeEmailChartInstance = null;
+let welcomeEmailPieTypeInstance = null;
+let welcomeEmailPieLangInstance = null;
+
+async function loadWelcomeEmailsDashboard() {
+    try {
+        allWelcomeEmails = await supaFetch('welcome_emails_log', 'select=*&order=created_at.desc&limit=5000');
+        if (!Array.isArray(allWelcomeEmails)) allWelcomeEmails = [];
+    } catch (e) {
+        console.error('Error loading welcome emails:', e);
+        allWelcomeEmails = [];
+    }
+    updateWelcomeEmailKpis();
+    renderWelcomeEmailCharts();
+    renderWelcomeEmails();
+}
+
+function updateWelcomeEmailKpis() {
+    const data = allWelcomeEmails;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const total = data.length;
+    const cvAnalysis = data.filter(e => e.type === 'cv_analysis').length;
+    const memberSignup = data.filter(e => e.type === 'member_signup').length;
+    const today = data.filter(e => e.created_at && e.created_at.slice(0, 10) === todayStr).length;
+    const week = data.filter(e => e.created_at && new Date(e.created_at) >= weekAgo).length;
+    const failed = data.filter(e => e.status === 'failed').length;
+
+    document.getElementById('weTotal').textContent = total;
+    document.getElementById('weCvAnalysis').textContent = cvAnalysis;
+    document.getElementById('weMemberSignup').textContent = memberSignup;
+    document.getElementById('weToday').textContent = today;
+    document.getElementById('weWeek').textContent = week;
+    document.getElementById('weFailed').textContent = failed;
+}
+
+function renderWelcomeEmailCharts() {
+    const data = allWelcomeEmails;
+
+    // ── Bar Chart: Envios por dia (últimos 30 dias) ──
+    const now = new Date();
+    const days = [];
+    const cvCounts = [];
+    const memberCounts = [];
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const dateStr = d.toISOString().slice(0, 10);
+        days.push(d.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' }));
+        cvCounts.push(data.filter(e => e.created_at && e.created_at.slice(0, 10) === dateStr && e.type === 'cv_analysis').length);
+        memberCounts.push(data.filter(e => e.created_at && e.created_at.slice(0, 10) === dateStr && e.type === 'member_signup').length);
+    }
+
+    if (welcomeEmailChartInstance) welcomeEmailChartInstance.destroy();
+    const ctx = document.getElementById('welcomeEmailChart');
+    if (ctx) {
+        welcomeEmailChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: days,
+                datasets: [
+                    { label: 'Análise CV', data: cvCounts, backgroundColor: 'rgba(124,58,237,0.7)', borderRadius: 4 },
+                    { label: 'Registo Membro', data: memberCounts, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+                }
+            }
+        });
+    }
+
+    // ── Pie Chart: Tipo ──
+    const cvTotal = data.filter(e => e.type === 'cv_analysis').length;
+    const memberTotal = data.filter(e => e.type === 'member_signup').length;
+
+    if (welcomeEmailPieTypeInstance) welcomeEmailPieTypeInstance.destroy();
+    const ctxType = document.getElementById('welcomeEmailPieType');
+    if (ctxType) {
+        welcomeEmailPieTypeInstance = new Chart(ctxType, {
+            type: 'doughnut',
+            data: {
+                labels: ['Análise CV', 'Registo Membro'],
+                datasets: [{ data: [cvTotal, memberTotal], backgroundColor: ['#7C3AED', '#3B82F6'], borderWidth: 0 }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } },
+                    title: { display: true, text: 'Por Tipo', font: { size: 11, weight: '600' }, color: '#374151' }
+                }
+            }
+        });
+    }
+
+    // ── Pie Chart: Idioma ──
+    const ptTotal = data.filter(e => e.lang === 'pt').length;
+    const enTotal = data.filter(e => e.lang === 'en').length;
+
+    if (welcomeEmailPieLangInstance) welcomeEmailPieLangInstance.destroy();
+    const ctxLang = document.getElementById('welcomeEmailPieLang');
+    if (ctxLang) {
+        welcomeEmailPieLangInstance = new Chart(ctxLang, {
+            type: 'doughnut',
+            data: {
+                labels: ['Português', 'English'],
+                datasets: [{ data: [ptTotal, enTotal], backgroundColor: ['#10B981', '#3B82F6'], borderWidth: 0 }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } },
+                    title: { display: true, text: 'Por Idioma', font: { size: 11, weight: '600' }, color: '#374151' }
+                }
+            }
+        });
+    }
+}
+
+function renderWelcomeEmails() {
+    const filterType = document.getElementById('weFilterType')?.value || 'all';
+    const filterLang = document.getElementById('weFilterLang')?.value || 'all';
+    const filterStatus = document.getElementById('weFilterStatus')?.value || 'all';
+    const search = (document.getElementById('weFilterSearch')?.value || '').toLowerCase();
+
+    let filtered = allWelcomeEmails;
+    if (filterType !== 'all') filtered = filtered.filter(e => e.type === filterType);
+    if (filterLang !== 'all') filtered = filtered.filter(e => e.lang === filterLang);
+    if (filterStatus !== 'all') filtered = filtered.filter(e => e.status === filterStatus);
+    if (search) filtered = filtered.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+
+    document.getElementById('weCount').textContent = filtered.length + ' registos';
+
+    const tbody = document.getElementById('welcomeEmailsTable');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email de boas-vindas encontrado</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.slice(0, 200).map(e => {
+        const date = e.created_at ? new Date(e.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.created_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '--';
+        const typeBadge = e.type === 'cv_analysis'
+            ? '<span class="badge badge-purple">Análise CV</span>'
+            : '<span class="badge badge-career">Registo Membro</span>';
+        const langBadge = e.lang === 'en'
+            ? '<span class="badge badge-en">EN</span>'
+            : '<span class="badge badge-pt">PT</span>';
+        const statusBadge = e.status === 'sent'
+            ? '<span class="badge badge-success">Enviado</span>'
+            : '<span class="badge badge-danger">Falhado</span>';
+        const brevoId = e.brevo_message_id ? '<span style="font-size:10px;color:var(--text-muted);">' + e.brevo_message_id + '</span>' : '--';
+
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${date}</td>
+            <td style="font-size:12px;">${e.email || '--'}</td>
+            <td style="font-size:12px;">${e.name || '--'}</td>
+            <td>${typeBadge}</td>
+            <td>${langBadge}</td>
+            <td>${statusBadge}</td>
+            <td>${brevoId}</td>
+        </tr>`;
+    }).join('');
+}
+
+function exportWelcomeEmailsCSV() {
+    const filterType = document.getElementById('weFilterType')?.value || 'all';
+    const filterLang = document.getElementById('weFilterLang')?.value || 'all';
+    const filterStatus = document.getElementById('weFilterStatus')?.value || 'all';
+    const search = (document.getElementById('weFilterSearch')?.value || '').toLowerCase();
+
+    let filtered = allWelcomeEmails;
+    if (filterType !== 'all') filtered = filtered.filter(e => e.type === filterType);
+    if (filterLang !== 'all') filtered = filtered.filter(e => e.lang === filterLang);
+    if (filterStatus !== 'all') filtered = filtered.filter(e => e.status === filterStatus);
+    if (search) filtered = filtered.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+
+    let csv = 'Data,Email,Nome,Tipo,Idioma,Estado,Brevo ID\n';
+    filtered.forEach(e => {
+        const date = e.created_at ? new Date(e.created_at).toISOString() : '';
+        csv += `"${date}","${e.email || ''}","${e.name || ''}","${e.type || ''}","${e.lang || ''}","${e.status || ''}","${e.brevo_message_id || ''}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'welcome_emails_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
 }
