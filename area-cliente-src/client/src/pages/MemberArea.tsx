@@ -14,6 +14,8 @@ import CareerProgress from '@/components/CareerProgress';
 import CvMaker from '@/components/CvMaker';
 import UpgradePage from './UpgradePage';
 import VagasFeed from '@/components/VagasFeed';
+import SavedJobsTracker from '@/components/SavedJobsTracker';
+import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
@@ -1835,7 +1837,14 @@ export default function MemberArea() {
 
         {/* ═══════════════════ TAB: JOBS ═══════════════════ */}
         {activeTab === 'jobs' && (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-in fade-in duration-300 space-y-8">
+            {/* ── Saved Jobs Tracker (extensão + manual) ── */}
+            <SavedJobsTracker lang={lang} />
+
+            {/* ── Job Contacts / Networking CRM ── */}
+            <JobContacts lang={lang} />
+
+            {/* ── Job Feed (Adzuna) ── */}
             {planTier !== 'essential' ? (
               <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
             ) : (
