@@ -412,7 +412,7 @@ async function loadAllData() {
             supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
             supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
-            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
+            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc.nullslast&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('linkedin_roaster_analyses', 'select=*&order=created_at.desc&limit=5000')
