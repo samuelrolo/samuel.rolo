@@ -23,7 +23,7 @@ export default function Header() {
   /* Nav links internos da área de cliente */
   const navLinks = [
     { href: '/planos', label: t('nav.plans'), icon: CreditCard },
-    ...(user ? [{ href: '/membros', label: lang === 'pt' ? 'Área de Membro' : 'Member Area', icon: Users }] : []),
+    { href: '/membros', label: lang === 'pt' ? 'Área de Membro' : 'Member Area', icon: Users },
   ];
 
   return (
