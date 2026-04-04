@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, MessageSquare, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp } from 'lucide-react';
+import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, Lock, Award } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────
    Design: Gold-themed, Poppins font, light background
-   Consistent with the S2I area-cliente visual identity
+   Focus: Área de Membro — what members get access to
    ────────────────────────────────────────────────────────── */
 
 const CDN = {
+  logo: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png',
   dashboard: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/dashboard-overview_ddd78f1d.webp',
   tools: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/tools-list_c1740de9.webp',
   vagas: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/vagas-tab_e62775c8.webp',
   cvMaker: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/cv-maker_ed8d1f33.webp',
-  careerAdvisory: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/career-advisory_401d983c.webp',
   planos: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/planos_7fc998af.webp',
   careerPath1: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/pasted_file_fkPdKc_image_891227bf.png',
   careerPath2: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/pasted_file_g7QX6F_image_1a6b08e0.png',
@@ -20,20 +20,20 @@ const CDN = {
 
 const i18n = {
   pt: {
-    heroTag: 'Plataforma de Gestão de Carreira',
-    heroTitle: 'As ferramentas certas para a carreira certa.',
-    heroSubtitle: 'Análise de CV, otimização de LinkedIn, planeamento de carreira e inteligência de mercado — tudo numa única plataforma, pensada para o mercado português.',
-    heroCta: 'Começar agora',
+    heroTag: 'Área de Membro',
+    heroTitle: 'O teu espaço exclusivo de gestão de carreira.',
+    heroSubtitle: 'Acede a ferramentas de IA, análises personalizadas e planeamento estratégico — tudo pensado para te posicionar melhor no mercado.',
+    heroCta: 'Entrar na Área de Membro',
     heroCtaSecondary: 'Ver planos',
     heroStat1: '+500',
-    heroStat1Label: 'Utilizadores ativos',
+    heroStat1Label: 'Membros ativos',
     heroStat2: '+23 pts',
     heroStat2Label: 'Melhoria média ATS',
-    heroStat3: '6',
+    heroStat3: '5',
     heroStat3Label: 'Ferramentas IA',
-    featuresTag: 'Ferramentas',
-    featuresTitle: 'Tudo o que precisas para a tua carreira',
-    featuresSubtitle: 'Seis ferramentas de inteligência artificial integradas numa única plataforma, desenhadas para profissionais que querem mais do que um simples CV.',
+    featuresTag: 'O que inclui a tua subscrição',
+    featuresTitle: 'Ferramentas exclusivas para membros',
+    featuresSubtitle: 'Cinco ferramentas de inteligência artificial integradas, disponíveis na tua área de membro.',
     features: [
       {
         icon: 'FileText',
@@ -48,13 +48,6 @@ const i18n = {
         desc: 'Análise completa e detalhada do teu CV com IA. Score ATS, feedback dimensional, sugestões de melhoria e comparação com o mercado.',
         img: CDN.dashboard,
         badge: 'Até ilimitado',
-      },
-      {
-        icon: 'MessageSquare',
-        name: 'Career Advisory',
-        desc: 'Assistente pessoal de carreira com IA. Chat, cartas de apresentação, networking, posts LinkedIn e simulação de entrevistas.',
-        img: CDN.careerAdvisory,
-        badge: 'Chat ilimitado',
       },
       {
         icon: 'Target',
@@ -78,9 +71,17 @@ const i18n = {
         badge: 'Extensão Chrome',
       },
     ],
+    benefitsTag: 'Benefícios',
+    benefitsTitle: 'Porquê ser membro?',
+    benefits: [
+      { icon: 'Lock', title: 'Acesso exclusivo', desc: 'Ferramentas de IA que não estão disponíveis no site público.' },
+      { icon: 'Award', title: 'Análises personalizadas', desc: 'Relatórios detalhados sobre o teu CV, perfil LinkedIn e posicionamento.' },
+      { icon: 'TrendingUp', title: 'Evolução contínua', desc: 'Acompanha o teu progresso e melhora o teu score ATS semana a semana.' },
+      { icon: 'Zap', title: 'Inteligência de mercado', desc: 'Dados de vagas, salários e tendências atualizados para o mercado português.' },
+    ],
     comparisonTag: 'Comparação',
     comparisonTitle: 'Porquê a Share2Inspire?',
-    comparisonSubtitle: 'Comparámos as nossas ferramentas com as alternativas mais populares do mercado. A diferença é clara.',
+    comparisonSubtitle: 'Comparámos as nossas ferramentas com as alternativas mais populares do mercado.',
     compHeaders: ['Funcionalidade', 'Share2Inspire', 'Teal', 'Jobscan', 'Kickresume', 'Enhancv'],
     compRows: [
       ['CV Builder com IA', true, true, false, true, true],
@@ -90,8 +91,6 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extensão', true, true, false, false, false],
       ['Feed de Vagas com Match', true, 'Básico', false, false, false],
-      ['Career Coach IA', true, false, false, false, false],
-      ['Simulação de Entrevista', true, false, false, false, false],
       ['Foco no mercado PT', true, false, false, false, false],
       ['Bilingue PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
@@ -134,33 +133,33 @@ const i18n = {
     ],
     plansBilling: 'Semestral -17% · Anual -33%',
     testimonialsTag: 'Testemunhos',
-    testimonialsTitle: 'O que dizem os nossos utilizadores',
+    testimonialsTitle: 'O que dizem os nossos membros',
     testimonials: [
       { name: 'Ana M.', role: 'Senior Manager', text: 'Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.', stars: 5 },
       { name: 'Diogo S.', role: 'Software Engineer', text: 'O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.', stars: 5 },
       { name: 'Mariana C.', role: 'Product Manager', text: 'Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.', stars: 5 },
     ],
     ctaTitle: 'Pronto para dar o próximo passo?',
-    ctaSubtitle: 'Junta-te a mais de 500 profissionais que já estão a usar a Share2Inspire para transformar a sua carreira.',
+    ctaSubtitle: 'Junta-te a mais de 500 membros que já estão a usar as ferramentas da Share2Inspire.',
     ctaButton: 'Criar conta gratuita',
     ctaNote: 'Sem cartão de crédito · Cancela quando quiseres',
     langSwitch: 'EN',
   },
   en: {
-    heroTag: 'Career Management Platform',
-    heroTitle: 'The right tools for the right career.',
-    heroSubtitle: 'CV analysis, LinkedIn optimization, career planning and market intelligence — all in one platform, designed for the Portuguese market.',
-    heroCta: 'Get started',
+    heroTag: 'Member Area',
+    heroTitle: 'Your exclusive career management space.',
+    heroSubtitle: 'Access AI tools, personalized analyses and strategic planning — all designed to position you better in the market.',
+    heroCta: 'Enter Member Area',
     heroCtaSecondary: 'View plans',
     heroStat1: '500+',
-    heroStat1Label: 'Active users',
+    heroStat1Label: 'Active members',
     heroStat2: '+23 pts',
     heroStat2Label: 'Average ATS improvement',
-    heroStat3: '6',
+    heroStat3: '5',
     heroStat3Label: 'AI tools',
-    featuresTag: 'Features',
-    featuresTitle: 'Everything you need for your career',
-    featuresSubtitle: 'Six integrated AI tools in a single platform, designed for professionals who want more than just a CV.',
+    featuresTag: 'What your subscription includes',
+    featuresTitle: 'Exclusive tools for members',
+    featuresSubtitle: 'Five integrated AI tools, available in your member area.',
     features: [
       {
         icon: 'FileText',
@@ -175,13 +174,6 @@ const i18n = {
         desc: 'Complete and detailed CV analysis with AI. ATS score, dimensional feedback, improvement suggestions and market comparison.',
         img: CDN.dashboard,
         badge: 'Up to unlimited',
-      },
-      {
-        icon: 'MessageSquare',
-        name: 'Career Advisory',
-        desc: 'Personal career assistant with AI. Chat, cover letters, networking, LinkedIn posts and interview simulation.',
-        img: CDN.careerAdvisory,
-        badge: 'Unlimited chat',
       },
       {
         icon: 'Target',
@@ -205,9 +197,17 @@ const i18n = {
         badge: 'Chrome Extension',
       },
     ],
+    benefitsTag: 'Benefits',
+    benefitsTitle: 'Why become a member?',
+    benefits: [
+      { icon: 'Lock', title: 'Exclusive access', desc: 'AI tools not available on the public site.' },
+      { icon: 'Award', title: 'Personalized analyses', desc: 'Detailed reports on your CV, LinkedIn profile and positioning.' },
+      { icon: 'TrendingUp', title: 'Continuous evolution', desc: 'Track your progress and improve your ATS score week by week.' },
+      { icon: 'Zap', title: 'Market intelligence', desc: 'Job data, salaries and trends updated for the Portuguese market.' },
+    ],
     comparisonTag: 'Comparison',
     comparisonTitle: 'Why Share2Inspire?',
-    comparisonSubtitle: 'We compared our tools with the most popular alternatives on the market. The difference is clear.',
+    comparisonSubtitle: 'We compared our tools with the most popular alternatives on the market.',
     compHeaders: ['Feature', 'Share2Inspire', 'Teal', 'Jobscan', 'Kickresume', 'Enhancv'],
     compRows: [
       ['AI CV Builder', true, true, false, true, true],
@@ -217,8 +217,6 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extension', true, true, false, false, false],
       ['Job Feed with Matching', true, 'Basic', false, false, false],
-      ['AI Career Coach', true, false, false, false, false],
-      ['Interview Simulation', true, false, false, false, false],
       ['Portuguese Market Focus', true, false, false, false, false],
       ['Bilingual PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
@@ -261,14 +259,14 @@ const i18n = {
     ],
     plansBilling: 'Semi-annual -17% · Annual -33%',
     testimonialsTag: 'Testimonials',
-    testimonialsTitle: 'What our users say',
+    testimonialsTitle: 'What our members say',
     testimonials: [
       { name: 'Ana M.', role: 'Senior Manager', text: 'I went from 45 to 82 ATS points in 10 minutes. Absolutely essential for anyone looking for a job today.', stars: 5 },
       { name: 'Diogo S.', role: 'Software Engineer', text: 'The LinkedIn Roaster gave me feedback I had never received. My profile is much stronger and getting more views.', stars: 5 },
       { name: 'Mariana C.', role: 'Product Manager', text: 'Finally a tool that tells me exactly what recruiters want to see. The CV Analyser is a game-changer.', stars: 5 },
     ],
     ctaTitle: 'Ready to take the next step?',
-    ctaSubtitle: 'Join over 500 professionals already using Share2Inspire to transform their careers.',
+    ctaSubtitle: 'Join over 500 members already using Share2Inspire tools.',
     ctaButton: 'Create free account',
     ctaNote: 'No credit card · Cancel anytime',
     langSwitch: 'PT',
@@ -276,7 +274,7 @@ const i18n = {
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  FileText, BarChart3, MessageSquare, Target, Brain, Briefcase,
+  FileText, BarChart3, Target, Brain, Briefcase, Lock, Award, TrendingUp, Zap,
 };
 
 function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -317,16 +315,15 @@ export default function ClientAreaLanding() {
       {/* ─── Sticky Nav ─── */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#e5e5e0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="https://share2inspire.pt" className="flex items-center gap-2">
-            <img src="https://share2inspire.pt/images/logo.png" alt="S2I" className="h-8 w-8" />
-            <span className="font-semibold text-sm tracking-tight hidden sm:inline">SHARE2INSPIRE</span>
+          <a href="https://share2inspire.pt" className="flex items-center">
+            <img src={CDN.logo} alt="Share2Inspire" className="h-9 w-auto object-contain" />
           </a>
           <div className="flex items-center gap-3">
             <button onClick={toggleLang} className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border border-[#e5e5e0] hover:bg-[#f5f5f0] transition-colors">
               <Globe className="w-3.5 h-3.5" />
               {t.langSwitch}
             </button>
-            <a href={`${basePath}/auth`} className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white hover:shadow-lg hover:shadow-[#C9A961]/20 transition-all">
+            <a href={`${basePath}/`} className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white hover:shadow-lg hover:shadow-[#C9A961]/20 transition-all">
               {t.heroCta} <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
             </a>
           </div>
@@ -342,7 +339,7 @@ export default function ClientAreaLanding() {
           <FadeIn>
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-6">
-                <Sparkles className="w-3.5 h-3.5" /> {t.heroTag}
+                <Lock className="w-3.5 h-3.5" /> {t.heroTag}
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-[#1a1a1a] mb-6">
                 {t.heroTitle}
@@ -351,7 +348,7 @@ export default function ClientAreaLanding() {
                 {t.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-3 mb-12">
-                <a href={`${basePath}/auth`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-sm shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5">
+                <a href={`${basePath}/`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-sm shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5">
                   {t.heroCta} <ArrowRight className="w-4 h-4" />
                 </a>
                 <a href="#plans" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-[#e5e5e0] text-[#555] font-semibold text-sm hover:bg-[#f5f5f0] transition-all">
@@ -380,8 +377,38 @@ export default function ClientAreaLanding() {
         </div>
       </section>
 
+      {/* ─── Benefits (Why become a member) ─── */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.benefitsTag}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.benefitsTitle}</h2>
+            </div>
+          </FadeIn>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {t.benefits.map((b, i) => {
+              const Icon = iconMap[b.icon] || Lock;
+              return (
+                <FadeIn key={i} delay={i * 100}>
+                  <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] hover:shadow-md transition-shadow text-center">
+                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 flex items-center justify-center mx-auto mb-4">
+                      <Icon className="w-6 h-6 text-[#C9A961]" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-[#1a1a1a] mb-2">{b.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{b.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ─── Features Showcase ─── */}
-      <section id="features" className="py-20 sm:py-28 bg-white">
+      <section id="features" className="py-20 sm:py-28 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="text-center mb-16">
@@ -405,12 +432,12 @@ export default function ClientAreaLanding() {
                       className={`w-full text-left p-4 rounded-xl transition-all duration-300 ${
                         activeFeat === i
                           ? 'bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 border border-[#C9A961]/30 shadow-sm'
-                          : 'hover:bg-[#f5f5f0] border border-transparent'
+                          : 'hover:bg-white border border-transparent'
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                          activeFeat === i ? 'bg-[#C9A961] text-white' : 'bg-[#f5f5f0] text-[#999]'
+                          activeFeat === i ? 'bg-[#C9A961] text-white' : 'bg-white text-[#999]'
                         }`}>
                           <Icon className="w-4.5 h-4.5" />
                         </div>
@@ -452,7 +479,7 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Comparison Table ─── */}
-      <section id="comparison" className="py-20 sm:py-28 bg-[#FAFAF9]">
+      <section id="comparison" className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="text-center mb-16">
@@ -515,7 +542,7 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Plans ─── */}
-      <section id="plans" className="py-20 sm:py-28 bg-white">
+      <section id="plans" className="py-20 sm:py-28 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="text-center mb-16">
@@ -580,7 +607,7 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Testimonials ─── */}
-      <section className="py-20 sm:py-28 bg-[#FAFAF9]">
+      <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="text-center mb-16">
@@ -594,7 +621,7 @@ export default function ClientAreaLanding() {
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {t.testimonials.map((test, i) => (
               <FadeIn key={i} delay={i * 100}>
-                <div className="bg-white rounded-2xl p-6 border border-[#e5e5e0] shadow-sm hover:shadow-md transition-shadow">
+                <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex gap-0.5 mb-4">
                     {Array.from({ length: test.stars }).map((_, si) => (
                       <Star key={si} className="w-4 h-4 fill-[#C9A961] text-[#C9A961]" />
@@ -623,7 +650,7 @@ export default function ClientAreaLanding() {
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t.ctaTitle}</h2>
             <p className="text-white/60 text-lg mb-8">{t.ctaSubtitle}</p>
-            <a href={`${basePath}/auth`} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5">
+            <a href={`${basePath}/`} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5">
               {t.ctaButton} <ArrowRight className="w-4 h-4" />
             </a>
             <p className="text-white/40 text-xs mt-4">{t.ctaNote}</p>
@@ -635,7 +662,7 @@ export default function ClientAreaLanding() {
       <footer className="py-8 bg-[#1a1a1a] border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-white/40 text-xs">
-            <img src="https://share2inspire.pt/images/logo.png" alt="S2I" className="h-5 w-5 opacity-40" />
+            <img src={CDN.logo} alt="S2I" className="h-5 w-auto opacity-40" />
             Share2Inspire &copy; {new Date().getFullYear()}
           </div>
           <div className="flex gap-6 text-white/40 text-xs">

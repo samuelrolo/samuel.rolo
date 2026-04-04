@@ -9,7 +9,7 @@ DIST_DIR="$(dirname "$0")/../dist/public"
 MAIN_INDEX="$DIST_DIR/index.html"
 
 # All client-side routes that need their own index.html
-ROUTES=(auth perfil dashboard membros planos upgrade)
+ROUTES=(auth perfil dashboard membros planos upgrade sobre vagas)
 
 if [ ! -f "$MAIN_INDEX" ]; then
   echo "❌ Build output not found at $MAIN_INDEX"
