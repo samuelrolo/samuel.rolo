@@ -783,25 +783,23 @@ Generate ONLY the post.`;
             </div>
           </div>
 
-          {/* Tool Selector Dropdown */}
-          <div className="border-b border-gray-100 shrink-0 px-3 py-2">
-            <div className="relative">
-              <select
-                value={view}
-                onChange={(e) => setView(e.target.value as WidgetView)}
-                className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 pr-8 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] cursor-pointer hover:bg-gray-100 transition-colors"
-              >
-                {tabs.map(tab => (
-                  <option key={tab.key} value={tab.key}>
-                    {tab.icon}  {tab.label}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
+          {/* Tool Selector Tabs */}
+          <div className="border-b border-gray-100 shrink-0">
+            <div className="flex overflow-x-auto scrollbar-hide">
+              {tabs.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setView(tab.key)}
+                  className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 px-2 py-2 text-[10px] font-medium transition-all whitespace-nowrap border-b-2 ${
+                    view === tab.key
+                      ? 'border-[#BFA14A] text-[#BFA14A] bg-[#BFA14A]/5'
+                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="text-sm leading-none">{tab.icon}</span>
+                  <span className="truncate max-w-full">{tab.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
