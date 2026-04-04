@@ -195,7 +195,18 @@ googleLabel.textContent=E?"Registar com Google":"Continuar com Google";
 
 /* ── Build user nav ── */
 function T(){
-var e,l,d=document.querySelector('a[href*="area-cliente"]');
+var e,l;
+/* Target only the LOGIN button (ms-2 gold button), not the Área de Cliente menu link */
+var allLinks=document.querySelectorAll('a[href*="area-cliente"]');
+var d=null;
+for(var idx=0;idx<allLinks.length;idx++){
+var li=allLinks[idx].closest("li");
+if(li&&li.classList.contains("ms-2")){d=allLinks[idx];break;}
+}
+if(!d){
+/* Fallback: find the last area-cliente link (usually the button) */
+if(allLinks.length>0)d=allLinks[allLinks.length-1];
+}
 if(d)e=d.closest("li")||d.parentElement;
 else if(!(l=document.querySelector("#navbarNav .navbar-nav")||document.querySelector(".navbar-nav")||document.querySelector(".nav-links")))return;
 
