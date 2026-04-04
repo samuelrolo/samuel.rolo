@@ -1,114 +1,123 @@
 import { useState, useEffect, useRef } from 'react';
-import { Check, X, ArrowRight, Star, Sparkles, BarChart3, FileText, MessageSquare, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, ChevronRight, Cpu, LineChart, Search, BookOpen, Video, Newspaper } from 'lucide-react';
+import { useLoginModal } from '@/contexts/LoginModalContext';
+import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, Lock, Award, Chrome, BookOpen, Video, Newspaper, MapPin, Search, Bell, Bookmark } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────
    Design: Gold-themed, Poppins font, light background
-   Consistent with the S2I area-cliente visual identity
-   
-   Viberank Feedback Applied:
-   - Single, clear CTA repeated strategically ("Start Career Diagnosis")
-   - AI differentiation section showcasing unique capabilities
-   - Mobile-first: touch-friendly spacing, larger tap targets
-   - Strong marketing positioning: "Career Intelligence"
-   - No competing CTAs — one primary action throughout
+   Focus: Área de Membro — what members get access to
+   NO Career Advisor — removed per user request
+   NO screenshots/prints — removed per user request
+   +100 membros (not +500)
+   Multi-market: UK, PT, ES, BR, US, NL, DE
    ────────────────────────────────────────────────────────── */
+
+const CDN = {
+  logo: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png',
+};
 
 const i18n = {
   pt: {
-    // ─── Hero ───
-    heroTag: 'Career Intelligence | Diagnóstico Estratégico de Carreira',
-    heroTitle: 'O relatório de carreira mais completo do mercado.',
-    heroSubtitle: 'Diagnóstico completo de carreira com IA — análise de mercado, posicionamento estratégico e decisão informada. Tudo numa única plataforma.',
-    heroCta: 'Inicia o Diagnóstico de Carreira',
+    heroTag: 'Área de Membro',
+    heroTitle: 'O teu espaço exclusivo de gestão de carreira.',
+    heroSubtitle: 'Acede a ferramentas de IA, análises personalizadas e planeamento estratégico — tudo pensado para te posicionar melhor no mercado.',
+    heroCta: 'Entrar na Área de Membro',
+    heroCtaSecondary: 'Ver planos',
     heroStat1: '+100',
-    heroStat1Label: 'Profissionais ativos',
+    heroStat1Label: 'Membros ativos',
     heroStat2: '+23 pts',
     heroStat2Label: 'Melhoria média ATS',
-    heroStat3: '7',
-    heroStat3Label: 'Mercados suportados',
-
-    // ─── AI Differentiation ───
-    aiTag: 'Inteligência Artificial Avançada',
-    aiTitle: 'Não é mais um gerador de CV. É um diagnóstico completo.',
-    aiSubtitle: 'A nossa IA analisa o teu perfil em profundidade, cruza com dados reais de mercado e entrega um relatório personalizado que nenhuma ferramenta genérica consegue produzir.',
-    aiFeatures: [
-      {
-        icon: 'Search',
-        title: 'Análise de Mercado em Tempo Real',
-        desc: 'A IA cruza o teu perfil com tendências salariais, competências em alta e oportunidades reais em 7 mercados — PT, UK, ES, BR, US, NL e DE.',
-      },
-      {
-        icon: 'Cpu',
-        title: 'Diagnóstico Personalizado',
-        desc: 'Cada relatório é único. A IA avalia as tuas competências individuais, experiência e objetivos para criar um plano de ação específico para ti.',
-      },
-      {
-        icon: 'LineChart',
-        title: 'Relatório Abrangente vs. Genérico',
-        desc: 'Enquanto outras ferramentas dão um score e param, nós entregamos análise ATS detalhada, matriz de prioridades, ações de melhoria e plano a 30 dias.',
-      },
+    heroStat3: '5',
+    heroStat3Label: 'Ferramentas IA',
+    benefitsTag: 'Benefícios',
+    benefitsTitle: 'Porquê ser membro?',
+    benefits: [
+      { icon: 'Lock', title: 'Acesso exclusivo', desc: 'Ferramentas de IA que não estão disponíveis no site público.' },
+      { icon: 'Award', title: 'Análises personalizadas', desc: 'Relatórios detalhados sobre o teu CV, perfil LinkedIn e posicionamento.' },
+      { icon: 'TrendingUp', title: 'Evolução contínua', desc: 'Acompanha o teu progresso e melhora o teu score ATS semana a semana.' },
+      { icon: 'Zap', title: 'Inteligência de mercado', desc: 'Dados de vagas, salários e tendências atualizados para múltiplos mercados.' },
     ],
-    aiCompare: 'Ferramentas genéricas dão-te um número. Nós damos-te um plano.',
-
-    // ─── Features ───
-    featuresTag: 'Ferramentas Integradas',
-    featuresTitle: '6 ferramentas. 1 plataforma. 0 dispersão.',
-    featuresSubtitle: 'Cada ferramenta foi desenhada para resolver um problema real na gestão de carreira — e todas trabalham em conjunto.',
+    featuresTag: 'O que inclui a tua subscrição',
+    featuresTitle: 'Ferramentas exclusivas para membros',
+    featuresSubtitle: 'Cinco ferramentas de inteligência artificial integradas, disponíveis na tua área de membro.',
     features: [
       {
         icon: 'FileText',
         name: 'CV Maker',
-        desc: 'Constrói CVs profissionais com templates otimizados para ATS. Importa dados do LinkedIn, edita em tempo real e exporta em PDF. A IA sugere melhorias de conteúdo e formatação.',
-        badge: 'Incluído em todos os planos',
+        desc: 'Constrói CVs profissionais com templates otimizados para ATS.',
+        details: [
+          'Importa dados do LinkedIn automaticamente ou começa do zero',
+          'Templates profissionais otimizados para sistemas ATS',
+          'Assistência de IA para melhorar descrições de experiência',
+          'Exporta em PDF com formatação perfeita',
+          'Sugestões de palavras-chave por setor e cargo',
+        ],
       },
       {
         icon: 'BarChart3',
         name: 'CV Analyser',
-        desc: 'Análise completa do teu CV com score ATS, feedback dimensional em 8 categorias, sugestões de melhoria prioritizadas, matriz de competências e plano de ação a 30 dias.',
-        badge: 'Até ilimitado',
-      },
-      {
-        icon: 'MessageSquare',
-        name: 'Career Advisory',
-        desc: 'Assistente pessoal de carreira com IA. Chat inteligente, cartas de apresentação personalizadas, e-mails de networking, posts LinkedIn, headlines e simulação de entrevistas com feedback.',
-        badge: 'Chat ilimitado',
+        desc: 'Análise completa e detalhada do teu CV com IA.',
+        details: [
+          'Score ATS detalhado com breakdown por dimensão',
+          'Feedback dimensional: conteúdo, formatação, impacto, keywords',
+          'Comparação com benchmarks do mercado',
+          'Sugestões de melhoria priorizadas por impacto',
+          'Análise de compatibilidade com vagas específicas',
+        ],
       },
       {
         icon: 'Target',
         name: 'Career Path',
-        desc: 'Planeamento estratégico da tua carreira. Próximos cargos recomendados, exercícios de visibilidade, estratégias de networking e ações imediatas com dados de empresa enriquecidos.',
-        badge: 'Com dados de mercado',
+        desc: 'Planeamento estratégico da tua carreira com dados reais.',
+        details: [
+          'Próximos cargos recomendados com base no teu perfil',
+          'Exercícios de visibilidade e networking personalizados',
+          'Ações imediatas para acelerar a progressão',
+          'Análise de gaps de competências por cargo-alvo',
+          'Powered by NinjaPear — dados de mercado em tempo real',
+        ],
       },
       {
         icon: 'Brain',
         name: 'Career Intelligence',
-        desc: 'Análise avançada de mercado e posicionamento estratégico. Tendências salariais por mercado, competências em alta, oportunidades por setor e benchmarking competitivo.',
-        badge: 'Premium',
+        desc: 'Análise avançada de mercado e posicionamento competitivo.',
+        details: [
+          'Tendências salariais por cargo, setor e região',
+          'Competências mais procuradas no teu setor',
+          'Dados de empresas enriquecidos (NinjaPear)',
+          'Oportunidades emergentes por mercado',
+          'Benchmarking do teu perfil vs. mercado',
+        ],
       },
       {
         icon: 'Briefcase',
-        name: 'Feed de Vagas + Extensão Chrome',
-        desc: 'Vagas curadas com match inteligente, estimativa salarial e dados de empresa enriquecidos. Extensão Chrome para guardar vagas de qualquer site e acompanhar candidaturas.',
-        badge: 'Extensão Chrome',
+        name: 'Feed de Vagas + Job Tracker',
+        desc: 'Vagas curadas com match inteligente e acompanhamento completo.',
+        details: [
+          'Feed personalizado com match % por vaga',
+          'Estimativa salarial e dados de empresa enriquecidos',
+          'Extensão Chrome para guardar vagas de qualquer site',
+          'Job Tracker: acompanha candidaturas (aplicado, entrevista, oferta)',
+          'Alertas de novas vagas compatíveis com o teu perfil',
+        ],
       },
     ],
-
-    // ─── Resources ───
-    resourcesTag: 'Recursos Exclusivos',
-    resourcesTitle: 'Mais do que ferramentas — conhecimento.',
-    resourcesSubtitle: 'Acede a uma biblioteca crescente de conteúdos criados por especialistas em gestão de carreira.',
-    resources: [
-      { icon: 'BookOpen', count: '6+', label: 'E-books', desc: 'Guias práticos sobre CV, LinkedIn, entrevistas e transição de carreira.' },
-      { icon: 'Video', count: '12+', label: 'Vídeos', desc: 'Tutoriais e masterclasses sobre posicionamento profissional.' },
-      { icon: 'Newspaper', count: '30+', label: 'Artigos', desc: 'Análises de mercado, tendências e estratégias de carreira.' },
+    extensionTag: 'Extensão Chrome',
+    extensionTitle: 'Acompanhamento de emprego integrado',
+    extensionSubtitle: 'A extensão Chrome da Share2Inspire permite-te guardar vagas de qualquer site e acompanhar todo o processo de candidatura.',
+    extensionSpecs: [
+      { icon: 'Chrome', title: 'Extensão Chrome', desc: 'Guarda vagas do LinkedIn, Indeed, Glassdoor e qualquer outro site com um clique.' },
+      { icon: 'Bookmark', title: 'Job Tracker', desc: 'Acompanha o estado de cada candidatura: guardada, aplicada, entrevista, oferta, rejeitada.' },
+      { icon: 'Bell', title: 'Alertas inteligentes', desc: 'Recebe notificações quando surgem vagas compatíveis com o teu perfil e preferências.' },
+      { icon: 'Search', title: 'Match inteligente', desc: 'Cada vaga tem um score de compatibilidade baseado no teu CV e experiência.' },
     ],
-
-    // ─── Markets ───
-    marketsTag: 'Cobertura Global',
-    marketsTitle: 'Dados de mercado de 7 países.',
-    markets: ['Portugal', 'Reino Unido', 'Espanha', 'Brasil', 'Estados Unidos', 'Países Baixos', 'Alemanha'],
-
-    // ─── Comparison ───
+    resourcesTag: 'Recursos',
+    resourcesTitle: 'Conteúdo exclusivo para membros',
+    resourcesSubtitle: 'Além das ferramentas, tens acesso a uma biblioteca de recursos para acelerar a tua evolução profissional.',
+    resources: [
+      { icon: 'BookOpen', title: 'E-books', desc: 'Guias práticos sobre otimização de CV, entrevistas, negociação salarial e transição de carreira. Atualizados regularmente.', count: '6+' },
+      { icon: 'Video', title: 'Vídeos', desc: 'Tutoriais e masterclasses sobre as ferramentas da plataforma, estratégias de carreira e tendências do mercado.', count: '12+' },
+      { icon: 'Newspaper', title: 'Artigos', desc: 'Análises aprofundadas sobre o mercado de trabalho, dicas de recrutadores e cases de sucesso de membros.', count: '30+' },
+    ],
     comparisonTag: 'Comparação',
     comparisonTitle: 'Porquê a Share2Inspire?',
     comparisonSubtitle: 'Comparámos as nossas ferramentas com as alternativas mais populares do mercado.',
@@ -121,15 +130,11 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extensão', true, true, false, false, false],
       ['Feed de Vagas com Match', true, 'Básico', false, false, false],
-      ['Career Coach IA', true, false, false, false, false],
-      ['Simulação de Entrevista', true, false, false, false, false],
-      ['Dados de 7 mercados', true, false, false, false, false],
+      ['Multi-mercado (PT, UK, ES, BR, US, NL, DE)', true, false, false, false, false],
       ['Bilingue PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
     compPrice: ['Preço mensal', '9,90€', '$29', '$49,95', '$19', '$24,99'],
-
-    // ─── Plans ───
     plansTag: 'Planos',
     plansTitle: 'Investe na tua carreira',
     plansSubtitle: 'Preço de fundador — aproveita antes que aumente.',
@@ -141,6 +146,7 @@ const i18n = {
         period: '/mês',
         features: ['CV Maker com acesso contínuo', 'CV Analyser — 1 análise/semana', 'LinkedIn Roaster — 1 análise/semana', 'Career Bot com respostas base', 'Acompanhamento de progresso'],
         highlight: 'Melhora o teu score ATS em média 23 pontos',
+        cta: 'Começar',
         popular: false,
       },
       {
@@ -150,6 +156,7 @@ const i18n = {
         period: '/mês',
         features: ['Tudo do Essential + mais', 'CV + LinkedIn — 5 análises/semana', 'Feed de Vagas com match inteligente', 'E-books e templates premium', 'Career Bot avançado'],
         highlight: 'Aumenta visualizações de perfil em 40%',
+        cta: 'Subscrever',
         popular: true,
       },
       {
@@ -159,124 +166,126 @@ const i18n = {
         period: '/mês',
         features: ['Tudo do Growth + acesso total', 'Análises ilimitadas', 'Feed com estimativa salarial', 'Prioridade no processamento', 'Acesso antecipado a novidades'],
         highlight: 'Vagas com salários 15% acima da média',
+        cta: 'Subscrever',
         popular: false,
       },
     ],
     plansBilling: 'Semestral -17% · Anual -33%',
-    plansCta: 'Inicia o Diagnóstico de Carreira',
-
-    // ─── Testimonials ───
     testimonialsTag: 'Testemunhos',
-    testimonialsTitle: 'O que dizem os nossos utilizadores',
+    testimonialsTitle: 'O que dizem os nossos membros',
     testimonials: [
-      { name: 'Ana M.', role: 'Senior Manager', text: 'Passei de 45 para 82 pontos ATS em 10 minutos. O relatório é incrivelmente detalhado — nada comparável ao que encontrei noutras plataformas.', stars: 5 },
-      { name: 'Diogo S.', role: 'Software Engineer', text: 'O Career Intelligence mostrou-me oportunidades em mercados que nem tinha considerado. A análise salarial por país é um diferencial enorme.', stars: 5 },
-      { name: 'Mariana C.', role: 'Product Manager', text: 'Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O plano de ação a 30 dias mudou completamente a minha abordagem.', stars: 5 },
+      { name: 'Ana M.', role: 'Senior Manager', text: 'Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.', stars: 5 },
+      { name: 'Diogo S.', role: 'Software Engineer', text: 'O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.', stars: 5 },
+      { name: 'Mariana C.', role: 'Product Manager', text: 'Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.', stars: 5 },
     ],
-
-    // ─── Final CTA ───
-    ctaTitle: 'Pronto para o diagnóstico completo da tua carreira?',
-    ctaSubtitle: 'Junta-te a mais de 100 profissionais que já estão a usar a Share2Inspire para tomar decisões de carreira informadas.',
-    ctaButton: 'Inicia o Diagnóstico de Carreira',
+    ctaTitle: 'Pronto para dar o próximo passo?',
+    ctaSubtitle: 'Junta-te a mais de 100 membros que já estão a usar as ferramentas da Share2Inspire.',
+    ctaButton: 'Criar conta gratuita',
     ctaNote: 'Sem cartão de crédito · Cancela quando quiseres',
-
     langSwitch: 'EN',
   },
   en: {
-    // ─── Hero ───
-    heroTag: 'Career Intelligence | Strategic Career Diagnosis',
-    heroTitle: 'The most comprehensive career report on the market.',
-    heroSubtitle: 'Complete career diagnosis with AI — market analysis, strategic positioning and informed decision. All in one platform.',
-    heroCta: 'Start Your Career Diagnosis',
+    heroTag: 'Member Area',
+    heroTitle: 'Your exclusive career management space.',
+    heroSubtitle: 'Access AI tools, personalized analyses and strategic planning — all designed to position you better in the market.',
+    heroCta: 'Enter Member Area',
+    heroCtaSecondary: 'View plans',
     heroStat1: '100+',
-    heroStat1Label: 'Active professionals',
+    heroStat1Label: 'Active members',
     heroStat2: '+23 pts',
     heroStat2Label: 'Average ATS improvement',
-    heroStat3: '7',
-    heroStat3Label: 'Markets supported',
-
-    // ─── AI Differentiation ───
-    aiTag: 'Advanced Artificial Intelligence',
-    aiTitle: 'Not just another CV generator. It\'s a complete diagnosis.',
-    aiSubtitle: 'Our AI analyzes your profile in depth, cross-references real market data and delivers a personalized report that no generic tool can produce.',
-    aiFeatures: [
-      {
-        icon: 'Search',
-        title: 'Real-Time Market Analysis',
-        desc: 'The AI cross-references your profile with salary trends, in-demand skills and real opportunities across 7 markets — PT, UK, ES, BR, US, NL and DE.',
-      },
-      {
-        icon: 'Cpu',
-        title: 'Personalized Diagnosis',
-        desc: 'Every report is unique. The AI evaluates your individual skills, experience and goals to create a specific action plan for you.',
-      },
-      {
-        icon: 'LineChart',
-        title: 'Comprehensive vs. Generic Report',
-        desc: 'While other tools give you a score and stop, we deliver detailed ATS analysis, priority matrix, improvement actions and a 30-day plan.',
-      },
+    heroStat3: '5',
+    heroStat3Label: 'AI tools',
+    benefitsTag: 'Benefits',
+    benefitsTitle: 'Why become a member?',
+    benefits: [
+      { icon: 'Lock', title: 'Exclusive access', desc: 'AI tools not available on the public site.' },
+      { icon: 'Award', title: 'Personalized analyses', desc: 'Detailed reports on your CV, LinkedIn profile and positioning.' },
+      { icon: 'TrendingUp', title: 'Continuous evolution', desc: 'Track your progress and improve your ATS score week by week.' },
+      { icon: 'Zap', title: 'Market intelligence', desc: 'Job data, salaries and trends updated across multiple markets.' },
     ],
-    aiCompare: 'Generic tools give you a number. We give you a plan.',
-
-    // ─── Features ───
-    featuresTag: 'Integrated Tools',
-    featuresTitle: '6 tools. 1 platform. Zero fragmentation.',
-    featuresSubtitle: 'Each tool was designed to solve a real career management problem — and they all work together.',
+    featuresTag: 'What your subscription includes',
+    featuresTitle: 'Exclusive tools for members',
+    featuresSubtitle: 'Five integrated AI tools, available in your member area.',
     features: [
       {
         icon: 'FileText',
         name: 'CV Maker',
-        desc: 'Build professional CVs with ATS-optimized templates. Import data from LinkedIn, edit in real-time and export as PDF. AI suggests content and formatting improvements.',
-        badge: 'Included in all plans',
+        desc: 'Build professional CVs with ATS-optimized templates.',
+        details: [
+          'Import data from LinkedIn automatically or start from scratch',
+          'Professional templates optimized for ATS systems',
+          'AI assistance to improve experience descriptions',
+          'Export to PDF with perfect formatting',
+          'Keyword suggestions by sector and role',
+        ],
       },
       {
         icon: 'BarChart3',
         name: 'CV Analyser',
-        desc: 'Complete CV analysis with ATS score, dimensional feedback across 8 categories, prioritized improvement suggestions, skills matrix and 30-day action plan.',
-        badge: 'Up to unlimited',
-      },
-      {
-        icon: 'MessageSquare',
-        name: 'Career Advisory',
-        desc: 'Personal career assistant with AI. Smart chat, personalized cover letters, networking emails, LinkedIn posts, headlines and interview simulation with feedback.',
-        badge: 'Unlimited chat',
+        desc: 'Complete and detailed CV analysis with AI.',
+        details: [
+          'Detailed ATS score with dimensional breakdown',
+          'Dimensional feedback: content, formatting, impact, keywords',
+          'Comparison with market benchmarks',
+          'Improvement suggestions prioritized by impact',
+          'Compatibility analysis with specific job listings',
+        ],
       },
       {
         icon: 'Target',
         name: 'Career Path',
-        desc: 'Strategic career planning. Recommended next roles, visibility exercises, networking strategies and immediate actions with enriched company data.',
-        badge: 'With market data',
+        desc: 'Strategic career planning with real market data.',
+        details: [
+          'Recommended next roles based on your profile',
+          'Personalized visibility and networking exercises',
+          'Immediate actions to accelerate progression',
+          'Skills gap analysis per target role',
+          'Powered by NinjaPear — real-time market data',
+        ],
       },
       {
         icon: 'Brain',
         name: 'Career Intelligence',
-        desc: 'Advanced market analysis and strategic positioning. Salary trends by market, in-demand skills, opportunities by sector and competitive benchmarking.',
-        badge: 'Premium',
+        desc: 'Advanced market analysis and competitive positioning.',
+        details: [
+          'Salary trends by role, sector and region',
+          'Most in-demand skills in your sector',
+          'Enriched company data (NinjaPear)',
+          'Emerging opportunities by market',
+          'Profile benchmarking vs. market',
+        ],
       },
       {
         icon: 'Briefcase',
-        name: 'Job Feed + Chrome Extension',
-        desc: 'Curated jobs with smart matching, salary estimates and enriched company data. Chrome extension to save jobs from any site and track applications.',
-        badge: 'Chrome Extension',
+        name: 'Job Feed + Job Tracker',
+        desc: 'Curated jobs with smart matching and full tracking.',
+        details: [
+          'Personalized feed with match % per job',
+          'Salary estimates and enriched company data',
+          'Chrome extension to save jobs from any site',
+          'Job Tracker: track applications (applied, interview, offer)',
+          'Alerts for new jobs matching your profile',
+        ],
       },
     ],
-
-    // ─── Resources ───
-    resourcesTag: 'Exclusive Resources',
-    resourcesTitle: 'More than tools — knowledge.',
-    resourcesSubtitle: 'Access a growing library of content created by career management experts.',
-    resources: [
-      { icon: 'BookOpen', count: '6+', label: 'E-books', desc: 'Practical guides on CV, LinkedIn, interviews and career transition.' },
-      { icon: 'Video', count: '12+', label: 'Videos', desc: 'Tutorials and masterclasses on professional positioning.' },
-      { icon: 'Newspaper', count: '30+', label: 'Articles', desc: 'Market analysis, trends and career strategies.' },
+    extensionTag: 'Chrome Extension',
+    extensionTitle: 'Integrated job tracking',
+    extensionSubtitle: 'The Share2Inspire Chrome extension lets you save jobs from any site and track your entire application process.',
+    extensionSpecs: [
+      { icon: 'Chrome', title: 'Chrome Extension', desc: 'Save jobs from LinkedIn, Indeed, Glassdoor and any other site with one click.' },
+      { icon: 'Bookmark', title: 'Job Tracker', desc: 'Track the status of each application: saved, applied, interview, offer, rejected.' },
+      { icon: 'Bell', title: 'Smart alerts', desc: 'Get notifications when new jobs matching your profile and preferences appear.' },
+      { icon: 'Search', title: 'Smart matching', desc: 'Each job has a compatibility score based on your CV and experience.' },
     ],
-
-    // ─── Markets ───
-    marketsTag: 'Global Coverage',
-    marketsTitle: 'Market data from 7 countries.',
-    markets: ['Portugal', 'United Kingdom', 'Spain', 'Brazil', 'United States', 'Netherlands', 'Germany'],
-
-    // ─── Comparison ───
+    resourcesTag: 'Resources',
+    resourcesTitle: 'Exclusive content for members',
+    resourcesSubtitle: 'Beyond the tools, you get access to a library of resources to accelerate your professional growth.',
+    resources: [
+      { icon: 'BookOpen', title: 'E-books', desc: 'Practical guides on CV optimization, interviews, salary negotiation and career transition. Regularly updated.', count: '6+' },
+      { icon: 'Video', title: 'Videos', desc: 'Tutorials and masterclasses on platform tools, career strategies and market trends.', count: '12+' },
+      { icon: 'Newspaper', title: 'Articles', desc: 'In-depth analyses of the job market, recruiter tips and member success stories.', count: '30+' },
+    ],
     comparisonTag: 'Comparison',
     comparisonTitle: 'Why Share2Inspire?',
     comparisonSubtitle: 'We compared our tools with the most popular alternatives on the market.',
@@ -289,15 +298,11 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extension', true, true, false, false, false],
       ['Job Feed with Matching', true, 'Basic', false, false, false],
-      ['AI Career Coach', true, false, false, false, false],
-      ['Interview Simulation', true, false, false, false, false],
-      ['Data from 7 markets', true, false, false, false, false],
+      ['Multi-market (PT, UK, ES, BR, US, NL, DE)', true, false, false, false, false],
       ['Bilingual PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
     compPrice: ['Monthly price', '€9.90', '$29', '$49.95', '$19', '$24.99'],
-
-    // ─── Plans ───
     plansTag: 'Plans',
     plansTitle: 'Invest in your career',
     plansSubtitle: 'Founder pricing — take advantage before it increases.',
@@ -309,6 +314,7 @@ const i18n = {
         period: '/mo',
         features: ['CV Maker with continuous access', 'CV Analyser — 1 analysis/week', 'LinkedIn Roaster — 1 analysis/week', 'Career Bot with basic answers', 'Progress tracking'],
         highlight: 'Improve your ATS score by 23 points on average',
+        cta: 'Get started',
         popular: false,
       },
       {
@@ -318,6 +324,7 @@ const i18n = {
         period: '/mo',
         features: ['Everything in Essential + more', 'CV + LinkedIn — 5 analyses/week', 'Job Feed with smart matching', 'E-books and premium templates', 'Advanced Career Bot'],
         highlight: 'Increase profile views by 40%',
+        cta: 'Subscribe',
         popular: true,
       },
       {
@@ -327,33 +334,28 @@ const i18n = {
         period: '/mo',
         features: ['Everything in Growth + full access', 'Unlimited analyses', 'Feed with salary estimates', 'Priority processing', 'Early access to new features'],
         highlight: 'Jobs with salaries 15% above average',
+        cta: 'Subscribe',
         popular: false,
       },
     ],
     plansBilling: 'Semi-annual -17% · Annual -33%',
-    plansCta: 'Start Your Career Diagnosis',
-
-    // ─── Testimonials ───
     testimonialsTag: 'Testimonials',
-    testimonialsTitle: 'What our users say',
+    testimonialsTitle: 'What our members say',
     testimonials: [
-      { name: 'Ana M.', role: 'Senior Manager', text: 'I went from 45 to 82 ATS points in 10 minutes. The report is incredibly detailed — nothing comparable to what I found on other platforms.', stars: 5 },
-      { name: 'Diogo S.', role: 'Software Engineer', text: 'Career Intelligence showed me opportunities in markets I hadn\'t even considered. The salary analysis by country is a huge differentiator.', stars: 5 },
-      { name: 'Mariana C.', role: 'Product Manager', text: 'Finally a tool that tells me exactly what recruiters want to see. The 30-day action plan completely changed my approach.', stars: 5 },
+      { name: 'Ana M.', role: 'Senior Manager', text: 'I went from 45 to 82 ATS points in 10 minutes. Absolutely essential for anyone looking for a job today.', stars: 5 },
+      { name: 'Diogo S.', role: 'Software Engineer', text: 'The LinkedIn Roaster gave me feedback I had never received. My profile is much stronger and getting more views.', stars: 5 },
+      { name: 'Mariana C.', role: 'Product Manager', text: 'Finally a tool that tells me exactly what recruiters want to see. The CV Analyser is a game-changer.', stars: 5 },
     ],
-
-    // ─── Final CTA ───
-    ctaTitle: 'Ready for your complete career diagnosis?',
-    ctaSubtitle: 'Join over 100 professionals already using Share2Inspire to make informed career decisions.',
-    ctaButton: 'Start Your Career Diagnosis',
+    ctaTitle: 'Ready to take the next step?',
+    ctaSubtitle: 'Join over 100 members already using Share2Inspire tools.',
+    ctaButton: 'Create free account',
     ctaNote: 'No credit card · Cancel anytime',
-
     langSwitch: 'PT',
   },
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  FileText, BarChart3, MessageSquare, Target, Brain, Briefcase, Search, Cpu, LineChart, BookOpen, Video, Newspaper,
+  FileText, BarChart3, Target, Brain, Briefcase, Lock, Award, TrendingUp, Zap, Chrome, BookOpen, Video, Newspaper, MapPin, Search, Bell, Bookmark,
 };
 
 function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -378,6 +380,7 @@ export default function ClientAreaLanding() {
     const stored = localStorage.getItem('s2i-lang');
     return stored === 'en' ? 'en' : 'pt';
   });
+  const [expandedFeat, setExpandedFeat] = useState<number | null>(null);
   const t = i18n[lang];
 
   const toggleLang = () => {
@@ -387,41 +390,41 @@ export default function ClientAreaLanding() {
   };
 
   const basePath = window.location.pathname.startsWith('/area-cliente') ? '/area-cliente' : '';
-  const ctaHref = `${basePath}/auth`;
+  const { openLoginModal } = useLoginModal();
 
   return (
     <div className="bg-[#FAFAF9] text-[#1a1a1a] font-[Poppins,sans-serif] overflow-x-hidden">
 
       {/* ─── Hero ─── */}
-      <section className="relative py-16 sm:py-24 lg:py-32">
+      <section className="relative py-20 sm:py-28 lg:py-36">
         <div className="absolute inset-0 bg-gradient-to-br from-[#faf8f3] via-[#FAFAF9] to-[#f5f0e8]" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-[#C9A961]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#C9A961]/8 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="max-w-3xl mx-auto text-center lg:text-left lg:mx-0">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-6">
-                <Sparkles className="w-3.5 h-3.5" /> {t.heroTag}
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-6">
+                <Lock className="w-3.5 h-3.5" /> {t.heroTag}
               </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight text-[#1a1a1a] mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-[#1a1a1a] mb-6">
                 {t.heroTitle}
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-[#666] leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-[#666] leading-relaxed mb-8 max-w-2xl">
                 {t.heroSubtitle}
               </p>
-              
-              {/* Single Primary CTA — above the fold */}
-              <div className="mb-12">
-                <a href={ctaHref} className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-base shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5 min-h-[52px]">
-                  {t.heroCta} <ArrowRight className="w-5 h-5" />
+              <div className="flex flex-wrap gap-3 mb-12">
+                <button onClick={openLoginModal} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-sm shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5 cursor-pointer">
+                  {t.heroCta} <ArrowRight className="w-4 h-4" />
+                </button>
+                <a href="#plans" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-[#e5e5e0] text-[#555] font-semibold text-sm hover:bg-[#f5f5f0] transition-all">
+                  {t.heroCtaSecondary} <ChevronDown className="w-4 h-4" />
                 </a>
               </div>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-6 sm:gap-10">
+              <div className="flex flex-wrap gap-8 sm:gap-12">
                 {[
                   { val: t.heroStat1, label: t.heroStat1Label, icon: Users },
                   { val: t.heroStat2, label: t.heroStat2Label, icon: TrendingUp },
-                  { val: t.heroStat3, label: t.heroStat3Label, icon: Globe },
+                  { val: t.heroStat3, label: t.heroStat3Label, icon: Zap },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-[#C9A961]/10 flex items-center justify-center">
@@ -439,120 +442,28 @@ export default function ClientAreaLanding() {
         </div>
       </section>
 
-      {/* ─── AI Differentiation Section ─── */}
-      <section className="py-16 sm:py-24 bg-white">
+      {/* ─── Benefits (Why become a member) ─── */}
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
-                <Cpu className="w-3.5 h-3.5" /> {t.aiTag}
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.benefitsTag}
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.aiTitle}</h2>
-              <p className="text-[#666] text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">{t.aiSubtitle}</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.benefitsTitle}</h2>
             </div>
           </FadeIn>
-
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-12">
-            {t.aiFeatures.map((feat, i) => {
-              const Icon = iconMap[feat.icon] || Cpu;
-              return (
-                <FadeIn key={i} delay={i * 120}>
-                  <div className="relative p-6 sm:p-8 rounded-2xl border border-[#e5e5e0] bg-[#FAFAF9] hover:border-[#C9A961]/30 hover:shadow-lg transition-all group">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C9A961] to-[#D4B96E] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-bold text-lg text-[#1a1a1a] mb-3">{feat.title}</h3>
-                    <p className="text-sm text-[#666] leading-relaxed">{feat.desc}</p>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-
-          <FadeIn delay={200}>
-            <div className="text-center">
-              <p className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1a1a1a] text-white text-sm font-medium">
-                <Zap className="w-4 h-4 text-[#C9A961]" />
-                {t.aiCompare}
-              </p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ─── Features Showcase ─── */}
-      <section id="features" className="py-16 sm:py-24 bg-[#FAFAF9]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
-                {t.featuresTag}
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.featuresTitle}</h2>
-              <p className="text-[#666] text-base sm:text-lg max-w-2xl mx-auto">{t.featuresSubtitle}</p>
-            </div>
-          </FadeIn>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-            {t.features.map((f, i) => {
-              const Icon = iconMap[f.icon] || FileText;
-              return (
-                <FadeIn key={i} delay={i * 80}>
-                  <div className="p-6 rounded-2xl bg-white border border-[#e5e5e0] hover:border-[#C9A961]/30 hover:shadow-lg transition-all h-full flex flex-col">
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-lg bg-[#C9A961]/10 flex items-center justify-center shrink-0">
-                        <Icon className="w-5 h-5 text-[#C9A961]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-base text-[#1a1a1a]">{f.name}</h3>
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-[10px] font-semibold">
-                          {f.badge}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-[#666] leading-relaxed flex-1">{f.desc}</p>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-
-          {/* Mid-page CTA repetition */}
-          <FadeIn delay={300}>
-            <div className="text-center mt-12">
-              <a href={ctaHref} className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-base shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5 min-h-[52px]">
-                {t.heroCta} <ArrowRight className="w-5 h-5" />
-              </a>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ─── Resources ─── */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
-                <BookOpen className="w-3.5 h-3.5" /> {t.resourcesTag}
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.resourcesTitle}</h2>
-              <p className="text-[#666] text-base sm:text-lg max-w-2xl mx-auto">{t.resourcesSubtitle}</p>
-            </div>
-          </FadeIn>
-
-          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {t.resources.map((r, i) => {
-              const Icon = iconMap[r.icon] || BookOpen;
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {t.benefits.map((b, i) => {
+              const Icon = iconMap[b.icon] || Lock;
               return (
                 <FadeIn key={i} delay={i * 100}>
-                  <div className="text-center p-6 rounded-2xl border border-[#e5e5e0] bg-[#FAFAF9] hover:border-[#C9A961]/30 hover:shadow-md transition-all">
-                    <div className="w-14 h-14 rounded-xl bg-[#C9A961]/10 flex items-center justify-center mx-auto mb-4">
-                      <Icon className="w-7 h-7 text-[#C9A961]" />
+                  <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] hover:shadow-md transition-shadow text-center">
+                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 flex items-center justify-center mx-auto mb-4">
+                      <Icon className="w-6 h-6 text-[#C9A961]" />
                     </div>
-                    <div className="text-3xl font-bold text-[#C9A961] mb-1">{r.count}</div>
-                    <div className="font-semibold text-[#1a1a1a] mb-2">{r.label}</div>
-                    <p className="text-xs text-[#666] leading-relaxed">{r.desc}</p>
+                    <h3 className="font-semibold text-sm text-[#1a1a1a] mb-2">{b.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{b.desc}</p>
                   </div>
                 </FadeIn>
               );
@@ -561,49 +472,148 @@ export default function ClientAreaLanding() {
         </div>
       </section>
 
-      {/* ─── Markets ─── */}
-      <section className="py-12 sm:py-16 bg-[#FAFAF9]">
+      {/* ─── Features — Expandable Cards (NO screenshots) ─── */}
+      <section id="features" className="py-20 sm:py-28 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-3">
-                <Globe className="w-3.5 h-3.5" /> {t.marketsTag}
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.featuresTag}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a]">{t.marketsTitle}</h2>
-            </div>
-            <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
-              {t.markets.map((m, i) => (
-                <span key={i} className="px-4 py-2.5 rounded-xl border border-[#e5e5e0] bg-white text-sm font-medium text-[#555] hover:border-[#C9A961]/30 hover:text-[#C9A961] transition-colors min-h-[44px] flex items-center">
-                  {m}
-                </span>
-              ))}
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.featuresTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.featuresSubtitle}</p>
             </div>
           </FadeIn>
+
+          <div className="max-w-4xl mx-auto space-y-4">
+            {t.features.map((f, i) => {
+              const Icon = iconMap[f.icon] || FileText;
+              const isOpen = expandedFeat === i;
+              return (
+                <FadeIn key={i} delay={i * 80}>
+                  <div className={`rounded-2xl border transition-all duration-300 ${isOpen ? 'bg-white border-[#C9A961]/30 shadow-lg' : 'bg-white border-[#e5e5e0] hover:shadow-md'}`}>
+                    <button
+                      onClick={() => setExpandedFeat(isOpen ? null : i)}
+                      className="w-full text-left p-6 flex items-start gap-4"
+                    >
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${isOpen ? 'bg-[#C9A961] text-white' : 'bg-[#C9A961]/10 text-[#C9A961]'}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-bold text-base text-[#1a1a1a]">{f.name}</h3>
+                          <ChevronDown className={`w-5 h-5 text-[#999] shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                        <p className="text-sm text-[#666] mt-1">{f.desc}</p>
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div className="px-6 pb-6 pt-0">
+                        <div className="ml-15 pl-4 border-l-2 border-[#C9A961]/20">
+                          <ul className="space-y-3">
+                            {f.details.map((d, di) => (
+                              <li key={di} className="flex items-start gap-2.5 text-sm text-[#555]">
+                                <Check className="w-4 h-4 text-[#C9A961] shrink-0 mt-0.5" />
+                                {d}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Chrome Extension & Job Tracking ─── */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.extensionTag}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.extensionTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.extensionSubtitle}</p>
+            </div>
+          </FadeIn>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {t.extensionSpecs.map((spec, i) => {
+              const Icon = iconMap[spec.icon] || Chrome;
+              return (
+                <FadeIn key={i} delay={i * 100}>
+                  <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] hover:shadow-md hover:border-[#C9A961]/20 transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-[#C9A961]" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-[#1a1a1a] mb-2">{spec.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{spec.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Resources (E-books, Videos, Articles) ─── */}
+      <section className="py-16 sm:py-20 bg-[#FAFAF9]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.resourcesTag}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.resourcesTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.resourcesSubtitle}</p>
+            </div>
+          </FadeIn>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {t.resources.map((res, i) => {
+              const Icon = iconMap[res.icon] || BookOpen;
+              return (
+                <FadeIn key={i} delay={i * 120}>
+                  <div className="bg-white rounded-2xl p-8 border border-[#e5e5e0] hover:shadow-lg hover:border-[#C9A961]/20 transition-all text-center group">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C9A961]/15 to-[#C9A961]/5 flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+                      <Icon className="w-7 h-7 text-[#C9A961]" />
+                    </div>
+                    <div className="text-2xl font-bold text-[#C9A961] mb-1">{res.count}</div>
+                    <h3 className="font-bold text-base text-[#1a1a1a] mb-3">{res.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{res.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* ─── Comparison Table ─── */}
-      <section id="comparison" className="py-16 sm:py-24 bg-white">
+      <section id="comparison" className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
                 {t.comparisonTag}
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.comparisonTitle}</h2>
-              <p className="text-[#666] text-base sm:text-lg max-w-2xl mx-auto">{t.comparisonSubtitle}</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.comparisonTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.comparisonSubtitle}</p>
             </div>
           </FadeIn>
 
           <FadeIn delay={100}>
-            <div className="overflow-x-auto rounded-2xl border border-[#e5e5e0] bg-white shadow-sm -mx-4 sm:mx-0">
+            <div className="overflow-x-auto rounded-2xl border border-[#e5e5e0] bg-white shadow-sm">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#e5e5e0]">
                     {t.compHeaders.map((h, i) => (
-                      <th key={i} className={`px-3 sm:px-4 py-4 text-left font-semibold text-xs sm:text-sm ${
+                      <th key={i} className={`px-4 py-4 text-left font-semibold ${
                         i === 1 ? 'bg-[#C9A961]/5 text-[#C9A961]' : 'text-[#999]'
-                      } ${i === 0 ? 'min-w-[140px] sm:min-w-[180px]' : 'min-w-[80px] sm:min-w-[100px] text-center'}`}>
+                      } ${i === 0 ? 'min-w-[180px]' : 'min-w-[100px] text-center'}`}>
                         {i === 1 && <Shield className="w-3.5 h-3.5 inline mr-1 mb-0.5" />}
                         {h}
                       </th>
@@ -614,7 +624,7 @@ export default function ClientAreaLanding() {
                   {t.compRows.map((row, ri) => (
                     <tr key={ri} className="border-b border-[#f5f5f0] hover:bg-[#faf8f3] transition-colors">
                       {row.map((cell, ci) => (
-                        <td key={ci} className={`px-3 sm:px-4 py-3 ${ci === 0 ? 'font-medium text-[#1a1a1a] text-xs sm:text-sm' : 'text-center'} ${ci === 1 ? 'bg-[#C9A961]/5' : ''}`}>
+                        <td key={ci} className={`px-4 py-3 ${ci === 0 ? 'font-medium text-[#1a1a1a]' : 'text-center'} ${ci === 1 ? 'bg-[#C9A961]/5' : ''}`}>
                           {ci === 0 ? (
                             cell as string
                           ) : cell === true ? (
@@ -622,17 +632,18 @@ export default function ClientAreaLanding() {
                           ) : cell === false ? (
                             <X className="w-4.5 h-4.5 text-[#ccc] mx-auto" />
                           ) : (
-                            <span className="text-[10px] sm:text-xs text-[#999]">{cell as string}</span>
+                            <span className="text-xs text-[#999]">{cell as string}</span>
                           )}
                         </td>
                       ))}
                     </tr>
                   ))}
+                  {/* Price row */}
                   <tr className="bg-[#faf8f3]">
                     {t.compPrice.map((p, i) => (
-                      <td key={i} className={`px-3 sm:px-4 py-4 font-bold text-xs sm:text-sm ${
+                      <td key={i} className={`px-4 py-4 font-bold ${
                         i === 0 ? 'text-[#1a1a1a]' : 'text-center'
-                      } ${i === 1 ? 'bg-[#C9A961]/10 text-[#C9A961] text-base sm:text-lg' : 'text-[#666]'}`}>
+                      } ${i === 1 ? 'bg-[#C9A961]/10 text-[#C9A961] text-lg' : 'text-[#666]'}`}>
                         {p}
                       </td>
                     ))}
@@ -645,15 +656,15 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Plans ─── */}
-      <section id="plans" className="py-16 sm:py-24 bg-[#FAFAF9]">
+      <section id="plans" className="py-20 sm:py-28 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
                 {t.plansTag}
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.plansTitle}</h2>
-              <p className="text-[#666] text-base sm:text-lg">{t.plansSubtitle}</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.plansTitle}</h2>
+              <p className="text-[#666] text-lg">{t.plansSubtitle}</p>
               <p className="text-xs text-[#999] mt-2">{t.plansBilling}</p>
             </div>
           </FadeIn>
@@ -693,14 +704,14 @@ export default function ClientAreaLanding() {
                     {plan.highlight}
                   </div>
                   <a
-                    href={ctaHref}
-                    className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all min-h-[48px] flex items-center justify-center ${
+                    href={`${basePath}/planos`}
+                    className={`block w-full text-center py-3 rounded-xl font-semibold text-sm transition-all ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white shadow-lg shadow-[#C9A961]/20 hover:shadow-xl'
                         : 'border border-[#C9A961] text-[#C9A961] hover:bg-[#C9A961]/5'
                     }`}
                   >
-                    {t.plansCta} <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
+                    {plan.cta} <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
                   </a>
                 </div>
               </FadeIn>
@@ -710,21 +721,21 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Testimonials ─── */}
-      <section className="py-16 sm:py-24 bg-white">
+      <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="text-center mb-14">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
                 {t.testimonialsTag}
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] mb-4">{t.testimonialsTitle}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.testimonialsTitle}</h2>
             </div>
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {t.testimonials.map((test, i) => (
               <FadeIn key={i} delay={i * 100}>
-                <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] hover:shadow-md transition-shadow">
+                <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex gap-0.5 mb-4">
                     {Array.from({ length: test.stars }).map((_, si) => (
                       <Star key={si} className="w-4 h-4 fill-[#C9A961] text-[#C9A961]" />
@@ -748,20 +759,33 @@ export default function ClientAreaLanding() {
       </section>
 
       {/* ─── Final CTA ─── */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] text-white">
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeIn>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">{t.ctaTitle}</h2>
-            <p className="text-white/60 text-base sm:text-lg mb-8">{t.ctaSubtitle}</p>
-            <a href={ctaHref} className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-base shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5 min-h-[52px]">
-              {t.ctaButton} <ArrowRight className="w-5 h-5" />
-            </a>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t.ctaTitle}</h2>
+            <p className="text-white/60 text-lg mb-8">{t.ctaSubtitle}</p>
+            <button onClick={openLoginModal} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5 cursor-pointer">
+              {t.ctaButton} <ArrowRight className="w-4 h-4" />
+            </button>
             <p className="text-white/40 text-xs mt-4">{t.ctaNote}</p>
           </FadeIn>
         </div>
       </section>
 
-
+      {/* ─── Footer ─── */}
+      <footer className="py-8 bg-[#1a1a1a] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-white/40 text-xs">
+            <img src={CDN.logo} alt="S2I" className="h-5 w-auto opacity-40" />
+            Share2Inspire &copy; {new Date().getFullYear()}
+          </div>
+          <div className="flex gap-6 text-white/40 text-xs">
+            <a href="https://share2inspire.pt/privacidade" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Privacidade' : 'Privacy'}</a>
+            <a href="https://share2inspire.pt/termos" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Termos' : 'Terms'}</a>
+            <a href="https://share2inspire.pt" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Site principal' : 'Main site'}</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
