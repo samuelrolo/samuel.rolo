@@ -1,31 +1,28 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Router as WouterRouter, Redirect } from "wouter";
+import { Route, Switch, Router as WouterRouter, useLocation, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { I18nProvider } from "./contexts/I18nContext";
-import { LoginModalProvider } from "./contexts/LoginModalContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CareerBotWidget from "./components/CareerBotWidget";
+import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 import Plans from "./pages/Plans";
 import MemberArea from "./pages/MemberArea";
 import ProfilePage from "./pages/ProfilePage";
+import ClientAreaLanding from "./pages/ClientAreaLanding";
 
 function Routes() {
   return (
     <Switch>
-      {/* Root → perfil (ProtectedRoute will show login modal if not authenticated) */}
-      <Route path="/">
-        <Redirect to="/perfil" />
-      </Route>
-      {/* Keep /auth as redirect for bookmarks/existing links */}
-      <Route path="/auth">
-        <Redirect to="/perfil" />
-      </Route>
+      <Route path="/" component={Home} />
+      <Route path="/sobre" component={ClientAreaLanding} />
+      <Route path="/auth" component={Auth} />
       <Route path="/planos" component={Plans} />
       <Route path="/perfil">
         <ProtectedRoute>
@@ -51,13 +48,17 @@ function Routes() {
 }
 
 function Layout() {
+  const [location] = useLocation();
+  const isAuthPage = location === '/auth';
+  const isLandingPage = location === '/sobre';
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
-      <Header />
+      {!isAuthPage && !isLandingPage && <Header />}
       <main className="flex-1">
         <Routes />
       </main>
-      <Footer />
+      {!isAuthPage && !isLandingPage && <Footer />}
       <CareerBotWidget />
     </div>
   );
@@ -72,14 +73,12 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <I18nProvider>
           <AuthProvider>
-            <LoginModalProvider>
-              <TooltipProvider>
-                <WouterRouter base={basePath}>
-                  <Toaster />
-                  <Layout />
-                </WouterRouter>
-              </TooltipProvider>
-            </LoginModalProvider>
+            <TooltipProvider>
+              <WouterRouter base={basePath}>
+                <Toaster />
+                <Layout />
+              </WouterRouter>
+            </TooltipProvider>
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>
