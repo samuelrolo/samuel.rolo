@@ -18,7 +18,7 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
 
   function openLoginModal() {
     if (user) {
-      navigate('/perfil');
+      navigate('/membros');
     } else {
       setIsOpen(true);
     }
@@ -30,7 +30,7 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
 
   function handleSuccess() {
     setIsOpen(false);
-    navigate('/perfil');
+    navigate('/membros');
   }
 
   return (

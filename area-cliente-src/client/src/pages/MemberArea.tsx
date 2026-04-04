@@ -17,6 +17,7 @@ import VagasFeed from '@/components/VagasFeed';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
+import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -1711,7 +1712,7 @@ export default function MemberArea() {
                           ) : (
                             <div>
                               <div data-analysis-result="true">
-                                <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                                <AnalysisDetailRenderer analysisType={expandedTool === 'careerPath' ? 'career_path' : expandedTool === 'careerIntelligence' ? 'career_intelligence' : expandedTool === 'linkedinRoster' ? 'linkedin_roaster' : 'cv_analyser'} data={analysisResult} />
                               </div>
                               <div className="flex items-center gap-3 mt-3">
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
@@ -1983,7 +1984,7 @@ export default function MemberArea() {
               {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
                 <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
               ) : (
-                <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+                <AnalysisDetailRenderer analysisType={viewingAnalysis.analysis_type} data={viewingAnalysis.data} />
               )}
             </div>
           </div>

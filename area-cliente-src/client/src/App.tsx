@@ -4,30 +4,24 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch, Router as WouterRouter, useLocation, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { LoginModalProvider } from "./contexts/LoginModalContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { I18nProvider } from "./contexts/I18nContext";
+import { LoginModalProvider } from "./contexts/LoginModalContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CareerBotWidget from "./components/CareerBotWidget";
+import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Plans from "./pages/Plans";
 import MemberArea from "./pages/MemberArea";
 import ProfilePage from "./pages/ProfilePage";
 import ClientAreaLanding from "./pages/ClientAreaLanding";
 
-function HomeRedirect() {
-  const { user } = useAuth();
-  return <Redirect to={user ? '/membros' : '/sobre'} />;
-}
-
 function Routes() {
   return (
     <Switch>
-      <Route path="/">
-        <HomeRedirect />
-      </Route>
+      <Route path="/" component={Home} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/auth" component={Auth} />
       <Route path="/planos" component={Plans} />
@@ -58,14 +52,15 @@ function Layout() {
   const [location] = useLocation();
   const isAuthPage = location === '/auth';
   const isLandingPage = location === '/sobre';
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
-      {!isAuthPage && <Header />}
+      {!isAuthPage && !isLandingPage && <Header />}
       <main className="flex-1">
         <Routes />
       </main>
-      {!isAuthPage && <Footer />}
-      {!isLandingPage && <CareerBotWidget />}
+      {!isAuthPage && !isLandingPage && <Footer />}
+      <CareerBotWidget />
     </div>
   );
 }
@@ -79,14 +74,14 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <I18nProvider>
           <AuthProvider>
-            <LoginModalProvider>
-              <TooltipProvider>
-                <WouterRouter base={basePath}>
+            <TooltipProvider>
+              <WouterRouter base={basePath}>
+                <LoginModalProvider>
                   <Toaster />
                   <Layout />
-                </WouterRouter>
-              </TooltipProvider>
-            </LoginModalProvider>
+                </LoginModalProvider>
+              </WouterRouter>
+            </TooltipProvider>
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>

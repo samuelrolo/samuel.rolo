@@ -1,16 +1,19 @@
 /**
  * AnalysisDetailRenderer — Renders full analysis details for each tool type
- * Replaces raw HTML / truncated JSON with native React components
  * Supports: cv_analyser, linkedin_roaster, career_intelligence, career_path, career_energy
+ *
+ * Data resolution strategy:
+ *  - Each renderer tries multiple data paths (data.X, data.analysis.X, data.career_path_json.X, etc.)
+ *  - When structured data is insufficient, falls back to results_html (HtmlRenderer)
+ *  - results_html contains the FULL original analysis as rendered by the tool
  */
-import { useState, lazy, Suspense } from 'react';
-import LiveMatchPanel from './LiveMatchPanel';
+import { useState } from 'react';
 import {
   ChevronDown, ChevronUp, Target, BarChart3, AlertTriangle,
   Eye, Euro, Bot, TrendingUp, Layers, Calendar, Briefcase,
   CheckCircle, XCircle, ArrowRight, Star, Globe, Users, Zap,
   FileText, Linkedin, Compass, Award, Lightbulb, Shield,
-  Search, Trophy, LayoutGrid,
+  MapPin, Building, DollarSign, Route, Rocket, GraduationCap,
 } from 'lucide-react';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -72,51 +75,75 @@ function CollapsibleSection({ title, children, defaultOpen = false }: { title: s
   );
 }
 
-// ─── CV Analyser Renderer ─────────────────────────────────────────────────────
-
-/** Lightweight wrapper for LiveMatch inside the member area — always full access */
-function LiveMatchPanelInline({ cvText }: { cvText: string }) {
-  return (
-    <LiveMatchPanel
-      cvText={cvText}
-      lang="pt"
-      isPaid={true}
-      isMemberArea={true}
-    />
-  );
+/** Resolve a value from multiple possible paths in the data object */
+function resolve<T>(data: Record<string, any>, ...paths: string[]): T | undefined {
+  for (const path of paths) {
+    const parts = path.split('.');
+    let val: any = data;
+    for (const p of parts) {
+      if (val == null) break;
+      val = val[p];
+    }
+    if (val !== undefined && val !== null && val !== '') return val as T;
+  }
+  return undefined;
 }
 
+// ─── CV Analyser Renderer ─────────────────────────────────────────────────────
+
 function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
-  const score = data.overallScore ?? data.score ?? data.analysis?.score ?? 0;
-  const quadrants = data.quadrants || data.analysis?.quadrants || [];
-  const keywords = data.keywords || data.analysis?.keywords || [];
-  const cvProblems = data.cvProblems || [];
-  const improvementActions = data.improvementActions || [];
-  const actionPlan = data.actionPlan30Days || [];
-  const atsRate = data.atsRejectionRate ?? data.analysis?.atsRejectionRate;
-  const atsFactor = data.atsTopFactor || data.analysis?.atsTopFactor || '';
-  const role = data.perceivedRole || data.analysis?.perceivedRole || '';
-  const seniority = data.perceivedSeniority || data.analysis?.perceivedSeniority || '';
-  const salary = data.salaryDetailed || data.analysis?.salaryDetailed;
-  const automationRisk = data.automationRisk || data.analysis?.automationRisk;
-  const recruiterAnalysis = data.recruiterDeepAnalysis || data.analysis?.recruiterDeepAnalysis;
-  const priorityMatrix = data.priorityMatrix || data.analysis?.priorityMatrix || [];
-  const atsDetailed = data.detailedAtsAnalysis || data.analysis?.detailedAtsAnalysis;
-  const atsDeepScan = data.atsDeepScan || data.analysis?.atsDeepScan;
-  const cvText = data.cvText || data.analysis?.cvText || data.cv_text || '';
+  const score = resolve<number>(data, 'overallScore', 'score', 'analysis.score', 'analysis.atsScore', 'analysis.overall_score', 'analysis.overallScore');
+  const quadrants = resolve<any[]>(data, 'quadrants', 'analysis.quadrants') || [];
+  const keywords = resolve<string[]>(data, 'keywords', 'analysis.keywords') || [];
+  const cvProblems = resolve<any[]>(data, 'cvProblems', 'analysis.cvProblems') || [];
+  const improvementActions = resolve<any[]>(data, 'improvementActions', 'analysis.improvementActions') || [];
+  const actionPlan = resolve<any[]>(data, 'actionPlan30Days', 'analysis.actionPlan30Days') || [];
+  const atsRate = resolve<number>(data, 'atsRejectionRate', 'analysis.atsRejectionRate');
+  const atsFactor = resolve<string>(data, 'atsTopFactor', 'analysis.atsTopFactor') || '';
+  const role = resolve<string>(data, 'perceivedRole', 'analysis.perceivedRole') || '';
+  const seniority = resolve<string>(data, 'perceivedSeniority', 'analysis.perceivedSeniority') || '';
+  const salary = resolve<any>(data, 'salaryDetailed', 'analysis.salaryDetailed');
+  const automationRisk = resolve<any>(data, 'automationRisk', 'analysis.automationRisk');
+  const recruiterAnalysis = resolve<any>(data, 'recruiterDeepAnalysis', 'analysis.recruiterDeepAnalysis');
+  const priorityMatrix = resolve<any[]>(data, 'priorityMatrix', 'analysis.priorityMatrix') || [];
+  const atsDetailed = resolve<any>(data, 'detailedAtsAnalysis', 'analysis.detailedAtsAnalysis');
 
-  // If we have results_html and NO structured data, render HTML
-  if (data.results_html && !quadrants.length && !score) {
-    return <HtmlRenderer html={data.results_html} />;
+  // Determine if we have enough structured data to render natively
+  const hasStructuredData = quadrants.length > 0 || cvProblems.length > 0 || improvementActions.length > 0 || actionPlan.length > 0 || recruiterAnalysis || salary || priorityMatrix.length > 0;
+
+  // If we have results_html and NO meaningful structured data beyond score, render HTML
+  if (data.results_html && !hasStructuredData) {
+    return (
+      <div className="space-y-3">
+        {score != null && score > 0 && (
+          <div className="flex items-center gap-3 p-3 bg-[#fafaf9] rounded-lg border border-[#e8e8e6]">
+            <ScoreCircle score={score} />
+            <div>
+              <p className="text-[10px] text-[#888] font-light">Pontuação global</p>
+              <p className="text-sm font-semibold text-[#333]">{score}/100</p>
+              {role && <p className="text-[10px] text-[#999] font-light">{role}{seniority ? ` · ${seniority}` : ''}</p>}
+            </div>
+          </div>
+        )}
+        {keywords.length > 0 && (
+          <div>
+            <SectionHeader icon={Target} title="Competências-chave" />
+            <div className="flex flex-wrap gap-1.5">
+              {keywords.slice(0, 10).map((k: string, i: number) => (
+                <span key={i} className="px-2 py-0.5 text-[10px] bg-[#f5f5f4] border border-[#e0e0e0] rounded-full text-[#555]">{k}</span>
+              ))}
+            </div>
+          </div>
+        )}
+        <HtmlRenderer html={data.results_html} />
+      </div>
+    );
   }
-
-  // If we only have analysis.teaser (old format), show what we can
-  const teaser = data.analysis?.teaser || data.analysis;
 
   return (
     <div className="space-y-3">
       {/* Score Global */}
-      {score > 0 && (
+      {score != null && score > 0 && (
         <div className="flex items-center gap-3 p-3 bg-[#fafaf9] rounded-lg border border-[#e8e8e6]">
           <ScoreCircle score={score} />
           <div>
@@ -232,8 +259,8 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
             {improvementActions.map((a: any, i: number) => (
               <div key={i} className="p-2 bg-[#fafaf9] border border-[#e8e8e6] rounded-lg space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium text-[#333]">{a.dimension}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                  <span className="text-[11px] font-medium text-[#333]">{a.title || a.dimension}</span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded ${
                     a.impact === 'Alto' ? 'bg-red-100 text-red-700' : a.impact === 'Médio' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
                   }`}>{a.impact}</span>
                 </div>
@@ -375,98 +402,6 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
         </CollapsibleSection>
       )}
 
-      {/* ATS Deep Scan */}
-      {atsDeepScan && atsDeepScan.keywords?.length > 0 && (
-        <CollapsibleSection title={`ATS Deep Scan — ${atsDeepScan.overallATSScore ?? '?'}/100`} defaultOpen={false}>
-          <div className="space-y-3">
-            {/* Score summary */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="text-center p-2 bg-[#fafaf9] rounded border border-[#e8e8e6]">
-                <p className="text-[10px] text-[#888]">ATS Global</p>
-                <p className="text-sm font-semibold text-[#333]">{atsDeepScan.overallATSScore}/100</p>
-              </div>
-              <div className="text-center p-2 bg-[#C9A961]/10 rounded border border-[#C9A961]/20">
-                <p className="text-[10px] text-[#888]">Keywords</p>
-                <p className="text-sm font-semibold text-[#C9A961]">{atsDeepScan.keywordScore}/100</p>
-              </div>
-              <div className="text-center p-2 bg-[#fafaf9] rounded border border-[#e8e8e6]">
-                <p className="text-[10px] text-[#888]">Formato</p>
-                <p className="text-sm font-semibold text-[#333]">{atsDeepScan.formatScore}/100</p>
-              </div>
-            </div>
-
-            {/* Keywords table */}
-            <div>
-              <p className="text-[10px] text-[#888] font-light mb-1.5">Keywords analisadas ({atsDeepScan.keywords.length}):</p>
-              <div className="border border-[#e8e8e6] rounded-lg overflow-hidden">
-                {atsDeepScan.keywords.map((kw: any, i: number) => (
-                  <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 ${i % 2 === 0 ? 'bg-white' : 'bg-[#fafaf9]'} ${i < atsDeepScan.keywords.length - 1 ? 'border-b border-[#e8e8e6]' : ''}`}>
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      {kw.status === 'found' ? <CheckCircle className="w-3 h-3 text-green-500 shrink-0" /> : kw.status === 'partial' ? <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" /> : <XCircle className="w-3 h-3 text-red-500 shrink-0" />}
-                      <span className="text-[11px] text-[#333] truncate">{kw.keyword}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${
-                        kw.importance === 'high' ? 'bg-red-50 text-red-600 border-red-200' :
-                        kw.importance === 'medium' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                        'bg-gray-50 text-gray-500 border-gray-200'
-                      }`}>{kw.importance === 'high' ? 'Alta' : kw.importance === 'medium' ? 'Média' : 'Baixa'}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Suggestions for missing/partial keywords */}
-            {atsDeepScan.keywords.filter((k: any) => k.suggestion).length > 0 && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-1.5">Sugestões de reformulação:</p>
-                <div className="space-y-1.5">
-                  {atsDeepScan.keywords.filter((k: any) => k.suggestion).map((kw: any, i: number) => (
-                    <div key={i} className="p-2 bg-[#C9A961]/5 border border-[#C9A961]/15 rounded-lg">
-                      <p className="text-[10px] font-medium text-[#555]">{kw.keyword}</p>
-                      <p className="text-[10px] text-[#666] font-light mt-0.5">{kw.suggestion}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Format checks */}
-            {atsDeepScan.formatChecks?.length > 0 && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-1.5">Checklist de formato ATS:</p>
-                <div className="space-y-1">
-                  {atsDeepScan.formatChecks.map((fc: any, i: number) => (
-                    <div key={i} className={`p-2 rounded-lg border ${
-                      fc.status === 'pass' ? 'border-green-200 bg-green-50' :
-                      fc.status === 'warning' ? 'border-amber-200 bg-amber-50' :
-                      'border-red-200 bg-red-50'
-                    }`}>
-                      <div className="flex items-start gap-1.5">
-                        {fc.status === 'pass' ? <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 shrink-0" /> : fc.status === 'warning' ? <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" /> : <XCircle className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />}
-                        <div>
-                          <p className="text-[11px] font-medium text-[#333]">{fc.check}</p>
-                          <p className="text-[10px] text-[#666] font-light">{fc.detail}</p>
-                          {fc.fix && <p className="text-[10px] text-[#C9A961] font-light mt-0.5">→ {fc.fix}</p>}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </CollapsibleSection>
-      )}
-
-      {/* Live Match */}
-      {cvText && (
-        <CollapsibleSection title="Live Match — ATS Keyword Matching" defaultOpen={false}>
-          <LiveMatchPanelInline cvText={cvText} />
-        </CollapsibleSection>
-      )}
-
       {/* Priority Matrix */}
       {priorityMatrix.length > 0 && (
         <CollapsibleSection title="Matriz de Prioridades">
@@ -508,7 +443,6 @@ function LinkedinRoasterDetail({ data }: { data: Record<string, any> }) {
   const sumario = parsed?.sumario_executivo || '';
   const visibilidade = parsed?.visibilidade_algoritmo || '';
   const dimensoes = parsed?.dimensoes || {};
-
   const dimEntries = Object.entries(dimensoes) as [string, any][];
 
   const dimLabels: Record<string, string> = {
@@ -519,6 +453,11 @@ function LinkedinRoasterDetail({ data }: { data: Record<string, any> }) {
     recomendacoes_competencias: 'Recomendações & Competências',
     media_publicacoes: 'Media & Publicações',
   };
+
+  // If we have results_html and no parsed structured data, use HTML
+  if (data.results_html && !parsed && !hookVendas && !notaGeral) {
+    return <HtmlRenderer html={data.results_html} />;
+  }
 
   return (
     <div className="space-y-3">
@@ -585,125 +524,18 @@ function LinkedinRoasterDetail({ data }: { data: Record<string, any> }) {
         </CollapsibleSection>
       )}
 
-      {/* Section Scores */}
-      {parsed?.scores_seccao && (
-        <CollapsibleSection title="Score por Secção do Perfil" defaultOpen={true}>
-          <div className="grid grid-cols-2 gap-2">
-            {Object.entries({
-              headline: 'Headline', about: 'Secção Sobre', experience: 'Experiência',
-              skills: 'Competências', education: 'Formação', certifications: 'Certificações',
-              recommendations: 'Recomendações', network: 'Rede'
-            } as Record<string, string>).map(([key, label]) => {
-              const sec = (parsed.scores_seccao as Record<string, any>)?.[key];
-              if (!sec) return null;
-              const val = Math.min(10, Math.max(1, parseInt(sec.score) || 5));
-              return (
-                <div key={key} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-medium text-[#333]">{label}</span>
-                    <span className="text-[10px] font-semibold text-[#C9A961]">{val}/10</span>
-                  </div>
-                  <ProgressBar value={val} max={10} />
-                  {sec.analise && <p className="text-[9px] text-[#666] font-light leading-relaxed">{sec.analise}</p>}
-                </div>
-              );
-            })}
-          </div>
-        </CollapsibleSection>
-      )}
-
-      {/* Benchmarking */}
-      {parsed?.benchmarking && (
-        <CollapsibleSection title="Benchmarking Setorial" defaultOpen={true}>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 p-3 bg-white border border-[#e8e8e6] rounded-lg">
-              <ScoreCircle score={parseInt(parsed.benchmarking.percentil_estimado) || 50} max={100} size={56} />
-              <div>
-                {parsed.benchmarking.setor && <p className="text-[11px] font-semibold text-[#333]">{parsed.benchmarking.setor}</p>}
-                {parsed.benchmarking.resumo && <p className="text-[10px] text-[#666] font-light leading-relaxed">{parsed.benchmarking.resumo}</p>}
-              </div>
-            </div>
-            {parsed.benchmarking.gaps_vs_top?.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider">Gaps vs Top Performers</p>
-                {parsed.benchmarking.gaps_vs_top.map((g: any, i: number) => (
-                  <div key={i} className="p-2 bg-white border-l-2 border-red-400 rounded-r-lg border border-[#e8e8e6]">
-                    <p className="text-[10px] font-medium text-[#333]">{g.area}</p>
-                    <p className="text-[9px] text-[#666] font-light">{g.gap}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-            {parsed.benchmarking.vantagens_competitivas?.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider">Vantagens Competitivas</p>
-                {parsed.benchmarking.vantagens_competitivas.map((v: string, i: number) => (
-                  <div key={i} className="flex items-start gap-1.5 py-1">
-                    <Trophy className="w-3 h-3 text-green-500 mt-0.5 shrink-0" />
-                    <p className="text-[10px] text-[#555] font-light leading-relaxed">{v}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </CollapsibleSection>
-      )}
-
-      {/* SEO LinkedIn */}
-      {parsed?.seo_linkedin && (
-        <CollapsibleSection title="Análise SEO LinkedIn" defaultOpen={true}>
-          <div className="space-y-2">
-            {parsed.seo_linkedin.densidade_score !== undefined && (
-              <div className="flex items-center gap-2 p-2 bg-white border border-[#e8e8e6] rounded-lg">
-                <span className="text-[10px] font-medium text-[#333] whitespace-nowrap">Densidade</span>
-                <div className="flex-1"><ProgressBar value={parseInt(parsed.seo_linkedin.densidade_score) || 5} max={10} /></div>
-                <span className="text-[10px] font-semibold text-[#C9A961]">{parsed.seo_linkedin.densidade_score}/10</span>
-              </div>
-            )}
-            {parsed.seo_linkedin.keywords_primarias?.length > 0 && (
-              <div>
-                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords Primárias</p>
-                <div className="flex flex-wrap gap-1">
-                  {parsed.seo_linkedin.keywords_primarias.map((kw: string, i: number) => (
-                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-semibold text-[#C9A961] bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-full">{kw}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {parsed.seo_linkedin.keywords_secundarias?.length > 0 && (
-              <div>
-                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords Secundárias</p>
-                <div className="flex flex-wrap gap-1">
-                  {parsed.seo_linkedin.keywords_secundarias.map((kw: string, i: number) => (
-                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-medium text-[#C9A961] bg-[#C9A961]/5 border border-[#C9A961]/15 rounded-full">{kw}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {parsed.seo_linkedin.keywords_em_falta?.length > 0 && (
-              <div>
-                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords em Falta</p>
-                <div className="flex flex-wrap gap-1">
-                  {parsed.seo_linkedin.keywords_em_falta.map((kw: string, i: number) => (
-                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-semibold text-red-500 bg-red-50 border border-red-200 rounded-full">{kw}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {parsed.seo_linkedin.recomendacoes_seo && (
-              <div className="p-2 bg-[#fafaf9] rounded-lg">
-                <p className="text-[10px] text-[#666] font-light leading-relaxed">{parsed.seo_linkedin.recomendacoes_seo}</p>
-              </div>
-            )}
-          </div>
-        </CollapsibleSection>
-      )}
-
       {/* Fallback: show results_text as text if no parsed data */}
       {!parsed && !hookVendas && data.results_text && (
         <div className="p-2 bg-[#fafaf9] rounded-lg border border-[#e8e8e6]">
           <p className="text-[10px] text-[#666] font-light leading-relaxed whitespace-pre-wrap">{data.results_text}</p>
         </div>
+      )}
+
+      {/* If we have results_html and some structured data, offer HTML as expanded view */}
+      {data.results_html && (parsed || hookVendas) && (
+        <CollapsibleSection title="Ver análise completa original">
+          <HtmlRenderer html={data.results_html} />
+        </CollapsibleSection>
       )}
     </div>
   );
@@ -712,18 +544,77 @@ function LinkedinRoasterDetail({ data }: { data: Record<string, any> }) {
 // ─── Career Intelligence Renderer ─────────────────────────────────────────────
 
 function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
-  const strategicPaths = data.strategic_paths || [];
-  const market = data.market_context || {};
-  const recommendation = data.decision_recommendation || {};
-  const score = data.career_potential_score;
+  // Resolve from multiple paths: data.X, data.analysis.career_path.X, data.analysis.X
+  const cpData = data.analysis?.career_path || data.career_path_json || {};
+  const strategicPaths = resolve<any[]>(data, 'strategic_paths', 'analysis.career_path.strategic_paths', 'analysis.strategic_paths', 'career_path_json.strategic_paths') || [];
+  const market = resolve<any>(data, 'market_context', 'analysis.career_path.market_context', 'analysis.market_context', 'career_path_json.market_context') || {};
+  const recommendation = resolve<any>(data, 'decision_recommendation', 'analysis.career_path.decision_recommendation', 'analysis.decision_recommendation', 'career_path_json.decision_recommendation') || {};
+  const tradeoffs = resolve<any[]>(data, 'tradeoffs', 'analysis.career_path.tradeoffs', 'analysis.tradeoffs', 'career_path_json.tradeoffs') || [];
+  const nextRoles = resolve<any[]>(data, 'next_roles', 'analysis.career_path.next_roles', 'analysis.next_roles', 'career_path_json.next_roles') || [];
+  const positioning = resolve<any>(data, 'current_positioning', 'analysis.career_path.current_positioning', 'analysis.current_positioning', 'career_path_json.current_positioning');
+  const developmentPlan = resolve<any>(data, 'development_plan', 'analysis.career_path.development_plan', 'analysis.development_plan', 'career_path_json.development_plan');
+  const longTermVision = resolve<any>(data, 'long_term_vision', 'analysis.career_path.long_term_vision', 'analysis.long_term_vision', 'career_path_json.long_term_vision');
+  const immediateActions = resolve<any[]>(data, 'immediate_actions', 'analysis.career_path.immediate_actions', 'analysis.immediate_actions', 'career_path_json.immediate_actions') || [];
+  const strategicComparison = resolve<any>(data, 'strategic_comparison', 'analysis.career_path.strategic_comparison', 'analysis.strategic_comparison', 'career_path_json.strategic_comparison');
+  const actionPlanByPath = resolve<any>(data, 'action_plan_by_path', 'analysis.career_path.action_plan_by_path', 'analysis.action_plan_by_path', 'career_path_json.action_plan_by_path');
+  const cvLinkedinCross = resolve<any>(data, 'cv_linkedin_cross_analysis', 'analysis.career_path.cv_linkedin_cross_analysis', 'analysis.cv_linkedin_cross_analysis', 'career_path_json.cv_linkedin_cross_analysis');
+
+  const hasStructuredData = strategicPaths.length > 0 || tradeoffs.length > 0 || nextRoles.length > 0 || recommendation.recommended_path || positioning;
 
   // If we only have results_html and no structured data, render HTML
-  if (data.results_html && !strategicPaths.length && !recommendation.recommended_path) {
+  if (data.results_html && !hasStructuredData) {
     return <HtmlRenderer html={data.results_html} />;
+  }
+
+  // If no structured data AND no HTML, show metadata
+  if (!hasStructuredData && !data.results_html) {
+    const meta = {
+      region: data.region || data.analysis?.region,
+      country: data.country || data.analysis?.country,
+      plan: data.plan,
+      tier: data.tier,
+    };
+    return (
+      <div className="space-y-3">
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-[11px] text-amber-800 font-medium">Análise sem dados detalhados</p>
+          <p className="text-[10px] text-amber-700 font-light mt-1">
+            Esta análise foi guardada sem os resultados completos. Para obter uma análise completa, executa novamente a ferramenta Career Intelligence.
+          </p>
+        </div>
+        {(meta.region || meta.country) && (
+          <div className="flex items-center gap-2 text-[10px] text-[#888]">
+            <MapPin className="w-3 h-3" />
+            <span>{[meta.region, meta.country].filter(Boolean).join(', ')}</span>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
     <div className="space-y-3">
+      {/* Current Positioning */}
+      {positioning && (
+        <div className="p-3 bg-[#fafaf9] rounded-lg border border-[#e8e8e6] space-y-2">
+          <SectionHeader icon={Rocket} title="Posicionamento Atual" />
+          {typeof positioning === 'string' ? (
+            <p className="text-[10px] text-[#666] font-light leading-relaxed">{positioning}</p>
+          ) : (
+            <>
+              {positioning.summary && <p className="text-[10px] text-[#666] font-light leading-relaxed">{positioning.summary}</p>}
+              {positioning.strengths && (
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {(Array.isArray(positioning.strengths) ? positioning.strengths : [positioning.strengths]).map((s: string, i: number) => (
+                    <span key={i} className="text-[9px] px-1.5 py-0.5 bg-green-50 border border-green-200 rounded text-green-700">{s}</span>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
       {/* Recommendation */}
       {recommendation.recommended_path && (
         <div className="p-3 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg space-y-1.5">
@@ -745,42 +636,6 @@ function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
         </div>
       )}
 
-      {/* Market Context */}
-      {(market.demand_level || market.competitiveness) && (
-        <CollapsibleSection title="Contexto de Mercado" defaultOpen={true}>
-          <div className="space-y-2">
-            {market.demand_level && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-0.5">Nível de procura:</p>
-                <p className="text-[10px] text-[#666] font-light leading-relaxed">{market.demand_level}</p>
-              </div>
-            )}
-            {market.competitiveness && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-0.5">Competitividade:</p>
-                <p className="text-[10px] text-[#666] font-light leading-relaxed">{market.competitiveness}</p>
-              </div>
-            )}
-            {market.differentiator && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-0.5">Diferenciador:</p>
-                <p className="text-[10px] text-[#666] font-light leading-relaxed">{market.differentiator}</p>
-              </div>
-            )}
-            {market.aligned_companies?.length > 0 && (
-              <div>
-                <p className="text-[10px] text-[#888] font-light mb-1">Empresas alinhadas:</p>
-                <div className="flex flex-wrap gap-1">
-                  {(Array.isArray(market.aligned_companies) ? market.aligned_companies : []).map((c: string, i: number) => (
-                    <span key={i} className="text-[9px] px-1.5 py-0.5 bg-[#f5f5f4] border border-[#e0e0e0] rounded text-[#555]">{c}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </CollapsibleSection>
-      )}
-
       {/* Strategic Paths */}
       {strategicPaths.length > 0 && (
         <CollapsibleSection title={`Caminhos Estratégicos (${strategicPaths.length})`} defaultOpen={true}>
@@ -790,7 +645,7 @@ function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-semibold text-[#333]">
                     <span className="text-[#C9A961] mr-1">#{i+1}</span>
-                    {path.name || path.title}
+                    {path.name || path.title || path.path_name}
                   </span>
                   {path.success_probability !== undefined && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
@@ -798,7 +653,7 @@ function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
                     </span>
                   )}
                 </div>
-                {path.logic && <p className="text-[10px] text-[#666] font-light leading-relaxed">{path.logic}</p>}
+                {(path.logic || path.description) && <p className="text-[10px] text-[#666] font-light leading-relaxed">{path.logic || path.description}</p>}
                 {path.ideal_for && (
                   <p className="text-[10px] text-[#888] font-light leading-relaxed">
                     <strong className="font-medium text-[#666]">Ideal para:</strong> {path.ideal_for}
@@ -816,6 +671,204 @@ function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
           </div>
         </CollapsibleSection>
       )}
+
+      {/* Tradeoffs */}
+      {tradeoffs.length > 0 && (
+        <CollapsibleSection title={`Trade-offs (${tradeoffs.length} caminhos)`} defaultOpen={false}>
+          <div className="space-y-2">
+            {tradeoffs.map((t: any, i: number) => (
+              <div key={i} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1.5">
+                <p className="text-[11px] font-semibold text-[#333]">{t.path_name}</p>
+                {t.you_gain && (
+                  <div className="flex items-start gap-1.5">
+                    <CheckCircle className="w-3 h-3 mt-0.5 shrink-0 text-green-500" />
+                    <p className="text-[10px] text-green-700 font-light leading-relaxed"><strong className="font-medium">Ganhas:</strong> {t.you_gain}</p>
+                  </div>
+                )}
+                {t.you_give_up && (
+                  <div className="flex items-start gap-1.5">
+                    <XCircle className="w-3 h-3 mt-0.5 shrink-0 text-amber-500" />
+                    <p className="text-[10px] text-amber-700 font-light leading-relaxed"><strong className="font-medium">Abdicas:</strong> {t.you_give_up}</p>
+                  </div>
+                )}
+                {t.hidden_risk && (
+                  <div className="flex items-start gap-1.5">
+                    <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0 text-red-400" />
+                    <p className="text-[10px] text-red-700 font-light leading-relaxed"><strong className="font-medium">Risco oculto:</strong> {t.hidden_risk}</p>
+                  </div>
+                )}
+                {t.real_scenario && (
+                  <p className="text-[10px] text-[#888] font-light leading-relaxed mt-1 italic">{t.real_scenario}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Next Roles */}
+      {nextRoles.length > 0 && (
+        <CollapsibleSection title={`Próximos Cargos (${nextRoles.length})`} defaultOpen={false}>
+          <div className="space-y-2">
+            {nextRoles.map((role: any, i: number) => (
+              <div key={i} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1.5">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <span className="text-[11px] font-semibold text-[#333]">
+                    <span className="text-[#C9A961] mr-1">#{i+1}</span>
+                    {role.title || role.role_title || role.name}
+                  </span>
+                  {role.fit_percentage && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
+                      {role.fit_percentage}% fit
+                    </span>
+                  )}
+                </div>
+                {role.description && <p className="text-[10px] text-[#666] font-light leading-relaxed">{role.description}</p>}
+                {role.salary_range && (
+                  <p className="text-[10px] text-[#C9A961] font-medium">{role.salary_range}</p>
+                )}
+                {role.timeline && (
+                  <p className="text-[10px] text-[#888] font-light">{role.timeline}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Market Context */}
+      {(market.demand_level || market.competitiveness || market.aligned_companies) && (
+        <CollapsibleSection title="Contexto de Mercado" defaultOpen={false}>
+          <div className="space-y-2">
+            {market.demand_level && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-0.5">Nível de procura:</p>
+                <p className="text-[10px] text-[#666] font-light leading-relaxed">{typeof market.demand_level === 'string' ? market.demand_level : JSON.stringify(market.demand_level)}</p>
+              </div>
+            )}
+            {market.competitiveness && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-0.5">Competitividade:</p>
+                <p className="text-[10px] text-[#666] font-light leading-relaxed">{typeof market.competitiveness === 'string' ? market.competitiveness : JSON.stringify(market.competitiveness)}</p>
+              </div>
+            )}
+            {market.differentiator && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-0.5">Diferenciador:</p>
+                <p className="text-[10px] text-[#666] font-light leading-relaxed">{typeof market.differentiator === 'string' ? market.differentiator : JSON.stringify(market.differentiator)}</p>
+              </div>
+            )}
+            {market.aligned_companies && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-1">Empresas alinhadas:</p>
+                <div className="flex flex-wrap gap-1">
+                  {(Array.isArray(market.aligned_companies)
+                    ? market.aligned_companies
+                    : typeof market.aligned_companies === 'object'
+                      ? Object.entries(market.aligned_companies).flatMap(([sector, companies]: [string, any]) =>
+                          Array.isArray(companies) ? companies.map((c: string) => `${c} (${sector})`) : [String(companies)]
+                        )
+                      : [String(market.aligned_companies)]
+                  ).map((c: string, i: number) => (
+                    <span key={i} className="text-[9px] px-1.5 py-0.5 bg-[#f5f5f4] border border-[#e0e0e0] rounded text-[#555]">{c}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Immediate Actions */}
+      {immediateActions.length > 0 && (
+        <CollapsibleSection title={`Ações Imediatas (${immediateActions.length})`} defaultOpen={false}>
+          <div className="space-y-1.5">
+            {immediateActions.map((action: any, i: number) => (
+              <div key={i} className="flex items-start gap-2 text-[10px]">
+                <span className="text-[#C9A961] font-semibold shrink-0 mt-0.5">{i+1}.</span>
+                <p className="text-[#666] font-light leading-relaxed">
+                  {typeof action === 'string' ? action : action.action || action.description || JSON.stringify(action)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Long Term Vision */}
+      {longTermVision && (
+        <CollapsibleSection title="Visão de Longo Prazo" defaultOpen={false}>
+          <div className="text-[10px] text-[#666] font-light leading-relaxed space-y-1.5">
+            {typeof longTermVision === 'string' ? (
+              <p>{longTermVision}</p>
+            ) : (
+              Object.entries(longTermVision).map(([key, val]) => (
+                <div key={key}>
+                  <p className="text-[10px] text-[#888] font-medium capitalize mb-0.5">{key.replace(/_/g, ' ')}:</p>
+                  <p className="text-[10px] text-[#666] font-light">{typeof val === 'string' ? val : JSON.stringify(val)}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Development Plan */}
+      {developmentPlan && (
+        <CollapsibleSection title="Plano de Desenvolvimento" defaultOpen={false}>
+          <div className="text-[10px] text-[#666] font-light leading-relaxed space-y-1.5">
+            {typeof developmentPlan === 'string' ? (
+              <p>{developmentPlan}</p>
+            ) : Array.isArray(developmentPlan) ? (
+              developmentPlan.map((item: any, i: number) => (
+                <div key={i} className="p-2 bg-[#fafaf9] border border-[#e8e8e6] rounded">
+                  <p className="text-[10px] text-[#666] font-light">{typeof item === 'string' ? item : item.action || item.description || JSON.stringify(item)}</p>
+                </div>
+              ))
+            ) : (
+              Object.entries(developmentPlan).map(([key, val]) => (
+                <div key={key}>
+                  <p className="text-[10px] text-[#888] font-medium capitalize mb-0.5">{key.replace(/_/g, ' ')}:</p>
+                  <p className="text-[10px] text-[#666] font-light">{typeof val === 'string' ? val : JSON.stringify(val)}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* CV/LinkedIn Cross Analysis */}
+      {cvLinkedinCross && (
+        <CollapsibleSection title="Análise Cruzada CV vs LinkedIn" defaultOpen={false}>
+          <div className="text-[10px] text-[#666] font-light leading-relaxed space-y-1.5">
+            {typeof cvLinkedinCross === 'string' ? (
+              <p>{cvLinkedinCross}</p>
+            ) : (
+              Object.entries(cvLinkedinCross).map(([key, val]) => (
+                <div key={key}>
+                  <p className="text-[10px] text-[#888] font-medium capitalize mb-0.5">{key.replace(/_/g, ' ')}:</p>
+                  <p className="text-[10px] text-[#666] font-light">{typeof val === 'string' ? val : JSON.stringify(val)}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Fallback: results_html if available */}
+      {data.results_html && hasStructuredData && (
+        <CollapsibleSection title="Ver análise completa original">
+          <HtmlRenderer html={data.results_html} />
+        </CollapsibleSection>
+      )}
+
+      {/* Metadata */}
+      {(data.region || data.country) && (
+        <div className="flex items-center gap-2 text-[10px] text-[#bbb] font-light pt-1">
+          <MapPin className="w-3 h-3" />
+          <span>{[data.region, data.country].filter(Boolean).join(', ')}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -823,26 +876,186 @@ function CareerIntelligenceDetail({ data }: { data: Record<string, any> }) {
 // ─── Career Path Renderer ─────────────────────────────────────────────────────
 
 function CareerPathDetail({ data }: { data: Record<string, any> }) {
-  const careerPath = data.career_path_json || data.career_path || {};
+  // Resolve structured data from multiple paths
+  const cpJson = data.career_path_json || {};
+  const cpData = (Object.keys(cpJson).length > 0) ? cpJson : (data.career_path || {});
 
-  // If we only have results_html and no structured data, render HTML
-  if (data.results_html && !Object.keys(careerPath).length) {
-    return <HtmlRenderer html={data.results_html} />;
+  const tradeoffs = cpData.tradeoffs || [];
+  const nextRoles = cpData.next_roles || [];
+  const strategicPaths = cpData.strategic_paths || [];
+  const marketContext = cpData.market_context || {};
+  const recommendation = cpData.decision_recommendation || {};
+  const positioning = cpData.current_positioning;
+  const developmentPlan = cpData.development_plan;
+  const longTermVision = cpData.long_term_vision;
+  const immediateActions = cpData.immediate_actions || [];
+  const strategicComparison = cpData.strategic_comparison;
+  const actionPlanByPath = cpData.action_plan_by_path;
+  const cvLinkedinCross = cpData.cv_linkedin_cross_analysis;
+
+  const hasStructuredData = tradeoffs.length > 0 || nextRoles.length > 0 || strategicPaths.length > 0 || recommendation.recommended_path || positioning;
+
+  // If we have results_html AND structured data, show BOTH (HTML is the primary rich view)
+  // If we have results_html and NO structured data, show HTML only
+  // If we have structured data and NO HTML, show structured only
+  if (data.results_html) {
+    return (
+      <div className="space-y-3">
+        <HtmlRenderer html={data.results_html} />
+        {data.linkedin_url && (
+          <p className="text-[10px] text-[#888] font-light">
+            LinkedIn: <a href={data.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">{data.linkedin_url}</a>
+          </p>
+        )}
+      </div>
+    );
   }
 
-  // If we have results_html AND structured data, prefer structured
-  // but also offer HTML as fallback
+  // No HTML — render structured data natively
+  if (!hasStructuredData) {
+    return (
+      <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+        <p className="text-[11px] text-amber-800 font-medium">Análise sem dados detalhados</p>
+        <p className="text-[10px] text-amber-700 font-light mt-1">
+          Esta análise foi guardada sem os resultados completos. Para obter uma análise completa, executa novamente a ferramenta Career Path.
+        </p>
+      </div>
+    );
+  }
+
+  // Render structured Career Path data (same structure as CareerIntelligence)
   return (
     <div className="space-y-3">
-      {careerPath.title && (
-        <div className="p-3 bg-[#fafaf9] rounded-lg border border-[#e8e8e6]">
-          <p className="text-[12px] font-semibold text-[#333]">{careerPath.title}</p>
-          {careerPath.summary && <p className="text-[10px] text-[#666] font-light leading-relaxed mt-1">{careerPath.summary}</p>}
+      {/* Current Positioning */}
+      {positioning && (
+        <div className="p-3 bg-[#fafaf9] rounded-lg border border-[#e8e8e6] space-y-2">
+          <SectionHeader icon={Rocket} title="Posicionamento Atual" />
+          {typeof positioning === 'string' ? (
+            <p className="text-[10px] text-[#666] font-light leading-relaxed">{positioning}</p>
+          ) : (
+            <>
+              {positioning.summary && <p className="text-[10px] text-[#666] font-light leading-relaxed">{positioning.summary}</p>}
+              {positioning.strengths && (
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {(Array.isArray(positioning.strengths) ? positioning.strengths : [positioning.strengths]).map((s: string, i: number) => (
+                    <span key={i} className="text-[9px] px-1.5 py-0.5 bg-green-50 border border-green-200 rounded text-green-700">{s}</span>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
-      {/* If we have results_html, render it since Career Path has rich visual content */}
-      {data.results_html && <HtmlRenderer html={data.results_html} />}
+      {/* Recommendation */}
+      {recommendation.recommended_path && (
+        <div className="p-3 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg space-y-1.5">
+          <SectionHeader icon={Award} title="Caminho Recomendado" />
+          <p className="text-[12px] font-semibold text-[#333]">{recommendation.recommended_path}</p>
+          {recommendation.justification && (
+            <p className="text-[10px] text-[#666] font-light leading-relaxed">{recommendation.justification}</p>
+          )}
+        </div>
+      )}
+
+      {/* Strategic Paths */}
+      {strategicPaths.length > 0 && (
+        <CollapsibleSection title={`Caminhos Estratégicos (${strategicPaths.length})`} defaultOpen={true}>
+          <div className="space-y-2">
+            {strategicPaths.map((path: any, i: number) => (
+              <div key={i} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-[#333]">
+                    <span className="text-[#C9A961] mr-1">#{i+1}</span>
+                    {path.name || path.title || path.path_name}
+                  </span>
+                  {path.success_probability !== undefined && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
+                      {path.success_probability}% sucesso
+                    </span>
+                  )}
+                </div>
+                {(path.logic || path.description) && <p className="text-[10px] text-[#666] font-light leading-relaxed">{path.logic || path.description}</p>}
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Tradeoffs */}
+      {tradeoffs.length > 0 && (
+        <CollapsibleSection title={`Trade-offs (${tradeoffs.length} caminhos)`} defaultOpen={false}>
+          <div className="space-y-2">
+            {tradeoffs.map((t: any, i: number) => (
+              <div key={i} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1.5">
+                <p className="text-[11px] font-semibold text-[#333]">{t.path_name}</p>
+                {t.you_gain && (
+                  <div className="flex items-start gap-1.5">
+                    <CheckCircle className="w-3 h-3 mt-0.5 shrink-0 text-green-500" />
+                    <p className="text-[10px] text-green-700 font-light leading-relaxed"><strong className="font-medium">Ganhas:</strong> {t.you_gain}</p>
+                  </div>
+                )}
+                {t.you_give_up && (
+                  <div className="flex items-start gap-1.5">
+                    <XCircle className="w-3 h-3 mt-0.5 shrink-0 text-amber-500" />
+                    <p className="text-[10px] text-amber-700 font-light leading-relaxed"><strong className="font-medium">Abdicas:</strong> {t.you_give_up}</p>
+                  </div>
+                )}
+                {t.hidden_risk && (
+                  <div className="flex items-start gap-1.5">
+                    <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0 text-red-400" />
+                    <p className="text-[10px] text-red-700 font-light leading-relaxed"><strong className="font-medium">Risco oculto:</strong> {t.hidden_risk}</p>
+                  </div>
+                )}
+                {t.real_scenario && (
+                  <p className="text-[10px] text-[#888] font-light leading-relaxed mt-1 italic">{t.real_scenario}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Next Roles */}
+      {nextRoles.length > 0 && (
+        <CollapsibleSection title={`Próximos Cargos (${nextRoles.length})`} defaultOpen={false}>
+          <div className="space-y-2">
+            {nextRoles.map((role: any, i: number) => (
+              <div key={i} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1.5">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <span className="text-[11px] font-semibold text-[#333]">
+                    <span className="text-[#C9A961] mr-1">#{i+1}</span>
+                    {role.title || role.role_title || role.name}
+                  </span>
+                  {role.fit_percentage && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
+                      {role.fit_percentage}% fit
+                    </span>
+                  )}
+                </div>
+                {role.description && <p className="text-[10px] text-[#666] font-light leading-relaxed">{role.description}</p>}
+                {role.salary_range && <p className="text-[10px] text-[#C9A961] font-medium">{role.salary_range}</p>}
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Immediate Actions */}
+      {immediateActions.length > 0 && (
+        <CollapsibleSection title={`Ações Imediatas (${immediateActions.length})`} defaultOpen={false}>
+          <div className="space-y-1.5">
+            {immediateActions.map((action: any, i: number) => (
+              <div key={i} className="flex items-start gap-2 text-[10px]">
+                <span className="text-[#C9A961] font-semibold shrink-0 mt-0.5">{i+1}.</span>
+                <p className="text-[#666] font-light leading-relaxed">
+                  {typeof action === 'string' ? action : action.action || action.description || JSON.stringify(action)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
 
       {data.linkedin_url && (
         <p className="text-[10px] text-[#888] font-light">
@@ -880,7 +1093,7 @@ function CareerEnergyDetail({ data }: { data: Record<string, any> }) {
           {Object.entries(dimensions as Record<string, number | null>).map(([dim, val]) => (
             val !== null && (
               <div key={dim} className="flex items-center gap-2">
-                <span className="text-[10px] text-[#888] font-light capitalize w-20 sm:w-24 shrink-0">{dim}</span>
+                <span className="text-[10px] text-[#888] font-light capitalize w-24">{dim}</span>
                 <div className="flex-1">
                   <ProgressBar value={val as number} />
                 </div>
@@ -901,8 +1114,8 @@ function CareerEnergyDetail({ data }: { data: Record<string, any> }) {
 function HtmlRenderer({ html }: { html: string }) {
   const clean = sanitizeHtml(html);
   return (
-    <div className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-2 sm:p-4"
-      style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden', wordBreak: 'break-word' }}
+    <div className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-4"
+      style={{ maxHeight: 800, overflowY: 'auto' }}
       dangerouslySetInnerHTML={{ __html: clean }}
     />
   );
