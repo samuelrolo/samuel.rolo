@@ -102,6 +102,7 @@ export default function CareerBotWidget() {
 
   // ─── Mock Interview state ───
   const [mockTargetRole, setMockTargetRole] = useState('');
+  const [mockTargetCompany, setMockTargetCompany] = useState('');
   const [mockStarted, setMockStarted] = useState(false);
   const [mockCurrentQuestion, setMockCurrentQuestion] = useState('');
   const [mockRecording, setMockRecording] = useState(false);
@@ -460,6 +461,7 @@ export default function CareerBotWidget() {
               current_question: mockCurrentQuestion,
               cv_text: cvText,
               target_role: mockTargetRole,
+              target_company: mockTargetCompany,
               language: lang,
             }),
           });
@@ -1264,6 +1266,15 @@ Generate ONLY the post.`;
                       value={mockTargetRole}
                       onChange={e => setMockTargetRole(e.target.value)}
                       placeholder={t('bot.mockTargetRolePlaceholder')}
+                      className="w-full px-2.5 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]"
+                    />
+                  </div>
+                  <div className="w-full max-w-[280px] mb-3">
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1 text-left">{t('bot.mockTargetCompany')}</label>
+                    <input
+                      value={mockTargetCompany}
+                      onChange={e => setMockTargetCompany(e.target.value)}
+                      placeholder={t('bot.mockTargetCompanyPlaceholder')}
                       className="w-full px-2.5 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]"
                     />
                   </div>
