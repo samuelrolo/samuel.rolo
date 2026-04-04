@@ -1540,12 +1540,22 @@ async function sendBrevoEmail(to, subject, htmlContent) {
     if (!key) return false;
     // Wrap content in professional template if not already wrapped
     const finalHtml = htmlContent.includes('f4f4f7') ? htmlContent : wrapEmailTemplate(htmlContent);
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
-        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent: finalHtml })
-    });
-    return res.ok;
+    try {
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
+            body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent: finalHtml })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            console.error('Brevo API Error:', err);
+            return false;
+        }
+        return true;
+    } catch (e) {
+        console.error('Brevo Fetch Error:', e);
+        return false;
+    }
 }
 
 async function sendSingleEmail() {
@@ -1558,11 +1568,26 @@ async function sendSingleEmail() {
     const ok = await sendBrevoEmail(to, subject, htmlBody);
     if (ok) {
         showToast('Email enviado com sucesso!', 'success');
-        await supaInsert('email_history', { recipient_email: to, subject, body: htmlBody, email_type: 'manual', sent_at: new Date().toISOString(), status: 'sent' });
         closeEmailModal();
-        await loadEmailHistory();
-        renderEmailHistory();
-    } else { showToast('Erro ao enviar email', 'danger'); }
+        
+        // Try to log to history, but don't block if it fails (e.g. RLS issues)
+        try {
+            await supaInsert('email_history', { 
+                recipient_email: to, 
+                subject, 
+                body: htmlBody, 
+                email_type: 'manual', 
+                sent_at: new Date().toISOString(), 
+                status: 'sent' 
+            });
+            await loadEmailHistory();
+            renderEmailHistory();
+        } catch (e) {
+            console.warn('Email sent but failed to log in history:', e.message);
+        }
+    } else { 
+        showToast('Erro ao enviar email (Brevo API)', 'danger'); 
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════
