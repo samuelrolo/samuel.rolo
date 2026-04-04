@@ -199,6 +199,16 @@ var e,l,d=document.querySelector('a[href*="area-cliente"]');
 if(d)e=d.closest("li")||d.parentElement;
 else if(!(l=document.querySelector("#navbarNav .navbar-nav")||document.querySelector(".navbar-nav")||document.querySelector(".nav-links")))return;
 
+/* ── Preserve language selector ONLY if inside the element being replaced ── */
+var langEl=null;
+if(e){
+var langLink=e.querySelector('a[href*="/en/"]')||e.querySelector('a[href*="/pt/"]');
+if(langLink&&langLink!==d){
+/* Clone just the <a> link — keeps original classes/styles from React */
+langEl=langLink.cloneNode(true);
+}
+}
+
 var c=document.createElement("li");
 
 function m(){
@@ -274,7 +284,23 @@ t&&t.auth.signOut().then(function(){m()});
 
 c.className="nav-item ms-2";
 c.id="s2i-auth-nav-container";
-if(e)e.replaceWith(c);else if(l)l.appendChild(c);
+if(e){
+if(langEl){
+/* Language link was inside the replaced element — wrap auth + lang together */
+var wrapper=document.createElement(e.tagName||"div");
+wrapper.id="s2i-auth-nav-container";
+/* Copy the original element's className to preserve React/Tailwind styles */
+if(e.className)wrapper.className=e.className;
+else wrapper.style.cssText="display:flex;align-items:center;gap:8px;list-style:none;";
+c.id="";
+wrapper.appendChild(c);
+wrapper.appendChild(langEl);
+e.replaceWith(wrapper);
+}else{
+/* Language selector is a sibling — safe to just replace the auth element */
+e.replaceWith(c);
+}
+}else if(l)l.appendChild(c);
 
 if(window.S2I_AUTH&&window.S2I_AUTH.ready&&window.S2I_AUTH.currentUser)p(window.S2I_AUTH.currentUser);
 else m();
