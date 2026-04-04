@@ -2963,9 +2963,8 @@ let welcomeEmailPieLangInstance = null;
 
 async function loadWelcomeEmailsDashboard() {
     try {
-        const res = await supaFetch('welcome_emails_log?select=*&order=created_at.desc&limit=5000');
-        if (!res.ok) { console.error('Failed to load welcome emails:', res.status); return; }
-        allWelcomeEmails = await res.json();
+        allWelcomeEmails = await supaFetch('welcome_emails_log', 'select=*&order=created_at.desc&limit=5000');
+        if (!Array.isArray(allWelcomeEmails)) allWelcomeEmails = [];
     } catch (e) {
         console.error('Error loading welcome emails:', e);
         allWelcomeEmails = [];
