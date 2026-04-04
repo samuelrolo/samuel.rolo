@@ -1,43 +1,5 @@
 !function(){"use strict";
 
-/* ── i18n detection ── */
-var isEN=window.location.pathname.indexOf("/en/")===0||window.location.pathname==="/en";
-var txt=isEN?{
-signIn:"Sign in",subtitle:"Access your client area",google:"Continue with Google",or:"or",
-firstName:"First name",lastName:"Last name",firstPH:"John",lastPH:"Doe",
-email:"Email",emailPH:"your@email.com",password:"Password",passPH:"••••••••",
-confirmPass:"Confirm password",submit:"Sign in",forgot:"Forgot your password?",
-noAccount:'Don\'t have an account? <strong>Create one</strong>',
-createAccount:"Create account",registerSub:"Sign up to access the tools",
-googleRegister:"Sign up with Google",
-resetTitle:"Reset password",resetSub:"Send a reset link to your email",sendLink:"Send link",
-backLogin:"<strong>Back to login</strong>",hasAccount:'Already have an account? <strong>Sign in</strong>',
-sending:"Sending...",creating:"Creating...",signing:"Signing in...",
-emailSent:"Email sent! Check your inbox.",passNoMatch:"Passwords don't match.",
-passShort:"Password must be at least 6 characters.",alreadyReg:"This email is already registered. Sign in instead.",
-invalidLogin:"Invalid email or password.",connError:"Connection error. Please reload the page.",
-close:"Close",
-dashboard:"Dashboard",myProfile:"My profile",plans:"Plans",membersArea:"Members area",signOut:"Sign out",
-redirecting:"Redirecting..."
-}:{
-signIn:"Iniciar sessão",subtitle:"Acede à tua área de cliente",google:"Continuar com Google",or:"ou",
-firstName:"Nome",lastName:"Apelido",firstPH:"João",lastPH:"Silva",
-email:"Email",emailPH:"o.teu@email.com",password:"Palavra-passe",passPH:"••••••••",
-confirmPass:"Confirmar palavra-passe",submit:"Entrar",forgot:"Esqueceste a palavra-passe?",
-noAccount:'Ainda não tens conta? <strong>Cria aqui</strong>',
-createAccount:"Criar conta",registerSub:"Regista-te para aceder às ferramentas",
-googleRegister:"Registar com Google",
-resetTitle:"Recuperar palavra-passe",resetSub:"Envia um link de recuperação para o teu email",sendLink:"Enviar link",
-backLogin:"<strong>Voltar ao login</strong>",hasAccount:'Já tens conta? <strong>Inicia sessão</strong>',
-sending:"A enviar...",creating:"A criar...",signing:"A entrar...",
-emailSent:"Email enviado! Verifica a tua caixa de correio.",passNoMatch:"As palavras-passe não coincidem.",
-passShort:"A palavra-passe deve ter pelo menos 6 caracteres.",alreadyReg:"Este email já está registado. Inicia sessão.",
-invalidLogin:"Email ou palavra-passe incorretos.",connError:"Erro de ligação. Recarrega a página.",
-close:"Fechar",
-dashboard:"Dashboard",myProfile:"O meu perfil",plans:"Planos",membersArea:"Área de membros",signOut:"Terminar sessão",
-redirecting:"A redirecionar..."
-};
-
 /* ── CSS ── */
 var e=document.createElement("style");
 e.textContent=[
@@ -64,12 +26,14 @@ e.textContent=[
 ".s2i-modal .forgot-link:hover{color:#C9A961;}",
 ".s2i-modal .name-row{display:flex;gap:.75rem;}",
 ".s2i-modal .name-row .field{flex:1;}",
+/* Google button styles */
 '.s2i-google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:.65rem;background:#fff;color:#333;border:1px solid #e0e0e0;border-radius:6px;font-size:.88rem;font-weight:500;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s;font-family:"Poppins",sans-serif;}',
 ".s2i-google-btn:hover{background:#fafafa;border-color:#ccc;box-shadow:0 1px 3px rgba(0,0,0,.08);}",
 ".s2i-google-btn:disabled{opacity:.5;cursor:not-allowed;}",
 ".s2i-google-btn svg{width:18px;height:18px;flex-shrink:0;}",
 '.s2i-divider{display:flex;align-items:center;gap:12px;margin:1rem 0;color:#bbb;font-size:.78rem;font-family:"Poppins",sans-serif;}',
 ".s2i-divider::before,.s2i-divider::after{content:'';flex:1;height:1px;background:#e8e8e8;}",
+/* User nav styles */
 ".s2i-user-nav{position:relative;display:flex;align-items:center;gap:8px;cursor:pointer;padding:.35rem .75rem;border-radius:6px;transition:background .2s;}",
 ".s2i-user-nav:hover{background:rgba(201,169,97,.1);}",
 '.s2i-user-avatar{width:32px;height:32px;border-radius:50%;background:#C9A961;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:"Poppins",sans-serif;flex-shrink:0;}',
@@ -105,24 +69,26 @@ document.body.appendChild(s);
 var r=document.createElement("div");
 r.className="s2i-modal";
 r.innerHTML=[
-'<button class="s2i-modal-close" aria-label="'+txt.close+'">&times;</button>',
-'<h3 id="s2i-modal-title">'+txt.signIn+'</h3>',
-'<p class="subtitle" id="s2i-modal-subtitle">'+txt.subtitle+'</p>',
-'<button type="button" class="s2i-google-btn" id="s2i-google-btn">'+googleLogoSVG+' <span id="s2i-google-label">'+txt.google+'</span></button>',
-'<div class="s2i-divider" id="s2i-divider">'+txt.or+'</div>',
+'<button class="s2i-modal-close" aria-label="Fechar">&times;</button>',
+'<h3 id="s2i-modal-title">Iniciar sessão</h3>',
+'<p class="subtitle" id="s2i-modal-subtitle">Acede à tua área de cliente</p>',
+/* Google button */
+'<button type="button" class="s2i-google-btn" id="s2i-google-btn">'+googleLogoSVG+' <span id="s2i-google-label">Continuar com Google</span></button>',
+'<div class="s2i-divider" id="s2i-divider">ou</div>',
+/* Form */
 '<form id="s2i-auth-form">',
 '  <div id="s2i-name-fields" class="name-row" style="display:none;">',
-'    <div class="field"><label for="s2i-fname">'+txt.firstName+'</label><input type="text" id="s2i-fname" placeholder="'+txt.firstPH+'" autocomplete="given-name"></div>',
-'    <div class="field"><label for="s2i-lname">'+txt.lastName+'</label><input type="text" id="s2i-lname" placeholder="'+txt.lastPH+'" autocomplete="family-name"></div>',
+'    <div class="field"><label for="s2i-fname">Nome</label><input type="text" id="s2i-fname" placeholder="João" autocomplete="given-name"></div>',
+'    <div class="field"><label for="s2i-lname">Apelido</label><input type="text" id="s2i-lname" placeholder="Silva" autocomplete="family-name"></div>',
 '  </div>',
-'  <div class="field"><label for="s2i-email">'+txt.email+'</label><input type="email" id="s2i-email" placeholder="'+txt.emailPH+'" required autocomplete="email"></div>',
-'  <div class="field"><label for="s2i-pass">'+txt.password+'</label><input type="password" id="s2i-pass" placeholder="'+txt.passPH+'" required autocomplete="current-password"></div>',
-'  <div class="field" id="s2i-pass-confirm-field" style="display:none;"><label for="s2i-pass2">'+txt.confirmPass+'</label><input type="password" id="s2i-pass2" placeholder="'+txt.passPH+'" autocomplete="new-password"></div>',
-'  <button type="submit" class="s2i-btn" id="s2i-submit-btn">'+txt.submit+'</button>',
+'  <div class="field"><label for="s2i-email">Email</label><input type="email" id="s2i-email" placeholder="o.teu@email.com" required autocomplete="email"></div>',
+'  <div class="field"><label for="s2i-pass">Palavra-passe</label><input type="password" id="s2i-pass" placeholder="••••••••" required autocomplete="current-password"></div>',
+'  <div class="field" id="s2i-pass-confirm-field" style="display:none;"><label for="s2i-pass2">Confirmar palavra-passe</label><input type="password" id="s2i-pass2" placeholder="••••••••" autocomplete="new-password"></div>',
+'  <button type="submit" class="s2i-btn" id="s2i-submit-btn">Entrar</button>',
 '  <div class="error-msg" id="s2i-error"></div>',
 '  <div class="success-msg" id="s2i-success" style="display:none;"></div>',
-'  <a class="forgot-link" id="s2i-forgot">'+txt.forgot+'</a>',
-'  <a class="toggle-link" id="s2i-toggle">'+txt.noAccount+'</a>',
+'  <a class="forgot-link" id="s2i-forgot">Esqueceste a palavra-passe?</a>',
+'  <a class="toggle-link" id="s2i-toggle">Ainda não tens conta? <strong>Cria aqui</strong></a>',
 '</form>'
 ].join("\n");
 document.body.appendChild(r);
@@ -164,40 +130,40 @@ b.textContent="";
 x.style.display="none";
 if("register"===e){
 E=!0;A=!1;
-d.textContent=txt.createAccount;
-c.textContent=txt.registerSub;
+d.textContent="Criar conta";
+c.textContent="Regista-te para aceder às ferramentas";
 m.style.display="flex";
 p.style.display="block";
-h.textContent=txt.createAccount;
+h.textContent="Criar conta";
 w.style.display="none";
-C.innerHTML=txt.hasAccount;
-googleLabel.textContent=txt.googleRegister;
+C.innerHTML="Já tens conta? <strong>Inicia sessão</strong>";
+googleLabel.textContent="Registar com Google";
 googleBtn.style.display="flex";
 dividerEl.style.display="flex";
 f.parentElement.style.display="block";
 }else if("reset"===e){
 E=!1;A=!0;
-d.textContent=txt.resetTitle;
-c.textContent=txt.resetSub;
+d.textContent="Recuperar palavra-passe";
+c.textContent="Envia um link de recuperação para o teu email";
 m.style.display="none";
 p.style.display="none";
 f.parentElement.style.display="none";
-h.textContent=txt.sendLink;
+h.textContent="Enviar link";
 w.style.display="none";
-C.innerHTML=txt.backLogin;
+C.innerHTML="<strong>Voltar ao login</strong>";
 googleBtn.style.display="none";
 dividerEl.style.display="none";
 }else{
 E=!1;A=!1;
-d.textContent=txt.signIn;
-c.textContent=txt.subtitle;
+d.textContent="Iniciar sessão";
+c.textContent="Acede à tua área de cliente";
 m.style.display="none";
 p.style.display="none";
 f.parentElement.style.display="block";
-h.textContent=txt.submit;
+h.textContent="Entrar";
 w.style.display="";
-C.innerHTML=txt.noAccount;
-googleLabel.textContent=txt.google;
+C.innerHTML="Ainda não tens conta? <strong>Cria aqui</strong>";
+googleLabel.textContent="Continuar com Google";
 googleBtn.style.display="flex";
 dividerEl.style.display="flex";
 }
@@ -206,9 +172,9 @@ dividerEl.style.display="flex";
 /* ── Google sign-in handler ── */
 googleBtn.addEventListener("click",function(){
 var sb=window.S2I_AUTH&&window.S2I_AUTH.supabaseClient;
-if(!sb){b.textContent=txt.connError;return;}
+if(!sb){b.textContent="Erro de ligação. Recarrega a página.";return;}
 googleBtn.disabled=true;
-googleLabel.textContent=txt.redirecting;
+googleLabel.textContent="A redirecionar...";
 sb.auth.signInWithOAuth({
 provider:"google",
 options:{
@@ -216,20 +182,21 @@ redirectTo:window.location.origin+"/area-cliente/perfil"
 }
 }).then(function(res){
 if(res.error){
-b.textContent=res.error.message||txt.connError;
+b.textContent=res.error.message||"Erro ao iniciar sessão com Google.";
 googleBtn.disabled=false;
-googleLabel.textContent=E?txt.googleRegister:txt.google;
+googleLabel.textContent=E?"Registar com Google":"Continuar com Google";
 }
 }).catch(function(){
-b.textContent=txt.connError;
+b.textContent="Erro ao iniciar sessão com Google.";
 googleBtn.disabled=false;
-googleLabel.textContent=E?txt.googleRegister:txt.google;
+googleLabel.textContent=E?"Registar com Google":"Continuar com Google";
 });
 });
 
 /* ── Build user nav ── */
 function T(){
 var e,l;
+/* Target only the LOGIN button (ms-2 gold button), not the Área de Cliente menu link */
 var allLinks=document.querySelectorAll('a[href*="area-cliente"]');
 var d=null;
 for(var idx=0;idx<allLinks.length;idx++){
@@ -237,6 +204,7 @@ var li=allLinks[idx].closest("li");
 if(li&&li.classList.contains("ms-2")){d=allLinks[idx];break;}
 }
 if(!d){
+/* Fallback: find the last area-cliente link (usually the button) */
 if(allLinks.length>0)d=allLinks[allLinks.length-1];
 }
 if(d)e=d.closest("li")||d.parentElement;
@@ -247,6 +215,7 @@ var langEl=null;
 if(e){
 var langLink=e.querySelector('a[href*="/en/"]')||e.querySelector('a[href*="/pt/"]');
 if(langLink&&langLink!==d){
+/* Clone just the <a> link — keeps original classes/styles from React */
 langEl=langLink.cloneNode(true);
 }
 }
@@ -293,12 +262,12 @@ d.innerHTML=[
 var p=document.createElement("div");
 p.className="s2i-dropdown";
 p.innerHTML=[
-'<a href="/area-cliente/perfil">'+t+" "+txt.dashboard+"</a>",
-'<a href="/area-cliente/perfil">'+n+" "+txt.myProfile+"</a>",
-'<a href="/area-cliente/planos">'+i+" "+txt.plans+"</a>",
-'<a href="/area-cliente/membros">'+a+" "+txt.membersArea+"</a>",
+'<a href="/area-cliente/perfil">'+t+" Dashboard</a>",
+'<a href="/area-cliente/perfil">'+n+" O meu perfil</a>",
+'<a href="/area-cliente/planos">'+i+" Planos</a>",
+'<a href="/area-cliente/membros">'+a+" Área de membros</a>",
 '<div class="sep"></div>',
-'<button id="s2i-logout-btn">'+o+" "+txt.signOut+"</button>"
+'<button id="s2i-logout-btn">'+o+" Terminar sessão</button>"
 ].join("");
 d.appendChild(p);c.appendChild(d);
 
@@ -328,8 +297,10 @@ c.className="nav-item ms-2";
 c.id="s2i-auth-nav-container";
 if(e){
 if(langEl){
+/* Language link was inside the replaced element — wrap auth + lang together */
 var wrapper=document.createElement(e.tagName||"div");
 wrapper.id="s2i-auth-nav-container";
+/* Copy the original element's className to preserve React/Tailwind styles */
 if(e.className)wrapper.className=e.className;
 else wrapper.style.cssText="display:flex;align-items:center;gap:8px;list-style:none;";
 c.id="";
@@ -337,6 +308,7 @@ wrapper.appendChild(c);
 wrapper.appendChild(langEl);
 e.replaceWith(wrapper);
 }else{
+/* Language selector is a sibling — safe to just replace the auth element */
 e.replaceWith(c);
 }
 }else if(l)l.appendChild(c);
@@ -369,34 +341,36 @@ var t=window.S2I_AUTH&&window.S2I_AUTH.supabaseClient;
 if(t){
 var n=u.value.trim(),i=f.value;
 h.disabled=!0;
-h.textContent=A?txt.sending:E?txt.creating:txt.signing;
-if(A)t.auth.resetPasswordForEmail(n,{redirectTo:window.location.origin+"/area-cliente/"}).then(function(e){h.disabled=!1;h.textContent=txt.sendLink;e.error?b.textContent=e.error.message:(x.textContent=txt.emailSent,x.style.display="block")});
+h.textContent=A?"A enviar...":E?"A criar...":"A entrar...";
+if(A)t.auth.resetPasswordForEmail(n,{redirectTo:window.location.origin+"/area-cliente/"}).then(function(e){h.disabled=!1;h.textContent="Enviar link";e.error?b.textContent=e.error.message:(x.textContent="Email enviado! Verifica a tua caixa de correio.",x.style.display="block")});
 else if(E){
-if(i!==g.value){b.textContent=txt.passNoMatch;h.disabled=!1;h.textContent=txt.createAccount;return}
-if(i.length<6){b.textContent=txt.passShort;h.disabled=!1;h.textContent=txt.createAccount;return}
+if(i!==g.value){b.textContent="As palavras-passe não coincidem.";h.disabled=!1;h.textContent="Criar conta";return}
+if(i.length<6){b.textContent="A palavra-passe deve ter pelo menos 6 caracteres.";h.disabled=!1;h.textContent="Criar conta";return}
 var a=(v.value.trim()+" "+y.value.trim()).trim();
 t.auth.signUp({email:n,password:i,options:{data:{full_name:a,name:a}}}).then(function(e){
-if(h.disabled=!1,h.textContent=txt.createAccount,e.error){
+if(h.disabled=!1,h.textContent="Criar conta",e.error){
 var t=e.error.message;
--1!==t.indexOf("already registered")&&(t=txt.alreadyReg);
+-1!==t.indexOf("already registered")&&(t="Este email já está registado. Inicia sessão.");
 b.textContent=t;
-}else e.data&&e.data.user&&!e.data.session?(x.textContent=txt.emailSent,x.style.display="block"):I();
+}else e.data&&e.data.user&&!e.data.session?(x.textContent="Conta criada! Verifica o teu email para confirmar.",x.style.display="block"):I();
 });
 }else t.auth.signInWithPassword({email:n,password:i}).then(function(e){
-if(h.disabled=!1,h.textContent=txt.submit,e.error){
+if(h.disabled=!1,h.textContent="Entrar",e.error){
 var t=e.error.message;
--1!==t.indexOf("Invalid login")&&(t=txt.invalidLogin);
+-1!==t.indexOf("Invalid login")&&(t="Email ou palavra-passe incorretos.");
 b.textContent=t;
 }else I();
 });
-}else b.textContent=txt.connError;
+}else b.textContent="Erro de ligação. Recarrega a página.";
 });
 
 /* ── Init ── */
 function _(){T()}
 
+/* Try immediately, then retry for React-rendered navbars */
 function initWithRetry(){
 _();
+/* If no container was created, the link wasn't found yet (React may not have rendered). Retry with observer + polling. */
 if(!document.getElementById("s2i-auth-nav-container")){
 var attempts=0,maxAttempts=20;
 var retryInterval=setInterval(function(){
@@ -404,6 +378,7 @@ attempts++;
 _();
 if(document.getElementById("s2i-auth-nav-container")||attempts>=maxAttempts)clearInterval(retryInterval);
 },500);
+/* Also use MutationObserver for faster detection */
 var obs=new MutationObserver(function(){
 if(document.querySelector('a[href*="area-cliente"]')&&!document.getElementById("s2i-auth-nav-container")){
 _();
@@ -411,6 +386,7 @@ if(document.getElementById("s2i-auth-nav-container")){obs.disconnect();clearInte
 }
 });
 obs.observe(document.body,{childList:true,subtree:true});
+/* Cleanup observer after 15s */
 setTimeout(function(){obs.disconnect()},15000);
 }
 }
