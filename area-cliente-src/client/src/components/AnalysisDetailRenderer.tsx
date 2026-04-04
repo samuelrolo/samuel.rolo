@@ -1143,7 +1143,16 @@ interface AnalysisDetailRendererProps {
 
 export default function AnalysisDetailRenderer({ analysisType, data }: AnalysisDetailRendererProps) {
   if (!data) return null;
-
+  // Normalize: saved analyses wrap the API result inside data.analysis
+  // Merge inner fields up so renderers can find results_html, career_path_json, etc.
+  const inner = data.analysis;
+  if (inner && typeof inner === 'object' && !Array.isArray(inner)) {
+    const merged: Record<string, any> = { ...data };
+    for (const [k, v] of Object.entries(inner)) {
+      if (merged[k] === undefined || merged[k] === null) merged[k] = v;
+    }
+    data = merged;
+  }
   switch (analysisType) {
     case 'cv_analyser':
       return <CvAnalyserDetail data={data} />;
