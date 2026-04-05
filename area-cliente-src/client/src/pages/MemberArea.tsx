@@ -22,6 +22,7 @@ import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/componen
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
+import { toast } from 'sonner';
 import {
   Loader2, Upload, FileText, BarChart3, Linkedin, Bot,
   Sparkles, Route, Lock, ExternalLink, AlertCircle, CheckCircle,
@@ -815,6 +816,7 @@ export default function MemberArea() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [pendingExtraRun, setPendingExtraRun] = useState<'career_path' | 'career_intelligence' | null>(null);
   const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
+  const [autoTriggerAnalysis, setAutoTriggerAnalysis] = useState<string | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -858,6 +860,53 @@ export default function MemberArea() {
     }
     fetchCpUsage();
   }, [user?.id, planTier, analysisResult]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      const orderId = sessionStorage.getItem('s2iExtraOrderId');
+      const orderType = sessionStorage.getItem('s2iExtraType');
+      if (orderId && orderType) {
+        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
+        window.history.replaceState({}, '', window.location.pathname);
+        
+        // Polling loop since Stripe webhooks can take a few seconds
+        let attempts = 0;
+        const checkStatus = () => {
+          fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.paid) {
+                sessionStorage.removeItem('s2iExtraOrderId');
+                sessionStorage.removeItem('s2iExtraType');
+                toast.success(lang === 'pt' ? 'Pagamento confirmado!' : 'Payment confirmed!');
+                setAutoTriggerAnalysis(orderType);
+              } else if (attempts < 5) {
+                attempts++;
+                setTimeout(checkStatus, 2000);
+              } else {
+                toast.error(lang === 'pt' ? 'Demorou muito tempo. Atualiza a página e tenta novamente.' : 'Taking too long. Refresh and try again.');
+              }
+            })
+            .catch(e => {
+              console.error('Failed to verify payment', e);
+            });
+        };
+        setTimeout(checkStatus, 1500); // initial wait
+      }
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    if (autoTriggerAnalysis && profile && (profile.cv_url || cvFile)) {
+      if (autoTriggerAnalysis === 'career_path') {
+        runCareerPath();
+      } else if (autoTriggerAnalysis.includes('career_intelligence')) {
+        runCareerIntelligence();
+      }
+      setAutoTriggerAnalysis(null);
+    }
+  }, [autoTriggerAnalysis, profile, cvFile, runCareerPath, runCareerIntelligence]);
 
   // ─── Fetch monthly Career Intelligence usage ─────────────────────────
   useEffect(() => {
