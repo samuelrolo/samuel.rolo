@@ -130,7 +130,10 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
   };
 
   const analysis = raw;
-  const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths || analysis?.career_path || data?.career_path;
+  // _toolType = 'career_intelligence' is set explicitly by runCareerIntelligence — never treat CI results as Career Path.
+  // Also exclude market_analysis from detection since Career Intelligence responses contain that field.
+  const isCareerIntelligence = !!(data?._toolType === 'career_intelligence' || analysis?._toolType === 'career_intelligence');
+  const isCareerPath = !isCareerIntelligence && !!(data?.career_paths || analysis?.career_paths || analysis?.career_path || data?.career_path);
   const cpData = isCareerPath ? (data?.career_path || analysis?.career_path || data?.career_paths ? data : analysis) : null;
   const isLinkedInFormat = analysis?.candidate_profile || data?.candidate_profile;
   const linkedinData = isLinkedInFormat ? (data?.candidate_profile ? data : analysis) : null;
