@@ -67,19 +67,19 @@ const testimonials = [
   {
     name: "Catherine M.",
     role: "HR Manager",
-    text: "Career Intelligence showed me exactly which of the 3 paths had the highest success probability. The side-by-side comparison was decisive.",
+    text: "Career Intelligence gave me a realistic salary estimate for each path. I realised my profile was worth more than I thought — and I negotiated an 18% raise.",
     rating: 5,
   },
   {
     name: "James R.",
     role: "Software Engineer",
-    text: "I was torn between Product Manager and Engineering Manager. The trade-off analysis and final recommendation gave me the clarity I needed.",
+    text: "I was torn between Product Manager and Engineering Manager. Instead of months of research, I had the answer in 1 minute — with concrete market data and clear trade-offs.",
     rating: 5,
   },
   {
     name: "Sophie L.",
     role: "Strategy Consultant",
-    text: "I never thought AI could compare career paths with this level of detail. The final recommendation was surgical.",
+    text: "The final recommendation came with such a detailed action plan that I used it directly in my interview. I walked into the new role with total confidence.",
     rating: 5,
   },
 ];

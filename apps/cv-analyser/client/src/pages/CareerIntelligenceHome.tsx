@@ -68,19 +68,19 @@ const testimonials = [
   {
     name: "Catarina Mendes",
     role: "Gestora de RH",
-    text: "O Career Intelligence mostrou-me exactamente qual dos 3 caminhos tinha maior probabilidade de sucesso. A comparação lado a lado foi decisiva.",
+    text: "O Career Intelligence deu-me uma estimativa salarial realista para cada caminho. Percebi que o meu perfil valia mais do que pensava — e negociei um aumento de 18%.",
     rating: 5,
   },
   {
     name: "Rui Ferreira",
     role: "Engenheiro de Software",
-    text: "Estava indeciso entre Product Manager e Engineering Manager. A análise de trade-offs e a recomendação final deram-me a clareza que precisava.",
+    text: "Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.",
     rating: 5,
   },
   {
     name: "Sofia Lopes",
     role: "Consultora de Estratégia",
-    text: "Nunca pensei que uma IA conseguisse comparar caminhos de carreira com este nível de detalhe. A recomendação final foi cirúrgica.",
+    text: "A recomendação final veio com um plano de acção tão detalhado que o usei diretamente na entrevista. Entrei no novo cargo com confiança total.",
     rating: 5,
   },
 ];
