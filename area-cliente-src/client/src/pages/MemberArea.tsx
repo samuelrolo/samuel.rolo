@@ -18,6 +18,7 @@ import SavedJobsTracker from '@/components/SavedJobsTracker';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
+import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -810,6 +811,7 @@ export default function MemberArea() {
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [pendingExtraRun, setPendingExtraRun] = useState<'career_path' | 'career_intelligence' | null>(null);
+  const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -1119,8 +1121,9 @@ export default function MemberArea() {
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
-      const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
+      const ciBody: any = { mode: 'career_path', depth: 'intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(ciBody);
+      result._toolType = 'career_intelligence';
       setAnalysisResult(result);
       const extraPrice = isExtra ? (planTier === 'pro' ? 9.75 : 19.50) : 0;
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, is_extra: isExtra, extra_price: extraPrice, analysis: result } });
@@ -1712,7 +1715,7 @@ export default function MemberArea() {
                           ) : (
                             <div>
                               <div data-analysis-result="true">
-                                <AnalysisDetailRenderer analysisType={expandedTool === 'careerPath' ? 'career_path' : expandedTool === 'careerIntelligence' ? 'career_intelligence' : expandedTool === 'linkedinRoster' ? 'linkedin_roaster' : 'cv_analyser'} data={analysisResult} />
+                                <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
                               </div>
                               <div className="flex items-center gap-3 mt-3">
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
@@ -1992,7 +1995,7 @@ export default function MemberArea() {
       )}
 
       {/* ═══════════════════ EXTRA PAYMENT CONFIRMATION MODAL ═══════════════════ */}
-      {pendingExtraRun && (
+      {pendingExtraRun && !paymentProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setPendingExtraRun(null)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-5">
@@ -2020,15 +2023,43 @@ export default function MemberArea() {
                 </span>
               </div>
             </div>
-            <p className="text-xs text-[#999] mb-5">{lang === 'pt' ? 'O valor será adicionado à tua próxima fatura. Podes cancelar a qualquer momento.' : 'The amount will be added to your next invoice. You can cancel at any time.'}</p>
             <div className="flex items-center gap-3">
               <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : 'Cancel'}</button>
-              <button onClick={() => { const type = pendingExtraRun; setPendingExtraRun(null); if (type === 'career_path') runCareerPath(); else runCareerIntelligence(); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
-                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Confirmar e gerar' : 'Confirm and generate'}
+              <button onClick={() => {
+                const type = pendingExtraRun!;
+                const isCp = type === 'career_path';
+                const price = isCp ? (planTier === 'pro' ? 4.75 : 9.50) : (planTier === 'pro' ? 9.75 : 19.50);
+                const origPrice = isCp ? 19 : 39;
+                const discount = planTier === 'pro' ? '-75%' : '-50%';
+                setPendingExtraRun(null);
+                setPaymentProduct({
+                  type,
+                  label: isCp ? 'Career Path' : 'Career Intelligence',
+                  price,
+                  originalPrice: origPrice,
+                  discountLabel: discount,
+                  stripeProductType: isCp
+                    ? (planTier === 'pro' ? 'career_path_member_pro' : 'career_path_member_growth')
+                    : (planTier === 'pro' ? 'career_intelligence_member_pro' : 'career_intelligence_full'),
+                });
+              }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
+                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Pagar e gerar' : 'Pay and generate'}
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {paymentProduct && (
+        <ExtraAnalysisPaymentModal
+          product={paymentProduct}
+          onClose={() => setPaymentProduct(null)}
+          onPaymentSuccess={() => {
+            setPaymentProduct(null);
+            if (paymentProduct.type === 'career_path') runCareerPath();
+            else runCareerIntelligence();
+          }}
+        />
       )}
 
       {/* ═══════════════════ EMAIL MODAL ═══════════════════ */}

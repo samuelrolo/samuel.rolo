@@ -51,15 +51,14 @@ function Routes() {
 function Layout() {
   const [location] = useLocation();
   const isAuthPage = location === '/auth';
-  const isLandingPage = location === '/sobre';
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
-      {!isAuthPage && !isLandingPage && <Header />}
+      {!isAuthPage && <Header />}
       <main className="flex-1">
         <Routes />
       </main>
-      {!isAuthPage && !isLandingPage && <Footer />}
+      {!isAuthPage && <Footer />}
       <CareerBotWidget />
     </div>
   );
