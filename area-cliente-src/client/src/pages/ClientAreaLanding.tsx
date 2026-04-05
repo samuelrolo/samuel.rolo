@@ -73,7 +73,7 @@ const i18n = {
           'Exercícios de visibilidade e networking personalizados',
           'Ações imediatas para acelerar a progressão',
           'Análise de gaps de competências por cargo-alvo',
-          'Powered by NinjaPear — dados de mercado em tempo real',
+          'Powered by IA & Edge — dados de mercado em tempo real',
         ],
       },
       {
@@ -83,7 +83,7 @@ const i18n = {
         details: [
           'Tendências salariais por cargo, setor e região',
           'Competências mais procuradas no teu setor',
-          'Dados de empresas enriquecidos (NinjaPear)',
+          'Dados de empresas enriquecidos via IA',
           'Oportunidades emergentes por mercado',
           'Benchmarking do teu perfil vs. mercado',
         ],
@@ -241,7 +241,7 @@ const i18n = {
           'Personalized visibility and networking exercises',
           'Immediate actions to accelerate progression',
           'Skills gap analysis per target role',
-          'Powered by NinjaPear — real-time market data',
+          'Powered by AI & Edge — real-time market data',
         ],
       },
       {
@@ -251,7 +251,7 @@ const i18n = {
         details: [
           'Salary trends by role, sector and region',
           'Most in-demand skills in your sector',
-          'Enriched company data (NinjaPear)',
+          'Enriched company data via AI',
           'Emerging opportunities by market',
           'Profile benchmarking vs. market',
         ],

@@ -3,7 +3,7 @@
  * Uses real Adzuna API for ALL countries (fallback to nearest supported)
  * Keywords extracted from user's Career Path / CV Analyser analyses
  * For Portugal: uses Adzuna ES (Spain) as nearest fallback + LinkedIn Jobs link
- * Company enrichment via NinjaPear (Nubela) API
+ * Company enrichment via AI & Edge (Gemini) API
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Briefcase, RefreshCw, ExternalLink, Search, AlertCircle, Linkedin, Building2, Users, MapPin, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react';
@@ -141,7 +141,7 @@ interface VagasFeedProps {
   region?: string;
 }
 
-// ─── NinjaPear company cache ───────────────────────────────────────────────
+// ─── AI Company Enrichment cache ───────────────────────────────────────────
 const companyCache = new Map<string, CompanyInfo | null>();
 
 async function fetchCompanyInfo(companyName: string): Promise<CompanyInfo | null> {
@@ -372,7 +372,7 @@ function CompanyDetailCard({ companyName, lang, onClose }: { companyName: string
       {/* Footer — powered by */}
       <div className="px-3 sm:px-4 py-1.5 border-t border-[#e9ecef] bg-[#f8f9fa]/50">
         <p className="text-[9px] text-[#adb5bd] text-center">
-          Powered by NinjaPear
+          Powered by IA & Edge
         </p>
       </div>
     </div>
@@ -754,7 +754,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
             </a>
           </div>
           <div className="text-[9px] sm:text-[10px] text-[#999] mt-1 text-center">
-            Powered by Adzuna API · NinjaPear
+            Powered by Adzuna API · IA & Edge
             {isUnsupportedCountry && ` · ${lang === 'pt' ? 'Vagas Internacionais' : 'International Jobs'}`}
             {userKeywords.length > 0 && ` · ${lang === 'pt' ? 'Personalizado ao teu perfil' : 'Personalized to your profile'}`}
           </div>
