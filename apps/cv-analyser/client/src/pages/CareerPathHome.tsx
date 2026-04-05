@@ -595,7 +595,7 @@ export default function CareerPathHome() {
             <a href="https://www.share2inspire.pt/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
           </nav>
           <div className="hidden lg:flex items-center gap-3">
-            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Área de Cliente</a>
+            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
             <a href="/en/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
               <Globe className="w-3.5 h-3.5" /><span>EN</span>
             </a>
@@ -614,7 +614,7 @@ export default function CareerPathHome() {
             <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
             <a href="https://www.share2inspire.pt/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Área de Cliente</a>
+              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
               <a href="/en/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
             </div>
           </div>
