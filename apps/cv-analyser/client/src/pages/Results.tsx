@@ -551,6 +551,7 @@ export default function Results() {
   const [careerPathLoading, setCareerPathLoading] = useState(false);
   const [careerPathError, setCareerPathError] = useState<string | null>(null);
   const [showCareerPathModal, setShowCareerPathModal] = useState(false);
+  const [careerPathIsUpgrade, setCareerPathIsUpgrade] = useState(false); // true when coming from post-CV upsell (14.99)
   const [careerPathLinkedin, setCareerPathLinkedin] = useState("");
   const [careerPathEmail, setCareerPathEmail] = useState("");
   const [careerPathPhone, setCareerPathPhone] = useState("");
@@ -1401,7 +1402,7 @@ export default function Results() {
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const cpAmount = isEN ? '19.99' : '19.99';
+      const cpAmount = careerPathIsUpgrade ? '14.99' : '19.99';
       const cpCurrencyCode = isEN ? 'usd' : 'eur';
 
       if (careerPathPaymentMethod === 'stripe') {
@@ -2600,46 +2601,76 @@ export default function Results() {
           </div>
         )}
 
-        {/* ═══ Career Path Cross-sell (produto independente) ═══ */}
+        {/* ═══ Career Path Cross-sell — Premium Dark Upsell ═══ */}
         {isPaid && !careerPathData && careerPathPaymentStep !== 'generating' && careerPathPaymentStep !== 'done' && (
-          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-5">
-            <div className="flex items-center gap-3">
-              <GoldIcon>
-                <Compass className="w-5 h-5 text-[#C9A961]" />
-              </GoldIcon>
-              <div>
-                <p className="text-base font-semibold text-foreground">{isEN ? 'What is your next career step?' : 'Qual é o teu próximo passo de carreira?'}</p>
-                <p className="text-xs text-muted-foreground">{isEN ? 'Career Path creates a personalised roadmap with concrete steps to get where you want' : 'O Career Path cria um roadmap personalizado com os passos concretos para chegares onde queres'}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { icon: <Briefcase className="w-4 h-4" />, text: isEN ? 'Next 3 recommended roles with roadmap' : 'Próximos 3 cargos recomendados com roadmap' },
-                { icon: <GraduationCap className="w-4 h-4" />, text: isEN ? 'Recommended training and certifications' : 'Formações e certificações recomendadas' },
-                { icon: <Globe className="w-4 h-4" />, text: isEN ? 'Visibility exercises and online presence' : 'Exercícios de visibilidade e presença online' },
-                { icon: <Users className="w-4 h-4" />, text: isEN ? 'Networking strategy and communities' : 'Estratégia de networking e comunidades' },
-                { icon: <Linkedin className="w-4 h-4" />, text: isEN ? 'CV vs LinkedIn cross-analysis' : 'Cruzamento CV vs LinkedIn' },
-                { icon: <Target className="w-4 h-4" />, text: isEN ? 'Immediate actions for 30, 60 and 90 days' : 'Acções imediatas para 30, 60 e 90 dias' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className="text-[#C9A961] mt-0.5">{item.icon}</span>
-                  <p className="text-sm text-muted-foreground">{item.text}</p>
+          <div className="relative overflow-hidden rounded-2xl border border-[#C9A961]/40" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%)'}}>
+            {/* Decorative gold accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#C9A961] to-transparent" />
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#C9A961]/5 rounded-full blur-3xl" />
+            
+            <div className="relative p-4 sm:p-8 space-y-6">
+              {/* Header with urgency badge */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center">
+                    <Compass className="w-6 h-6 text-[#C9A961]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white">{isEN ? 'Your CV is analysed. Now what?' : 'O teu CV está analisado. E agora?'}</p>
+                    <p className="text-sm text-white/50">{isEN ? "Don't stop at diagnosis — build the roadmap" : 'Não fiques pelo diagnóstico — constrói o roadmap'}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
-              <div>
-                <span className="text-3xl font-bold text-foreground">{`${CUR}${P.career}`}</span>
-                <span className="text-sm text-muted-foreground ml-2">{isEN ? '/ analysis' : '/ análise'}</span>
-
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 animate-pulse">
+                  <Flame className="w-3.5 h-3.5 text-red-400" />
+                  <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">{isEN ? 'Upgrade discount' : 'Desconto de upgrade'}</span>
+                </div>
               </div>
-              <a
-                href={isEN ? '/en/career-path' : '/career-path'}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-base transition-colors"
-              >
-                <Compass className="w-4 h-4" />
-                {isEN ? 'Try Career Path' : 'Experimentar Career Path'}
-              </a>
+
+              {/* Cost of inaction comparison */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                  <p className="text-[10px] font-bold text-white/40 tracking-wider uppercase">{isEN ? 'Traditional career coaching' : 'Coaching de carreira tradicional'}</p>
+                  <p className="text-2xl font-bold text-white/30 line-through">{isEN ? '$300-800' : '€300-800'}</p>
+                  <p className="text-xs text-white/30">{isEN ? '3-6 sessions • weeks of waiting' : '3-6 sessões • semanas de espera'}</p>
+                </div>
+                <div className="p-4 rounded-xl bg-[#C9A961]/10 border border-[#C9A961]/30 space-y-2">
+                  <p className="text-[10px] font-bold text-[#C9A961] tracking-wider uppercase">{isEN ? 'Career Path AI — upgrade price' : 'Career Path IA — preço de upgrade'}</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm text-white/40 line-through">{CUR}{P.career}</span>
+                    <span className="text-2xl font-bold text-[#C9A961]">{isEN ? '$14.99' : '€14,99'}</span>
+                  </div>
+                  <p className="text-xs text-[#C9A961]/70">{isEN ? 'Instant • AI-powered • personalised' : 'Instantâneo • IA avançada • personalizado'}</p>
+                </div>
+              </div>
+
+              {/* What you get — compact grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {[
+                  { icon: <Briefcase className="w-3.5 h-3.5" />, text: isEN ? 'Next 3 career roles' : '3 próximos cargos' },
+                  { icon: <TrendingUp className="w-3.5 h-3.5" />, text: isEN ? 'Salary progression' : 'Progressão salarial' },
+                  { icon: <GraduationCap className="w-3.5 h-3.5" />, text: isEN ? 'Training plan' : 'Plano de formação' },
+                  { icon: <Linkedin className="w-3.5 h-3.5" />, text: isEN ? 'CV vs LinkedIn sync' : 'CV vs LinkedIn' },
+                  { icon: <Users className="w-3.5 h-3.5" />, text: isEN ? 'Networking strategy' : 'Estratégia networking' },
+                  { icon: <Target className="w-3.5 h-3.5" />, text: isEN ? '30-60-90 day plan' : 'Plano 30-60-90 dias' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/5">
+                    <span className="text-[#C9A961]">{item.icon}</span>
+                    <p className="text-[11px] text-white/70 font-medium">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <button
+                  onClick={() => { setCareerPathIsUpgrade(true); setShowCareerPathModal(true); setCareerPathPaymentStep('info'); }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-[#C9A961] hover:bg-[#d4af5a] text-[#0a0a0a] font-bold text-base transition-all shadow-lg shadow-[#C9A961]/20 hover:shadow-[#C9A961]/40"
+                >
+                  <Compass className="w-5 h-5" />
+                  {isEN ? 'Upgrade for $14.99' : 'Fazer Upgrade por €14,99'}
+                </button>
+                <p className="text-[10px] text-white/30 text-center">{isEN ? 'One-time payment • Personalised AI report in <1 min • Based on your CV data already analysed' : 'Pagamento único • Relatório IA personalizado em <1 min • Baseado nos dados do CV já analisado'}</p>
+              </div>
             </div>
           </div>
         )}
@@ -3835,7 +3866,7 @@ export default function Results() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="w-5 h-5 text-[#C9A961]" />
-              Career Path {sessionStorage.getItem('careerPathIncluded') === 'true' ? (isEN ? '— Included' : '— Incluído') : `— ${CUR}${P.career}`}
+              Career Path {sessionStorage.getItem('careerPathIncluded') === 'true' ? (isEN ? '— Included' : '— Incluído') : careerPathIsUpgrade ? (isEN ? '— Upgrade $14.99' : '— Upgrade €14,99') : `— ${CUR}${P.career}`}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -3913,7 +3944,10 @@ export default function Results() {
                   onClick={handleCareerPathPayment}
                   className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
                 >
-                  {isEN ? `Pay ${CUR}${P.career} and Generate Career Path` : `Pagar ${CUR}${P.career} e Gerar Career Path`}
+                  {careerPathIsUpgrade
+                    ? (isEN ? 'Pay $14.99 and Generate Career Path' : 'Pagar €14,99 e Gerar Career Path')
+                    : (isEN ? `Pay ${CUR}${P.career} and Generate Career Path` : `Pagar ${CUR}${P.career} e Gerar Career Path`)
+                  }
                 </Button>
               </>
             )}

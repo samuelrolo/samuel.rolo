@@ -561,13 +561,12 @@ export default function CareerIntelligenceHomeEN() {
             <a href="/en/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
             <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/en/career-intelligence" className="text-[#C9A961]">Career Intelligence</a>
+            <a href="/en/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
-            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
-            <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
           </nav>
           <div className="hidden lg:flex items-center gap-3">
-            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Client Area</a>
+            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
             <a href="/career-intelligence" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
               <Globe className="w-3.5 h-3.5" /><span>PT</span>
             </a>
@@ -582,12 +581,11 @@ export default function CareerIntelligenceHomeEN() {
             <a href="/en/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
             <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/en/career-intelligence" className="block text-sm text-[#C9A961] font-semibold">Career Intelligence</a>
+            <a href="/en/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
-            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
-            <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Client Area</a>
+              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Login</a>
               <a href="/career-intelligence" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />PT</a>
             </div>
           </div>

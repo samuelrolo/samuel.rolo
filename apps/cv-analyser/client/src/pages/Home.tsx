@@ -305,11 +305,11 @@ export default function Home() {
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Rotating headlines
+  // Rotating headlines — conversion-focused
   const headlines = [
-    { text: "Vê se o teu CV passa nos filtros", highlight: "das empresas" },
-    { text: "O teu CV está a ser", highlight: "rejeitado sem saberes?" },
-    { text: "O que os recrutadores veem no teu CV em", highlight: "30 segundos" },
+    { text: "O teu CV está a ser rejeitado por", highlight: "robôs?" },
+    { text: "87% dos CVs nunca chegam ao", highlight: "recrutador" },
+    { text: "Descobre o que os recrutadores realmente", highlight: "veem" },
   ];
   const [headlineIdx, setHeadlineIdx] = useState(0);
   useEffect(() => {
@@ -1072,8 +1072,9 @@ export default function Home() {
             <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
             <a href="/cv-analyser" className="text-[#C9A961]">CV Analyser</a>
             <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
+            <a href="/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
+            <a href="/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
-            <a href="https://www.share2inspire.pt/conhecimento" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
             <a href="https://www.share2inspire.pt/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
           </nav>
@@ -1094,10 +1095,10 @@ export default function Home() {
             <a href="https://www.share2inspire.pt" className="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
             <a href="/cv-analyser" className="block text-sm text-[#C9A961] font-semibold">CV Analyser</a>
             <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
+            <a href="/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
+            <a href="/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
-            <a href="https://www.share2inspire.pt/conhecimento" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
-            <a href="https://www.share2inspire.pt/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
               <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
               <a href="/en/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
@@ -1106,16 +1107,16 @@ export default function Home() {
         )}
       </header>
 
-      {/* Bundle Banner — Main offer */}
-      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
+      {/* Bundle Banner — Value-focused, no explicit price */}
+      <a href="/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Mais popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path por <strong className="text-white">€29</strong>
+            <strong className="text-[#C9A961]">Bundle</strong> — Diagnóstico CV + Roadmap de Carreira num só passo
           </span>
-          <a href="/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Obter Bundle</a>
+          <span className="text-xs bg-[#C9A961] text-white px-3 py-1 rounded-full font-semibold shrink-0">Descobrir →</span>
         </div>
-      </div>
+      </a>
 
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
@@ -1126,6 +1127,24 @@ export default function Home() {
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Análise gratuita em 30 segundos. Descobre se o teu CV passa nos sistemas de recrutamento.
           </p>
+
+          {/* Feature Cards — what you get */}
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 max-w-3xl mx-auto pt-2">
+            {[
+              { icon: <BarChart3 className="w-5 h-5 text-[#C9A961]" />, label: "Score ATS" },
+              { icon: <Grid2x2 className="w-5 h-5 text-[#C9A961]" />, label: "4 Quadrantes" },
+              { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, label: "Benchmarks" },
+              { icon: <Eye className="w-5 h-5 text-[#C9A961]" />, label: "Visão Recrutador" },
+              { icon: <Target className="w-5 h-5 text-[#C9A961]" />, label: "Keywords" },
+              { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, label: "Em 30 segundos" },
+            ].map((card, i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-muted/30 border border-border hover:border-[#C9A961]/40 transition-all">
+                {card.icon}
+                <span className="text-[10px] md:text-xs font-semibold text-foreground text-center leading-tight">{card.label}</span>
+              </div>
+            ))}
+          </div>
+
           <a
             href="/cv-analyser/demo.html"
             target="_blank"

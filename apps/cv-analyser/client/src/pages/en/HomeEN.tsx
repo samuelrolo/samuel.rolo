@@ -291,11 +291,11 @@ export default function HomeEN() {
   const [liPaywallError, setLiPaywallError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Rotating headlines
+  // Rotating headlines — conversion-focused
   const headlines = [
-    { text: "Is your CV being", highlight: "rejected without you knowing?" },
-    { text: "What recruiters see in your CV in", highlight: "30 seconds" },
-    { text: "Does your CV pass", highlight: "company filters?" },
+    { text: "Is your CV being rejected by", highlight: "robots?" },
+    { text: "87% of CVs never reach the", highlight: "recruiter" },
+    { text: "Find out what recruiters really", highlight: "see" },
   ];
   const [headlineIdx, setHeadlineIdx] = useState(0);
   useEffect(() => {
@@ -963,10 +963,10 @@ export default function HomeEN() {
             <a href="https://www.share2inspire.pt/en/pages/home" className="text-slate-500 hover:text-[#C9A961] transition-colors">Home</a>
             <a href="/en/cv-analyser" className="text-[#C9A961]">CV Analyser</a>
             <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
+            <a href="/en/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
+            <a href="/en/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
-            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
-            <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
           </nav>
           <div className="hidden lg:flex items-center gap-3">
             <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
@@ -983,10 +983,10 @@ export default function HomeEN() {
             <a href="https://www.share2inspire.pt/en/pages/home" className="block text-sm text-slate-600 hover:text-[#C9A961]">Home</a>
             <a href="/en/cv-analyser" className="block text-sm text-[#C9A961] font-semibold">CV Analyser</a>
             <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
+            <a href="/en/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
+            <a href="/en/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
-            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
-            <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
               <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
               <a href="/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />PT</a>
@@ -995,16 +995,16 @@ export default function HomeEN() {
         )}
       </header>
 
-      {/* Bundle Banner — Main offer */}
-      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
+      {/* Bundle Banner — Value-focused, no explicit price */}
+      <a href="/en/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">{CUR}29</strong>
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Diagnosis + Career Roadmap in one step
           </span>
-          <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
+          <span className="text-xs bg-[#C9A961] text-white px-3 py-1 rounded-full font-semibold shrink-0">Discover →</span>
         </div>
-      </div>
+      </a>
 
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
@@ -1015,6 +1015,24 @@ export default function HomeEN() {
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Free analysis in 30 seconds. Find out if your CV passes recruitment systems.
           </p>
+
+          {/* Feature Cards — what you get */}
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 max-w-3xl mx-auto pt-2">
+            {[
+              { icon: <BarChart3 className="w-5 h-5 text-[#C9A961]" />, label: "ATS Score" },
+              { icon: <Grid2x2 className="w-5 h-5 text-[#C9A961]" />, label: "4 Quadrants" },
+              { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, label: "Benchmarks" },
+              { icon: <Eye className="w-5 h-5 text-[#C9A961]" />, label: "Recruiter View" },
+              { icon: <Target className="w-5 h-5 text-[#C9A961]" />, label: "Keywords" },
+              { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, label: "In 30 seconds" },
+            ].map((card, i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-muted/30 border border-border hover:border-[#C9A961]/40 transition-all">
+                {card.icon}
+                <span className="text-[10px] md:text-xs font-semibold text-foreground text-center leading-tight">{card.label}</span>
+              </div>
+            ))}
+          </div>
+
           <a
             href="/en/cv-analyser/demo.html"
             target="_blank"
