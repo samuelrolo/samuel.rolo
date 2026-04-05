@@ -33,9 +33,9 @@ export default function Header() {
         <div className="flex items-center gap-4 shrink-0">
           <Link href="/perfil" className="flex items-center group">
             <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png"
+              src="https://share2inspire.pt/images/logo.webp"
               alt="Share2Inspire"
-              className="h-9 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300"
+              className="h-[55px] w-auto object-contain group-hover:opacity-80 transition-opacity duration-300"
             />
           </Link>
         </div>

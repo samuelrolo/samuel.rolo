@@ -12,7 +12,7 @@ import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText,
    ────────────────────────────────────────────────────────── */
 
 const CDN = {
-  logo: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png',
+  logo: 'https://share2inspire.pt/images/logo.webp',
 };
 
 const i18n = {
@@ -398,7 +398,7 @@ export default function ClientAreaLanding() {
       {/* ─── Hero ─── */}
       <section className="relative py-20 sm:py-28 lg:py-36">
         <div className="absolute inset-0 bg-gradient-to-br from-[#faf8f3] via-[#FAFAF9] to-[#f5f0e8]" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-[#C9A961]/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-0 w-96 h-[55px]6 bg-[#C9A961]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#C9A961]/8 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
