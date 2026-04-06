@@ -314,7 +314,7 @@ export default function StudentPackResults() {
                               <span className="text-xs font-semibold text-slate-600 capitalize">{key.replace(/_/g, ' ')}</span>
                               <span className={`text-lg font-bold ${scoreColor((val?.valor || 0) * 10, true)}`}>{val?.valor || 0}<span className="text-xs text-slate-400">/10</span></span>
                             </div>
-                            {val?.analise && <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">{val.analise}</p>}
+                            {val?.analise && <p className="text-xs text-slate-500 leading-relaxed">{val.analise}</p>}
                           </div>
                         ))}
                       </div>

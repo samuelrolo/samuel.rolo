@@ -64,6 +64,21 @@ const visibilityColor = (v: string) => {
   return 'bg-red-100 text-red-700 border-red-300';
 };
 
+// Deep sanitizer — recursively converts {txt,href} objects to strings
+const deepSanitize = (obj: any): any => {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') return obj;
+  if (typeof obj === 'object') {
+    if (obj.txt && typeof obj.txt === 'string') return obj.txt;
+    if (obj.text && typeof obj.text === 'string') return obj.text;
+    if (Array.isArray(obj)) return obj.map(deepSanitize);
+    const result: any = {};
+    for (const [key, val] of Object.entries(obj)) { result[key] = deepSanitize(val); }
+    return result;
+  }
+  return obj;
+};
+
 const dimensionLabels: Record<string, string> = {
   headline_sumario: 'Headline & About',
   experiencia_conteudo: 'Experiência',
@@ -172,8 +187,8 @@ export default function LinkedInRoasterResults() {
   }, [isPaid]);
 
   // Extract teaser & analysis
-  const teaser = rawData?.teaser || rawData?.data?.teaser || {};
-  const analysis: AnaliseCompleta = rawData?.analise_completa || rawData?.data?.analise_completa || rawData?.analysis || {};
+  const teaser = deepSanitize(rawData?.teaser || rawData?.data?.teaser || {});
+  const analysis: AnaliseCompleta = deepSanitize(rawData?.analise_completa || rawData?.data?.analise_completa || rawData?.analysis || {});
 
   const notaGeral = teaser?.nota_geral || 0;
   const hookVendas = teaser?.hook_vendas || '';
@@ -293,7 +308,7 @@ export default function LinkedInRoasterResults() {
                           <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">{sectionLabels[key] || key}</span>
                         </div>
                         <p className={`text-2xl font-bold mb-1 ${scoreColor(sec.score)}`}>{sec.score}<span className="text-xs text-slate-400">/10</span></p>
-                        <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">{sec.analise}</p>
+                        <p className="text-xs text-slate-600 leading-relaxed">{sec.analise}</p>
                       </div>
                     );
                   })}
@@ -487,7 +502,7 @@ export default function LinkedInRoasterResults() {
                     <div key={i} className="flex items-center justify-between bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <span className="text-xs font-bold text-orange-500 bg-orange-100 rounded-full w-7 h-7 flex items-center justify-center shrink-0">{i + 1}</span>
-                        <p className="text-sm font-medium text-slate-800 truncate">{h}</p>
+                        <p className="text-sm font-medium text-slate-800">{h}</p>
                       </div>
                       <CopyButton text={h} />
                     </div>
