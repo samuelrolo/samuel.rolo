@@ -897,16 +897,8 @@ export default function MemberArea() {
     }
   }, [lang]);
 
-  useEffect(() => {
-    if (autoTriggerAnalysis && profile && (profile.cv_url || cvFile)) {
-      if (autoTriggerAnalysis === 'career_path') {
-        runCareerPath();
-      } else if (autoTriggerAnalysis.includes('career_intelligence')) {
-        runCareerIntelligence();
-      }
-      setAutoTriggerAnalysis(null);
-    }
-  }, [autoTriggerAnalysis, profile, cvFile, runCareerPath, runCareerIntelligence]);
+  // NOTE: useEffect that calls runCareerPath/runCareerIntelligence is placed AFTER those
+  // useCallback declarations (below) to avoid TDZ (Temporal Dead Zone) errors.
 
   // ─── Fetch monthly Career Intelligence usage ─────────────────────────
   useEffect(() => {
@@ -1183,6 +1175,19 @@ export default function MemberArea() {
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
   }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
+
+  // ─── Auto-trigger after payment return (moved here to avoid TDZ) ──────────
+  // runCareerPath and runCareerIntelligence must be declared above before this useEffect
+  useEffect(() => {
+    if (autoTriggerAnalysis && profile && (profile.cv_url || cvFile)) {
+      if (autoTriggerAnalysis === 'career_path') {
+        runCareerPath();
+      } else if (autoTriggerAnalysis.includes('career_intelligence')) {
+        runCareerIntelligence();
+      }
+      setAutoTriggerAnalysis(null);
+    }
+  }, [autoTriggerAnalysis, profile, cvFile, runCareerPath, runCareerIntelligence]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
