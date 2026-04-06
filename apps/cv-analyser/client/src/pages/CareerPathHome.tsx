@@ -588,7 +588,7 @@ export default function CareerPathHome() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo-novo.png" alt="Share2Inspire" className="h-8" />
+            <img src="https://www.share2inspire.pt/images/logo-lateral.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
           </a>
           <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
             <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
