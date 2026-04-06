@@ -21,9 +21,6 @@ const BundleHomeEN = lazy(() => import("./pages/en/BundleHomeEN"));
 const CareerIntelligenceHome = lazy(() => import("./pages/CareerIntelligenceHome"));
 const CareerIntelligenceHomeEN = lazy(() => import("./pages/en/CareerIntelligenceHomeEN"));
 const CareerIntelligenceResults = lazy(() => import("./pages/CareerIntelligenceResults"));
-const StudentPackHome = lazy(() => import("./pages/StudentPackHome"));
-const StudentPackHomeEN = lazy(() => import("./pages/en/StudentPackHomeEN"));
-const StudentPackResults = lazy(() => import("./pages/StudentPackResults"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -65,19 +62,6 @@ function AppRouter() {
   usePageTitle();
 
   // ─── English International Routes ───
-
-  // EN Student Pack: /en/student-pack
-  if (pathname.startsWith('/en/student-pack')) {
-    return (
-      <Router base="/en/student-pack">
-        <Switch>
-          <Route path={"/"} component={StudentPackHomeEN} />
-          <Route path={"/results"} component={StudentPackResults} />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    );
-  }
 
   // EN Bundle: /en/bundle
   if (pathname.startsWith('/en/bundle')) {
@@ -132,19 +116,6 @@ function AppRouter() {
   }
 
   // ─── Portuguese Routes (unchanged) ───
-
-  // Student Pack PT: /estudante
-  if (pathname.startsWith('/estudante')) {
-    return (
-      <Router base="/estudante">
-        <Switch>
-          <Route path={"/"} component={StudentPackHome} />
-          <Route path={"/results"} component={StudentPackResults} />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    );
-  }
 
   // Bundle PT: /bundle
   if (pathname.startsWith('/bundle')) {
