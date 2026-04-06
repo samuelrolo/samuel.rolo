@@ -1131,6 +1131,17 @@ export default function Home() {
         </div>
       </a>
 
+      {/* Pack Estudante Banner */}
+      <a href="/estudante" className="block bg-gradient-to-r from-emerald-700 to-emerald-800 border-b border-emerald-500/30 hover:from-emerald-600 hover:to-emerald-700 transition-all cursor-pointer">
+        <div className="max-w-6xl mx-auto px-6 py-2.5 flex items-center justify-center gap-3 flex-wrap">
+          <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">🎓 Estudante</span>
+          <span className="text-sm text-white">
+            <strong className="text-emerald-200">Pack Estudante</strong> — CV Analyser + LinkedIn Roaster por apenas 7,99€
+          </span>
+          <span className="text-xs bg-white/20 text-white px-3 py-1 rounded-full font-semibold shrink-0">Poupar 43% →</span>
+        </div>
+      </a>
+
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
         <div className="text-center space-y-3 md:space-y-6 mb-6 md:mb-12">
