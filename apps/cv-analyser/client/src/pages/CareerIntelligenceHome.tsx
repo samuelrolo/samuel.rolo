@@ -85,9 +85,9 @@ const testimonials = [
   },
 ];
 
-const PRICE_DISPLAY_BASE = '49€';
-const PRICE_BASE = '49,00';
-const PRICE_NUM_BASE = 49.00;
+const PRICE_DISPLAY_BASE = '49,99€';
+const PRICE_BASE = '49,99';
+const PRICE_NUM_BASE = 49.99;
 const PRICE_DISPLAY_UPGRADE = '29€';
 const PRICE_UPGRADE = '29,00';
 const PRICE_NUM_UPGRADE = 29.00;
@@ -737,23 +737,19 @@ export default function CareerIntelligenceHome() {
               </div>
             </div>
 
-            {/* What's included — Career Intelligence vs Career Path */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">Tudo incluído. Uma análise. Uma decisão.</h2>
+            {/* What's included — simplified */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-center text-foreground">O que recebes com a análise</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Career Path features (included) */}
-                <div className="space-y-3 p-5 rounded-xl bg-card border border-border">
-                  <div className="flex items-center gap-2">
-                    <Compass className="w-5 h-5 text-muted-foreground" />
-                    <p className="text-sm font-semibold text-muted-foreground">Diagnóstico (incluído)</p>
+                <div className="space-y-2.5 p-5 rounded-xl bg-card border border-border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Compass className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-sm font-semibold text-muted-foreground">Diagnóstico completo</p>
                   </div>
                   {[
                     "Roadmap de carreira personalizado",
                     "Análise de gaps de competências",
                     "Estimativa salarial por etapa",
-                    "Formações e certificações recomendadas",
-                    "Estratégia de networking",
-                    "Plano 30-60-90 dias",
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Check className="w-4 h-4 text-green-500 shrink-0" />
@@ -761,19 +757,15 @@ export default function CareerIntelligenceHome() {
                     </div>
                   ))}
                 </div>
-                {/* Career Intelligence PRO features */}
-                <div className="space-y-3 p-5 rounded-xl bg-gradient-to-b from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/30">
-                  <div className="flex items-center gap-2">
-                    <Scale className="w-5 h-5 text-[#C9A961]" />
-                    <p className="text-sm font-semibold text-[#C9A961]">Decisão Estratégica (exclusivo)</p>
+                <div className="space-y-2.5 p-5 rounded-xl bg-gradient-to-b from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Scale className="w-4 h-4 text-[#C9A961]" />
+                    <p className="text-sm font-semibold text-[#C9A961]">Decisão Estratégica</p>
                   </div>
                   {[
-                    "3 caminhos com probabilidade de sucesso",
-                    "Comparação lado a lado dos 3 caminhos",
-                    "Trade-offs: o que ganhas vs o que abdicas",
+                    "3 caminhos comparados com probabilidade de sucesso",
                     "Recomendação final com justificação",
                     "Plano de acção por caminho",
-                    "Contexto de mercado (empresas, procura)",
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-foreground font-medium">
                       <Sparkles className="w-4 h-4 text-[#C9A961] shrink-0" />
@@ -782,17 +774,7 @@ export default function CareerIntelligenceHome() {
                   ))}
                 </div>
               </div>
-              {/* CTA Button */}
-              <div className="text-center space-y-4 pt-4">
-                <Button
-                  onClick={() => setStep('upload')}
-                  className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal"
-                >
-                  <Scale className="w-5 h-5 mr-2 flex-shrink-0" />
-                  Obter a minha recomendação de carreira
-                </Button>
-                <p className="text-xs text-muted-foreground">Análise completa por {PRICE_DISPLAY} · Pagamento único · Resultado em &lt; 1 minuto{isUpgrade && <span className="ml-1 text-green-600 font-medium">(upgrade Career Path)</span>}</p>
-                {/* Demo button */}
+              <div className="text-center space-y-2">
                 <a
                   href="/career-intelligence/demo"
                   target="_blank"
@@ -801,27 +783,13 @@ export default function CareerIntelligenceHome() {
                   style={{ background: 'rgba(201,169,97,0.07)' }}
                 >
                   <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  Vê o que vais receber
+                  Vê um exemplo de análise
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
                 <p className="text-xs text-muted-foreground">
-                  Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
+                  Só o diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
                 </p>
               </div>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { icon: <Shield className="w-5 h-5" />, label: "Dados 100% privados" },
-                { icon: <Zap className="w-5 h-5" />, label: "Resultado em < 1 minuto" },
-                { icon: <Award className="w-5 h-5" />, label: "Criado por especialistas RH" },
-              ].map((badge, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 text-center">
-                  <span className="text-[#C9A961]">{badge.icon}</span>
-                  <span className="text-xs font-medium text-muted-foreground">{badge.label}</span>
-                </div>
-              ))}
             </div>
 
             {/* How it works */}
