@@ -24,6 +24,8 @@ const CareerIntelligenceResults = lazy(() => import("./pages/CareerIntelligenceR
 const StudentPackHome = lazy(() => import("./pages/StudentPackHome"));
 const StudentPackHomeEN = lazy(() => import("./pages/en/StudentPackHomeEN"));
 const StudentPackResults = lazy(() => import("./pages/StudentPackResults"));
+const LinkedInRoasterHome = lazy(() => import("./pages/LinkedInRoasterHome"));
+const LinkedInRoasterHomeEN = lazy(() => import("./pages/en/LinkedInRoasterHomeEN"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -84,7 +86,7 @@ function AppRouter() {
     return (
       <Router base="/en/linkedin-roaster">
         <Switch>
-          <Route path={"/"} component={HomeEN} />
+          <Route path={"/"} component={LinkedInRoasterHomeEN} />
           <Route component={NotFound} />
         </Switch>
       </Router>
@@ -163,7 +165,7 @@ function AppRouter() {
     return (
       <Router base="/linkedin-roaster">
         <Switch>
-          <Route path={"/"} component={Home} />
+          <Route path={"/"} component={LinkedInRoasterHome} />
           <Route component={NotFound} />
         </Switch>
       </Router>
