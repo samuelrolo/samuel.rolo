@@ -1830,90 +1830,58 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </section>
 
     <!-- ============================
-         SECÇÃO 3 — O ECOSSISTEMA EXPLICADO
+         SECÇÃO 3 — AS FERRAMENTAS (static grid)
          ============================ -->
-    <section class="ecossistema-section fade-up">
-        <div class="container">
-            <h2>O Share2Inspire não é uma <strong>ferramenta isolada</strong></h2>
-            <p class="eco-text">É um sistema que liga Análise, Posicionamento e Decisão — para garantir que cada passo na tua carreira tem intenção e direção.</p>
-        </div>
-    </section>
-
-    <!-- ============================
-         CARROSSEL DE SERVIÇOS — Cards horizontais automáticos
-         ============================ -->
-    <section class="services-carousel-section fade-up">
+    <style>
+        .services-static-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;}
+        @media(max-width:991px){.services-static-grid{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:576px){.services-static-grid{grid-template-columns:1fr;}}
+        .service-grid-card{background:#fff;border:1px solid #f0ebe0;border-radius:12px;padding:1.5rem;text-decoration:none;color:inherit;transition:all 0.25s ease;display:block;}
+        .service-grid-card:hover{border-color:#C9A961;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.07);color:inherit;}
+        .service-grid-card h3{font-size:0.95rem;font-weight:600;margin:0.75rem 0 0.4rem;color:#1a1a2e;}
+        .service-grid-card p{font-size:0.82rem;color:#666;line-height:1.5;margin:0 0 0.75rem;}
+        .service-grid-card .sgc-link{font-size:0.78rem;color:#C9A961;font-weight:600;}
+    </style>
+    <section class="services-carousel-section fade-up" style="overflow:visible;">
         <div class="container">
             <h2>As nossas <strong>ferramentas</strong></h2>
             <div class="gold-line"></div>
-        </div>
-        <div class="carousel-track-wrapper">
-            <div class="carousel-track">
-                <!-- Set 1 -->
-                <div class="service-card">
+            <div class="services-static-grid">
+                <a href="/cv-analyser" class="service-grid-card">
                     <div class="service-card-icon"><i class="fas fa-file-alt"></i></div>
                     <h3>CV Analyser</h3>
-                    <p>Diagnóstico do teu CV com IA em 30 segundos. ATS Score, benchmarks e sugestões de melhoria.</p>
-                    <a href="/cv-analyser" class="service-card-link">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
+                    <p>Diagnóstico ATS em 30 segundos. Percebe porque não estás a ser chamado.</p>
+                    <span class="sgc-link">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></span>
+                </a>
+                <a href="/linkedin-roaster" class="service-grid-card">
                     <div class="service-card-icon"><i class="fab fa-linkedin"></i></div>
                     <h3>LinkedIn Roaster</h3>
-                    <p>Análise brutal e honesta do teu perfil LinkedIn. Descobre o que os recrutadores realmente veem.</p>
-                    <a href="/linkedin-roaster" class="service-card-link">Analisar perfil <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
+                    <p>Feedback honesto sobre o teu perfil. O que os recrutadores realmente veem.</p>
+                    <span class="sgc-link">Analisar perfil <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></span>
+                </a>
+                <a href="/career-path" class="service-grid-card">
                     <div class="service-card-icon"><i class="fas fa-route"></i></div>
                     <h3>Career Path</h3>
-                    <p>Roadmap de carreira personalizado com IA. 3 funções ideais, gap de competências e plano de acção.</p>
-                    <a href="/career-path" class="service-card-link">Criar roadmap <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
+                    <p>Roadmap personalizado com IA. 3 funções ideais, gaps e plano de ação.</p>
+                    <span class="sgc-link">Criar roadmap <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></span>
+                </a>
+                <a href="/career-intelligence" class="service-grid-card">
                     <div class="service-card-icon"><i class="fas fa-brain"></i></div>
                     <h3>Career Intelligence</h3>
-                    <p>Comparação estratégica dos 3 caminhos de carreira com trade-offs e recomendação final.</p>
-                    <a href="/career-path" class="service-card-link">Saber mais <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
+                    <p>Comparação estratégica dos 3 caminhos com trade-offs e recomendação final.</p>
+                    <span class="sgc-link">Saber mais <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></span>
+                </a>
+                <a href="/pages/servicos.html" class="service-grid-card">
                     <div class="service-card-icon"><i class="fas fa-rocket"></i></div>
                     <h3>KickStart Pro</h3>
-                    <p>Sessão estratégica para parar, pensar e recentrar. Clarifica opções e define próximos passos.</p>
-                    <a href="pages/servicos.html" class="service-card-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <!-- Set 2 (duplicado para loop infinito) -->
-                <div class="service-card">
-                    <div class="service-card-icon"><i class="fas fa-file-alt"></i></div>
-                    <h3>CV Analyser</h3>
-                    <p>Diagnóstico do teu CV com IA em 30 segundos. ATS Score, benchmarks e sugestões de melhoria.</p>
-                    <a href="/cv-analyser" class="service-card-link">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
-                    <div class="service-card-icon"><i class="fab fa-linkedin"></i></div>
-                    <h3>LinkedIn Roaster</h3>
-                    <p>Análise brutal e honesta do teu perfil LinkedIn. Descobre o que os recrutadores realmente veem.</p>
-                    <a href="/linkedin-roaster" class="service-card-link">Analisar perfil <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
-                    <div class="service-card-icon"><i class="fas fa-route"></i></div>
-                    <h3>Career Path</h3>
-                    <p>Roadmap de carreira personalizado com IA. 3 funções ideais, gap de competências e plano de acção.</p>
-                    <a href="/career-path" class="service-card-link">Criar roadmap <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
-                    <div class="service-card-icon"><i class="fas fa-brain"></i></div>
-                    <h3>Career Intelligence</h3>
-                    <p>Comparação estratégica dos 3 caminhos de carreira com trade-offs e recomendação final.</p>
-                    <a href="/career-path" class="service-card-link">Saber mais <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
-                <div class="service-card">
-                    <div class="service-card-icon"><i class="fas fa-rocket"></i></div>
-                    <h3>KickStart Pro</h3>
-                    <p>Sessão estratégica para parar, pensar e recentrar. Clarifica opções e define próximos passos.</p>
-                    <a href="pages/servicos.html" class="service-card-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
-                </div>
+                    <p>Sessão estratégica 1:1 para clarificar opções e definir os próximos passos.</p>
+                    <span class="sgc-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i></span>
+                </a>
+            </div>
             </div>
         </div>
     </section>
+
 
     <!-- ============================
          SECÇÃO 4 — PARA QUEM É
@@ -1939,32 +1907,27 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- ============================
-         SECÇÃO 5 — AUTORIDADE
-         ============================ -->
-    <section class="autoridade-section fade-up">
-        <div class="container">
-            <h2>Criado com base em <strong>experiência real</strong></h2>
-            <div class="gold-line"></div>
-            <p class="aut-text">Não é uma tool genérica com IA. É um sistema construído com base em anos de experiência em consultoria, transformação organizacional e gestão de talento.</p>
-        </div>
-    </section>
+
 
     <!-- ============================
          SECÇÃO 6 — CTA FINAL COM ESCOLHA
          ============================ -->
     <section class="cta-final-section fade-up">
         <div class="cta-final-inner">
+            <p style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:0.75rem;font-weight:600;">Começa hoje</p>
+            <h2 style="font-size:1.6rem;font-weight:600;color:#fff;margin-bottom:0.5rem;">Por onde queres começar?</h2>
+            <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:2rem;">Resultados em menos de 60 segundos. Sem subscrição.</p>
             <div class="cta-final-cards">
                 <div class="cta-final-card">
-                    <p class="cfc-condition">Se queres resultados mais rápidos nas candidaturas</p>
+                    <p class="cfc-condition">Se queres mais chamadas de recrutadores</p>
                     <a href="/cv-analyser" class="cfc-button">Analisa o teu CV</a>
                 </div>
                 <div class="cta-final-card">
-                    <p class="cfc-condition">Se queres clareza sobre o teu futuro profissional</p>
+                    <p class="cfc-condition">Se queres clareza sobre o teu futuro</p>
                     <a href="/career-path" class="cfc-button">Explora o teu caminho</a>
                 </div>
             </div>
+            <p style="margin-top:1.75rem;font-size:0.78rem;color:rgba(255,255,255,0.35);">Ou <a href="/pages/servicos.html" style="color:rgba(201,169,97,0.7);text-decoration:none;">vê todos os serviços →</a></p>
         </div>
     </section>
 
@@ -2052,25 +2015,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     -->
 
-    <!-- ============================
-         E-BOOK — Lead magnet limpo.
-         ============================ -->
-    <section class="section-serene ebook-section fade-up">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 text-center">
-                    <img loading="lazy" src="images/ebook-capa.webp" alt="E-book Energia para Liderar" class="ebook-cover">
-                    <h2>Energia para <strong>Liderar</strong></h2>
-                    <div class="gold-line"></div>
-                    <p class="section-text">
-                        O guia prático de performance mental e física para quem lidera e quer manter a energia de forma sustentável.
-                    </p>
-                    <p class="ebook-authors">Samuel Rolo &bull; Marlene Ruivo</p>
-                    <a href="pages/conhecimento.html#ebook-download" class="ebook-cta">Saber mais</a>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- [HIDDEN — Career Energy Diagnostic original preservado]
     <section class="section-serene career-energy-section fade-up" id="career-energy">
@@ -2335,55 +2280,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     -->
 
-    <!-- ============================
-         VALORES — Tipografia como elemento visual.
-         ============================ -->
-    <section class="section-serene valores-section fade-up">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-7 text-center">
-                    <h2>O que nos <strong>move</strong></h2>
-                    <div class="gold-line"></div>
-                </div>
-            </div>
-            <div class="row justify-content-center" style="margin-top: 2rem;">
-                <div class="col-6 col-md-3">
-                    <div class="valor-item">
-                        <div class="valor-word">Humanidade</div>
-                        <p class="valor-desc">Pessoas primeiro. Decisões conscientes.</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="valor-item">
-                        <div class="valor-word">Confiança</div>
-                        <p class="valor-desc">Transparência, não promessas.</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="valor-item">
-                        <div class="valor-word">Clareza</div>
-                        <p class="valor-desc">Pensamento crítico e direção.</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="valor-item">
-                        <div class="valor-word">Impacto</div>
-                        <p class="valor-desc">Mudanças que se sentem.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ============================
-         PWA APP BANNER
-         ============================ -->
-    <section class="section-serene fade-up" style="padding: 0; background: transparent;">
-        <div class="container" style="max-width: 900px;">
-            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 16px; overflow: hidden;">
-                <div style="display: flex; align-items: center; justify-content: center; padding: 48px 40px; gap: 40px; flex-wrap: wrap;">
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0;">
-                        <div style="width: 80px; height: 140px; background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%); border: 2px solid #444; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative;">
+
                             <div style="position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 24px; height: 3px; background: #444; border-radius: 2px;"></div>
                             <span style="font-size: 28px; color: #D4A853; font-family: 'Poppins', sans-serif; font-weight: 600;">S</span>
                         </div>
@@ -2422,16 +2320,38 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </style>
 
     <!-- ============================
-         TESTEMUNHOS — Carrossel horizontal automático
+         TESTEMUNHOS — 3 cards estáticos
          ============================ -->
-    <section class="testimonials-carousel-section fade-up">
+    <section class="testimonials-carousel-section fade-up" style="overflow:visible;">
         <div class="container">
             <h2>O que dizem os nossos <strong>utilizadores</strong></h2>
             <div class="gold-line"></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;">
+                <div style="background:#fff;border-radius:12px;padding:1.5rem;border:1px solid #f0ebe0;">
+                    <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1.25rem;font-style:italic;">&ldquo;Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego.&rdquo;</p>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div style="width:36px;height:36px;background:#C9A961;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.78rem;font-weight:600;flex-shrink:0;">AM</div>
+                        <div><strong style="font-size:0.85rem;color:#1a1a2e;">Ana M.</strong><br><span style="font-size:0.75rem;color:#999;">Senior Manager</span></div>
+                    </div>
+                </div>
+                <div style="background:#fff;border-radius:12px;padding:1.5rem;border:1px solid #f0ebe0;">
+                    <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1.25rem;font-style:italic;">&ldquo;O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte.&rdquo;</p>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div style="width:36px;height:36px;background:#C9A961;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.78rem;font-weight:600;flex-shrink:0;">DS</div>
+                        <div><strong style="font-size:0.85rem;color:#1a1a2e;">Diogo S.</strong><br><span style="font-size:0.75rem;color:#999;">Software Engineer</span></div>
+                    </div>
+                </div>
+                <div style="background:#fff;border-radius:12px;padding:1.5rem;border:1px solid #f0ebe0;">
+                    <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1.25rem;font-style:italic;">&ldquo;Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. Um game-changer.&rdquo;</p>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div style="width:36px;height:36px;background:#C9A961;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.78rem;font-weight:600;flex-shrink:0;">MC</div>
+                        <div><strong style="font-size:0.85rem;color:#1a1a2e;">Mariana C.</strong><br><span style="font-size:0.75rem;color:#999;">Product Manager</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="testimonials-track-wrapper">
-            <div class="testimonials-track">
-                <!-- Set 1 -->
+    </section>
+
                 <div class="testimonial-card">
                     <div class="testimonial-avatar">AM</div>
                     <p class="testimonial-quote">“Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.”</p>
