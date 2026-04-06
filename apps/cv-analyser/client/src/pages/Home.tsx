@@ -1084,6 +1084,7 @@ export default function Home() {
             <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
             <a href="/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
+            <a href="/estudante" className="text-slate-500 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
             <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
             <a href="https://www.share2inspire.pt/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
@@ -1107,6 +1108,8 @@ export default function Home() {
             <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
             <a href="/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
+            <a href="/estudante" className="block text-sm text-slate-600 hover:text-[#C9A961]">Pack Estudante</a>
+            <a href="/estudante" className="text-slate-500 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
             <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">

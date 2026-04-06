@@ -385,6 +385,7 @@ export default function BundleHomeEN() {
             <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/en/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
             <a href="/en/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
+            <a href="/en/student-pack" className="text-slate-500 hover:text-[#C9A961] transition-colors">Student Pack</a>
             <a href="/en/bundle" className="text-[#C9A961]">Bundle</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
@@ -406,6 +407,8 @@ export default function BundleHomeEN() {
             <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/en/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
             <a href="/en/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
+            <a href="/en/student-pack" className="block text-sm text-slate-600 hover:text-[#C9A961]">Student Pack</a>
+            <a href="/en/student-pack" className="text-slate-500 hover:text-[#C9A961] transition-colors">Student Pack</a>
             <a href="/en/bundle" className="block text-sm text-[#C9A961] font-semibold">Bundle</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>

@@ -131,13 +131,32 @@ export default function StudentPackHome() {
   ];
 
   /* ─── Handle Proceed to Payment ─── */
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (!file) { setError('Faz upload do teu CV (PDF ou DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Introduz um URL de LinkedIn válido'); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
     if (!selectedCountry) { setError('Selecciona o teu país para resultados localizados'); return; }
     if (!acceptedTerms) { setError('Aceita a Política de Privacidade'); return; }
     setError(null);
+
+    // Pre-extract CV text and save to sessionStorage BEFORE payment redirect
+    // This ensures data survives Stripe redirects that lose React state
+    try {
+      let cvText = '';
+      if (file.type === 'application/pdf') {
+        cvText = await extractTextFromPDF(file);
+      } else {
+        cvText = await extractTextFromDOCX(file);
+      }
+      sessionStorage.setItem('studentPackCvText', cvText);
+      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      sessionStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
+      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
+    } catch (e) {
+      console.warn('[StudentPack] Pre-extraction warning:', e);
+    }
+
     setPaymentStep('payment');
     setPaymentError(null);
     setShowPaymentModal(true);
@@ -159,20 +178,35 @@ export default function StudentPackHome() {
     }, 4500);
 
     try {
-      // Extract CV text
+      // Extract CV text — use file if available, otherwise restore from sessionStorage (Stripe return)
       let cvText = "";
-      if (file!.type === 'application/pdf') {
-        cvText = await extractTextFromPDF(file!);
+      let base64Content = "";
+      if (file) {
+        if (file.type === 'application/pdf') {
+          cvText = await extractTextFromPDF(file);
+        } else {
+          cvText = await extractTextFromDOCX(file);
+        }
+        const reader = new FileReader();
+        base64Content = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
       } else {
-        cvText = await extractTextFromDOCX(file!);
+        // Stripe return: file lost, use sessionStorage
+        cvText = sessionStorage.getItem('studentPackCvText') || '';
+        if (!cvText) {
+          throw new Error('CV não disponível após pagamento. Por favor contacta support@share2inspire.pt com o teu comprovativo.');
+        }
       }
-      const reader = new FileReader();
-      const base64Content = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file!);
-      });
-      const useServerExtraction = cvText.length < 50;
+      // Also restore linkedinUrl from sessionStorage if lost
+      const currentLinkedinUrl = linkedinUrl || sessionStorage.getItem('studentPackLinkedinUrl') || '';
+      if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
+      const currentCountry = selectedCountry || sessionStorage.getItem('studentPackCountry') || 'Portugal';
+      const currentRegion = selectedRegion || sessionStorage.getItem('studentPackRegion') || '';
+      const currentEmail = email || sessionStorage.getItem('studentPackEmail') || '';
+      const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       // ─── ENGINE 1: CV Analyser ───
       setAnalysisMsg("A analisar o teu CV com IA...");
@@ -181,8 +215,8 @@ export default function StudentPackHome() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
         try {
-          const requestBody: any = { mode: 'cv_extraction', language: 'pt', country: selectedCountry, region: selectedRegion };
-          if (useServerExtraction) { requestBody.file = base64Content; requestBody.filename = file!.name; }
+          const requestBody: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
+          if (useServerExtraction && base64Content) { requestBody.file = base64Content; requestBody.filename = file?.name || 'cv.pdf'; }
           else { requestBody.cv_text = cvText.substring(0, 8000); }
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
@@ -211,7 +245,7 @@ export default function StudentPackHome() {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: 'pt', country: selectedCountry, region: selectedRegion }),
+            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
@@ -233,18 +267,20 @@ export default function StudentPackHome() {
       sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSource));
       sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseData || {}));
-      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
-      sessionStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
-      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
-      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('studentPackEmail', currentEmail);
+      sessionStorage.setItem('studentPackCountry', currentCountry);
+      sessionStorage.setItem('studentPackRegion', currentRegion);
+      sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
       sessionStorage.setItem('studentPackPaid', 'true');
+      // Clean up pre-saved CV text
+      sessionStorage.removeItem('studentPackCvText');
 
       // Also store for regular CV results (compatibility)
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('isPaid', 'true');
-      sessionStorage.setItem('paymentEmail', email.trim().toLowerCase());
-      sessionStorage.setItem('analysisCountry', selectedCountry || 'Portugal');
-      sessionStorage.setItem('analysisRegion', selectedRegion || '');
+      sessionStorage.setItem('paymentEmail', currentEmail);
+      sessionStorage.setItem('analysisCountry', currentCountry);
+      sessionStorage.setItem('analysisRegion', currentRegion);
 
       // Save to Supabase
       try {
