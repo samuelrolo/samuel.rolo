@@ -36,7 +36,7 @@ export default function S2IFooter() {
           }
         }
       `}</style>
-      <footer style={{ background: '#1A1A1A', color: '#fff', padding: '60px 0 30px', marginTop: 0, width: '100%' }}>
+      <footer style={{ background: '#1A1A1A', color: '#fff', padding: '60px 0 30px', marginTop: 0, width: '100%', overflowX: 'hidden', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1140px', margin: '0 auto', padding: '0 24px', boxSizing: 'border-box' }}>
           <div className="s2i-footer-grid">
             {/* Logo */}
