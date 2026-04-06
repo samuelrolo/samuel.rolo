@@ -77,6 +77,11 @@ export default function LinkedInRoasterHome() {
     return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
   };
 
+  const [loadingMsg, setLoadingMsg] = useState("");
+  const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+  const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+
   const handleRoast = async () => {
     if (!isValidLinkedinUrl(linkedinUrl)) {
       setError("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)");
@@ -88,25 +93,110 @@ export default function LinkedInRoasterHome() {
     }
     setError(null);
     setLoading(true);
+    const startTime = Date.now();
+
+    // Loading messages rotation
+    const messages = [
+      "A analisar o teu perfil LinkedIn...",
+      "A comparar com top performers do setor...",
+      "A avaliar headline, about e experiência...",
+      "A verificar SEO e keywords...",
+      "A preparar o teu relatório personalizado..."
+    ];
+    let msgIdx = 0;
+    setLoadingMsg(messages[0]);
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % messages.length;
+      setLoadingMsg(messages[msgIdx]);
+    }, 3000);
 
     try {
       // Track conversion
-      sendConversion('linkedin_roast_request');
+      sendConversion(0, 'EUR', `roast-${Date.now()}`);
       if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'linkedin_roaster' });
 
-      // Store data and redirect to results
-      sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
+      // Call edge function
+      let responseData: any = null;
+      for (let attempt = 0; attempt <= 2; attempt++) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+        try {
+          const response = await fetch(SUPABASE_EDGE_URL, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mode: 'linkedin_roast',
+              linkedin_url: linkedinUrl,
+              language: 'pt'
+            }),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (response.ok) {
+            responseData = await response.json();
+            if (responseData.success) break;
+          }
+          if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          if (attempt < 2 && fetchError.name !== 'AbortError') {
+            await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+          } else throw fetchError;
+        }
+      }
+
+      if (!responseData?.success) {
+        throw new Error(responseData?.error || 'Não foi possível analisar o perfil. Verifica se o URL está correto e o perfil é público.');
+      }
+
+      // Store results
+      sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(responseData));
       sessionStorage.setItem('linkedinRoasterEmail', email);
+      sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
 
-      // TODO: implement actual payment flow
-      // For now, redirect to CV analyser as cross-sell
+      // Save to Supabase
+      try {
+        fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            profile_url: linkedinUrl,
+            user_email: email.trim().toLowerCase(),
+            score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0,
+            analysis_result: JSON.stringify(responseData),
+            domain: 'share2inspire.pt',
+            created_at: new Date().toISOString()
+          }),
+        }).catch(() => {});
+      } catch (_) {}
+
+      // Trigger welcome email
+      try {
+        fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            name: '',
+            source: 'linkedin_roaster',
+            language: 'pt'
+          })
+        }).catch(() => {});
+      } catch (_) {}
+
+      // Ensure minimum loading time of 2.8s
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
+
+      clearInterval(msgInterval);
+      setLoadingMsg("Tudo pronto! A abrir o relatório...");
+
       setTimeout(() => {
-        setLoading(false);
-        // Show success state
-        alert('🔥 O teu roast está a ser preparado! Receberás no email em breve.');
-      }, 2000);
+        window.location.href = '/linkedin-roaster/results';
+      }, 800);
     } catch (err: any) {
+      clearInterval(msgInterval);
       setError(err.message || "Erro ao processar. Tenta novamente.");
       setLoading(false);
     }
@@ -286,7 +376,7 @@ export default function LinkedInRoasterHome() {
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all disabled:shadow-none disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> A preparar o teu roast...</>
+                  <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || 'A preparar o teu roast...'}</>
                 ) : (
                   <><Flame className="w-5 h-5" /> Roast o meu LinkedIn 🔥</>
                 )}

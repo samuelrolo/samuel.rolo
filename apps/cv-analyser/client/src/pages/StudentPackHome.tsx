@@ -18,7 +18,7 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/student-pack';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
@@ -208,16 +208,32 @@ export default function StudentPackHome() {
       const currentEmail = email || sessionStorage.getItem('studentPackEmail') || '';
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
-      // ─── ENGINE 1: CV Analyser ───
+      // ─── SINGLE ENGINE: Student Pack (unified analysis) ───
       setAnalysisMsg("A analisar o teu CV com IA...");
-      let cvResponseData: any = null;
+      let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000);
+        const timeoutId = setTimeout(() => controller.abort(), 180000);
         try {
-          const requestBody: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
-          if (useServerExtraction && base64Content) { requestBody.file = base64Content; requestBody.filename = file?.name || 'cv.pdf'; }
-          else { requestBody.cv_text = cvText.substring(0, 8000); }
+          const requestBody: any = {
+            mode: 'student_pack',
+            language: 'pt',
+            country: currentCountry,
+            region: currentRegion,
+            linkedin_url: currentLinkedinUrl
+          };
+          if (useServerExtraction && base64Content) {
+            requestBody.file = base64Content;
+            requestBody.filename = file?.name || 'cv.pdf';
+          } else {
+            requestBody.cv_text = cvText.substring(0, 8000);
+          }
+
+          // Update loading messages
+          setTimeout(() => setAnalysisMsg("A cruzar com o teu perfil LinkedIn..."), 5000);
+          setTimeout(() => setAnalysisMsg("A construir o teu plano de entrada no mercado..."), 12000);
+          setTimeout(() => setAnalysisMsg("A preparar recomendações personalizadas..."), 20000);
+
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
@@ -225,7 +241,10 @@ export default function StudentPackHome() {
             signal: controller.signal
           });
           clearTimeout(timeoutId);
-          if (response.ok) { cvResponseData = await response.json(); if (cvResponseData.success) break; }
+          if (response.ok) {
+            responseData = await response.json();
+            if (responseData.success) break;
+          }
           if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
         } catch (fetchError: any) {
           clearTimeout(timeoutId);
@@ -233,50 +252,18 @@ export default function StudentPackHome() {
           else throw fetchError;
         }
       }
-      if (!cvResponseData?.success) throw new Error('Erro na análise do CV. Tenta novamente.');
-
-      // ─── ENGINE 2: LinkedIn Roaster ───
-      setAnalysisMsg("A analisar o teu perfil LinkedIn...");
-      let linkedinResponseData: any = null;
-      for (let attempt = 0; attempt <= 2; attempt++) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000);
-        try {
-          const response = await fetch(SUPABASE_EDGE_URL, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (response.ok) { linkedinResponseData = await response.json(); if (linkedinResponseData.success) break; }
-          if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-        } catch (fetchError: any) {
-          clearTimeout(timeoutId);
-          if (attempt < 2 && fetchError.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-          else throw fetchError;
-        }
-      }
+      if (!responseData?.success) throw new Error(responseData?.error || 'Erro na análise. Tenta novamente.');
 
       // ─── STORE RESULTS ───
-      setAnalysisMsg("A cruzar dados CV ↔ LinkedIn...");
-      const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
-      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource);
-
-      // Store everything in sessionStorage for StudentPackResults
-      sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
-      sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSource));
-      sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseData || {}));
+      setAnalysisMsg("A finalizar o teu relatório...");
+      // Store the unified student_pack response
+      sessionStorage.setItem('studentPackAnalysis', JSON.stringify(responseData));
       sessionStorage.setItem('studentPackEmail', currentEmail);
       sessionStorage.setItem('studentPackCountry', currentCountry);
       sessionStorage.setItem('studentPackRegion', currentRegion);
       sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
       sessionStorage.setItem('studentPackPaid', 'true');
-      // Clean up pre-saved CV text
       sessionStorage.removeItem('studentPackCvText');
-
-      // Also store for regular CV results (compatibility)
-      sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('isPaid', 'true');
       sessionStorage.setItem('paymentEmail', currentEmail);
       sessionStorage.setItem('analysisCountry', currentCountry);
@@ -284,31 +271,45 @@ export default function StudentPackHome() {
 
       // Save to Supabase
       try {
-        const cp = cvAnalysisSource?.candidate_profile || {};
+        const perfil = responseData?.analysis?.perfil || {};
         const transactionId = `STUDPACK-${Date.now()}`;
         fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
           body: JSON.stringify({
-            score: cvAnalysisResult.overallScore || 0,
-            professional_area: cp.detected_role || null,
+            score: responseData?.analysis?.score_global?.valor || 0,
+            professional_area: perfil.area_alvo || null,
             analysis_type: 'student_pack',
-            analysis_result: JSON.stringify(cvAnalysisSource),
+            analysis_result: JSON.stringify(responseData),
             cv_text: cvText || null,
             payment_status: 'paid',
             payment_amount: finalPrice,
             transaction_id: transactionId,
             domain: 'share2inspire.pt',
-            user_name: cp.name || cp.detected_name || null,
+            user_name: perfil.nome || null,
             user_email: email.trim().toLowerCase(),
             linkedin_url: linkedinUrl,
           }),
         }).catch(() => {});
       } catch (_) {}
 
+      // Trigger welcome email
+      try {
+        fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            name: responseData?.analysis?.perfil?.nome || '',
+            source: 'student_pack',
+            language: 'pt'
+          })
+        }).catch(() => {});
+      } catch (_e) {}
+
       // Track conversions
       trackPurchase('student_pack', finalPrice, `STUDPACK-${Date.now()}`);
-      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
+      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
       trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-${Date.now()}` });
 
       // Ensure minimum loading time of 2.8s
@@ -320,7 +321,7 @@ export default function StudentPackHome() {
       setStep('done');
 
       // Save to user_analyses
-      try { saveToUserAnalyses('student_pack', { cv_score: cvAnalysisResult.overallScore || 0, linkedin_score: linkedinResponseData?.teaser_score || null, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
+      try { saveToUserAnalyses('student_pack', { score: responseData?.analysis?.score_global?.valor || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
 
       setTimeout(() => { window.location.href = '/estudante/results'; }, 1500);
     } catch (err: any) {
@@ -335,7 +336,7 @@ export default function StudentPackHome() {
     if (!email) { setPaymentError('Introduz o teu email'); return; }
     if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
     setPaymentLoading(true);
-    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
+    if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const cleanPhone = phone.replace(/\s/g, '').replace(/\D/g, '');
@@ -361,7 +362,7 @@ export default function StudentPackHome() {
     trackPaymentStart('student_pack', finalPrice);
     window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
     setPaymentStep('success');
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
+    if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
     trackPurchase('student_pack', finalPrice, `STUDPACK-PAYPAL-${Date.now()}`);
     trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `STUDPACK-PAYPAL-${Date.now()}` });
   };
@@ -369,7 +370,7 @@ export default function StudentPackHome() {
   const handleStripePayment = async () => {
     if (!email) { setPaymentError('Introduz o teu email'); return; }
     setPaymentLoading(true);
-    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
+    if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `STUDPACK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
