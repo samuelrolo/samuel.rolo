@@ -1912,22 +1912,110 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <!-- ============================
          SECÇÃO 6 — CTA FINAL COM ESCOLHA
          ============================ -->
+    <style>
+        .cta-final-cards-v2 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 2.5rem;
+        }
+        @media (max-width: 900px) { .cta-final-cards-v2 { grid-template-columns: 1fr; } }
+        .cfc2-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 14px;
+            padding: 2rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .cfc2-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(201,169,97,0.4), transparent);
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+        .cfc2-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(201,169,97,0.45); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .cfc2-card:hover::before { opacity: 1; }
+        .cfc2-icon {
+            width: 44px; height: 44px;
+            background: rgba(201,169,97,0.12);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #C9A961;
+            margin-bottom: 1.1rem;
+        }
+        .cfc2-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(201,169,97,0.7);
+            margin-bottom: 0.4rem;
+        }
+        .cfc2-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .cfc2-desc {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+        .cfc2-btn {
+            display: inline-block;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .cfc2-btn:hover { background: #fff; color: #1A1A1A; }
+    </style>
     <section class="cta-final-section fade-up">
-        <div class="cta-final-inner">
-            <p style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:0.75rem;font-weight:600;">Começa hoje</p>
-            <h2 style="font-size:1.6rem;font-weight:600;color:#fff;margin-bottom:0.5rem;">Por onde queres começar?</h2>
-            <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:2rem;">Resultados em menos de 60 segundos. Sem subscrição.</p>
-            <div class="cta-final-cards">
-                <div class="cta-final-card">
-                    <p class="cfc-condition">Se queres mais chamadas de recrutadores</p>
-                    <a href="/cv-analyser" class="cfc-button">Analisa o teu CV</a>
+        <div class="cta-final-inner" style="max-width:920px;">
+            <p style="font-size:0.68rem;letter-spacing:2.5px;text-transform:uppercase;color:#C9A961;margin-bottom:0.75rem;font-weight:700;">Começa hoje</p>
+            <h2 style="font-size:1.75rem;font-weight:600;color:#fff;margin-bottom:0.5rem;letter-spacing:-0.3px;">Por onde queres começar?</h2>
+            <p style="font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:0;">Resultados em menos de 60 segundos. Sem subscrição.</p>
+            <div class="cta-final-cards-v2">
+                <div class="cfc2-card">
+                    <div class="cfc2-icon"><i class="fas fa-file-alt"></i></div>
+                    <p class="cfc2-label">CV Analyser</p>
+                    <h3 class="cfc2-title">Queres mais chamadas de recrutadores?</h3>
+                    <p class="cfc2-desc">Descobre o teu ATS Score e o que mudas no CV para passares os filtros.</p>
+                    <a href="/cv-analyser" class="cfc2-btn">Analisa o teu CV</a>
                 </div>
-                <div class="cta-final-card">
-                    <p class="cfc-condition">Se queres clareza sobre o teu futuro</p>
-                    <a href="/career-path" class="cfc-button">Explora o teu caminho</a>
+                <div class="cfc2-card">
+                    <div class="cfc2-icon"><i class="fab fa-linkedin"></i></div>
+                    <p class="cfc2-label">LinkedIn Roaster</p>
+                    <h3 class="cfc2-title">O teu perfil está a atrair oportunidades?</h3>
+                    <p class="cfc2-desc">Recebe um diagnóstico honesto sobre o que os recrutadores realmente veem.</p>
+                    <a href="/linkedin-roaster" class="cfc2-btn">Analisar perfil</a>
+                </div>
+                <div class="cfc2-card">
+                    <div class="cfc2-icon"><i class="fas fa-route"></i></div>
+                    <p class="cfc2-label">Career Path</p>
+                    <h3 class="cfc2-title">Queres clareza sobre o teu próximo passo?</h3>
+                    <p class="cfc2-desc">Roadmap personalizado com IA: funções ideais, gaps e plano de ação 30-60-90.</p>
+                    <a href="/career-path" class="cfc2-btn">Explorar o meu caminho</a>
                 </div>
             </div>
-            <p style="margin-top:1.75rem;font-size:0.78rem;color:rgba(255,255,255,0.35);">Ou <a href="/pages/servicos.html" style="color:rgba(201,169,97,0.7);text-decoration:none;">vê todos os serviços →</a></p>
+            <p style="margin-top:2rem;font-size:0.78rem;color:rgba(255,255,255,0.3);">Ou <a href="/pages/servicos.html" style="color:rgba(201,169,97,0.6);text-decoration:none;">vê todos os serviços →</a></p>
         </div>
     </section>
 
@@ -2282,42 +2370,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
 
 
-                            <div style="position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 24px; height: 3px; background: #444; border-radius: 2px;"></div>
-                            <span style="font-size: 28px; color: #D4A853; font-family: 'Poppins', sans-serif; font-weight: 600;">S</span>
-                        </div>
-                    </div>
-                    <div style="max-width: 480px;">
-                        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(212, 168, 83, 0.12); color: #D4A853; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 16px; font-family: 'Poppins', sans-serif;">
-                            <span style="width: 6px; height: 6px; background: #D4A853; border-radius: 50%; animation: pwa-pulse 2s infinite;"></span>
-                            Novidade
-                        </div>
-                        <h2 style="font-size: 22px; font-weight: 600; color: #fff; line-height: 1.3; margin-bottom: 10px; font-family: 'Poppins', sans-serif;">A tua carreira no bolso.<br><span style="color: #D4A853;">Instala a app.</span></h2>
-                        <p style="font-size: 14px; font-weight: 300; color: #aaa; line-height: 1.6; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">O teu ecossistema de carreira Share2Inspire agora funciona como uma app no teu telemóvel. Sem downloads, sem App Store — direto do browser.</p>
-                        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: flex-start; gap: 8px;">
-                                <span style="width: 22px; height: 22px; background: rgba(212, 168, 83, 0.15); color: #D4A853; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; font-family: 'Poppins', sans-serif;">1</span>
-                                <span style="font-size: 12px; color: #ccc; line-height: 1.4; font-family: 'Poppins', sans-serif;">Abre no browser</span>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 8px;">
-                                <span style="width: 22px; height: 22px; background: rgba(212, 168, 83, 0.15); color: #D4A853; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; font-family: 'Poppins', sans-serif;">2</span>
-                                <span style="font-size: 12px; color: #ccc; line-height: 1.4; font-family: 'Poppins', sans-serif;">Toca em "Instalar" ou "Adicionar ao ecrã"</span>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 8px;">
-                                <span style="width: 22px; height: 22px; background: rgba(212, 168, 83, 0.15); color: #D4A853; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; font-family: 'Poppins', sans-serif;">3</span>
-                                <span style="font-size: 12px; color: #ccc; line-height: 1.4; font-family: 'Poppins', sans-serif;">Acede com um toque</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <style>
-        @keyframes pwa-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-    </style>
+
+
 
     <!-- ============================
          TESTEMUNHOS — 3 cards estáticos
@@ -2352,46 +2406,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">AM</div>
-                    <p class="testimonial-quote">“Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.”</p>
-                    <p class="testimonial-name">Ana M.</p>
-                    <p class="testimonial-role">Senior Manager</p>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">DS</div>
-                    <p class="testimonial-quote">“O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.”</p>
-                    <p class="testimonial-name">Diogo S.</p>
-                    <p class="testimonial-role">Software Engineer</p>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">MC</div>
-                    <p class="testimonial-quote">“Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.”</p>
-                    <p class="testimonial-name">Mariana C.</p>
-                    <p class="testimonial-role">Product Manager</p>
-                </div>
-                <!-- Set 2 (duplicado para loop infinito) -->
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">AM</div>
-                    <p class="testimonial-quote">“Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.”</p>
-                    <p class="testimonial-name">Ana M.</p>
-                    <p class="testimonial-role">Senior Manager</p>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">DS</div>
-                    <p class="testimonial-quote">“O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.”</p>
-                    <p class="testimonial-name">Diogo S.</p>
-                    <p class="testimonial-role">Software Engineer</p>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-avatar">MC</div>
-                    <p class="testimonial-quote">“Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.”</p>
-                    <p class="testimonial-name">Mariana C.</p>
-                    <p class="testimonial-role">Product Manager</p>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Footer -->
     <footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
