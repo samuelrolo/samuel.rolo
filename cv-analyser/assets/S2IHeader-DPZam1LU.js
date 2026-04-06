@@ -1,4 +1,4 @@
-import{j as e,r as o}from"./vendor-radix-D8pSuGtB.js";import{b as i,X as d,M as c}from"./x-DSy6J-7H.js";function p(){const r={display:"block",fontSize:"0.82rem",color:"rgba(255,255,255,0.6)",textDecoration:"none",marginBottom:"10px",transition:"color .3s"},s={fontSize:"0.75rem",textTransform:"uppercase",letterSpacing:"1.5px",color:"#C9A961",fontWeight:600,marginBottom:"20px"};return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+import{j as e,r as o}from"./vendor-radix-D8pSuGtB.js";import{b as i,X as d,M as c}from"./x-D_jsntNA.js";function p(){const r={display:"block",fontSize:"0.82rem",color:"rgba(255,255,255,0.6)",textDecoration:"none",marginBottom:"10px",transition:"color .3s"},s={fontSize:"0.75rem",textTransform:"uppercase",letterSpacing:"1.5px",color:"#C9A961",fontWeight:600,marginBottom:"20px"};return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
         .s2i-footer-grid {
           display: grid;
           grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
