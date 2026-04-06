@@ -411,6 +411,7 @@ export default function Home() {
     trackAnalysisStart('cv_analyser');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE] Iniciando análise:', file.name, file.type);
@@ -577,6 +578,10 @@ export default function Home() {
         }
       } catch (e) { /* silent */ }
 
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -707,6 +712,7 @@ export default function Home() {
     trackAnalysisStart('cv_analyser_linkedin');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE] Iniciando análise via LinkedIn:', linkedInUrl);
@@ -802,6 +808,10 @@ export default function Home() {
       // Fire-and-forget: send welcome email (LinkedIn flow)
       const liEmail = sessionStorage.getItem('paymentEmail') || '';
       if (liEmail) sendWelcomeEmail(liEmail, '', 'pt');
+
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
 
@@ -1065,7 +1075,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+            <img src="https://www.share2inspire.pt/images/logo-lateral.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
           </a>
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">

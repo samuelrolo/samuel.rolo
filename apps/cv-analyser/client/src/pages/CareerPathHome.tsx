@@ -65,8 +65,8 @@ const testimonials = [
 
 /* ─── Pricing (inline) ─── */
 const PRICE_DISPLAY_BASE = '19,99€';
-const PRICE_DISPLAY_GROWTH = '8,99€';
-const PRICE_DISPLAY_PRO = '4,99€';
+const PRICE_DISPLAY_GROWTH = '19,99€';
+const PRICE_DISPLAY_PRO = '19,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
@@ -146,10 +146,10 @@ export default function CareerPathHome() {
   const isMemberPro = memberTier === 'pro';
   const hasMemberDiscount = isMemberGrowth || isMemberPro;
 
-  const PRICE = isMemberPro ? '4,99' : isMemberGrowth ? '8,99' : '19,99';
-  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
-  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_PRO : isMemberGrowth ? PRICE_DISPLAY_GROWTH : PRICE_DISPLAY_BASE;
-  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
+  const PRICE = '19,99';
+  const PRICE_NUM = 19.99;
+  const PRICE_DISPLAY = PRICE_DISPLAY_BASE;
+  const memberProductType = 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
 
@@ -253,6 +253,7 @@ export default function CareerPathHome() {
     trackAnalysisStart('career_path');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       let cvText = "";
@@ -368,6 +369,10 @@ export default function CareerPathHome() {
         skills: (profile.key_skills || []).slice(0, 5),
         nextRole: profile.likely_next_role || null,
       });
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLoading(false);
       setStep('preview');
 
@@ -583,7 +588,7 @@ export default function CareerPathHome() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+            <img src="https://www.share2inspire.pt/images/logo-lateral.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
           </a>
           <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
             <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
@@ -638,6 +643,32 @@ export default function CareerPathHome() {
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.
               </p>
+
+              {/* Primary CTA — immediately visible above the fold */}
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <Button
+                  onClick={() => setStep('upload')}
+                  className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
+                >
+                  <Compass className="w-5 h-5 mr-2" />
+                  Descobrir o meu Career Path
+                </Button>
+                <p className="text-xs text-muted-foreground">Pagamento único de {PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto</p>
+              </div>
+
+              {/* Trust badges — inline */}
+              <div className="flex flex-wrap justify-center gap-6 pt-1">
+                {[
+                  { icon: <Shield className="w-4 h-4" />, label: "Dados 100% privados" },
+                  { icon: <Zap className="w-4 h-4" />, label: "Resultado em < 1 min" },
+                  { icon: <Award className="w-4 h-4" />, label: "Criado por especialistas RH" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-[#C9A961]">{badge.icon}</span>
+                    {badge.label}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* ── Showcase: See What You'll Receive ── */}

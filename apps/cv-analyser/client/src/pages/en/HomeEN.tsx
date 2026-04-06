@@ -363,6 +363,7 @@ export default function HomeEN() {
 
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       let cvText = "";
@@ -506,6 +507,10 @@ export default function HomeEN() {
         }
       } catch (e) { /* silent */ }
 
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -628,6 +633,7 @@ export default function HomeEN() {
 
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE_EN] Starting LinkedIn analysis:', linkedInUrl);
@@ -722,6 +728,10 @@ export default function HomeEN() {
       // Fire-and-forget: send welcome email (LinkedIn flow)
       const liEmail = sessionStorage.getItem('paymentEmail') || '';
       if (liEmail) sendWelcomeEmail(liEmail, '', 'en');
+
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
 
@@ -957,7 +967,7 @@ export default function HomeEN() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <a href="https://www.share2inspire.pt/en/pages/home" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+            <img src="https://www.share2inspire.pt/images/logo-lateral.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
           </a>
           <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
             <a href="https://www.share2inspire.pt/en/pages/home" className="text-slate-500 hover:text-[#C9A961] transition-colors">Home</a>
