@@ -3,7 +3,7 @@
 // Análise honesta e directa que mostra o que recrutadores realmente pensam
 
 import { useState, useEffect } from "react";
-import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Sparkles, Search, Globe, Zap, ArrowRight, Shield, Check, Menu, X, AlertCircle, Users, Award, MessageSquare, ThumbsDown, ThumbsUp, Lightbulb, CreditCard, Smartphone } from "lucide-react";
+import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Sparkles, Search, Globe, Zap, ArrowRight, Shield, Check, Menu, X, AlertCircle, Users, Award, MessageSquare, ThumbsDown, ThumbsUp, Lightbulb, CreditCard, Smartphone, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { sendConversion } from "@/lib/gtag";
@@ -85,6 +85,15 @@ export default function LinkedInRoasterHome() {
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
+  // Discount state
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+  const finalPriceStr = finalPrice.toFixed(2).replace('.', ',');
+
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
     return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
@@ -108,8 +117,8 @@ export default function LinkedInRoasterHome() {
     setShowPaymentModal(true);
   };
 
-  // Step 2: Run analysis after payment
-  const handleRoast = async () => {
+  // Step 2: Run analysis - called ONLY from verified payment callbacks
+  const runAnalysis = async () => {
     setError(null);
     setLoading(true);
     const startTime = Date.now();
@@ -278,7 +287,7 @@ export default function LinkedInRoasterHome() {
         const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId }) });
         if (!res.ok) { if (attempts >= 20) { clearInterval(interval); setPollingExpired(true); } return; }
         const data = await res.json();
-        if (data.paid) { clearInterval(interval); setShowPaymentModal(false); handleRoast(); return; }
+        if (data.paid) { clearInterval(interval); setShowPaymentModal(false); runAnalysis(); return; }
         if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg('Tempo esgotado.'); }
         else setPollingMsg(attempts < 6 ? 'Confirma o pagamento na app MB WAY...' : 'Ainda a aguardar confirmação...');
       } catch { }
@@ -292,9 +301,49 @@ export default function LinkedInRoasterHome() {
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
       const data = await res.json();
-      if (data.paid) { setShowPaymentModal(false); handleRoast(); }
+      if (data.paid) { setShowPaymentModal(false); runAnalysis(); }
       else { setPollingExpired(true); setPollingMsg('Pagamento não confirmado.'); startPolling(currentOrderId); }
     } catch { setPollingMsg('Erro.'); setPollingExpired(true); }
+  };
+
+  /* ─── Discount Code Handler ─── */
+  const incrementCouponUsage = (code: string) => {
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
+      method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coupon_code: code })
+    }).catch(() => {});
+  };
+
+  const handleDiscountCode = async () => {
+    if (!discountCode.trim()) { setDiscountError('Introduz um código'); return; }
+    setDiscountLoading(true); setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
+    try {
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Código ainda não ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Código expirado.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Código atingiu o limite.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster') && !products.includes('roaster')) { setDiscountError('Código não aplicável.'); return; }
+        if (coupon.discount_percent === 100) { incrementCouponUsage(code); setShowDiscountModal(false); runAnalysis(); return; }
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code); setShowDiscountModal(false); return;
+      }
+      const vRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+      const vouchers = await vRes.json();
+      if (vouchers && vouchers.length > 0) {
+        const v = vouchers[0];
+        if (v.valid_until && new Date(v.valid_until) < new Date()) { setDiscountError('Voucher expirado.'); return; }
+        fetch(`${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: false, redeemed_at: new Date().toISOString() }) }).catch(() => {});
+        setShowDiscountModal(false); runAnalysis(); return;
+      }
+      setDiscountError('Código inválido ou já utilizado.');
+    } catch { setDiscountError('Erro ao verificar.'); }
+    finally { setDiscountLoading(false); }
   };
 
   // Check for Stripe return
@@ -304,7 +353,7 @@ export default function LinkedInRoasterHome() {
       window.history.replaceState({}, '', '/linkedin-roaster');
       const savedEmail = sessionStorage.getItem('linkedinRoasterEmail') || '';
       const savedUrl = sessionStorage.getItem('linkedinRoasterUrl') || '';
-      if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => handleRoast(), 500); }
+      if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => runAnalysis(), 500); }
     }
   }, []);
 
@@ -444,14 +493,28 @@ export default function LinkedInRoasterHome() {
                 {loading ? (
                   <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || 'A preparar o teu roast...'}</>
                 ) : (
-                  <><Flame className="w-5 h-5" /> Pagar {PRICE}€ e receber o roast 🔥</>
+                  <><Flame className="w-5 h-5" /> {appliedCoupon ? `Pagar ${finalPriceStr}€ e receber o roast` : `Pagar ${PRICE}€ e receber o roast`} 🔥</>
                 )}
               </button>
+
+              {appliedCoupon && (
+                <div className="text-center">
+                  <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 rounded-full px-3 py-1 text-xs font-medium text-green-700">
+                    <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}: -{appliedCoupon.percent}% aplicado
+                  </span>
+                </div>
+              )}
 
               <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2">
                 <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> 100% Confidencial</span>
                 <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> Resultado em 30s</span>
                 <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Pagamento seguro</span>
+              </div>
+
+              <div className="text-center pt-1">
+                <button onClick={() => setShowDiscountModal(true)} className="text-xs text-[#C9A961] hover:underline inline-flex items-center gap-1">
+                  <Ticket className="w-3 h-3" /> Tens um código de desconto?
+                </button>
               </div>
             </div>
           </section>
@@ -543,6 +606,12 @@ export default function LinkedInRoasterHome() {
             {paymentStep === 'payment' && (
               <div className="space-y-4">
                 <p className="text-sm text-slate-600">LinkedIn Roaster — Roast Brutal ao teu perfil LinkedIn</p>
+                {appliedCoupon && (
+                  <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <span className="text-sm text-green-700 font-medium"><Ticket className="w-4 h-4 inline mr-1" />{appliedCoupon.code}: -{appliedCoupon.percent}%</span>
+                    <span className="text-sm font-bold text-green-800">{finalPriceStr}€ <span className="line-through text-slate-400 font-normal text-xs">{PRICE}€</span></span>
+                  </div>
+                )}
 
                 {/* Payment method tabs */}
                 <div className="flex gap-2">
@@ -571,7 +640,7 @@ export default function LinkedInRoasterHome() {
                   disabled={paymentLoading || (paymentMethod === 'mbway' && !phone)}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {paymentLoading ? 'A processar...' : `Pagar ${PRICE}€`}
+                  {paymentLoading ? 'A processar...' : `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`}
                 </button>
 
                 <p className="text-xs text-slate-400 text-center">Pagamento seguro via {paymentMethod === 'mbway' ? 'MB WAY' : paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}</p>
@@ -592,9 +661,28 @@ export default function LinkedInRoasterHome() {
               <div className="text-center py-6 space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
                 <p className="text-sm text-slate-600">Após confirmar o pagamento, clica abaixo:</p>
-                <button onClick={() => { setShowPaymentModal(false); handleRoast(); }} className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold">Iniciar Roast 🔥</button>
+                <button onClick={() => { setShowPaymentModal(false); runAnalysis(); }} className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold">Iniciar Roast 🔥</button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ DISCOUNT MODAL ═══ */}
+      {showDiscountModal && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onClick={() => setShowDiscountModal(false)}>
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Ticket className="w-5 h-5 text-[#C9A961]" /> Código de desconto</h3>
+              <button onClick={() => setShowDiscountModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label="Fechar"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-3">
+              <input type="text" value={discountCode} onChange={e => setDiscountCode(e.target.value.toUpperCase())} placeholder="Introduz o código" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm uppercase tracking-wider focus:ring-2 focus:ring-orange-500 outline-none" />
+              {discountError && <p className="text-sm text-red-600">{discountError}</p>}
+              <button onClick={handleDiscountCode} disabled={discountLoading || !discountCode.trim()} className="w-full py-3 rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold disabled:opacity-50 transition-all">
+                {discountLoading ? 'A verificar...' : 'Aplicar código'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -26,6 +26,47 @@ const nivelBadge = (nivel: string) => {
   return 'bg-amber-100 text-amber-700 border-amber-300';
 };
 
+// Safe text renderer — converts any API value to a renderable string
+// Handles: {txt, href}, {text, url}, arrays, nested objects, nulls
+const safeText = (val: any): string => {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+  if (typeof val === 'object') {
+    if (val.txt) return String(val.txt);
+    if (val.text) return String(val.text);
+    if (val.descricao) return String(val.descricao);
+    if (val.valor !== undefined && val.analise) return String(val.analise);
+    if (Array.isArray(val)) return val.map(v => safeText(v)).filter(Boolean).join(', ');
+    const firstStr = Object.values(val).find(v => typeof v === 'string');
+    if (firstStr) return String(firstStr);
+    try { return JSON.stringify(val); } catch { return '[dados]'; }
+  }
+  return String(val);
+};
+
+// Deep sanitizer — recursively converts {txt,href} objects to strings throughout the data
+const deepSanitize = (obj: any): any => {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') return obj;
+  if (typeof obj === 'object') {
+    // Check if this is a {txt, href} leaf node
+    if (obj.txt && typeof obj.txt === 'string' && (obj.href !== undefined || Object.keys(obj).length <= 3)) {
+      return obj.txt;
+    }
+    if (obj.text && typeof obj.text === 'string' && (obj.url !== undefined || Object.keys(obj).length <= 3)) {
+      return obj.text;
+    }
+    if (Array.isArray(obj)) return obj.map(deepSanitize);
+    const result: any = {};
+    for (const [key, val] of Object.entries(obj)) {
+      result[key] = deepSanitize(val);
+    }
+    return result;
+  }
+  return obj;
+};
+
 function ScoreCircle({ score, size = 120, strokeWidth = 8, max = 100 }: { score: number; size?: number; strokeWidth?: number; max?: number }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -112,8 +153,8 @@ export default function StudentPackResults() {
   const isPaid = sessionStorage.getItem('studentPackPaid') === 'true';
   useEffect(() => { if (!isPaid) window.location.href = '/estudante'; }, [isPaid]);
 
-  // Extract data from the unified student_pack response
-  const analysis = rawData?.analysis || rawData?.data || rawData || {};
+  // Extract data from the unified student_pack response, sanitize to prevent {txt,href} objects crashing React
+  const analysis = deepSanitize(rawData?.analysis || rawData?.data || rawData || {});
   const perfil = analysis?.perfil || {};
   const scoreGlobal = analysis?.score_global || {};
   const auditoria = analysis?.auditoria_perfil_dual || {};
