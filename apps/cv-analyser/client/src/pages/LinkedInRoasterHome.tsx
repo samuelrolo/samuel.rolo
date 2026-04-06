@@ -3,14 +3,17 @@
 // Análise honesta e directa que mostra o que recrutadores realmente pensam
 
 import { useState, useEffect } from "react";
-import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Sparkles, Search, Globe, Zap, ArrowRight, Shield, Check, Menu, X, AlertCircle, Users, Award, MessageSquare, ThumbsDown, ThumbsUp, Lightbulb } from "lucide-react";
+import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Sparkles, Search, Globe, Zap, ArrowRight, Shield, Check, Menu, X, AlertCircle, Users, Award, MessageSquare, ThumbsDown, ThumbsUp, Lightbulb, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { sendConversion } from "@/lib/gtag";
+import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const PRICE = '3,99';
+const PRICE_NUM = 3.99;
 
 /* ─── Testimonials ─── */
 const testimonials = [
@@ -69,8 +72,18 @@ export default function LinkedInRoasterHome() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  // Payment state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
+  const [phone, setPhone] = useState("");
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
+  const [pollingMsg, setPollingMsg] = useState("");
+  const [pollingExpired, setPollingExpired] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -82,15 +95,21 @@ export default function LinkedInRoasterHome() {
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
   const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 
+  // Step 1: Validate and show payment modal
+  const handleProceedToPayment = () => {
+    if (!isValidLinkedinUrl(linkedinUrl)) { setError("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)"); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Introduz um email válido"); return; }
+    if (!acceptedTerms) { setError("Aceita a Política de Privacidade"); return; }
+    setError(null);
+    sessionStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
+    sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
+    setPaymentStep('payment');
+    setPaymentError(null);
+    setShowPaymentModal(true);
+  };
+
+  // Step 2: Run analysis after payment
   const handleRoast = async () => {
-    if (!isValidLinkedinUrl(linkedinUrl)) {
-      setError("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)");
-      return;
-    }
-    if (!email || !email.includes('@')) {
-      setError("Introduz um email válido para receber o roast");
-      return;
-    }
     setError(null);
     setLoading(true);
     const startTime = Date.now();
@@ -112,8 +131,8 @@ export default function LinkedInRoasterHome() {
 
     try {
       // Track conversion
-      sendConversion(0, 'EUR', `roast-${Date.now()}`);
-      if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'linkedin_roaster' });
+      sendConversion(PRICE_NUM, 'EUR', `roast-${Date.now()}`);
+      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
 
       // Call edge function
       let responseData: any = null;
@@ -202,54 +221,101 @@ export default function LinkedInRoasterHome() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header — Unified */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
-          </a>
-          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
-            <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
-            <a href="/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
-            <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
-            <a href="/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
-            <a href="/linkedin-roaster" className="text-[#C9A961]">LinkedIn Roaster</a>
-            <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
-            <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
-          </nav>
-          <div className="hidden lg:flex items-center gap-3">
-            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
-            <a href="/en/linkedin-roaster" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
-              <Globe className="w-3.5 h-3.5" /><span>EN</span>
-            </a>
-          </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
-            <a href="https://www.share2inspire.pt" className="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
-            <a href="/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
-            <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
-            <a href="/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
-            <a href="/linkedin-roaster" className="block text-sm text-[#C9A961] font-semibold">LinkedIn Roaster</a>
-            <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
-            <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
-            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Login</a>
-              <a href="/en/linkedin-roaster" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
-            </div>
-          </div>
-        )}
-      </header>
+  /* ─── Payment Handlers ─── */
+  const handleMBWayPayment = async () => {
+    if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
+    setPaymentLoading(true);
+    if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
+    setPaymentError(null);
+    try {
+      const cleanPhone = phone.replace(/\s/g, '').replace(/\D/g, '');
+      const formattedPhone = cleanPhone.startsWith('351') ? cleanPhone : (cleanPhone.length === 9 ? '351' + cleanPhone : cleanPhone);
+      const orderId = `ROAST-${Date.now()}`;
+      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: PRICE_NUM.toFixed(2), email, product: 'LinkedIn Roaster — Share2Inspire', description: 'LinkedIn Roaster — Roast Brutal ao Perfil LinkedIn' })
+      });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      setPaymentStep('polling');
+      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      startPolling(orderId);
+    } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
+    finally { setPaymentLoading(false); }
+  };
 
-      {/* Bundle Bar */}
+  const handleStripePayment = async () => {
+    setPaymentLoading(true);
+    if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
+    setPaymentError(null);
+    try {
+      const orderId = `ROAST-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'eur', description: 'LinkedIn Roaster — Roast Brutal — Share2Inspire', orderId, success_url: `${window.location.origin}/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/linkedin-roaster` }),
+      });
+      const data = await response.json();
+      if (data.url) { sessionStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
+      else throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+    } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
+    finally { setPaymentLoading(false); }
+  };
+
+  const handlePayPalPayment = () => {
+    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
+    setPaymentStep('success');
+  };
+
+  const startPolling = (orderId: string) => {
+    let attempts = 0;
+    setCurrentOrderId(orderId);
+    setPollingExpired(false);
+    const interval = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId }) });
+        if (!res.ok) { if (attempts >= 20) { clearInterval(interval); setPollingExpired(true); } return; }
+        const data = await res.json();
+        if (data.paid) { clearInterval(interval); setShowPaymentModal(false); handleRoast(); return; }
+        if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg('Tempo esgotado.'); }
+        else setPollingMsg(attempts < 6 ? 'Confirma o pagamento na app MB WAY...' : 'Ainda a aguardar confirmação...');
+      } catch { }
+    }, 5000);
+  };
+
+  const handleManualCheck = async () => {
+    if (!currentOrderId) return;
+    setPollingMsg('A verificar...');
+    setPollingExpired(false);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
+      const data = await res.json();
+      if (data.paid) { setShowPaymentModal(false); handleRoast(); }
+      else { setPollingExpired(true); setPollingMsg('Pagamento não confirmado.'); startPolling(currentOrderId); }
+    } catch { setPollingMsg('Erro.'); setPollingExpired(true); }
+  };
+
+  // Check for Stripe return
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      window.history.replaceState({}, '', '/linkedin-roaster');
+      const savedEmail = sessionStorage.getItem('linkedinRoasterEmail') || '';
+      const savedUrl = sessionStorage.getItem('linkedinRoasterUrl') || '';
+      if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => handleRoast(), 500); }
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background" style={{ overflowX: 'hidden' }}>
+      <S2IHeader activePage="linkedin-roaster" langToggleHref="/en/linkedin-roaster" />
+
+      {/* Price Bar */}
       <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] text-white py-2.5 px-4 text-center text-sm">
         <span className="inline-flex items-center gap-2">
-          <span className="bg-[#C9A961] text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Grátis</span>
+          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{PRICE}€</span>
           <span className="font-medium">Roast completo ao teu perfil LinkedIn — <span className="text-[#C9A961]">descobre o que recrutadores realmente pensam</span></span>
         </span>
       </div>
@@ -288,11 +354,11 @@ export default function LinkedInRoasterHome() {
             <div className="pt-4">
               <button
                 onClick={() => document.getElementById('roast-input')?.scrollIntoView({ behavior: 'smooth' })}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 min-w-[200px]"
               >
                 <Flame className="w-5 h-5" /> Quero o meu roast
               </button>
-              <p className="text-xs text-slate-400 mt-3">Análise gratuita · Resultado em 30 segundos · 100% confidencial</p>
+              <p className="text-xs text-slate-400 mt-3">Apenas {PRICE}€ · Resultado em 30 segundos · 100% confidencial</p>
             </div>
           </section>
 
@@ -371,21 +437,21 @@ export default function LinkedInRoasterHome() {
               )}
 
               <button
-                onClick={handleRoast}
+                onClick={handleProceedToPayment}
                 disabled={!isValidLinkedinUrl(linkedinUrl) || !email.includes('@') || !acceptedTerms || loading}
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all disabled:shadow-none disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || 'A preparar o teu roast...'}</>
                 ) : (
-                  <><Flame className="w-5 h-5" /> Roast o meu LinkedIn 🔥</>
+                  <><Flame className="w-5 h-5" /> Pagar {PRICE}€ e receber o roast 🔥</>
                 )}
               </button>
 
               <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2">
                 <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> 100% Confidencial</span>
                 <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> Resultado em 30s</span>
-                <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5" /> Grátis</span>
+                <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Pagamento seguro</span>
               </div>
             </div>
           </section>
@@ -438,7 +504,7 @@ export default function LinkedInRoasterHome() {
               O teu LinkedIn está a trabalhar <span className="text-orange-400">contra ti</span>?
             </h2>
             <p className="text-slate-300 max-w-xl mx-auto mb-8">
-              Roast gratuito. Resultado em 30 segundos. Sem rodeios.
+              Roast completo por apenas {PRICE}€. Resultado em 30 segundos. Sem rodeios.
             </p>
             <button
               onClick={() => document.getElementById('roast-input')?.scrollIntoView({ behavior: 'smooth' })}
@@ -465,12 +531,73 @@ export default function LinkedInRoasterHome() {
       {/* Footer */}
       <S2IFooter />
 
-      {/* Login button */}
-      <div className="fixed bottom-6 left-6 z-50">
-        <ul><li>
-          <a href="/area-cliente/" className="px-4 py-2 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
-        </li></ul>
-      </div>
+      {/* ═══ PAYMENT MODAL ═══ */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onClick={() => { if (!paymentLoading) setShowPaymentModal(false); }}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900">Pagar {PRICE}€</h3>
+              <button onClick={() => setShowPaymentModal(false)} className="p-1 hover:bg-slate-100 rounded-full"><X className="w-5 h-5" /></button>
+            </div>
+
+            {paymentStep === 'payment' && (
+              <div className="space-y-4">
+                <p className="text-sm text-slate-600">LinkedIn Roaster — Roast Brutal ao teu perfil LinkedIn</p>
+
+                {/* Payment method tabs */}
+                <div className="flex gap-2">
+                  <button onClick={() => setPaymentMethod('mbway')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'mbway' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                    <Smartphone className="w-4 h-4 inline mr-1" />MB WAY
+                  </button>
+                  <button onClick={() => setPaymentMethod('stripe')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'stripe' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                    <CreditCard className="w-4 h-4 inline mr-1" />Cartão
+                  </button>
+                  <button onClick={() => setPaymentMethod('paypal')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'paypal' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                    PayPal
+                  </button>
+                </div>
+
+                {paymentMethod === 'mbway' && (
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">Número de telemóvel</label>
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="912 345 678" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
+                  </div>
+                )}
+
+                {paymentError && <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700">{paymentError}</div>}
+
+                <button
+                  onClick={paymentMethod === 'mbway' ? handleMBWayPayment : paymentMethod === 'stripe' ? handleStripePayment : handlePayPalPayment}
+                  disabled={paymentLoading || (paymentMethod === 'mbway' && !phone)}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {paymentLoading ? 'A processar...' : `Pagar ${PRICE}€`}
+                </button>
+
+                <p className="text-xs text-slate-400 text-center">Pagamento seguro via {paymentMethod === 'mbway' ? 'MB WAY' : paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}</p>
+              </div>
+            )}
+
+            {paymentStep === 'polling' && (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-sm text-slate-600">{pollingMsg}</p>
+                {pollingExpired && (
+                  <button onClick={handleManualCheck} className="px-6 py-2 bg-[#C9A961] text-white rounded-lg text-sm font-semibold">Já paguei — verificar</button>
+                )}
+              </div>
+            )}
+
+            {paymentStep === 'success' && (
+              <div className="text-center py-6 space-y-4">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
+                <p className="text-sm text-slate-600">Após confirmar o pagamento, clica abaixo:</p>
+                <button onClick={() => { setShowPaymentModal(false); handleRoast(); }} className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold">Iniciar Roast 🔥</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
