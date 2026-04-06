@@ -41,11 +41,8 @@ export default function S2IFooterEN() {
           <div className="s2i-footer-grid">
             {/* Logo */}
             <div className="s2i-footer-logo">
-              <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire"
-                style={{ height: '40px', marginBottom: '16px', filter: 'brightness(0) invert(1)' }} />
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', lineHeight: 1.7, margin: 0 }}>
-                Share knowledge, Inspire Careers.
-              </p>
+              <img loading="lazy" src="/images/logo-novo.png" alt="Share2Inspire"
+                style={{ height: '56px', marginBottom: '16px' }} />
             </div>
             {/* Navigation */}
             <div>
