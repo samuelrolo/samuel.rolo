@@ -134,9 +134,9 @@ export default function CareerPathHomeEN() {
   const isMemberPro = memberTier === 'pro';
   const hasMemberDiscount = isMemberGrowth || isMemberPro;
 
-  const PRICE = isMemberPro ? '4.99' : isMemberGrowth ? '8.99' : '19.99';
-  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
-  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
+  const PRICE = '19.99';
+  const PRICE_NUM = 19.99;
+  const memberProductType = 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
@@ -485,7 +485,7 @@ export default function CareerPathHomeEN() {
                   <Compass className="w-5 h-5 mr-2" />
                   Discover my Career Path
                 </Button>
-                <p className="text-xs text-muted-foreground">One-time payment of {CUR}{PRICE} · No subscription · Results in under 1 minute{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(member discount {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
+                <p className="text-xs text-muted-foreground">One-time payment of {CUR}{PRICE} · No subscription · Results in under 1 minute</p>
               </div>
 
               {/* Trust badges — inline */}

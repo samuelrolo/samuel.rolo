@@ -610,6 +610,32 @@ export default function CareerIntelligenceHomeEN() {
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Our AI analyses your CV and LinkedIn, compares the 3 career paths with the highest potential, and delivers a final recommendation — with data, not intuition.
               </p>
+
+              {/* Primary CTA — immediately visible above the fold */}
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <Button
+                  onClick={() => setStep('upload')}
+                  className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
+                >
+                  <Scale className="w-5 h-5 mr-2" />
+                  Get my career recommendation
+                </Button>
+                <p className="text-xs text-muted-foreground">Full analysis for {PRICE_DISPLAY} · One-time payment · Result in under 1 minute{isUpgrade && <span className="ml-1 text-green-600 font-medium">(Career Path upgrade price)</span>}</p>
+              </div>
+
+              {/* Trust badges inline */}
+              <div className="flex flex-wrap justify-center gap-6 pt-1">
+                {[
+                  { icon: <Shield className="w-4 h-4" />, label: "100% private" },
+                  { icon: <Zap className="w-4 h-4" />, label: "Result in < 1 min" },
+                  { icon: <Award className="w-4 h-4" />, label: "Built by HR experts" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-[#C9A961]">{badge.icon}</span>
+                    {badge.label}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-6">

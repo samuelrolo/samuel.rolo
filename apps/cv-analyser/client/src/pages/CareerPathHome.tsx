@@ -65,8 +65,8 @@ const testimonials = [
 
 /* ─── Pricing (inline) ─── */
 const PRICE_DISPLAY_BASE = '19,99€';
-const PRICE_DISPLAY_GROWTH = '8,99€';
-const PRICE_DISPLAY_PRO = '4,99€';
+const PRICE_DISPLAY_GROWTH = '19,99€';
+const PRICE_DISPLAY_PRO = '19,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
@@ -146,10 +146,10 @@ export default function CareerPathHome() {
   const isMemberPro = memberTier === 'pro';
   const hasMemberDiscount = isMemberGrowth || isMemberPro;
 
-  const PRICE = isMemberPro ? '4,99' : isMemberGrowth ? '8,99' : '19,99';
-  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
-  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_PRO : isMemberGrowth ? PRICE_DISPLAY_GROWTH : PRICE_DISPLAY_BASE;
-  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
+  const PRICE = '19,99';
+  const PRICE_NUM = 19.99;
+  const PRICE_DISPLAY = PRICE_DISPLAY_BASE;
+  const memberProductType = 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
 
@@ -653,7 +653,7 @@ export default function CareerPathHome() {
                   <Compass className="w-5 h-5 mr-2" />
                   Descobrir o meu Career Path
                 </Button>
-                <p className="text-xs text-muted-foreground">Pagamento único de {PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
+                <p className="text-xs text-muted-foreground">Pagamento único de {PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto</p>
               </div>
 
               {/* Trust badges — inline */}
