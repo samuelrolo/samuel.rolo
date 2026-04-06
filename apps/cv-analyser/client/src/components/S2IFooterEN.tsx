@@ -42,7 +42,7 @@ export default function S2IFooterEN() {
             {/* Logo */}
             <div className="s2i-footer-logo">
               <img loading="lazy" src="/images/logo-sem-fundo.png" alt="Share2Inspire"
-                style={{ height: '80px', width: 'auto', marginBottom: '16px' }} />
+                style={{ height: '120px', width: 'auto', marginBottom: '16px' }} />
             </div>
             {/* Navigation */}
             <div>
