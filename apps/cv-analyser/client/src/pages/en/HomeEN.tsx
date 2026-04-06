@@ -363,6 +363,7 @@ export default function HomeEN() {
 
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       let cvText = "";
@@ -506,6 +507,10 @@ export default function HomeEN() {
         }
       } catch (e) { /* silent */ }
 
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -628,6 +633,7 @@ export default function HomeEN() {
 
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE_EN] Starting LinkedIn analysis:', linkedInUrl);
@@ -722,6 +728,10 @@ export default function HomeEN() {
       // Fire-and-forget: send welcome email (LinkedIn flow)
       const liEmail = sessionStorage.getItem('paymentEmail') || '';
       if (liEmail) sendWelcomeEmail(liEmail, '', 'en');
+
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
 

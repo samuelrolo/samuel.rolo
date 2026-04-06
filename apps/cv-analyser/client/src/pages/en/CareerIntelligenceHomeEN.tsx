@@ -284,6 +284,7 @@ export default function CareerIntelligenceHomeEN() {
     trackAnalysisStart('career_intelligence_full');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       let cvText = "";
@@ -361,6 +362,10 @@ export default function CareerIntelligenceHomeEN() {
         skills: (profile.key_skills || []).slice(0, 5),
         nextRole: profile.likely_next_role || null,
       });
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLoading(false);
       setStep('preview');
     } catch (err: any) {

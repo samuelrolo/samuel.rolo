@@ -411,6 +411,7 @@ export default function Home() {
     trackAnalysisStart('cv_analyser');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE] Iniciando análise:', file.name, file.type);
@@ -577,6 +578,10 @@ export default function Home() {
         }
       } catch (e) { /* silent */ }
 
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -707,6 +712,7 @@ export default function Home() {
     trackAnalysisStart('cv_analyser_linkedin');
     setLoading(true);
     setError(null);
+    const startTime = Date.now();
 
     try {
       console.log('[CV_ENGINE] Iniciando análise via LinkedIn:', linkedInUrl);
@@ -802,6 +808,10 @@ export default function Home() {
       // Fire-and-forget: send welcome email (LinkedIn flow)
       const liEmail = sessionStorage.getItem('paymentEmail') || '';
       if (liEmail) sendWelcomeEmail(liEmail, '', 'pt');
+
+      const elapsed = Date.now() - startTime;
+      const remaining = 2800 - elapsed;
+      if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
 
