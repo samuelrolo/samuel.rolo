@@ -148,7 +148,7 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl mb-5 overflow-hidden shadow-sm">
+    <div className="bg-white border border-slate-200 rounded-2xl mb-5 shadow-sm" style={{ overflow: 'visible' }}>
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
@@ -164,7 +164,7 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
           {open ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
         </div>
       </button>
-      {open && <div className="px-5 pb-5">{children}</div>}
+      {open && <div className="px-5 pb-5 overflow-x-auto">{children}</div>}
     </div>
   );
 }
@@ -469,7 +469,7 @@ export default function LinkedInRoasterResults() {
                   {seoLinkedin.keywords_por_seccao && Object.keys(seoLinkedin.keywords_por_seccao).length > 0 && (
                     <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                       <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">Keywords por Secção</p>
-                      <div className="flex gap-1 mb-3 overflow-x-auto">
+                      <div className="flex flex-wrap gap-1 mb-3 overflow-x-auto pb-1 -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
                         {Object.keys(seoLinkedin.keywords_por_seccao).map(tab => (
                           <button key={tab} onClick={() => setSeoTab(tab)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${seoTab === tab ? 'bg-orange-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
@@ -477,9 +477,9 @@ export default function LinkedInRoasterResults() {
                           </button>
                         ))}
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-1.5" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                         {(seoLinkedin.keywords_por_seccao[seoTab] || []).map((kw: string, i: number) => (
-                          <span key={i} className="px-2.5 py-1 bg-white border border-slate-200 text-slate-700 rounded-full text-xs font-medium">{kw}</span>
+                          <span key={i} className="px-2.5 py-1 bg-white border border-slate-200 text-slate-700 rounded-full text-xs font-medium" style={{ maxWidth: '100%', wordBreak: 'break-word' }}>{kw}</span>
                         ))}
                       </div>
                     </div>
