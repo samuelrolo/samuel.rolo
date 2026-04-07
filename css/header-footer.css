@@ -9,13 +9,13 @@
   .navbar-nav .nav-link{font-size:0.8rem!important;padding:0.6rem 1rem!important;letter-spacing:0.5px!important}
   /* On scroll: hide logo, minimal header */
   .navbar.navbar-scrolled{padding:0.15rem 0;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-  .navbar.navbar-scrolled .navbar-brand img{height:0;opacity:0;width:0;overflow:hidden;margin:0;padding:0}
-  .navbar.navbar-scrolled .navbar-brand{width:0;padding:0;margin:0;overflow:hidden}
+  .navbar.navbar-scrolled .navbar-brand img{height:0!important;opacity:0!important;width:0!important;overflow:hidden;margin:0;padding:0}
+  .navbar.navbar-scrolled .navbar-brand{width:0!important;padding:0!important;margin:0!important;overflow:hidden}
   /* Language selector outside hamburger */
   .lang-toggle-mobile{display:inline-flex!important;align-items:center;gap:4px;font-size:0.75rem;font-weight:500;color:#666;text-decoration:none;padding:0.25rem 0.5rem;letter-spacing:1px;text-transform:uppercase}
   .lang-toggle-mobile:hover{color:#C9A961}
-  /* Hide the language item inside the collapsed menu on mobile */
-  .navbar-nav .nav-item.lang-inside-hamburger{display:none!important}
+  /* Hide lang toggle when scrolled — only hamburger remains */
+  .navbar.navbar-scrolled .lang-toggle-mobile{display:none!important}
 }
 
 /* ── Mobile Student Pack Promo Banner ── */
