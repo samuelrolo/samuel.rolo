@@ -403,6 +403,7 @@ export default function BundleHome() {
           name: email.split('@')[0],
           amount: finalPrice,
           currency: 'eur',
+          product_type: 'bundle',
           description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% desconto)` : 'Bundle CV Analyser + Career Path — Share2Inspire',
           orderId,
           success_url: `${window.location.origin}/bundle?paid=true`,

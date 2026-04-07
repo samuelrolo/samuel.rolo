@@ -306,6 +306,7 @@ export default function BundleHomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode,
+          product_type: 'bundle', language: 'en',
           description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% off)` : 'Bundle CV Analyser + Career Path — Share2Inspire', orderId,
           success_url: `${window.location.origin}/en/bundle?paid=true`,
           cancel_url: `${window.location.origin}/en/bundle`,

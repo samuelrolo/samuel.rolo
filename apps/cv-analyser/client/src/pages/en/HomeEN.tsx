@@ -764,10 +764,13 @@ export default function HomeEN() {
           amount: plan.price,
           currency: currencyCode,
           email: liPaywallEmail,
+          name: liPaywallEmail.split('@')[0],
+          product_type: 'cv_analysis',
+          language: 'en',
           product: `CV Analyser - ${plan.name} (LinkedIn)`,
           description: `LinkedIn ${plan.name} - ${plan.analyses} analysis(es)`,
-          successUrl: `${window.location.origin}/en/cv-analyser?li_payment=success&li_email=${encodeURIComponent(liPaywallEmail)}&li_plan=${liPaywallPlan}&li_url=${encodeURIComponent(linkedInUrl)}`,
-          cancelUrl: `${window.location.origin}/en/cv-analyser?li_payment=cancelled`,
+          success_url: `${window.location.origin}/en/cv-analyser?li_payment=success&li_email=${encodeURIComponent(liPaywallEmail)}&li_plan=${liPaywallPlan}&li_url=${encodeURIComponent(linkedInUrl)}`,
+          cancel_url: `${window.location.origin}/en/cv-analyser?li_payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -806,10 +809,13 @@ export default function HomeEN() {
           amount: plan.price,
           currency: currencyCode,
           email: voucherEmail,
+          name: voucherEmail.split('@')[0],
+          product_type: 'cv_analysis',
+          language: 'en',
           product: `CV Analyser - ${plan.name} (Voucher)`,
           description: `Voucher ${plan.name} - ${plan.analyses} analysis(es)`,
-          successUrl: `${window.location.origin}/en/cv-analyser?voucher_payment=success&voucher_email=${encodeURIComponent(voucherEmail)}&voucher_plan=${voucherSelectedPlan}`,
-          cancelUrl: `${window.location.origin}/en/cv-analyser?voucher_payment=cancelled`,
+          success_url: `${window.location.origin}/en/cv-analyser?voucher_payment=success&voucher_email=${encodeURIComponent(voucherEmail)}&voucher_plan=${voucherSelectedPlan}`,
+          cancel_url: `${window.location.origin}/en/cv-analyser?voucher_payment=cancelled`,
         })
       });
       const data = await response.json();

@@ -198,7 +198,7 @@ export default function StudentPackHomeEN() {
     setPaymentLoading(true); setPaymentError(null);
     try {
       const orderId = `STUDPACK-EN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const res = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, description: 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', orderId, success_url: `${window.location.origin}/en/student-pack?paid=true`, cancel_url: `${window.location.origin}/en/student-pack` }) });
+      const res = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, product_type: 'student_pack', language: 'en', description: 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', orderId, success_url: `${window.location.origin}/en/student-pack?paid=true`, cancel_url: `${window.location.origin}/en/student-pack` }) });
       const data = await res.json();
       if (data.url) { localStorage.setItem('studentPackPendingOrderId', orderId); localStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
       else throw new Error(data.error || 'Error creating payment');
