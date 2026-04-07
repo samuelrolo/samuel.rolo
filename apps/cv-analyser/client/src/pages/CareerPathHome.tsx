@@ -14,6 +14,7 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
+import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -98,7 +99,6 @@ export default function CareerPathHome() {
   const [region, setRegion] = useState<string>('');
   const countryData = countries.find(c => c.country === country);
   const [previewData, setPreviewData] = useState<any>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Progressive loading messages for Career Path
   const loadingMessages = [
@@ -465,6 +465,9 @@ export default function CareerPathHome() {
           region,
           currency: 'eur',
           amount: FINAL_PRICE,
+          description: 'Career Path — Share2Inspire',
+          success_url: `${window.location.origin}/career-path/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}/career-path`,
         })
       });
       const data = await response.json();
@@ -584,50 +587,7 @@ export default function CareerPathHome() {
     <div className="min-h-screen bg-background">
       {/* Bundle banner removed — one page, one product, one decision */}
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
-          </a>
-          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
-            <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
-            <a href="/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
-            <a href="/career-path" className="text-[#C9A961]">Career Path</a>
-            <a href="/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
-            <a href="/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
-            <a href="/estudante" className="text-slate-500 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
-            <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
-            <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
-          </nav>
-          <div className="hidden lg:flex items-center gap-3">
-            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
-            <a href="/en/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
-              <Globe className="w-3.5 h-3.5" /><span>EN</span>
-            </a>
-          </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
-            <a href="https://www.share2inspire.pt" className="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
-            <a href="/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
-            <a href="/career-path" className="block text-sm text-[#C9A961] font-semibold">Career Path</a>
-            <a href="/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
-            <a href="/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
-            <a href="/estudante" className="block text-sm text-slate-600 hover:text-[#C9A961]">Pack Estudante</a>
-            <a href="/estudante" className="text-slate-500 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
-            <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
-            <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
-            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
-              <a href="/en/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
-            </div>
-          </div>
-        )}
-      </header>
+      <S2IHeader activePage="career-path" langToggleHref="/en/career-path" />
 
       <main className="max-w-4xl mx-auto px-6 py-16">
 
@@ -894,14 +854,14 @@ export default function CareerPathHome() {
                   2. LinkedIn <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Linkedin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <input
                     type="url"
                     placeholder="https://linkedin.com/in/o-teu-perfil"
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                     disabled={loading}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
                   />
                 </div>
                 {/* Transparency note */}
