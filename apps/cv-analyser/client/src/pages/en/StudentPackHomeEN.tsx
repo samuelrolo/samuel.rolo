@@ -87,8 +87,9 @@ export default function StudentPackHomeEN() {
     if (!acceptedTerms) { setError('Accept the Privacy Policy'); return; }
     setError(null);
 
-    // Pre-extract CV text and save to sessionStorage BEFORE payment redirect
-    // This ensures data survives Stripe redirects that lose React state
+    // Pre-extract CV text and save to localStorage BEFORE payment redirect
+    // IMPORTANT: Safari iOS clears sessionStorage on cross-domain navigation (Stripe)
+    // so we must use localStorage for data that needs to survive the redirect
     try {
       let cvText = '';
       if (file.type === 'application/pdf') {
@@ -96,11 +97,11 @@ export default function StudentPackHomeEN() {
       } else {
         cvText = await extractTextFromDOCX(file);
       }
-      sessionStorage.setItem('studentPackCvText', cvText);
-      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
-      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
-      sessionStorage.setItem('studentPackCountry', selectedCountry || '');
-      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
+      localStorage.setItem('studentPackCvText', cvText);
+      localStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      localStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      localStorage.setItem('studentPackCountry', selectedCountry || '');
+      localStorage.setItem('studentPackRegion', selectedRegion || '');
     } catch (e) {
       console.warn('[StudentPackEN] Pre-extraction warning:', e);
     }
@@ -113,7 +114,8 @@ export default function StudentPackHomeEN() {
     const startTime = Date.now();
     const msgInterval = setInterval(() => { setAnalysisProgress(prev => { const next = Math.min(prev + 1, loadingMessages.length - 1); setAnalysisMsg(loadingMessages[next]); return next; }); }, 4500);
     try {
-      // Extract CV text — use file if available, otherwise restore from sessionStorage (Stripe return)
+      // Extract CV text — use file if available, otherwise restore from localStorage (Stripe return)
+      // NOTE: We use localStorage because Safari iOS clears sessionStorage on cross-domain redirect
       let cvText = "";
       let base64Content = "";
       if (file) {
@@ -122,18 +124,18 @@ export default function StudentPackHomeEN() {
         const reader = new FileReader();
         base64Content = await new Promise<string>((resolve, reject) => { reader.onload = () => resolve((reader.result as string).split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file); });
       } else {
-        // Stripe return: file lost, use sessionStorage
-        cvText = sessionStorage.getItem('studentPackCvText') || '';
+        // Stripe return: file lost, use localStorage (fallback to sessionStorage for backwards compat)
+        cvText = localStorage.getItem('studentPackCvText') || sessionStorage.getItem('studentPackCvText') || '';
         if (!cvText) {
           throw new Error('CV not available after payment. Please contact support@share2inspire.pt with your receipt.');
         }
       }
-      // Also restore other fields from sessionStorage if lost
-      const currentLinkedinUrl = linkedinUrl || sessionStorage.getItem('studentPackLinkedinUrl') || '';
+      // Also restore other fields from localStorage if lost (fallback to sessionStorage)
+      const currentLinkedinUrl = linkedinUrl || localStorage.getItem('studentPackLinkedinUrl') || sessionStorage.getItem('studentPackLinkedinUrl') || '';
       if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
-      const currentCountry = selectedCountry || sessionStorage.getItem('studentPackCountry') || '';
-      const currentRegion = selectedRegion || sessionStorage.getItem('studentPackRegion') || '';
-      const currentEmail = email || sessionStorage.getItem('studentPackEmail') || '';
+      const currentCountry = selectedCountry || localStorage.getItem('studentPackCountry') || sessionStorage.getItem('studentPackCountry') || '';
+      const currentRegion = selectedRegion || localStorage.getItem('studentPackRegion') || sessionStorage.getItem('studentPackRegion') || '';
+      const currentEmail = email || localStorage.getItem('studentPackEmail') || sessionStorage.getItem('studentPackEmail') || '';
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       // ENGINE 1: CV
@@ -198,7 +200,7 @@ export default function StudentPackHomeEN() {
       const orderId = `STUDPACK-EN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const res = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, description: 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', orderId, success_url: `${window.location.origin}/en/student-pack?paid=true`, cancel_url: `${window.location.origin}/en/student-pack` }) });
       const data = await res.json();
-      if (data.url) { sessionStorage.setItem('studentPackPendingOrderId', orderId); sessionStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
+      if (data.url) { localStorage.setItem('studentPackPendingOrderId', orderId); localStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
       else throw new Error(data.error || 'Error creating payment');
     } catch (err: any) { setPaymentError(err.message); } finally { setPaymentLoading(false); }
   };
@@ -237,7 +239,7 @@ export default function StudentPackHomeEN() {
     } catch { setDiscountError('Error verifying code.'); } finally { setDiscountLoading(false); }
   };
 
-  useEffect(() => { const p = new URLSearchParams(window.location.search); if (p.get('paid') === 'true') { const e = sessionStorage.getItem('studentPackEmail'); if (e) setEmail(e); window.history.replaceState({}, '', '/en/student-pack'); runBothEngines(); } }, []);
+  useEffect(() => { const p = new URLSearchParams(window.location.search); if (p.get('paid') === 'true') { const e = localStorage.getItem('studentPackEmail') || sessionStorage.getItem('studentPackEmail'); if (e) setEmail(e); window.history.replaceState({}, '', '/en/student-pack'); runBothEngines(); } }, []);
   useEffect(() => { if (paymentStep === 'success' && step !== 'analyzing' && step !== 'done') { const t = setTimeout(() => { setShowPaymentModal(false); runBothEngines(); }, 2000); return () => clearTimeout(t); } }, [paymentStep]);
 
   return (
