@@ -6,7 +6,7 @@
  *   activePage: current page identifier for highlighting
  *   langToggleHref: link for the EN version toggle
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Globe, Menu, X } from "lucide-react";
 
 interface S2IHeaderProps {
@@ -27,6 +27,8 @@ const navItems = [
 
 export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolledDown, setScrolledDown] = useState(false);
+  const lastScrollY = useRef(0);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -38,11 +40,34 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
     return () => { document.body.style.overflow = ''; };
   }, [mobileMenuOpen]);
 
+  // Scroll-to-hide logo on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY > 60) {
+        setScrolledDown(true);
+      } else {
+        setScrolledDown(false);
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80" style={{ overflowX: 'hidden' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
-        {/* Logo */}
-        <a href="https://www.share2inspire.pt" className="shrink-0">
+        {/* Logo — hidden on mobile when scrolled */}
+        <a
+          href="https://www.share2inspire.pt"
+          className="shrink-0 transition-all duration-300 lg:opacity-100 lg:w-auto"
+          style={{
+            opacity: scrolledDown ? 0 : 1,
+            width: scrolledDown ? 0 : 'auto',
+            overflow: 'hidden',
+          }}
+        >
           <img
             src="https://www.share2inspire.pt/images/logo-s.png"
             alt="Share2Inspire"
@@ -87,14 +112,25 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
           )}
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 -mr-2 text-slate-500 hover:text-slate-800 transition-colors z-[60]"
-          aria-label="Menu"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile Actions — lang toggle + hamburger always visible */}
+        <div className="lg:hidden flex items-center gap-1">
+          {langToggleHref && (
+            <a
+              href={langToggleHref}
+              className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              EN
+            </a>
+          )}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 -mr-2 text-slate-500 hover:text-slate-800 transition-colors z-[60]"
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu - Full screen overlay */}
@@ -125,15 +161,6 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
               >
                 Login
               </a>
-              {langToggleHref && (
-                <a
-                  href={langToggleHref}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm text-slate-500 hover:text-slate-700 border border-slate-200"
-                >
-                  <Globe className="w-4 h-4" />
-                  EN
-                </a>
-              )}
             </div>
           </div>
         </div>
