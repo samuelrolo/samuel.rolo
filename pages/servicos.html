@@ -248,6 +248,10 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+<script>
+/* header-scroll: toggle .navbar-scrolled on scroll */
+(function(){var n=document.querySelector('.navbar');if(!n)return;var t=50,l=false;function s(){var x=window.scrollY>t;if(x!==l){n.classList.toggle('navbar-scrolled',x);l=x}}window.addEventListener('scroll',s,{passive:true});s()})();
+</script>
 </head>
 
 <body>
@@ -924,7 +928,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <script src="../js/coupon-handler.js"></script>
     <script src="../js/hub-widget.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/js/header-scroll.js"></script>
 </body>
 
 </html>
