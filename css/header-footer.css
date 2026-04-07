@@ -8,9 +8,11 @@
   .navbar-collapse{background:#fff;padding:0.5rem 0;border-top:1px solid #f0f0f0;margin-top:0.35rem}
   .navbar-nav .nav-link{font-size:0.8rem!important;padding:0.6rem 1rem!important;letter-spacing:0.5px!important}
   /* On scroll: hide logo, minimal header */
-  .navbar.navbar-scrolled{padding:0.15rem 0;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+  .navbar.navbar-scrolled{padding:0.5rem 1rem;background-color:transparent!important;box-shadow:none!important;border:none!important;pointer-events:none;display:flex;justify-content:flex-end;}
   .navbar.navbar-scrolled .navbar-brand img{height:0!important;opacity:0!important;width:0!important;overflow:hidden;margin:0;padding:0}
-  .navbar.navbar-scrolled .navbar-brand{width:0!important;padding:0!important;margin:0!important;overflow:hidden}
+  .navbar.navbar-scrolled .navbar-brand{display:none!important;}
+  .navbar.navbar-scrolled .navbar-toggler{pointer-events:auto;background:#ffffff!important;box-shadow:0 4px 15px rgba(0,0,0,0.2)!important;border:none!important;border-radius:12px;padding:0.4rem 0.6rem;opacity:0.95;}
+  .navbar.navbar-scrolled .navbar-collapse.show{pointer-events:auto;background:#fff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.15);margin-top:10px;padding:1rem;}
   /* Language selector outside hamburger */
   .lang-toggle-mobile{display:inline-flex!important;align-items:center;gap:4px;font-size:0.75rem;font-weight:500;color:#666;text-decoration:none;padding:0.25rem 0.5rem;letter-spacing:1px;text-transform:uppercase}
   .lang-toggle-mobile:hover{color:#C9A961}
