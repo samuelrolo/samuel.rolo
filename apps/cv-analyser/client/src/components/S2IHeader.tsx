@@ -56,7 +56,7 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+    <header className={`sticky top-0 z-50 transition-all duration-300 border-b ${scrolledDown ? 'lg:bg-white/95 lg:backdrop-blur-md lg:border-slate-200/80 bg-transparent border-transparent pointer-events-none lg:pointer-events-auto' : 'bg-white/95 backdrop-blur-md border-slate-200/80'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
         {/* Logo — hidden on mobile when scrolled */}
         <a
@@ -125,10 +125,10 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
           )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 -mr-2 text-slate-500 hover:text-slate-800 transition-colors z-[60]"
+            className={`p-2 -mr-2 transition-all duration-300 pointer-events-auto z-[60] ${scrolledDown ? 'bg-white/95 shadow-md border border-slate-100 rounded-xl' : 'text-slate-500 hover:text-slate-800'}`}
             aria-label="Menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-slate-800" /> : <Menu className={`w-5 h-5 ${scrolledDown ? 'text-slate-800' : ''}`} />}
           </button>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
       {/* Mobile Menu - Full screen overlay */}
       {mobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 top-[57px] bg-white z-50"
+          className="lg:hidden fixed inset-0 top-[57px] bg-white z-50 pointer-events-auto"
           style={{ overflowY: 'auto', overflowX: 'hidden' }}
         >
           <div className="px-4 py-4 space-y-1">

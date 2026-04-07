@@ -95,10 +95,10 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
           )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 -mr-2 text-slate-500 hover:text-slate-800 transition-colors z-[60]"
+            className={`p-2 -mr-2 transition-all duration-300 pointer-events-auto z-[60] ${scrolledDown ? 'bg-white/95 shadow-md border border-slate-100 rounded-xl' : 'text-slate-500 hover:text-slate-800'}`}
             aria-label="Menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-slate-800" /> : <Menu className={`w-5 h-5 ${scrolledDown ? 'text-slate-800' : ''}`} />}
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
       {/* Mobile Menu - Full screen overlay */}
       {mobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 top-[57px] bg-white z-50"
+          className="lg:hidden fixed inset-0 top-[57px] bg-white z-50 pointer-events-auto"
           style={{ overflowY: 'auto', overflowX: 'hidden' }}
         >
           <div className="px-4 py-4 space-y-1">
