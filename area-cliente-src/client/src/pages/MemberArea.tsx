@@ -18,6 +18,7 @@ import SavedJobsTracker from '@/components/SavedJobsTracker';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
+import SalaryRealityCheck, { type SalaryRealityCheckRef } from '@/components/SalaryRealityCheck';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
@@ -70,6 +71,7 @@ const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; colo
   career_path:         { label: 'Career Path',         icon: Compass,    color: 'text-emerald-600', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200' },
   career_intelligence: { label: 'Career Intelligence', icon: BarChart3,  color: 'text-violet-600',  bgColor: 'bg-violet-50',  borderColor: 'border-violet-200' },
   career_energy:       { label: 'Career Energy Score', icon: Sparkles,   color: 'text-pink-600',    bgColor: 'bg-pink-50',    borderColor: 'border-pink-200' },
+  salary_reality_check: {  label: 'Salary Reality Check',  icon: Euro,  color: 'text-amber-600',  bgColor: 'bg-amber-50',  borderColor: 'border-amber-200',},
 };
 
 // Weekly limits (combined CV Analyser + LinkedIn Roaster)
@@ -816,8 +818,9 @@ export default function MemberArea() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [pendingExtraRun, setPendingExtraRun] = useState<'career_path' | 'career_intelligence' | null>(null);
   const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
+  const srcRef = useRef<SalaryRealityCheckRef>(null);
+  const [srcPendingId, setSrcPendingId] = useState<number | null>(null);
   const [autoTriggerAnalysis, setAutoTriggerAnalysis] = useState<string | null>(null);
-
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
   const isProPlan = planTier === 'pro';
@@ -1205,6 +1208,9 @@ export default function MemberArea() {
     { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant' },
     { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
     { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
+    { key: 'salaryRealityCheck',  icon: Euro,  color: 'from-amber-500/15 to-amber-500/5',  type: 'inline' as const,  action: 'salaryRealityCheck',  label: 'Salary Reality Check',  desc: lang === 'pt'    ? 'Descobre onde o teu pacote se posiciona no mercado global': 'Discover where your compensation stands in the global market',
+  badge: savedAnalyses.filter(a => a.analysis_type === 'salary_reality_check').length || undefined,
+},
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
@@ -1390,7 +1396,28 @@ export default function MemberArea() {
         />
       );
     }
-    return null;
+    if (tool.action === 'salaryRealityCheck') {
+  return (
+    <SalaryRealityCheck
+      ref={srcRef}
+      userEmail={profile?.email || user?.email || ''}
+      userName={profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : ''}
+      isPro={isProPlan}
+      onPaymentRequest={(analysisId, amount) => {
+        setSrcPendingId(analysisId);
+        setPaymentProduct({
+          type: 'salary_reality_check',
+          label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
+          price: amount,
+          originalPrice: 9.99,
+          discountLabel: isProPlan ? '-50%' : '',
+          stripeProductType: 'salary_reality_check_premium',
+        });
+      }}
+    />
+  );
+}
+return null;
   };
 
   // ─── Analysis helpers ───────────────────────────────────────────────────
@@ -2107,17 +2134,27 @@ export default function MemberArea() {
         </div>
       )}
 
-      {paymentProduct && (
-        <ExtraAnalysisPaymentModal
-          product={paymentProduct}
-          onClose={() => setPaymentProduct(null)}
-          onPaymentSuccess={() => {
-            setPaymentProduct(null);
-            if (paymentProduct.type === 'career_path') runCareerPath();
-            else runCareerIntelligence();
-          }}
-        />
-      )}
+ {paymentProduct && (
+  <ExtraAnalysisPaymentModal
+    product={paymentProduct}
+    onClose={() => setPaymentProduct(null)}
+    onPaymentSuccess={async () => {
+      setPaymentProduct(null);
+      if (paymentProduct.type === 'career_path') {
+        runCareerPath();
+      } else if (paymentProduct.type === 'career_intelligence') {
+        runCareerIntelligence();
+      } else if (paymentProduct.type === 'salary_reality_check' && srcPendingId) {
+        await supabase
+          .from('cv_analysis')
+          .update({ payment_status: 'paid', payment_method: 'stripe', updated_at: new Date().toISOString() })
+          .eq('id', srcPendingId);
+        srcRef.current?.unlockPremium(srcPendingId);
+        setSrcPendingId(null);
+      }
+    }}
+  />
+)}
 
       {/* ═══════════════════ EMAIL MODAL ═══════════════════ */}
       {emailModalOpen && (
