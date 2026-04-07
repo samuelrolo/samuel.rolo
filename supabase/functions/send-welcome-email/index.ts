@@ -163,6 +163,59 @@ function cvAnalysisWelcomeBody(name: string, lang: string): string {
 <p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Se tiveres alguma dúvida, basta responder a este email.<br><strong>Equipa Share2Inspire</strong></p>`;
 }
 
+/* ─── Template: Welcome after Student Pack Purchase ─── */
+function studentPackWelcomeBody(name: string, lang: string): string {
+  const isEn = lang === "en";
+  const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
+  const greeting = isEn ? `Hi ${firstName},` : `Olá ${firstName},`;
+
+  if (isEn) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Your Student Pack is ready!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Thank you for purchasing the <strong>Student Pack</strong>. Your analysis is complete and your results are now available.</p>
+
+<div style="background:#f0fdf4;border-left:4px solid #059669;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">What is included in your pack:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>A CV analysis with practical improvement guidance</li>
+    <li>LinkedIn profile feedback to strengthen your positioning</li>
+    <li>A clearer starting point for your job search strategy</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">You can now review your results and continue exploring the Share2Inspire tools that best support your next career step.</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/en/student-pack/results" style="display:inline-block;background:linear-gradient(135deg,#059669,#34d399);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">View my Student Pack results</a>
+</div>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">If you have any questions, simply reply to this email.<br><strong>The Share2Inspire Team</strong></p>`;
+  }
+
+  return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">O teu Student Pack está pronto!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Obrigado por comprares o <strong>Student Pack</strong>. A tua análise foi concluída e os resultados já estão disponíveis.</p>
+
+<div style="background:#f0fdf4;border-left:4px solid #059669;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">O que está incluído no teu pack:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Uma análise de CV com recomendações práticas de melhoria</li>
+    <li>Feedback ao perfil LinkedIn para reforçares o teu posicionamento</li>
+    <li>Um ponto de partida mais claro para a tua estratégia de procura de emprego</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Já podes consultar os teus resultados e continuar a explorar as ferramentas Share2Inspire mais adequadas para o teu próximo passo de carreira.</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/estudante/results" style="display:inline-block;background:linear-gradient(135deg,#059669,#34d399);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver os resultados do meu Student Pack</a>
+</div>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Se tiveres alguma dúvida, basta responder a este email.<br><strong>Equipa Share2Inspire</strong></p>`;
+}
+
 /* ─── Template: Welcome after Member Registration ─── */
 function memberWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
@@ -283,7 +336,11 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { type, email, name, lang } = await req.json();
+    const payload = await req.json();
+    const type = payload?.type || payload?.source;
+    const email = payload?.email;
+    const name = payload?.name;
+    const lang = payload?.lang || payload?.language;
 
     if (!email) {
       return new Response(
@@ -292,9 +349,9 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!type || !["cv_analysis", "member_signup"].includes(type)) {
+    if (!type || !["cv_analysis", "member_signup", "student_pack"].includes(type)) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Invalid type. Must be "cv_analysis" or "member_signup"' }),
+        JSON.stringify({ success: false, error: 'Invalid type. Must be "cv_analysis", "member_signup" or "student_pack"' }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -315,6 +372,11 @@ Deno.serve(async (req: Request) => {
         ? "Welcome to Share2Inspire — Your CV Results Are Ready!"
         : "Bem-vindo ao Share2Inspire — Os Resultados do Teu CV Estão Prontos!";
       bodyHtml = cvAnalysisWelcomeBody(name || "", language);
+    } else if (type === "student_pack") {
+      subject = language === "en"
+        ? "Welcome to Share2Inspire — Your Student Pack Is Ready!"
+        : "Bem-vindo ao Share2Inspire — O Teu Student Pack Está Pronto!";
+      bodyHtml = studentPackWelcomeBody(name || "", language);
     } else {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
@@ -390,7 +452,12 @@ Deno.serve(async (req: Request) => {
             recipient_email: email,
             subject,
             body: bodyHtml,
-            email_type: type === "cv_analysis" ? "welcome_cv_analysis" : "welcome_member_signup",
+              email_type: type === "cv_analysis"
+                ? "welcome_cv_analysis"
+                : type === "student_pack"
+                  ? "welcome_student_pack"
+                  : "welcome_member_signup",
+
             sent_at: new Date().toISOString(),
             status: "sent",
           }),
