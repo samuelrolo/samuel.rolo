@@ -2,8 +2,8 @@
 
 /* ── Mobile Header — compact hamburger ── */
 @media (max-width:991px){
-  .navbar{padding:0.35rem 0;transition:padding 0.3s ease}
-  .navbar-brand img{height:32px;transition:all 0.3s ease}
+  .navbar{padding:0.35rem 0 !important; transition:padding 0.3s ease}
+  .navbar-brand img{height:32px !important; transition:all 0.3s ease}
   .navbar-toggler{padding:0.25rem 0.5rem;font-size:0.85rem;border:1px solid rgba(0,0,0,0.1)}
   .navbar-collapse{background:#fff;padding:0.5rem 0;border-top:1px solid #f0f0f0;margin-top:0.35rem}
   .navbar-nav .nav-link{font-size:0.8rem!important;padding:0.6rem 1rem!important;letter-spacing:0.5px!important}
