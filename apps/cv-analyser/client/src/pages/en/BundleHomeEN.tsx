@@ -124,13 +124,25 @@ export default function BundleHomeEN() {
     "Preparing your results..."
   ];
 
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (!file) { setError('Upload your CV (PDF or DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Enter a valid LinkedIn URL'); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email'); return; }
     if (!selectedCountry) { setError('Please select your country for localised results'); return; }
     if (!acceptedTerms) { setError('Accept the Privacy Policy'); return; }
     setError(null);
+
+    try {
+      let cvText = "";
+      if (file.type === 'application/pdf') cvText = await extractTextFromPDF(file);
+      else cvText = await extractTextFromDOCX(file);
+      localStorage.setItem('bundleCvText', cvText);
+      localStorage.setItem('bundleLinkedinUrl', linkedinUrl);
+      localStorage.setItem('bundleEmail', email.trim().toLowerCase());
+      localStorage.setItem('bundleCountry', selectedCountry || '');
+      localStorage.setItem('bundleRegion', selectedRegion || '');
+    } catch (e) { console.warn('[Bundle] Pre-extraction error', e); }
+
     setPaymentStep('payment');
     setPaymentError(null);
     setShowPaymentModal(true);
@@ -149,18 +161,30 @@ export default function BundleHomeEN() {
     }, 4000);
     try {
       let cvText = "";
-      if (file!.type === 'application/pdf') {
-        cvText = await extractTextFromPDF(file!);
+      let base64Content = "";
+      let cvFilename = "cv.pdf";
+      if (file) {
+        if (file.type === 'application/pdf') cvText = await extractTextFromPDF(file);
+        else cvText = await extractTextFromDOCX(file);
+        cvFilename = file.name;
+        const reader = new FileReader();
+        base64Content = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
       } else {
-        cvText = await extractTextFromDOCX(file!);
+        cvText = localStorage.getItem('bundleCvText') || sessionStorage.getItem('bundleCvText') || '';
+        if (!cvText) throw new Error('CV could not be restored. Please try again or contact support.');
       }
-      const reader = new FileReader();
-      const base64Content = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file!);
-      });
-      const useServerExtraction = cvText.length < 50;
+      
+      const currentLinkedinUrl = linkedinUrl || localStorage.getItem('bundleLinkedinUrl') || sessionStorage.getItem('bundleLinkedinUrl') || '';
+      if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
+      const currentEmail = email || localStorage.getItem('bundleEmail') || sessionStorage.getItem('bundleEmail') || localStorage.getItem('paymentEmail') || '';
+      const currentCountry = selectedCountry || localStorage.getItem('bundleCountry') || sessionStorage.getItem('bundleCountry') || '';
+      const currentRegion = selectedRegion || localStorage.getItem('bundleRegion') || sessionStorage.getItem('bundleRegion') || '';
+      
+      const useServerExtraction = cvText.length < 50 && !!base64Content;
       setAnalysisMsg("Analysing your CV with AI...");
       let cvResponseData: any = null;
       const maxRetries = 2;
@@ -171,7 +195,7 @@ export default function BundleHomeEN() {
           const requestBody: any = { mode: 'cv_extraction' };
           if (useServerExtraction) {
             requestBody.file = base64Content;
-            requestBody.filename = file!.name;
+            requestBody.filename = cvFilename;
           } else {
             requestBody.cv_text = cvText.substring(0, 8000);
           }
@@ -198,20 +222,20 @@ export default function BundleHomeEN() {
       const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, 'en');
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('cvFile', base64Content);
-      sessionStorage.setItem('cvFilename', file!.name);
+      sessionStorage.setItem('cvFilename', cvFilename);
       sessionStorage.setItem('analysisLang', 'en');
       sessionStorage.setItem('isPaid', 'true');
-      sessionStorage.setItem('paymentEmail', email.trim().toLowerCase());
+      sessionStorage.setItem('paymentEmail', currentEmail.trim().toLowerCase());
       // Store country/region for Career Path localisation
-      sessionStorage.setItem('analysisCountry', selectedCountry || '');
-      sessionStorage.setItem('analysisRegion', selectedRegion || '');
+      sessionStorage.setItem('analysisCountry', currentCountry);
+      sessionStorage.setItem('analysisRegion', currentRegion);
       window.currentReportData = cvAnalysisSource;
       setAnalysisMsg("Generating your Career Path...");
       sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
       sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       sessionStorage.setItem('careerPathCvFile', base64Content);
-      sessionStorage.setItem('careerPathCvFilename', file!.name);
-      sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('careerPathCvFilename', cvFilename);
+      sessionStorage.setItem('careerPathLinkedinUrl', currentLinkedinUrl);
       sessionStorage.setItem('careerPathPaid', 'true');
 
       // Save bundle analysis to Supabase (for Admin analytics)
@@ -241,7 +265,7 @@ export default function BundleHomeEN() {
             transaction_id: transactionId,
             domain: 'share2inspire.pt',
             user_name: detectedName,
-            user_email: email.trim().toLowerCase(),
+            user_email: currentEmail.trim().toLowerCase(),
             user_phone: detectedPhone,
           }),
         }).catch(() => {});
@@ -289,6 +313,8 @@ export default function BundleHomeEN() {
       });
       const data = await response.json();
       if (data.url) {
+        localStorage.setItem('bundlePendingOrderId', orderId);
+        localStorage.setItem('bundleEmail', email);
         sessionStorage.setItem('bundlePendingOrderId', orderId);
         sessionStorage.setItem('bundleEmail', email);
         redirectToCheckout(data.url);
@@ -357,7 +383,7 @@ export default function BundleHomeEN() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true') {
-      const savedEmail = sessionStorage.getItem('bundleEmail');
+      const savedEmail = localStorage.getItem('bundleEmail') || sessionStorage.getItem('bundleEmail');
       if (savedEmail) setEmail(savedEmail);
       window.history.replaceState({}, '', '/en/bundle');
       runBothEngines();

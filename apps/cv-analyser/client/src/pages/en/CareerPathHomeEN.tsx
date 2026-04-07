@@ -208,7 +208,7 @@ export default function CareerPathHomeEN() {
           }
         );
         setShowPaymentModal(false);
-        sessionStorage.setItem('careerPathPaid', 'true');
+        localStorage.setItem('careerPathPaid', 'true');
         setTimeout(() => { setLocation('/results'); }, 400);
         return;
       }
@@ -315,18 +315,18 @@ export default function CareerPathHomeEN() {
 
       const analysisSource = responseData.analysis || responseData;
 
-      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
-      sessionStorage.setItem('careerPathCvText', cvText.substring(0, 8000));
-      sessionStorage.setItem('careerPathCvFile', base64Content);
-      sessionStorage.setItem('careerPathCvFilename', file.name);
-      sessionStorage.setItem('careerPathLang', 'en');
-      sessionStorage.setItem('careerPathCountry', selectedCountry);
-      sessionStorage.setItem('careerPathRegion', selectedRegion);
-      sessionStorage.setItem('analysisLang', 'en');
-      sessionStorage.setItem('analysisCountry', selectedCountry);
-      sessionStorage.setItem('analysisRegion', selectedRegion);
+      localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      localStorage.setItem('careerPathCvText', cvText.substring(0, 8000));
+      localStorage.setItem('careerPathCvFile', base64Content);
+      localStorage.setItem('careerPathCvFilename', file.name);
+      localStorage.setItem('careerPathLang', 'en');
+      localStorage.setItem('careerPathCountry', selectedCountry);
+      localStorage.setItem('careerPathRegion', selectedRegion);
+      localStorage.setItem('analysisLang', 'en');
+      localStorage.setItem('analysisCountry', selectedCountry);
+      localStorage.setItem('analysisRegion', selectedRegion);
       if (linkedinUrl) {
-        sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+        localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
 
       const profile = analysisSource.candidate_profile || {};
@@ -384,9 +384,9 @@ export default function CareerPathHomeEN() {
       if (!data.success || !data.url) {
         throw new Error(data.error || 'Error creating payment session');
       }
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
-      sessionStorage.setItem('stripeSessionId', data.sessionId);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('stripeSessionId', data.sessionId);
       redirectToCheckout(data.url);
     } catch (err: any) {
       setPaymentError(err.message || 'Error processing payment');
@@ -399,7 +399,7 @@ export default function CareerPathHomeEN() {
     if (!email) { setPaymentError('Please enter your email'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
-    sessionStorage.setItem('cpPaymentEmail', email);
+    localStorage.setItem('cpPaymentEmail', email);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}USD`, '_blank');
     setPaymentStep('success');
     if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: currencyCodeUpper});
@@ -409,7 +409,7 @@ export default function CareerPathHomeEN() {
 
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
-    sessionStorage.setItem('careerPathPaid', 'true');
+    localStorage.setItem('careerPathPaid', 'true');
     setTimeout(() => { setLocation('/results'); }, 400);
   };
 
@@ -1060,9 +1060,9 @@ export default function CareerPathHomeEN() {
                   <Button
                     onClick={() => {
                       setShowPaymentModal(false);
-                      sessionStorage.setItem('careerPathPaid', 'true');
-                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
-                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      localStorage.setItem('careerPathPaid', 'true');
+                      localStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) localStorage.setItem('cpPaymentEmail', email);
                       setLocation('/results');
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"

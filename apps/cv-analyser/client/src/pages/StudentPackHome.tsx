@@ -139,7 +139,7 @@ export default function StudentPackHome() {
     if (!acceptedTerms) { setError('Aceita a Política de Privacidade'); return; }
     setError(null);
 
-    // Pre-extract CV text and save to sessionStorage BEFORE payment redirect
+    // Pre-extract CV text and save to localStorage BEFORE payment redirect
     // This ensures data survives Stripe redirects that lose React state
     try {
       let cvText = '';
@@ -148,11 +148,11 @@ export default function StudentPackHome() {
       } else {
         cvText = await extractTextFromDOCX(file);
       }
-      sessionStorage.setItem('studentPackCvText', cvText);
-      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
-      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
-      sessionStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
-      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
+      localStorage.setItem('studentPackCvText', cvText);
+      localStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      localStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      localStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
+      localStorage.setItem('studentPackRegion', selectedRegion || '');
     } catch (e) {
       console.warn('[StudentPack] Pre-extraction warning:', e);
     }
@@ -178,7 +178,7 @@ export default function StudentPackHome() {
     }, 4500);
 
     try {
-      // Extract CV text — use file if available, otherwise restore from sessionStorage (Stripe return)
+      // Extract CV text — use file if available, otherwise restore from localStorage (Stripe return)
       let cvText = "";
       let base64Content = "";
       if (file) {
@@ -194,18 +194,18 @@ export default function StudentPackHome() {
           reader.readAsDataURL(file);
         });
       } else {
-        // Stripe return: file lost, use sessionStorage
-        cvText = sessionStorage.getItem('studentPackCvText') || '';
+        // Stripe return: file lost, use localStorage
+        cvText = localStorage.getItem('studentPackCvText') || '';
         if (!cvText) {
           throw new Error('CV não disponível após pagamento. Por favor contacta support@share2inspire.pt com o teu comprovativo.');
         }
       }
-      // Also restore linkedinUrl from sessionStorage if lost
-      const currentLinkedinUrl = linkedinUrl || sessionStorage.getItem('studentPackLinkedinUrl') || '';
+      // Also restore linkedinUrl from localStorage if lost
+      const currentLinkedinUrl = linkedinUrl || localStorage.getItem('studentPackLinkedinUrl') || '';
       if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
-      const currentCountry = selectedCountry || sessionStorage.getItem('studentPackCountry') || 'Portugal';
-      const currentRegion = selectedRegion || sessionStorage.getItem('studentPackRegion') || '';
-      const currentEmail = email || sessionStorage.getItem('studentPackEmail') || '';
+      const currentCountry = selectedCountry || localStorage.getItem('studentPackCountry') || 'Portugal';
+      const currentRegion = selectedRegion || localStorage.getItem('studentPackRegion') || '';
+      const currentEmail = email || localStorage.getItem('studentPackEmail') || '';
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       // ─── SINGLE ENGINE: Student Pack (unified analysis) ───
@@ -380,7 +380,7 @@ export default function StudentPackHome() {
         body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: 'eur', description: appliedCoupon ? `Pack Estudante — Share2Inspire (${appliedCoupon.percent}% desconto)` : 'Pack Estudante — CV Analyser + LinkedIn Roaster — Share2Inspire', orderId, success_url: `${window.location.origin}/estudante?paid=true`, cancel_url: `${window.location.origin}/estudante` }),
       });
       const data = await response.json();
-      if (data.url) { sessionStorage.setItem('studentPackPendingOrderId', orderId); sessionStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
+      if (data.url) { localStorage.setItem('studentPackPendingOrderId', orderId); localStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
       else throw new Error(data.error || 'Erro ao criar sessão de pagamento');
     } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
     finally { setPaymentLoading(false); }
@@ -460,7 +460,7 @@ export default function StudentPackHome() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true') {
-      const savedEmail = sessionStorage.getItem('studentPackEmail');
+      const savedEmail = localStorage.getItem('studentPackEmail');
       if (savedEmail) setEmail(savedEmail);
       window.history.replaceState({}, '', '/estudante');
       runBothEngines();

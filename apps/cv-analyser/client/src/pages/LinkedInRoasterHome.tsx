@@ -110,8 +110,8 @@ export default function LinkedInRoasterHome() {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Introduz um email válido"); return; }
     if (!acceptedTerms) { setError("Aceita a Política de Privacidade"); return; }
     setError(null);
-    sessionStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
-    sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
+    localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
+    localStorage.setItem('linkedinRoasterUrl', linkedinUrl);
     setPaymentStep('payment');
     setPaymentError(null);
     setShowPaymentModal(true);
@@ -266,7 +266,7 @@ export default function LinkedInRoasterHome() {
         body: JSON.stringify({ email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'eur', description: 'LinkedIn Roaster — Roast Brutal — Share2Inspire', orderId, success_url: `${window.location.origin}/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/linkedin-roaster` }),
       });
       const data = await response.json();
-      if (data.url) { sessionStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
+      if (data.url) { localStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
       else throw new Error(data.error || 'Erro ao criar sessão de pagamento');
     } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
     finally { setPaymentLoading(false); }
@@ -351,8 +351,8 @@ export default function LinkedInRoasterHome() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true') {
       window.history.replaceState({}, '', '/linkedin-roaster');
-      const savedEmail = sessionStorage.getItem('linkedinRoasterEmail') || '';
-      const savedUrl = sessionStorage.getItem('linkedinRoasterUrl') || '';
+      const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
+      const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
       if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => runAnalysis(), 500); }
     }
   }, []);

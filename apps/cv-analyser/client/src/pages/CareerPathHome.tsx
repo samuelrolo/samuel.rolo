@@ -201,9 +201,9 @@ export default function CareerPathHome() {
           incrementCouponUsage(code);
           trackAffiliateConversion({ product: 'career_path', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setShowPaymentModal(false);
-          sessionStorage.setItem('careerPathPaid', 'true');
-          sessionStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
-          if (email) sessionStorage.setItem('cpPaymentEmail', email);
+          localStorage.setItem('careerPathPaid', 'true');
+          localStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
+          if (email) localStorage.setItem('cpPaymentEmail', email);
           setTimeout(() => { setLocation('/results'); }, 400);
         }
         return;
@@ -229,9 +229,9 @@ export default function CareerPathHome() {
           }
         );
         setShowPaymentModal(false);
-        sessionStorage.setItem('careerPathPaid', 'true');
-        sessionStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
-        if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
+        localStorage.setItem('careerPathPaid', 'true');
+        localStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
+        if (v.email) localStorage.setItem('cpPaymentEmail', v.email);
         setTimeout(() => { setLocation('/results'); }, 400);
         return;
       }
@@ -348,15 +348,15 @@ export default function CareerPathHome() {
       }
 
       // Store CV data and LinkedIn URL for the results page
-      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
-      sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
-      sessionStorage.setItem('careerPathCvFile', base64Content);
-      sessionStorage.setItem('careerPathCvFilename', file.name);
-      sessionStorage.setItem('analysisLang', 'pt');
-      sessionStorage.setItem('analysisCountry', country);
-      sessionStorage.setItem('analysisRegion', region || '');
+      localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      localStorage.setItem('careerPathCvFile', base64Content);
+      localStorage.setItem('careerPathCvFilename', file.name);
+      localStorage.setItem('analysisLang', 'pt');
+      localStorage.setItem('analysisCountry', country);
+      localStorage.setItem('analysisRegion', region || '');
       if (linkedinUrl) {
-        sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+        localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
 
       // Show preview before payment
@@ -399,8 +399,8 @@ export default function CareerPathHome() {
 
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
 
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
         method: 'POST',
@@ -434,7 +434,7 @@ export default function CareerPathHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
-    sessionStorage.setItem('cpPaymentEmail', email);
+    localStorage.setItem('cpPaymentEmail', email);
     trackPaymentStart('career_path', FINAL_PRICE);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}EUR`, '_blank');
     setPaymentStep('success');
@@ -471,9 +471,9 @@ export default function CareerPathHome() {
       if (!data.success || !data.url) {
         throw new Error(data.error || 'Erro ao criar sessão de pagamento');
       }
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
-      sessionStorage.setItem('stripeSessionId', data.sessionId);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('stripeSessionId', data.sessionId);
       redirectToCheckout(data.url);
     } catch (err: any) {
       setPaymentError(err.message || 'Erro ao processar pagamento');
@@ -514,7 +514,7 @@ export default function CareerPathHome() {
         if (data.paid) {
           clearInterval(interval);
           setShowPaymentModal(false);
-          sessionStorage.setItem('careerPathPaid', 'true');
+          localStorage.setItem('careerPathPaid', 'true');
           setTimeout(() => { setLocation('/results'); }, 400);
           return;
         }
@@ -561,7 +561,7 @@ export default function CareerPathHome() {
       const data = await res.json();
       if (data.paid) {
         setShowPaymentModal(false);
-        sessionStorage.setItem('careerPathPaid', 'true');
+        localStorage.setItem('careerPathPaid', 'true');
         setTimeout(() => { setLocation('/results'); }, 400);
       } else {
         setPollingExpired(true);
@@ -576,7 +576,7 @@ export default function CareerPathHome() {
 
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
-    sessionStorage.setItem('careerPathPaid', 'true');
+    localStorage.setItem('careerPathPaid', 'true');
     setTimeout(() => { setLocation('/results'); }, 400);
   };
 
@@ -1286,9 +1286,9 @@ export default function CareerPathHome() {
                   <Button
                     onClick={() => {
                       setShowPaymentModal(false);
-                      sessionStorage.setItem('careerPathPaid', 'true');
-                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
-                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      localStorage.setItem('careerPathPaid', 'true');
+                      localStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) localStorage.setItem('cpPaymentEmail', email);
                       setLocation('/results');
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"

@@ -86,8 +86,8 @@ export default function LinkedInRoasterHomeEN() {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Enter a valid email"); return; }
     if (!acceptedTerms) { setError("Please accept the Privacy Policy"); return; }
     setError(null);
-    sessionStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
-    sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
+    localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
+    localStorage.setItem('linkedinRoasterUrl', linkedinUrl);
     setPaymentStep('payment');
     setPaymentError(null);
     setShowPaymentModal(true);
@@ -206,7 +206,7 @@ export default function LinkedInRoasterHomeEN() {
         body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: 'eur', description: appliedCoupon ? `LinkedIn Roaster — Share2Inspire (${appliedCoupon.percent}% off)` : 'LinkedIn Roaster — Brutal Profile Roast — Share2Inspire', orderId, success_url: `${window.location.origin}/en/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/en/linkedin-roaster` }),
       });
       const data = await response.json();
-      if (data.url) { sessionStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
+      if (data.url) { localStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
       else throw new Error(data.error || 'Error creating payment session');
     } catch (err: any) { setPaymentError(err.message || 'Error processing payment'); }
     finally { setPaymentLoading(false); }
@@ -221,8 +221,8 @@ export default function LinkedInRoasterHomeEN() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true') {
       window.history.replaceState({}, '', '/en/linkedin-roaster');
-      const savedEmail = sessionStorage.getItem('linkedinRoasterEmail') || '';
-      const savedUrl = sessionStorage.getItem('linkedinRoasterUrl') || '';
+      const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
+      const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
       if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => handleRoast(), 500); }
     }
   }, []);

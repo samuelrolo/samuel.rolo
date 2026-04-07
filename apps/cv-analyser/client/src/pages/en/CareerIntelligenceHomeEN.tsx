@@ -34,13 +34,13 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
     const userId = parsed?.user?.id;
     if (!accessToken || !userId) return;
     const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
-    if (sessionStorage.getItem(dedupKey)) return;
+    if ((localStorage.getItem(dedupKey) || sessionStorage.getItem(dedupKey))) return;
     const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
       method: 'POST',
       headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
       body: JSON.stringify({ user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() })
     });
-    if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved to user_analyses:', analysisType); }
+    if (res.ok) { localStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved to user_analyses:', analysisType); }
   } catch (e) { console.warn('[S2I] Error saving to user_analyses:', e); }
 }
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
@@ -165,8 +165,8 @@ export default function CareerIntelligenceHomeEN() {
   // selected in THIS form, overriding any value left by a previous Career Path
   // session — which is the root cause of the upgrade-flow country bug.
   useEffect(() => {
-    sessionStorage.setItem('analysisCountry', country);
-    sessionStorage.setItem('analysisRegion', region || '');
+    localStorage.setItem('analysisCountry', country);
+    localStorage.setItem('analysisRegion', region || '');
   }, [country, region]);
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -255,13 +255,13 @@ export default function CareerIntelligenceHomeEN() {
           }
         );
         setShowPaymentModal(false);
-        sessionStorage.setItem('careerPathPaid', 'true');
-        sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-        sessionStorage.setItem('careerIntelligenceFull', 'true');
-        sessionStorage.setItem('ciNeedsRegeneration', 'true');
-        sessionStorage.removeItem('careerPathData');
-        sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
-        if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
+        localStorage.setItem('careerPathPaid', 'true');
+        localStorage.setItem('careerIntelligenceProPaid', 'true');
+        localStorage.setItem('careerIntelligenceFull', 'true');
+        localStorage.setItem('ciNeedsRegeneration', 'true');
+        (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
+        localStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
+        if (v.email) localStorage.setItem('cpPaymentEmail', v.email);
         trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: currencyCodeUpper, payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
         setTimeout(() => { setLocation('/results'); }, 400);
         return;
@@ -344,14 +344,14 @@ export default function CareerIntelligenceHomeEN() {
       const analysisSource = responseData.analysis || responseData;
       if (useServerExtraction && analysisSource.raw_text) cvText = analysisSource.raw_text;
 
-      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
-      sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
-      sessionStorage.setItem('careerPathCvFile', base64Content);
-      sessionStorage.setItem('careerPathCvFilename', file.name);
-      sessionStorage.setItem('analysisLang', 'en');
-      sessionStorage.setItem('analysisCountry', country);
-      sessionStorage.setItem('analysisRegion', region || '');
-      if (linkedinUrl) sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      localStorage.setItem('careerPathCvFile', base64Content);
+      localStorage.setItem('careerPathCvFilename', file.name);
+      localStorage.setItem('analysisLang', 'en');
+      localStorage.setItem('analysisCountry', country);
+      localStorage.setItem('analysisRegion', region || '');
+      if (linkedinUrl) localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
 
       const profile = analysisSource.candidate_profile || {};
       setPreviewData({
@@ -387,8 +387,8 @@ export default function CareerIntelligenceHomeEN() {
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
       const orderId = `CI-FREE-${Date.now()}`;
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
       handlePaymentSuccess();
       return;
     }
@@ -398,8 +398,8 @@ export default function CareerIntelligenceHomeEN() {
     setPaymentError(null);
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -426,12 +426,12 @@ export default function CareerIntelligenceHomeEN() {
 
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
-      sessionStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('cpPaymentEmail', email);
       handlePaymentSuccess();
       return;
     }
 
-    sessionStorage.setItem('cpPaymentEmail', email);
+    localStorage.setItem('cpPaymentEmail', email);
     trackPaymentStart('career_intelligence_full', FINAL_PRICE);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE.toFixed(2)}USD`, '_blank');
     setPaymentStep('success');
@@ -448,7 +448,7 @@ export default function CareerIntelligenceHomeEN() {
 
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
-      sessionStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('cpPaymentEmail', email);
       handlePaymentSuccess();
       return;
     }
@@ -468,9 +468,9 @@ export default function CareerIntelligenceHomeEN() {
       });
       const data = await response.json();
       if (!data.success || !data.url) throw new Error(data.error || 'Error creating payment session');
-      sessionStorage.setItem('cpOrderId', orderId);
-      sessionStorage.setItem('cpPaymentEmail', email);
-      sessionStorage.setItem('stripeSessionId', data.sessionId);
+      localStorage.setItem('cpOrderId', orderId);
+      localStorage.setItem('cpPaymentEmail', email);
+      localStorage.setItem('stripeSessionId', data.sessionId);
       redirectToCheckout(data.url);
     } catch (err: any) {
       setPaymentError(err.message || 'Payment error');
@@ -512,15 +512,15 @@ export default function CareerIntelligenceHomeEN() {
 
   const unlockAndRedirect = (orderId: string) => {
     setShowPaymentModal(false);
-    sessionStorage.setItem('careerPathPaid', 'true');
-    sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-    sessionStorage.setItem('careerIntelligenceFull', 'true');
-    sessionStorage.setItem('ciNeedsRegeneration', 'true');
-    sessionStorage.removeItem('careerPathData');
+    localStorage.setItem('careerPathPaid', 'true');
+    localStorage.setItem('careerIntelligenceProPaid', 'true');
+    localStorage.setItem('careerIntelligenceFull', 'true');
+    localStorage.setItem('ciNeedsRegeneration', 'true');
+    (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
     trackPurchase('career_intelligence_full', FINAL_PRICE, orderId);
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
     try {
-      const cvAnalysis = sessionStorage.getItem('careerPathCvAnalysis');
+      const cvAnalysis = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
       const p = cvAnalysis ? JSON.parse(cvAnalysis) : {};
       saveToUserAnalyses('career_intelligence', {
         strategic_paths: p.strategic_paths || [],
@@ -550,7 +550,7 @@ export default function CareerIntelligenceHomeEN() {
 
   const handlePaymentSuccess = () => {
     if (currentOrderId) { unlockAndRedirect(currentOrderId); }
-    else { setShowPaymentModal(false); sessionStorage.setItem('careerPathPaid', 'true'); sessionStorage.setItem('careerIntelligenceProPaid', 'true'); sessionStorage.setItem('careerIntelligenceFull', 'true'); sessionStorage.setItem('ciNeedsRegeneration', 'true'); sessionStorage.removeItem('careerPathData'); setTimeout(() => { setLocation('/results'); }, 400); }
+    else { setShowPaymentModal(false); localStorage.setItem('careerPathPaid', 'true'); localStorage.setItem('careerIntelligenceProPaid', 'true'); localStorage.setItem('careerIntelligenceFull', 'true'); localStorage.setItem('ciNeedsRegeneration', 'true'); (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData')); setTimeout(() => { setLocation('/results'); }, 400); }
   };
 
   return (
@@ -912,13 +912,13 @@ export default function CareerIntelligenceHomeEN() {
                   <Button
                     onClick={() => {
                       setShowPaymentModal(false);
-                      sessionStorage.setItem('careerPathPaid', 'true');
-                      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-                      sessionStorage.setItem('careerIntelligenceFull', 'true');
-                      sessionStorage.setItem('ciNeedsRegeneration', 'true');
-                      sessionStorage.removeItem('careerPathData');
-                      sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
-                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      localStorage.setItem('careerPathPaid', 'true');
+                      localStorage.setItem('careerIntelligenceProPaid', 'true');
+                      localStorage.setItem('careerIntelligenceFull', 'true');
+                      localStorage.setItem('ciNeedsRegeneration', 'true');
+                      (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
+                      localStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
+                      if (email) localStorage.setItem('cpPaymentEmail', email);
                       setLocation('/results');
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"

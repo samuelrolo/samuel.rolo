@@ -23,6 +23,7 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { redirectToCheckout } from '../lib/webviewPayment';
+import { finishAndClean } from "@/lib/storageCleanup";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -1587,9 +1588,9 @@ export default function Results() {
         { title: isEN ? 'Education' : 'Formação', score: 68, benchmark: 65, impactPhrase: isEN ? 'Academic and continuous education' : 'Formação académica e contínua' },
         { title: isEN ? 'Experience' : 'Experiência', score: 72, benchmark: 70, impactPhrase: isEN ? 'Professional experience' : 'Experiência profissional' },
       ];
-  if (!analysisData.quadrants || !Array.isArray(analysisData.quadrants) || analysisData.quadrants.length === 0) {
-    analysisData = { ...analysisData, quadrants: safeQuadrants };
-  }
+  const activeAnalysisData = (!analysisData.quadrants || !Array.isArray(analysisData.quadrants) || analysisData.quadrants.length === 0)
+    ? { ...analysisData, quadrants: safeQuadrants }
+    : analysisData;
 
   const avgScore = analysisData.quadrants.reduce((sum, q) => sum + q.score, 0) / analysisData.quadrants.length;
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
@@ -1697,12 +1698,12 @@ export default function Results() {
                 </Button>
               </>
             )}
-            <a 
-              href="https://www.share2inspire.pt" 
+            <button 
+              onClick={() => finishAndClean(setLocation)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm font-medium text-foreground"
             >
               <HomeIcon className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </header>
