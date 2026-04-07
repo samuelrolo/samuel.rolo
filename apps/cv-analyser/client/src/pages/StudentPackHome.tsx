@@ -481,15 +481,15 @@ export default function StudentPackHome() {
 
       {/* ─── HERO ─── */}
       {step === 'hero' && (
-        <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
-          <div className="text-center space-y-6">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-20">
+          <div className="text-center space-y-4 md:space-y-6">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 text-emerald-600 text-xs font-bold px-4 py-2 rounded-full border border-emerald-500/20 uppercase tracking-wider">
               <GraduationCap className="w-4 h-4" /> Oferta Estudante — Poupas 43%
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
+            <h1 className="text-2xl md:text-5xl font-bold text-slate-900 leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
               {headlines[headlineIndex].text} <span className="text-emerald-600">{headlines[headlineIndex].highlight}</span>
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-slate-600 max-w-2xl mx-auto">
               CV Analyser + LinkedIn Roaster. Analisa o teu CV, audita o teu LinkedIn e descobre exatamente o que corrigir — tudo num relatório integrado.
             </p>
             <div className="flex items-center justify-center gap-4">
@@ -506,48 +506,55 @@ export default function StudentPackHome() {
                 </>
               )}
             </div>
-            <Button onClick={() => setStep('upload')} className="h-16 px-12 text-lg font-bold rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] mt-4">
-              Começar agora <ArrowRight className="w-6 h-6 ml-2" />
-            </Button>
-            <p className="text-xs text-slate-400">Pagamento único · Sem subscrição · Resultados imediatos</p>
           </div>
 
-          {/* What's included */}
-          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto mt-14">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><BarChart3 className="w-5 h-5 text-blue-600" /></div>
-                <div><h3 className="font-bold text-slate-900">CV Analyser</h3><p className="text-xs text-slate-400">Valor: 9,99€</p></div>
-              </div>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Análise ATS completa com score</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Top 3 problemas do CV com soluções</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estimativa salarial detalhada</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Risco de automação da profissão</li>
-              </ul>
+          {/* Mobile-first: feature boxes THEN CTA */}
+          <div className="flex flex-col-reverse md:flex-col">
+            {/* CTA */}
+            <div className="text-center mt-6 md:mt-8">
+              <Button onClick={() => setStep('upload')} className="h-14 md:h-16 px-10 md:px-12 text-base md:text-lg font-bold rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                Começar agora <ArrowRight className="w-5 h-5 md:w-6 md:h-6 ml-2" />
+              </Button>
+              <p className="text-xs text-slate-400 mt-2">Pagamento único · Sem subscrição · Resultados imediatos</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center"><Linkedin className="w-5 h-5 text-purple-600" /></div>
-                <div><h3 className="font-bold text-slate-900">LinkedIn Roaster</h3><p className="text-xs text-slate-400">Valor: 3,99€</p></div>
+
+            {/* What's included — visible immediately on mobile */}
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 max-w-3xl mx-auto mt-6 md:mt-14 w-full">
+              <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-blue-600" /></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">CV Analyser</h3><p className="text-[10px] md:text-xs text-slate-400">Valor: 9,99€</p></div>
+                </div>
+                <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Análise ATS com score</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Top 3 problemas + soluções</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Estimativa salarial</span></li>
+                  <li className="hidden md:flex items-start gap-1.5"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Risco de automação da profissão</li>
+                </ul>
               </div>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Auditoria completa do perfil</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Headline & About optimization</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> SEO keywords para recrutadores</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de visibilidade</li>
-              </ul>
+              <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><Linkedin className="w-4 h-4 md:w-5 md:h-5 text-purple-600" /></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">LinkedIn Roaster</h3><p className="text-[10px] md:text-xs text-slate-400">Valor: 3,99€</p></div>
+                </div>
+                <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Auditoria do perfil</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Headline & About optimization</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>SEO keywords</span></li>
+                  <li className="hidden md:flex items-start gap-1.5"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de visibilidade</li>
+                </ul>
+              </div>
             </div>
           </div>
 
           {/* Exclusive: Consistency Check */}
-          <div className="mt-8 max-w-3xl mx-auto">
-            <div className="bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-3">
+          <div className="mt-6 md:mt-8 max-w-3xl mx-auto">
+            <div className="bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-2xl p-4 md:p-6 text-center space-y-2 md:space-y-3">
               <div className="inline-flex items-center gap-2 text-emerald-700 text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-4 h-4" /> Exclusivo do Pack Estudante
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Consistência CV ↔ LinkedIn</h3>
-              <p className="text-sm text-slate-600 max-w-lg mx-auto">Cruzamos automaticamente os dois relatórios para detectar inconsistências: skills em falta, headline desalinhada, experiências que faltam no LinkedIn — e dizemos-te exatamente o que corrigir.</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-900">Consistência CV ↔ LinkedIn</h3>
+              <p className="text-xs md:text-sm text-slate-600 max-w-lg mx-auto">Cruzamos automaticamente os dois relatórios para detectar inconsistências: skills em falta, headline desalinhada, experiências que faltam no LinkedIn — e dizemos-te exatamente o que corrigir.</p>
             </div>
           </div>
 

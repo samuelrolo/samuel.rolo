@@ -26,9 +26,9 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
         <a href="https://www.share2inspire.pt/en/pages/home" className="shrink-0">
-          <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-8" style={{ width: "auto" }} />
+          <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-6 lg:h-8" style={{ width: "auto" }} />
         </a>
         <nav className="hidden lg:flex items-center gap-1">
           {navItems.map(item => (
