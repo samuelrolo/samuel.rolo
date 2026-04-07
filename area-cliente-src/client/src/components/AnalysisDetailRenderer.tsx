@@ -1134,6 +1134,127 @@ function sanitizeHtml(html: string): string {
   return clean.trim();
 }
 
+// ─── Salary Reality Check Renderer ──────────────────────────────────────────
+
+function SalaryRealityCheckDetail({ data }: { data: Record<string, any> }) {
+  const resolve = <T,>(obj: any, key: string): T | undefined => obj[key];
+  const percentileBase = resolve<number>(data, 'percentile_base');
+  const percentileTotal = resolve<number>(data, 'percentile_total');
+  const marketLabel = resolve<string>(data, 'market_label');
+  const differentiators = resolve<string[]>(data, 'differentiators') || [];
+  const strengths = resolve<string>(data, 'strengths');
+  const considerations = resolve<string>(data, 'considerations');
+  const advice = resolve<string>(data, 'strategic_advice');
+  const tips = resolve<string>(data, 'negotiation_tips');
+  const nextSteps = resolve<string[]>(data, 'next_steps') || [];
+
+  const p25Base = resolve<number>(data, 'p25_base');
+  const p50Base = resolve<number>(data, 'p50_base');
+  const p75Base = resolve<number>(data, 'p75_base');
+  const p90Base = resolve<number>(data, 'p90_base');
+
+  const p25Total = resolve<number>(data, 'p25_total');
+  const p50Total = resolve<number>(data, 'p50_total');
+  const p75Total = resolve<number>(data, 'p75_total');
+  const p90Total = resolve<number>(data, 'p90_total');
+
+  function fmt(n: number | undefined) { 
+    if (n === undefined) return '—';
+    return Math.round(n).toLocaleString('pt-PT'); 
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Overview */}
+      <div className="p-3 bg-[#fafaf9] border-l-2 border-[#C9A961] rounded-lg space-y-1.5">
+        <SectionHeader icon={TrendingUp} title="Leitura de Mercado" />
+        <p className="text-[12px] font-semibold text-[#333]">{marketLabel || 'Análise de posicionamento'}</p>
+        <div className="flex flex-wrap gap-1.5 mt-1">
+          {differentiators.map((d, i) => (
+            <span key={i} className="text-[9px] px-1.5 py-0.5 bg-[#C9A961]/10 border border-[#C9A961]/20 rounded text-[#a57b0a]">{d}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Percentiles */}
+      <div className="space-y-3">
+        {percentileBase !== undefined && (
+          <div className="p-3 border border-[#e8e8e6] rounded-lg bg-white">
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[11px] font-medium text-[#555]">Base Anual</span>
+              <span className="text-[11px] font-bold text-[#C9A961]">P{percentileBase}</span>
+            </div>
+            <ProgressBar value={percentileBase} />
+            <div className="flex justify-between mt-1 text-[9px] text-[#999]">
+              <span>P25: €{fmt(p25Base)}</span>
+              <span>P50: €{fmt(p50Base)}</span>
+              <span>P75: €{fmt(p75Base)}</span>
+              <span>P90: €{fmt(p90Base)}</span>
+            </div>
+          </div>
+        )}
+
+        {percentileTotal !== undefined && (
+          <div className="p-3 border border-[#e8e8e6] rounded-lg bg-white">
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[11px] font-medium text-[#555]">Pacote Total (CTC)</span>
+              <span className="text-[11px] font-bold text-[#1a1a1a]">P{percentileTotal}</span>
+            </div>
+            <ProgressBar value={percentileTotal} color="#1a1a1a" />
+            <div className="flex justify-between mt-1 text-[9px] text-[#999]">
+              <span>P25: €{fmt(p25Total)}</span>
+              <span>P50: €{fmt(p50Total)}</span>
+              <span>P75: €{fmt(p75Total)}</span>
+              <span>P90: €{fmt(p90Total)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Detailed Analysis */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {strengths && (
+          <div className="p-3 bg-white border border-[#e8e8e6] rounded-lg space-y-1">
+            <p className="text-[10px] font-semibold text-[#999] uppercase tracking-wider">Pontos Fortes</p>
+            <p className="text-[11px] text-[#555] leading-relaxed">{strengths}</p>
+          </div>
+        )}
+        {considerations && (
+          <div className="p-3 bg-white border border-[#e8e8e6] rounded-lg space-y-1">
+            <p className="text-[10px] font-semibold text-[#999] uppercase tracking-wider">A ter em conta</p>
+            <p className="text-[11px] text-[#555] leading-relaxed">{considerations}</p>
+          </div>
+        )}
+      </div>
+
+      {advice && (
+        <div className="p-3 bg-[#1a1a1a] border border-[#1a1a1a] rounded-lg space-y-1">
+          <p className="text-[10px] font-semibold text-[#C9A961] uppercase tracking-wider">Conselho Estratégico</p>
+          <p className="text-[11px] text-white/70 leading-relaxed font-light">{advice}</p>
+        </div>
+      )}
+
+      {tips && (
+        <CollapsibleSection title="Dicas de Negociação">
+          <p className="text-[11px] text-[#555] leading-relaxed font-light whitespace-pre-wrap">{tips}</p>
+        </CollapsibleSection>
+      )}
+
+      {nextSteps.length > 0 && (
+        <CollapsibleSection title="Próximos Passos" defaultOpen={true}>
+          <ol className="space-y-1.5">
+            {nextSteps.map((step, i) => (
+              <li key={i} className="flex items-start gap-2 text-[11px] text-[#555] font-light">
+                <span className="text-[#C9A961] font-bold shrink-0">{i + 1}.</span> {step}
+              </li>
+            ))}
+          </ol>
+        </CollapsibleSection>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Export ──────────────────────────────────────────────────────────────
 
 interface AnalysisDetailRendererProps {
@@ -1164,6 +1285,8 @@ export default function AnalysisDetailRenderer({ analysisType, data }: AnalysisD
       return <CareerPathDetail data={data} />;
     case 'career_energy':
       return <CareerEnergyDetail data={data} />;
+    case 'salary_reality_check':
+      return <SalaryRealityCheckDetail data={data} />;
     default:
       // Generic fallback
       if (data.results_html) return <HtmlRenderer html={data.results_html} />;

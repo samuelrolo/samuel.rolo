@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 const plugins = [react(), tailwindcss()];
 
 export default defineConfig({
-  base: '/area-cliente/',
+  base: './',
   plugins,
   resolve: {
     alias: {

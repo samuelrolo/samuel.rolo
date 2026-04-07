@@ -23,6 +23,7 @@ import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
 import { toast } from 'sonner';
+import SalaryRealityCheck, { type SalaryRealityCheckRef } from '@/components/SalaryRealityCheck';
 import {
   Loader2, Upload, FileText, BarChart3, Linkedin, Bot,
   Sparkles, Route, Lock, ExternalLink, AlertCircle, CheckCircle,
@@ -70,6 +71,7 @@ const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; colo
   career_path:         { label: 'Career Path',         icon: Compass,    color: 'text-emerald-600', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200' },
   career_intelligence: { label: 'Career Intelligence', icon: BarChart3,  color: 'text-violet-600',  bgColor: 'bg-violet-50',  borderColor: 'border-violet-200' },
   career_energy:       { label: 'Career Energy Score', icon: Sparkles,   color: 'text-pink-600',    bgColor: 'bg-pink-50',    borderColor: 'border-pink-200' },
+  salary_reality_check: { label: 'Salary Reality Check', icon: Euro,      color: 'text-amber-600',   bgColor: 'bg-amber-50',   borderColor: 'border-amber-200' },
 };
 
 // Weekly limits (combined CV Analyser + LinkedIn Roaster)
@@ -1189,6 +1191,10 @@ export default function MemberArea() {
     }
   }, [autoTriggerAnalysis, profile, cvFile, runCareerPath, runCareerIntelligence]);
 
+  // ─── Salary Reality Check Refs & State ────────────────────────────────
+  const salaryCheckRef = useRef<SalaryRealityCheckRef>(null);
+  const [pendingSalaryAnalysisId, setPendingSalaryAnalysisId] = useState<number | null>(null);
+
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
     if (expandedTool === key) { setExpandedTool(null); setAnalysisResult(null); setAnalysisError(null); setCvFile(null); }
@@ -1205,6 +1211,7 @@ export default function MemberArea() {
     { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant' },
     { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
     { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
+    { key: 'salaryRealityCheck', icon: Euro, color: 'from-amber-600/15 to-amber-600/5', type: 'inline', action: 'salaryRealityCheck', label: 'Salary Reality Check', desc: lang === 'pt' ? 'Verifica se o teu salário está alinhado com o mercado' : 'Check if your salary is aligned with the market', badge: savedAnalyses.filter(a => a.analysis_type === 'salary_reality_check').length || undefined },
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
@@ -1390,6 +1397,27 @@ export default function MemberArea() {
         />
       );
     }
+    if (tool.action === 'salaryRealityCheck') {
+      return (
+        <SalaryRealityCheck
+          ref={salaryCheckRef}
+          userEmail={user?.email || ''}
+          userName={profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : ''}
+          isPro={planTier === 'pro'}
+          onPaymentRequest={(analysisId, amount) => {
+            setPaymentProduct({
+              type: 'salary_reality_check' as any,
+              label: 'Salary Reality Check',
+              price: amount,
+              originalPrice: 9.99,
+              discountLabel: planTier === 'pro' ? '-50% Pro' : '-0%',
+              stripeProductType: 'salary_reality_check_premium'
+            });
+            setPendingSalaryAnalysisId(analysisId);
+          }}
+        />
+      );
+    }
     return null;
   };
 
@@ -1402,6 +1430,7 @@ export default function MemberArea() {
     if (analysis.analysis_type === 'career_path') { if (data.career_path?.title) return data.career_path.title; }
     if (analysis.analysis_type === 'career_intelligence') { if (data.strategic_paths && Array.isArray(data.strategic_paths)) return `${data.strategic_paths.length} caminhos estratégicos`; }
     if (analysis.analysis_type === 'career_energy') { if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`; }
+    if (analysis.analysis_type === 'salary_reality_check') { if (data.market_label) return data.market_label; if (data.percentile_total) return `P${data.percentile_total} Pacote Total`; }
     return '';
   }
 
@@ -2112,9 +2141,14 @@ export default function MemberArea() {
           product={paymentProduct}
           onClose={() => setPaymentProduct(null)}
           onPaymentSuccess={() => {
+            const type = paymentProduct.type;
             setPaymentProduct(null);
-            if (paymentProduct.type === 'career_path') runCareerPath();
-            else runCareerIntelligence();
+            if (type === 'career_path') runCareerPath();
+            else if (type === 'career_intelligence') runCareerIntelligence();
+            else if (type === 'salary_reality_check' && pendingSalaryAnalysisId) {
+              salaryCheckRef.current?.unlockPremium(pendingSalaryAnalysisId);
+              setPendingSalaryAnalysisId(null);
+            }
           }}
         />
       )}

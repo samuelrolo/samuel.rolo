@@ -1,410 +1,686 @@
 /**
- * SalaryRealityCheck.tsx
- * Stack: React 19 + TypeScript + Tailwind CSS 4
- * Coloca em: area-cliente-src/client/src/components/SalaryRealityCheck.tsx
+ * SalaryRealityCheck — Ferramenta de benchmark salarial
+ * Passos: Contexto → Remuneração → Benefícios → Resultados
  */
-
-import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { Loader2, CheckCircle, AlertCircle, TrendingUp, ChevronRight } from 'lucide-react';
-
-const EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/salary-reality-check';
-const SYM: Record<string, string> = { EUR: '€', GBP: '£', USD: '$', CHF: 'CHF' };
-const STEPS = ['Contexto', 'Remuneração', 'Benefícios', 'Resultados'];
-const COUNTRIES = ['Portugal','Espanha','França','Alemanha','Países Baixos','Reino Unido','Suíça','Irlanda','Estados Unidos','Brasil','Outro'];
-const FUNCTIONS = ['HR / People','Finance','Technology / IT','Consulting / Advisory','Marketing','Operations','Legal','Sales / Commercial','Strategy','Engineering','Healthcare / Medical','Other'];
-const INDUSTRIES = ['Pharmaceutical / Life Sciences','Financial Services / Banking','Technology / Software','Consulting / Professional Services','FMCG / Retail','Energy / Utilities','Telecomunicações','Healthcare','Manufacturing','Sector Público','Other'];
-const SENIORITIES = ['Junior (0-3 anos)','Mid-level (3-6 anos)','Senior IC','Manager / Team Lead','Senior Manager','Director','VP / Head of','C-Suite / Partner'];
-
-interface CompForm {
-  country: string; fn: string; seniority: string; industry: string;
-  monthly: string; currency: 'EUR'|'GBP'|'USD'|'CHF'; months: '12'|'13'|'14';
-  bonus_pct: string; bonus_type: 'commercial'|'non-commercial';
-  car: 'none'|'conventional'|'ev_partial'|'ev_full';
-  health: 'none'|'self'|'family';
-  pension_pct: string; meal: string; flex: string;
-}
-
-interface AnalysisResult {
-  percentile_base: number; percentile_total: number;
-  p25_base: number; p50_base: number; p75_base: number; p90_base: number;
-  p25_total: number; p50_total: number; p75_total: number; p90_total: number;
-  market_label: string; differentiators: string[];
-  strengths: string; considerations: string; strategic_advice: string;
-  negotiation_tips?: string; red_flags?: string[]; next_steps?: string[];
-  analysis_id?: number; payment_amount?: number;
-}
+import { useState, useImperativeHandle, forwardRef } from 'react';
+import {
+  ChevronRight, ChevronLeft, Loader2, AlertCircle, Lock,
+  CheckCircle, TrendingUp, Plus, Trash2, Smartphone, Wifi,
+} from 'lucide-react';
 
 export interface SalaryRealityCheckRef {
-  unlockPremium: (analysisId: number) => Promise<void>;
+  unlockPremium: (analysisId: number) => void;
 }
 
-interface Props {
-  userEmail?: string; userName?: string; isPro?: boolean;
-  onPaymentRequest?: (analysisId: number, amount: number, type: string) => void;
+interface SalaryRealityCheckProps {
+  userEmail?: string;
+  userName?: string;
+  isPro?: boolean;
+  onPaymentRequest?: (analysisId: number, amount: number) => void;
 }
 
-function fmt(n: number) { return Math.round(n).toLocaleString('pt-PT'); }
-
-function computeCTC(f: CompForm) {
-  const base = parseFloat(f.monthly||'0') * parseFloat(f.months);
-  const bonus = base * (parseFloat(f.bonus_pct||'0') / 100);
-  const car = ({none:0,conventional:6000,ev_partial:9000,ev_full:14000} as Record<string,number>)[f.car];
-  const health = ({none:0,self:1200,family:2400} as Record<string,number>)[f.health];
-  const pension = base * (parseFloat(f.pension_pct||'0') / 100);
-  const meal = parseFloat(f.meal||'0') * 220;
-  const flex = parseFloat(f.flex||'0');
-  return { base, bonus, car, health, pension, meal, flex, ctc: base+bonus+car+health+pension+meal+flex };
+interface OtherIncome {
+  id: string;
+  description: string;
+  amount: string;
+  period: 'monthly' | 'annual';
 }
 
-function PctBar({ label, pct, p25, p50, p75, p90, sym, dark, locked }: {
-  label:string; pct:number; p25:number; p50:number; p75:number; p90:number;
-  sym:string; dark?:boolean; locked:boolean;
-}) {
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between items-center mb-1.5">
-        <span className="text-[11px] text-[#666]">{label}</span>
-        {locked
-          ? <span className="text-[10px] font-semibold text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded border border-[#e5e5e5]">🔒 Desbloquear</span>
-          : <span className="text-[10px] font-bold text-gold bg-gold/10 px-2 py-0.5 rounded border border-gold/20">P{pct}</span>
-        }
-      </div>
-      <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all duration-1000 ${dark ? 'bg-[#1a1a1a]' : 'bg-gold'}`} style={{width:`${pct}%`}} />
-      </div>
-      <div className="flex justify-between mt-1">
-        {[['P25',p25],['P50',p50],['P75',p75],['P90',p90]].map(([l,v])=>(
-          <span key={l as string} className="text-[9px] text-[#ccc]">{l}: {sym}{fmt(v as number)}</span>
-        ))}
-      </div>
-    </div>
-  );
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const SRC_URL = `${SUPABASE_URL}/functions/v1/salary-reality-check`;
+
+const COUNTRIES = ['Portugal','Spain','United Kingdom','France','Germany','Netherlands','Switzerland','Ireland','Belgium','Luxembourg','Brazil','Angola','Mozambique','United States','Canada'];
+const FUNCTIONS = ['HR','Finance','Technology','Sales','Marketing','Operations','Legal','Consulting','Engineering','Product','Data/Analytics','Procurement','Risk & Compliance','Other'];
+const INDUSTRIES = ['Financial Services','Technology','Consulting','Healthcare','Pharmaceuticals','Energy','Retail','Telecommunications','Automotive','FMCG','Media','Real Estate','Government','Education','Other'];
+const SENIORITIES = ['Intern/Trainee','Junior (0-2y)','Mid-Level (2-5y)','Senior (5-10y)','Lead/Principal (7-12y)','Manager','Senior Manager','Director','VP','C-Level'];
+const CURRENCIES = ['EUR','GBP','USD','CHF','BRL','AOA'];
+const STEPS = ['CONTEXTO','REMUNERAÇÃO','BENEFÍCIOS','RESULTADOS'];
+
+function fmt(n: number, currency = 'EUR') {
+  const sym = ({ EUR:'€', GBP:'£', USD:'$', CHF:'CHF', BRL:'R$', AOA:'Kz' } as Record<string,string>)[currency] ?? '€';
+  return `${sym}${Math.round(n).toLocaleString('pt-PT')}`;
 }
 
-const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, Props>(
-  ({ userEmail='', userName='', isPro=false, onPaymentRequest }, ref) => {
+function computeOtherIncomeAnnual(items: OtherIncome[]): number {
+  return items.reduce((sum, item) => {
+    const val = parseFloat(item.amount) || 0;
+    return sum + (item.period === 'monthly' ? val * 12 : val);
+  }, 0);
+}
+
+function computeCTC(
+  monthly: number, months: number, bonusPct: number,
+  car: string, health: string,
+  pensionPct: number, mealDaily: number, flexAnnual: number,
+  phone: string, remote: string, otherIncomeAnnual: number,
+) {
+  const base    = monthly * months;
+  const bonus   = base * (bonusPct / 100);
+  const carVal  = ({ none:0, conventional:6000, ev_partial:9000, ev_full:14000 } as Record<string,number>)[car] ?? 0;
+  const healthV = ({ none:0, self:1200, family:2400 } as Record<string,number>)[health] ?? 0;
+  const pension = base * (pensionPct / 100);
+  const meal    = mealDaily * 220;
+  const flex    = flexAnnual;
+  const phoneV  = phone === 'company' ? 600 : 0;
+  const remoteV = ({ presencial:0, hybrid:1200, full_remote:2400 } as Record<string,number>)[remote] ?? 0;
+  const other   = otherIncomeAnnual;
+  const ctc = base + bonus + carVal + healthV + pension + meal + flex + phoneV + remoteV + other;
+  return { base, bonus, car: carVal, health: healthV, pension, meal, flex, phone: phoneV, remote: remoteV, other, ctc };
+}
+
+const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckProps>(
+  ({ userEmail = '', userName = '', isPro = false, onPaymentRequest }, ref) => {
 
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState<CompForm>({
-    country:'Portugal', fn:'', seniority:'', industry:'',
-    monthly:'', currency:'EUR', months:'14',
-    bonus_pct:'', bonus_type:'non-commercial',
-    car:'none', health:'none', pension_pct:'', meal:'', flex:'',
-  });
-  const [loading, setLoading] = useState(false);
-  const [freeResult, setFreeResult] = useState<AnalysisResult|null>(null);
-  const [premium, setPremium] = useState<AnalysisResult|null>(null);
-  const [analysisId, setAnalysisId] = useState<number|null>(null);
-  const [error, setError] = useState<string|null>(null);
 
-  const u = useCallback(<K extends keyof CompForm>(k: K, v: CompForm[K]) => {
-    setForm(f => ({...f, [k]:v}));
-  }, []);
+  // Step 0
+  const [country, setCountry]     = useState('Portugal');
+  const [fn, setFn]               = useState('');
+  const [industry, setIndustry]   = useState('');
+  const [seniority, setSeniority] = useState('');
 
-  const c = computeCTC(form);
-  const sym = SYM[form.currency] || '€';
+  // Step 1
+  const [monthly, setMonthly]     = useState('');
+  const [months, setMonths]       = useState('14');
+  const [currency, setCurrency]   = useState('EUR');
+  const [bonusPct, setBonusPct]   = useState('0');
+  const [bonusType, setBonusType] = useState('performance');
+  const [otherIncome, setOtherIncome] = useState<OtherIncome[]>([]);
+
+  // Step 2
+  const [car, setCar]               = useState('none');
+  const [health, setHealth]         = useState('none');
+  const [pensionPct, setPensionPct] = useState('0');
+  const [mealDaily, setMealDaily]   = useState('0');
+  const [flexAnnual, setFlexAnnual] = useState('0');
+  const [phone, setPhone]           = useState('none');
+  const [remote, setRemote]         = useState('presencial');
+
+  // Results
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState<string | null>(null);
+  const [freeResult, setFreeResult] = useState<any>(null);
+  const [premiumResult, setPremiumResult] = useState<any>(null);
+  const [analysisId, setAnalysisId] = useState<number | null>(null);
+  const [unlocking, setUnlocking]   = useState(false);
 
   useImperativeHandle(ref, () => ({
-    unlockPremium: async (aId: number) => {
-      if (!freeResult) return;
-      setLoading(true); setError(null);
+    unlockPremium: async (aid: number) => {
+      setUnlocking(true);
       try {
-        const res = await fetch(EDGE_URL, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({
-            country:form.country, fn:form.fn, industry:form.industry,
-            seniority:form.seniority, monthly:parseFloat(form.monthly),
-            currency:form.currency, months:parseFloat(form.months),
-            bonus_pct:parseFloat(form.bonus_pct||'0'), bonus_type:form.bonus_type,
-            car:form.car, health:form.health,
-            pension_pct:parseFloat(form.pension_pct||'0'),
-            meal_daily:parseFloat(form.meal||'0'),
-            flex_annual:parseFloat(form.flex||'0'),
-            tier:'premium', analysis_id:aId, payment_method:'stripe',
-            user_email:userEmail, user_name:userName,
-          }),
+        const pkg = buildPackage('premium', aid);
+        const res = await fetch(SRC_URL, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(pkg),
         });
-        if (!res.ok) { const e = await res.json(); throw new Error(e.error||`HTTP ${res.status}`); }
-        setPremium(await res.json());
-      } catch(e) {
-        setError(e instanceof Error ? e.message : 'Erro ao desbloquear análise premium.');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro na análise premium');
+        setPremiumResult(data);
+      } catch (e: any) {
+        setError(e.message || 'Erro ao desbloquear análise premium');
+      } finally {
+        setUnlocking(false);
       }
-      setLoading(false);
     },
   }));
 
-  async function analyse() {
+  const otherAnnual = computeOtherIncomeAnnual(otherIncome);
+  const computed = computeCTC(
+    parseFloat(monthly) || 0, parseInt(months) || 14,
+    parseFloat(bonusPct) || 0,
+    car, health,
+    parseFloat(pensionPct) || 0,
+    parseFloat(mealDaily) || 0,
+    parseFloat(flexAnnual) || 0,
+    phone, remote, otherAnnual,
+  );
+
+  const addOtherIncome = () => setOtherIncome(prev => [
+    ...prev, { id: Date.now().toString(), description: '', amount: '', period: 'monthly' },
+  ]);
+  const removeOtherIncome = (id: string) => setOtherIncome(prev => prev.filter(i => i.id !== id));
+  const updateOtherIncome = (id: string, field: keyof OtherIncome, value: string) =>
+    setOtherIncome(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
+
+  function buildPackage(tier: 'free' | 'premium', aid?: number) {
+    return {
+      country, fn, industry, seniority,
+      monthly: parseFloat(monthly) || 0,
+      months: parseInt(months) || 14,
+      currency,
+      bonus_pct: parseFloat(bonusPct) || 0,
+      bonus_type: bonusType,
+      car, health,
+      pension_pct: parseFloat(pensionPct) || 0,
+      meal_daily: parseFloat(mealDaily) || 0,
+      flex_annual: parseFloat(flexAnnual) || 0,
+      phone,
+      remote,
+      other_income_annual: Math.round(otherAnnual),
+      other_income_items: otherIncome
+        .filter(i => i.description && i.amount)
+        .map(i => ({
+          description: i.description,
+          amount_annual: i.period === 'monthly' ? (parseFloat(i.amount) || 0) * 12 : parseFloat(i.amount) || 0,
+        })),
+      tier,
+      ...(aid ? { analysis_id: aid } : {}),
+      user_email: userEmail,
+      user_name: userName,
+    };
+  }
+
+  const runAnalysis = async () => {
     setLoading(true); setError(null);
     try {
-      const res = await fetch(EDGE_URL, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          country:form.country, fn:form.fn, industry:form.industry,
-          seniority:form.seniority, monthly:parseFloat(form.monthly),
-          currency:form.currency, months:parseFloat(form.months),
-          bonus_pct:parseFloat(form.bonus_pct||'0'), bonus_type:form.bonus_type,
-          car:form.car, health:form.health,
-          pension_pct:parseFloat(form.pension_pct||'0'),
-          meal_daily:parseFloat(form.meal||'0'),
-          flex_annual:parseFloat(form.flex||'0'),
-          tier:'free', user_email:userEmail, user_name:userName,
-        }),
+      const res = await fetch(SRC_URL, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildPackage('free')),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: AnalysisResult = await res.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro na análise');
       setFreeResult(data);
       if (data.analysis_id) setAnalysisId(data.analysis_id);
       setStep(3);
-    } catch { setError('Erro na análise. Verifica os dados e tenta novamente.'); }
-    setLoading(false);
-  }
+    } catch (e: any) {
+      setError(e.message || 'Erro na análise. Verifica os dados e tenta novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const result = premium || freeResult;
+  const step0Valid = !!(fn && industry && seniority);
+  const step1Valid = parseFloat(monthly) > 0;
+
+  const inputCls = "w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-xs text-[#1a1a1a] focus:border-[#C8A02A]/40 focus:outline-none bg-white placeholder:text-[#bbb]";
+  const cardBtn = (active: boolean) =>
+    `p-3 border rounded-lg text-left transition-all cursor-pointer ${active ? 'border-[#C8A02A] bg-[#C8A02A]/5' : 'border-[#e5e5e5] hover:border-[#C8A02A]/30 bg-white'}`;
+  const sym = ({ EUR:'€', GBP:'£', USD:'$', CHF:'CHF', BRL:'R$', AOA:'Kz' } as Record<string,string>)[currency] ?? '€';
 
   return (
-    <div>
-      {/* Step tabs */}
-      <div className="flex border-b border-[#e5e5e5] mb-5">
-        {STEPS.map((s,i)=>(
-          <div key={s} className={`flex-1 py-2 text-center text-[10px] font-semibold uppercase tracking-wider transition-colors ${
-            i===step ? 'text-gold border-b-2 border-gold' : i<step ? 'text-[#888]' : 'text-[#ccc]'
-          }`}>{s}</div>
+    <div className="space-y-4">
+      {/* Progress */}
+      <div className="flex gap-1">
+        {STEPS.map((s, i) => (
+          <div key={s} className={`flex-1 h-1 rounded-full transition-all ${i <= step ? 'bg-[#C8A02A]' : 'bg-[#e5e5e5]'}`} />
+        ))}
+      </div>
+      <div className="flex gap-1 mb-2">
+        {STEPS.map((s, i) => (
+          <span key={s} className={`flex-1 text-center text-[9px] font-medium uppercase tracking-wider transition-colors ${i === step ? 'text-[#C8A02A]' : 'text-[#ccc]'}`}>{s}</span>
         ))}
       </div>
 
-      {/* Step 0 */}
-      {step===0 && (
+      {/* STEP 0: CONTEXTO */}
+      {step === 0 && (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              {label:'País', opts:COUNTRIES, field:'country' as const},
-              {label:'Função', opts:FUNCTIONS, field:'fn' as const},
-              {label:'Indústria', opts:INDUSTRIES, field:'industry' as const},
-              {label:'Senioridade', opts:SENIORITIES, field:'seniority' as const},
-            ].map(({label,opts,field})=>(
-              <div key={field}>
-                <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{label}</label>
-                <select value={form[field]} onChange={e=>u(field, e.target.value)}
-                  className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">
-                  {field!=='country' && <option value="">Seleciona...</option>}
-                  {opts.map(o=><option key={o}>{o}</option>)}
-                </select>
-              </div>
-            ))}
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">País</label>
+            <select value={country} onChange={e => setCountry(e.target.value)} className={inputCls}>
+              {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+            </select>
           </div>
-          <div className="flex justify-end">
-            <button onClick={()=>setStep(1)} disabled={!form.fn||!form.industry||!form.seniority}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-xs font-medium rounded-lg disabled:opacity-40 hover:from-[#333] hover:to-[#444] transition-all">
-              Continuar <ChevronRight className="w-3.5 h-3.5"/>
-            </button>
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Função / Área</label>
+            <select value={fn} onChange={e => setFn(e.target.value)} className={inputCls}>
+              <option value="">Seleccionar...</option>
+              {FUNCTIONS.map(f => <option key={f}>{f}</option>)}
+            </select>
           </div>
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Indústria</label>
+            <select value={industry} onChange={e => setIndustry(e.target.value)} className={inputCls}>
+              <option value="">Seleccionar...</option>
+              {INDUSTRIES.map(i => <option key={i}>{i}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Senioridade</label>
+            <select value={seniority} onChange={e => setSeniority(e.target.value)} className={inputCls}>
+              <option value="">Seleccionar...</option>
+              {SENIORITIES.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <button onClick={() => setStep(1)} disabled={!step0Valid}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+            Continuar <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* Step 1 */}
-      {step===1 && (
+      {/* STEP 1: REMUNERAÇÃO */}
+      {step === 1 && (
         <div className="space-y-4">
-          <div>
-            <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">Salário mensal bruto</label>
-            <div className="flex border border-[#e5e5e5] rounded overflow-hidden focus-within:border-gold/30">
-              <span className="bg-[#fafaf9] px-3 flex items-center text-xs text-[#999] border-r border-[#e5e5e5]">{sym}</span>
-              <input type="number" placeholder="0" value={form.monthly} onChange={e=>u('monthly',e.target.value)}
-                className="flex-1 px-3 py-2 text-sm outline-none bg-white"/>
-              <select value={form.currency} onChange={e=>u('currency',e.target.value as CompForm['currency'])}
-                className="bg-[#fafaf9] border-l border-[#e5e5e5] px-2 text-xs outline-none w-20">
-                {['EUR','GBP','USD','CHF'].map(c=><option key={c}>{c}</option>)}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Salário base (mensal)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#999]">{sym}</span>
+                <input type="number" value={monthly} onChange={e => setMonthly(e.target.value)}
+                  placeholder="0" className={`${inputCls} pl-6`} />
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Moeda</label>
+              <select value={currency} onChange={e => setCurrency(e.target.value)} className={inputCls}>
+                {CURRENCIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
           </div>
+
           <div>
-            <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">Meses de salário</label>
-            <div className="flex gap-2">
-              {(['12','13','14'] as const).map(m=>(
-                <button key={m} onClick={()=>u('months',m)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${form.months===m ? 'bg-gold text-[#1a1a1a] border-gold' : 'bg-white text-[#666] border-[#e5e5e5] hover:border-gold/40'}`}>
-                  {m} meses
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Nº de meses / ano</label>
+            <div className="grid grid-cols-4 gap-2">
+              {['12','13','14','15'].map(m => (
+                <button key={m} onClick={() => setMonths(m)}
+                  className={`py-2 border rounded-lg text-xs font-medium transition-all ${months === m ? 'border-[#C8A02A] bg-[#C8A02A]/5 text-[#C8A02A]' : 'border-[#e5e5e5] text-[#666] hover:border-[#C8A02A]/30'}`}>
+                  {m}m
                 </button>
               ))}
             </div>
           </div>
-          {form.monthly && parseFloat(form.monthly)>0 && (
-            <div className="flex items-center justify-between bg-[#1a1a1a] rounded-lg px-4 py-3">
-              <span className="text-[10px] text-white/50 uppercase tracking-wider">Base anual estimada</span>
-              <span className="text-base font-bold text-gold">{sym}{fmt(c.base)}</span>
-            </div>
-          )}
-          <div className="h-px bg-[#f0f0f0]"/>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">Bónus target (%)</label>
-              <div className="flex border border-[#e5e5e5] rounded overflow-hidden focus-within:border-gold/30">
-                <input type="number" placeholder="0" value={form.bonus_pct} onChange={e=>u('bonus_pct',e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm outline-none bg-white"/>
-                <span className="bg-[#fafaf9] px-3 flex items-center text-xs text-[#999] border-l border-[#e5e5e5]">%</span>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Bónus (%)</label>
+              <input type="number" value={bonusPct} onChange={e => setBonusPct(e.target.value)}
+                placeholder="0" className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Tipo de bónus</label>
+              <select value={bonusType} onChange={e => setBonusType(e.target.value)} className={inputCls}>
+                <option value="performance">Performance</option>
+                <option value="commercial">Comercial</option>
+                <option value="guaranteed">Garantido</option>
+                <option value="profit_share">Profit share</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Outros Rendimentos */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[10px] text-[#999] uppercase tracking-wider">Outros Rendimentos</label>
+              <button onClick={addOtherIncome}
+                className="flex items-center gap-1 text-[10px] text-[#C8A02A] hover:text-[#b8960c] font-medium transition-colors">
+                <Plus className="w-3 h-3" /> Adicionar
+              </button>
+            </div>
+            {otherIncome.length === 0 && (
+              <p className="text-[10px] text-[#bbb] italic">Ex: freelance, rendas, consultoria, RSU, comissões...</p>
+            )}
+            {otherIncome.map((item) => (
+              <div key={item.id} className="flex gap-2 mb-2 items-center">
+                <input
+                  type="text" value={item.description}
+                  onChange={e => updateOtherIncome(item.id, 'description', e.target.value)}
+                  placeholder="Descrição (ex: freelance)"
+                  className="flex-1 px-2 py-1.5 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-[#C8A02A]/40 focus:outline-none bg-white placeholder:text-[#bbb]"
+                />
+                <div className="relative w-24">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-[#999]">{sym}</span>
+                  <input
+                    type="number" value={item.amount}
+                    onChange={e => updateOtherIncome(item.id, 'amount', e.target.value)}
+                    placeholder="0"
+                    className="w-full pl-5 pr-2 py-1.5 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-[#C8A02A]/40 focus:outline-none bg-white"
+                  />
+                </div>
+                <select
+                  value={item.period}
+                  onChange={e => updateOtherIncome(item.id, 'period', e.target.value as 'monthly' | 'annual')}
+                  className="w-20 px-1 py-1.5 border border-[#e5e5e5] rounded text-[10px] text-[#666] focus:border-[#C8A02A]/40 focus:outline-none bg-white"
+                >
+                  <option value="monthly">Mensal</option>
+                  <option value="annual">Anual</option>
+                </select>
+                <button onClick={() => removeOtherIncome(item.id)}
+                  className="text-[#ddd] hover:text-red-400 transition-colors shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            {otherIncome.length > 0 && otherAnnual > 0 && (
+              <p className="text-[10px] text-[#C8A02A] font-medium mt-1">
+                Total: {fmt(otherAnnual, currency)}/ano
+              </p>
+            )}
+          </div>
+
+          {parseFloat(monthly) > 0 && (
+            <div className="p-3 bg-[#0B1929]/5 border border-[#0B1929]/10 rounded-lg">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider mb-1">Estimativa (antes de benefícios)</p>
+              <p className="text-sm font-bold text-[#1a1a1a]">{fmt(computed.base + computed.bonus + computed.other, currency)}/ano</p>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <button onClick={() => setStep(0)}
+              className="flex items-center gap-1 px-3 py-2.5 text-xs text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Voltar
+            </button>
+            <button onClick={() => setStep(2)} disabled={!step1Valid}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+              Continuar <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2: BENEFÍCIOS */}
+      {step === 2 && (
+        <div className="space-y-5">
+
+          {/* Viatura */}
+          <div>
+            <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2">Viatura de empresa</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { key:'none', label:'Sem viatura', sub:'—' },
+                { key:'conventional', label:'Convencional', sub:'~€6k/ano' },
+                { key:'ev_partial', label:'EV parcial', sub:'~€9k/ano' },
+                { key:'ev_full', label:'EV full use', sub:'~€14k/ano' },
+              ].map(o => (
+                <button key={o.key} onClick={() => setCar(o.key)} className={cardBtn(car === o.key)}>
+                  <p className={`text-xs font-medium ${car === o.key ? 'text-[#C8A02A]' : 'text-[#1a1a1a]'}`}>{o.label}</p>
+                  <p className="text-[10px] text-[#999] mt-0.5">{o.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Seguro saúde */}
+          <div>
+            <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2">Seguro de Saúde</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { key:'none', label:'Sem seguro', sub:'—' },
+                { key:'self', label:'Colaborador', sub:'~€1.2k/ano' },
+                { key:'family', label:'Família', sub:'~€2.4k/ano' },
+              ].map(o => (
+                <button key={o.key} onClick={() => setHealth(o.key)} className={cardBtn(health === o.key)}>
+                  <p className={`text-xs font-medium ${health === o.key ? 'text-[#C8A02A]' : 'text-[#1a1a1a]'}`}>{o.label}</p>
+                  <p className="text-[10px] text-[#999] mt-0.5">{o.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Telemóvel */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-2">
+              <Smartphone className="w-3 h-3 text-[#999]" />
+              <p className="text-[10px] text-[#999] uppercase tracking-wider">Telemóvel de empresa</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { key:'none', label:'Sem telemóvel', sub:'—' },
+                { key:'company', label:'Telemóvel empresa', sub:'~€600/ano' },
+              ].map(o => (
+                <button key={o.key} onClick={() => setPhone(o.key)} className={cardBtn(phone === o.key)}>
+                  <p className={`text-xs font-medium ${phone === o.key ? 'text-[#C8A02A]' : 'text-[#1a1a1a]'}`}>{o.label}</p>
+                  <p className="text-[10px] text-[#999] mt-0.5">{o.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Trabalho remoto */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-2">
+              <Wifi className="w-3 h-3 text-[#999]" />
+              <p className="text-[10px] text-[#999] uppercase tracking-wider">Trabalho Remoto</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { key:'presencial', label:'Presencial', sub:'—' },
+                { key:'hybrid', label:'Híbrido', sub:'~€100/mês' },
+                { key:'full_remote', label:'Full Remote', sub:'~€200/mês' },
+              ].map(o => (
+                <button key={o.key} onClick={() => setRemote(o.key)} className={cardBtn(remote === o.key)}>
+                  <p className={`text-xs font-medium ${remote === o.key ? 'text-[#C8A02A]' : 'text-[#1a1a1a]'}`}>{o.label}</p>
+                  <p className="text-[10px] text-[#999] mt-0.5">{o.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* PPR + Meal + Flex */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">PPR Empresa (%)</label>
+              <div className="flex items-center gap-1">
+                <input type="number" value={pensionPct} onChange={e => setPensionPct(e.target.value)}
+                  placeholder="0" className={inputCls} />
+                <span className="text-xs text-[#999]">%</span>
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">Tipo</label>
-              <div className="flex gap-2">
-                {[{v:'commercial',l:'Comercial'},{v:'non-commercial',l:'Não-comercial'}].map(({v,l})=>(
-                  <button key={v} onClick={()=>u('bonus_type',v as CompForm['bonus_type'])}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${form.bonus_type===v ? 'bg-gold text-[#1a1a1a] border-gold' : 'bg-white text-[#666] border-[#e5e5e5] hover:border-gold/40'}`}>
-                    {l}
-                  </button>
-                ))}
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Alim. (€/dia)</label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-[#999]">€</span>
+                <input type="number" value={mealDaily} onChange={e => setMealDaily(e.target.value)}
+                  placeholder="0" className={inputCls} />
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Flex (€/ano)</label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-[#999]">€</span>
+                <input type="number" value={flexAnnual} onChange={e => setFlexAnnual(e.target.value)}
+                  placeholder="0" className={inputCls} />
               </div>
             </div>
           </div>
-          <div className="flex justify-between">
-            <button onClick={()=>setStep(0)} className="text-xs text-[#999] hover:text-[#1a1a1a]">← Voltar</button>
-            <button onClick={()=>setStep(2)} disabled={!form.monthly||parseFloat(form.monthly)<=0}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-xs font-medium rounded-lg disabled:opacity-40 hover:from-[#333] hover:to-[#444] transition-all">
-              Continuar <ChevronRight className="w-3.5 h-3.5"/>
-            </button>
-          </div>
-        </div>
-      )}
 
-      {/* Step 2 */}
-      {step===2 && (
-        <div className="space-y-4">
-          <div>
-            <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">Viatura de empresa</label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {[{v:'none',t:'Sem viatura',s:'—'},{v:'conventional',t:'Convencional',s:'~€6k/ano'},{v:'ev_partial',t:'EV parcial',s:'~€9k/ano'},{v:'ev_full',t:'EV full use',s:'~€14k/ano'}].map(({v,t,s})=>(
-                <button key={v} onClick={()=>u('car',v as CompForm['car'])}
-                  className={`text-left rounded-lg border p-2.5 text-xs transition-all ${form.car===v ? 'border-gold/50 bg-gold/5' : 'border-[#e5e5e5] hover:border-gold/30'}`}>
-                  <div className={`font-semibold ${form.car===v?'text-gold':'text-[#1a1a1a]'}`}>{t}</div>
-                  <div className="text-[#999] mt-0.5">{s}</div>
-                </button>
-              ))}
-            </div>
+          {/* CTC total */}
+          <div className="p-4 bg-[#0B1929] text-white rounded-xl flex items-center justify-between">
+            <p className="text-xs font-medium text-white/70">Pacote Total Estimado</p>
+            <p className="text-lg font-bold">{fmt(computed.ctc, currency)}</p>
           </div>
-          <div>
-            <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">Seguro de saúde</label>
-            <div className="grid grid-cols-3 gap-2">
-              {[{v:'none',t:'Sem seguro',s:'—'},{v:'self',t:'Colaborador',s:'~€1.2k/ano'},{v:'family',t:'Família',s:'~€2.4k/ano'}].map(({v,t,s})=>(
-                <button key={v} onClick={()=>u('health',v as CompForm['health'])}
-                  className={`text-left rounded-lg border p-2.5 text-xs transition-all ${form.health===v ? 'border-gold/50 bg-gold/5' : 'border-[#e5e5e5] hover:border-gold/30'}`}>
-                  <div className={`font-semibold ${form.health===v?'text-gold':'text-[#1a1a1a]'}`}>{t}</div>
-                  <div className="text-[#999] mt-0.5">{s}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {[{label:'PPR empresa (%)',field:'pension_pct' as const,suffix:'%'},{label:'Alim. (€/dia)',field:'meal' as const,prefix:sym},{label:'Flex (€/ano)',field:'flex' as const,prefix:sym}].map(({label,field,suffix,prefix})=>(
-              <div key={field}>
-                <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{label}</label>
-                <div className="flex border border-[#e5e5e5] rounded overflow-hidden focus-within:border-gold/30">
-                  {prefix && <span className="bg-[#fafaf9] px-2 flex items-center text-xs text-[#999] border-r border-[#e5e5e5]">{prefix}</span>}
-                  <input type="number" placeholder="0" value={form[field]} onChange={e=>u(field,e.target.value)}
-                    className="flex-1 px-2 py-1.5 text-xs outline-none bg-white"/>
-                  {suffix && <span className="bg-[#fafaf9] px-2 flex items-center text-xs text-[#999] border-l border-[#e5e5e5]">{suffix}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-          {c.ctc>0 && (
-            <div className="flex items-center justify-between bg-[#1a1a1a] rounded-lg px-4 py-3">
-              <span className="text-[10px] text-white/50 uppercase tracking-wider">Pacote total estimado</span>
-              <span className="text-base font-bold text-gold">{sym}{fmt(c.ctc)}</span>
+
+          {error && (
+            <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{error}</span>
             </div>
           )}
-          {error && <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2"><AlertCircle className="w-3.5 h-3.5 shrink-0"/>{error}</div>}
-          <div className="flex justify-between">
-            <button onClick={()=>setStep(1)} className="text-xs text-[#999] hover:text-[#1a1a1a]">← Voltar</button>
-            <button onClick={analyse} disabled={loading}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-xs font-medium rounded-lg disabled:opacity-40 hover:from-[#333] hover:to-[#444] transition-all">
-              {loading ? <><Loader2 className="w-3.5 h-3.5 animate-spin"/> A analisar...</> : <><TrendingUp className="w-3.5 h-3.5"/> Ver posicionamento</>}
+
+          <div className="flex gap-2">
+            <button onClick={() => setStep(1)}
+              className="flex items-center gap-1 px-3 py-2.5 text-xs text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Voltar
+            </button>
+            <button onClick={runAnalysis} disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all hover:opacity-90">
+              {loading
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> A analisar...</>
+                : <><TrendingUp className="w-4 h-4" /> Ver posicionamento</>
+              }
             </button>
           </div>
         </div>
       )}
 
-      {/* Step 3 */}
-      {step===3 && (
-        <div>
-          {loading && <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin text-gold mx-auto mb-2"/><p className="text-xs text-[#999]">A calcular o teu posicionamento...</p></div>}
-          {!loading && result && (
-            <>
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {[{l:'Base Anual',v:sym+fmt(c.base),d:false},{l:'CTC Total',v:sym+fmt(c.ctc),d:true},{l:'Bónus',v:sym+fmt(c.bonus),d:false}].map(m=>(
-                  <div key={m.l} className={`rounded-lg p-3 ${m.d ? 'bg-[#1a1a1a]' : 'bg-[#fafaf9] border border-[#e5e5e5]'}`}>
-                    <div className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${m.d?'text-white/40':'text-[#999]'}`}>{m.l}</div>
-                    <div className={`text-base font-bold ${m.d?'text-gold':'text-[#1a1a1a]'}`}>{m.v}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-[#fafaf9] border-l-2 border-gold rounded-lg px-4 py-3 mb-4">
-                <div className="text-[10px] text-[#999] uppercase tracking-wider mb-1">Leitura de mercado</div>
-                <div className="text-sm font-semibold text-[#1a1a1a]">{result.market_label}</div>
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {(result.differentiators||[]).map((d,i)=>(
-                    <span key={i} className="bg-gold/10 text-gold/80 border border-gold/20 rounded-full px-2.5 py-0.5 text-[10px] font-medium">{d}</span>
-                  ))}
+      {/* STEP 3: RESULTADOS */}
+      {step === 3 && freeResult && (
+        <div className="space-y-4">
+          {/* CTC breakdown */}
+          <div className="p-4 bg-[#0B1929] text-white rounded-xl">
+            <p className="text-[10px] text-white/60 uppercase tracking-wider mb-1">Pacote Total Calculado</p>
+            <p className="text-2xl font-bold">{fmt(computed.ctc, currency)}</p>
+            <div className="mt-3 space-y-1">
+              {([
+                { label: 'Base anual', val: computed.base },
+                computed.bonus > 0 ? { label: 'Bónus', val: computed.bonus } : null,
+                computed.car > 0 ? { label: 'Viatura', val: computed.car } : null,
+                computed.health > 0 ? { label: 'Saúde', val: computed.health } : null,
+                computed.pension > 0 ? { label: 'PPR', val: computed.pension } : null,
+                computed.meal > 0 ? { label: 'Refeição', val: computed.meal } : null,
+                computed.flex > 0 ? { label: 'Flex', val: computed.flex } : null,
+                computed.phone > 0 ? { label: 'Telemóvel', val: computed.phone } : null,
+                computed.remote > 0 ? { label: 'Trabalho remoto', val: computed.remote } : null,
+                computed.other > 0 ? { label: 'Outros rendimentos', val: computed.other } : null,
+              ] as Array<{label:string;val:number}|null>).filter(Boolean).map((item) => (
+                <div key={item!.label} className="flex justify-between text-[11px]">
+                  <span className="text-white/60">{item!.label}</span>
+                  <span className="text-white/90 font-medium">{fmt(item!.val, currency)}</span>
                 </div>
-              </div>
-              <div className="text-[10px] text-[#999] uppercase tracking-wider mb-3">Posicionamento · {form.country}</div>
-              <PctBar label={`Base anual · ${form.fn}`} pct={result.percentile_base} p25={result.p25_base} p50={result.p50_base} p75={result.p75_base} p90={result.p90_base} sym={sym} dark locked={!premium}/>
-              <PctBar label="Pacote total (CTC)" pct={result.percentile_total} p25={result.p25_total} p50={result.p50_total} p75={result.p75_total} p90={result.p90_total} sym={sym} locked={!premium}/>
+              ))}
+            </div>
+          </div>
 
-              {premium ? (
-                <div className="space-y-3 mt-4 pt-4 border-t border-[#f0f0f0]">
-                  <div className="flex items-center gap-2 text-xs text-emerald-600 mb-2"><CheckCircle className="w-3.5 h-3.5"/> Análise premium desbloqueada</div>
-                  {[{t:'Pontos fortes',c:premium.strengths,navy:false},{t:'A ter em conta',c:premium.considerations,navy:false},{t:'Conselho estratégico',c:premium.strategic_advice,navy:true}].map((s,i)=>(
-                    <div key={i} className={`p-3 rounded-lg border text-xs leading-relaxed ${s.navy ? 'bg-[#1a1a1a] border-[#1a1a1a] text-white/70' : 'bg-[#fafaf9] border-[#e5e5e5] text-[#555]'}`}>
-                      <div className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${s.navy?'text-gold':'text-[#999]'}`}>{s.t}</div>
-                      {s.c}
-                    </div>
-                  ))}
-                  {premium.negotiation_tips && (
-                    <div className="p-3 bg-[#fafaf9] border border-[#e5e5e5] rounded-lg text-xs text-[#555] leading-relaxed">
-                      <div className="text-[10px] font-semibold text-[#999] uppercase tracking-wider mb-1">Tips de negociação</div>
-                      {premium.negotiation_tips}
-                    </div>
-                  )}
-                  {(premium.next_steps||[]).length>0 && (
-                    <div className="p-3 bg-[#fafaf9] border border-[#e5e5e5] rounded-lg">
-                      <div className="text-[10px] font-semibold text-[#999] uppercase tracking-wider mb-2">Próximos passos</div>
-                      <ol className="space-y-1">{premium.next_steps!.map((s,i)=>(<li key={i} className="flex items-start gap-2 text-xs text-[#555]"><span className="text-gold font-bold shrink-0">{i+1}.</span>{s}</li>))}</ol>
-                    </div>
-                  )}
+          {freeResult.market_label && (
+            <div className="p-3 bg-[#C8A02A]/5 border border-[#C8A02A]/20 rounded-lg">
+              <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider mb-0.5 font-medium">Posicionamento de mercado</p>
+              <p className="text-sm text-[#1a1a1a] font-semibold">{freeResult.market_label}</p>
+            </div>
+          )}
+
+          {freeResult.p50_base && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-3">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Benchmark — Base anual</p>
+              {[
+                { label:'P25', val: freeResult.p25_base },
+                { label:'P50', val: freeResult.p50_base },
+                { label:'P75', val: freeResult.p75_base },
+                { label:'P90', val: freeResult.p90_base },
+              ].map(b => (
+                <div key={b.label}>
+                  <div className="flex justify-between text-[10px] mb-1">
+                    <span className="text-[#999]">{b.label}</span>
+                    <span className="font-medium text-[#666]">{fmt(b.val, currency)}</span>
+                  </div>
+                  <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#C8A02A]/40 rounded-full"
+                      style={{ width: `${Math.min(100, (b.val / (freeResult.p90_base * 1.1)) * 100)}%` }} />
+                  </div>
                 </div>
-              ) : (
-                <div className="mt-4 border border-gold/30 rounded-xl overflow-hidden">
-                  <div className="p-4 filter blur-sm pointer-events-none select-none">
-                    <div className="grid grid-cols-3 gap-2">
-                      {[{t:'Pontos fortes',c:freeResult?.strengths||''},{t:'A ter em conta',c:freeResult?.considerations||''},{t:'Conselho estratégico',c:freeResult?.strategic_advice||''}].map((s,i)=>(
-                        <div key={i} className={`p-2.5 rounded-lg text-xs leading-relaxed ${i===2 ? 'bg-[#1a1a1a] text-white/60' : 'bg-[#fafaf9] border border-[#e5e5e5] text-[#555]'}`}>
-                          <div className={`text-[10px] font-bold uppercase mb-1 ${i===2?'text-gold':'text-[#999]'}`}>{s.t}</div>
-                          {s.c}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex gap-2 justify-center mt-3">
-                      <span className="text-xs font-bold text-gold bg-gold/10 px-3 py-1 rounded">P{freeResult?.percentile_base} base</span>
-                      <span className="text-xs font-bold text-gold bg-gold/10 px-3 py-1 rounded">P{freeResult?.percentile_total} CTC</span>
-                    </div>
-                  </div>
-                  <div className="bg-[#1a1a1a] px-5 py-4 text-center">
-                    <div className="text-gold font-bold text-sm mb-1">✦ Desbloqueia a análise completa</div>
-                    <div className="text-white/50 text-xs mb-3">Percentil exacto · Análise detalhada · Conselho estratégico · Tips de negociação</div>
-                    <div className="text-white/40 text-[11px] mb-3">A partir de <strong className="text-gold">€4,99</strong> · Acesso imediato{isPro && <span className="ml-2 text-emerald-400">· -50% Pro</span>}</div>
-                    <button onClick={()=>analysisId && onPaymentRequest?.(analysisId, freeResult?.payment_amount||4.99, 'salary_reality_check')}
-                      className="w-full py-2.5 bg-gold text-[#1a1a1a] font-bold text-sm rounded-lg hover:bg-gold/90 transition-colors">
-                      Ver análise completa →
-                    </button>
-                  </div>
+              ))}
+              <div className="pt-2 border-t border-[#f0f0f0]">
+                <div className="flex justify-between text-[10px] mb-1">
+                  <span className="text-[#C8A02A] font-semibold">O teu pacote (base)</span>
+                  <span className="font-bold text-[#C8A02A]">{fmt(computed.base, currency)}</span>
+                </div>
+                <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#C8A02A] rounded-full"
+                    style={{ width: `${Math.min(100, (computed.base / (freeResult.p90_base * 1.1)) * 100)}%` }} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {freeResult.differentiators && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-2">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Diferenciais detectados</p>
+              {freeResult.differentiators.slice(0, 2).map((d: string, i: number) => (
+                <div key={i} className="flex items-start gap-2 text-xs text-[#555]">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" /><span>{d}</span>
+                </div>
+              ))}
+              {freeResult.differentiators.length > 2 && (
+                <p className="text-[10px] text-[#bbb]">+ {freeResult.differentiators.length - 2} mais na análise completa</p>
+              )}
+            </div>
+          )}
+
+          {freeResult.strategic_advice && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium mb-1">Conselho estratégico</p>
+              <p className="text-xs text-[#555] leading-relaxed">{freeResult.strategic_advice}</p>
+            </div>
+          )}
+
+          {!premiumResult && (
+            <div className="p-4 bg-[#0B1929]/3 border-2 border-[#C8A02A]/20 rounded-xl space-y-3">
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#C8A02A]" />
+                <p className="text-sm font-semibold text-[#1a1a1a]">Análise Premium</p>
+                <span className="ml-auto text-xs font-bold text-[#C8A02A]">
+                  {isPro ? '€4.99' : '€9.99'}
+                  {isPro && <span className="ml-1 text-[10px] text-emerald-600">-50% Pro</span>}
+                </span>
+              </div>
+              <ul className="space-y-1.5">
+                {['Percentil exacto vs mercado global','3 insights de negociação personalizados','Riscos e red flags do teu pacote','Próximos passos accionáveis'].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-xs text-[#666]">
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#C8A02A]/10 flex items-center justify-center shrink-0">
+                      <span className="text-[8px] text-[#C8A02A] font-bold">✓</span>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => analysisId && onPaymentRequest?.(analysisId, isPro ? 4.99 : 9.99)}
+                disabled={!analysisId || unlocking}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-40 transition-all hover:opacity-90">
+                {unlocking
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> A desbloquear...</>
+                  : <>Ver análise completa — {isPro ? '€4.99' : '€9.99'}</>
+                }
+              </button>
+            </div>
+          )}
+
+          {premiumResult && (
+            <div className="space-y-3">
+              {premiumResult.percentile_total !== undefined && (
+                <div className="p-4 bg-[#C8A02A]/5 border border-[#C8A02A]/20 rounded-xl text-center">
+                  <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider mb-1">Percentil no mercado (CTC total)</p>
+                  <p className="text-3xl font-bold text-[#1a1a1a]">P{premiumResult.percentile_total}</p>
+                  <p className="text-xs text-[#666] mt-1">Estás acima de {premiumResult.percentile_total}% dos profissionais com este perfil</p>
                 </div>
               )}
-
-              {error && <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-3"><AlertCircle className="w-3.5 h-3.5 shrink-0"/>{error}</div>}
-              <div className="mt-4 pt-3 border-t border-[#f0f0f0]">
-                <button onClick={()=>{setStep(0);setFreeResult(null);setPremium(null);setAnalysisId(null);setError(null);}} className="text-xs text-[#999] hover:text-[#1a1a1a] underline">← Nova análise</button>
-              </div>
-            </>
+              {premiumResult.strengths && (
+                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+                  <p className="text-[10px] text-emerald-700 uppercase tracking-wider font-medium mb-2">Pontos fortes do pacote</p>
+                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.strengths}</p>
+                </div>
+              )}
+              {premiumResult.considerations && (
+                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+                  <p className="text-[10px] text-amber-700 uppercase tracking-wider font-medium mb-2">Considerações</p>
+                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.considerations}</p>
+                </div>
+              )}
+              {premiumResult.negotiation_tips && (
+                <div className="p-4 border border-[#C8A02A]/20 bg-[#C8A02A]/3 rounded-lg">
+                  <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider font-medium mb-2">Dicas de negociação</p>
+                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.negotiation_tips}</p>
+                </div>
+              )}
+              {premiumResult.red_flags && premiumResult.red_flags.length > 0 && premiumResult.red_flags[0] && (
+                <div className="p-4 border border-red-100 bg-red-50/50 rounded-lg">
+                  <p className="text-[10px] text-red-700 uppercase tracking-wider font-medium mb-2">Red flags</p>
+                  {premiumResult.red_flags.map((f: string, i: number) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-red-700 mb-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" /><span>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {premiumResult.next_steps && premiumResult.next_steps.length > 0 && (
+                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+                  <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium mb-2">Próximos passos</p>
+                  {premiumResult.next_steps.map((s: string, i: number) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-[#555] mb-1.5">
+                      <span className="w-4 h-4 rounded-full bg-[#0B1929]/10 flex items-center justify-center shrink-0 text-[9px] font-bold text-[#0B1929]">{i+1}</span>
+                      <span>{s}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
+
+          <button
+            onClick={() => { setStep(0); setFreeResult(null); setPremiumResult(null); setAnalysisId(null); setError(null); }}
+            className="w-full text-[11px] text-[#999] hover:text-[#C8A02A] transition-colors py-1">
+            ← Nova análise
+          </button>
         </div>
       )}
     </div>

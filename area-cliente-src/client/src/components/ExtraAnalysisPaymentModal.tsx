@@ -15,12 +15,12 @@ import {
 } from 'lucide-react';
 
 type PayMethod = 'mbway' | 'stripe' | 'paypal';
-type Step = 'method' | 'processing' | 'polling' | 'success' | 'error';
+type Step = 'method' | 'processing' | 'polling' | 'success' | 'error' | 'select';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 export type ExtraAnalysisProduct = {
-  type: 'career_path' | 'career_intelligence';
+  type: 'career_path' | 'career_intelligence' | 'salary_reality_check';
   label: string;
   price: number;
   originalPrice: number;
@@ -315,7 +315,7 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e5e5] sticky top-0 bg-[#F0F0EE] z-10">
           <div className="flex items-center gap-3">
             {step === 'error' && (
-              <button onClick={() => { setStep('method'); setError(''); }} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
+              <button onClick={() => { setStep('method'); setError(''); }} title={lang === 'pt' ? 'Voltar' : 'Back'} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
                 <ArrowLeft className="w-4 h-4" />
               </button>
             )}
@@ -326,7 +326,7 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
               <p className="text-[11px] text-[#999]">{product.label}</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
+          <button onClick={onClose} title={lang === 'pt' ? 'Fechar' : 'Close'} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -377,11 +377,13 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
               <div className="space-y-3">
                 {/* Email — always shown */}
                 <div>
-                  <label className="block text-xs font-medium text-[#666] mb-1">Email</label>
+                  <label htmlFor="extra-payment-email" className="block text-xs font-medium text-[#666] mb-1">Email</label>
                   <input
                     type="email"
+                    id="extra-payment-email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
+                    placeholder="email@exemplo.com"
                     className="w-full px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]"
                   />
                 </div>
