@@ -211,11 +211,11 @@
     },
     {
       "source": "/bundle",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/bundle/index.html"
     },
     {
       "source": "/bundle/:path*",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/bundle/index.html"
     },
     {
       "source": "/cv-analyser/demo",
@@ -259,11 +259,11 @@
     },
     {
       "source": "/en/bundle",
-      "destination": "/en/cv-analyser/index.html"
+      "destination": "/en/bundle/index.html"
     },
     {
       "source": "/en/bundle/:path*",
-      "destination": "/en/cv-analyser/index.html"
+      "destination": "/en/bundle/index.html"
     },
     {
       "source": "/en/cv-analyser",
@@ -304,6 +304,22 @@
     {
       "source": "/linkedin-roaster/:path*",
       "destination": "/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/en/linkedin-roaster",
+      "destination": "/en/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/en/linkedin-roaster/:path*",
+      "destination": "/en/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/en/estudante",
+      "destination": "/en/estudante/index.html"
+    },
+    {
+      "source": "/en/estudante/:path*",
+      "destination": "/en/estudante/index.html"
     },
     {
       "source": "/estudos",
@@ -467,19 +483,19 @@
     },
     {
       "source": "/estudante",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/estudante/index.html"
     },
     {
       "source": "/estudante/:path*",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/estudante/index.html"
     },
     {
       "source": "/en/student-pack",
-      "destination": "/en/cv-analyser/index.html"
+      "destination": "/en/student-pack/index.html"
     },
     {
       "source": "/en/student-pack/:path*",
-      "destination": "/en/cv-analyser/index.html"
+      "destination": "/en/student-pack/index.html"
     }
   ]
 }
