@@ -79,13 +79,33 @@ export default function StudentPackHomeEN() {
 
   const loadingMessages = ["Extracting CV data...", "Analysing skills and experience...", "Analysing your LinkedIn profile...", "Cross-referencing CV ↔ LinkedIn...", "Generating integrated recommendations...", "Preparing your complete report..."];
 
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (!file) { setError('Upload your CV (PDF or DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Enter a valid LinkedIn URL'); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email'); return; }
     if (!selectedCountry) { setError('Select your country'); return; }
     if (!acceptedTerms) { setError('Accept the Privacy Policy'); return; }
-    setError(null); setPaymentStep('payment'); setPaymentError(null); setShowPaymentModal(true);
+    setError(null);
+
+    // Pre-extract CV text and save to sessionStorage BEFORE payment redirect
+    // This ensures data survives Stripe redirects that lose React state
+    try {
+      let cvText = '';
+      if (file.type === 'application/pdf') {
+        cvText = await extractTextFromPDF(file);
+      } else {
+        cvText = await extractTextFromDOCX(file);
+      }
+      sessionStorage.setItem('studentPackCvText', cvText);
+      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      sessionStorage.setItem('studentPackCountry', selectedCountry || '');
+      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
+    } catch (e) {
+      console.warn('[StudentPackEN] Pre-extraction warning:', e);
+    }
+
+    setPaymentStep('payment'); setPaymentError(null); setShowPaymentModal(true);
   };
 
   const runBothEngines = async () => {
@@ -93,18 +113,36 @@ export default function StudentPackHomeEN() {
     const startTime = Date.now();
     const msgInterval = setInterval(() => { setAnalysisProgress(prev => { const next = Math.min(prev + 1, loadingMessages.length - 1); setAnalysisMsg(loadingMessages[next]); return next; }); }, 4500);
     try {
-      let cvText = ""; if (file!.type === 'application/pdf') cvText = await extractTextFromPDF(file!); else cvText = await extractTextFromDOCX(file!);
-      const reader = new FileReader();
-      const base64Content = await new Promise<string>((resolve, reject) => { reader.onload = () => resolve((reader.result as string).split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file!); });
-      const useServerExtraction = cvText.length < 50;
+      // Extract CV text — use file if available, otherwise restore from sessionStorage (Stripe return)
+      let cvText = "";
+      let base64Content = "";
+      if (file) {
+        if (file.type === 'application/pdf') cvText = await extractTextFromPDF(file);
+        else cvText = await extractTextFromDOCX(file);
+        const reader = new FileReader();
+        base64Content = await new Promise<string>((resolve, reject) => { reader.onload = () => resolve((reader.result as string).split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file); });
+      } else {
+        // Stripe return: file lost, use sessionStorage
+        cvText = sessionStorage.getItem('studentPackCvText') || '';
+        if (!cvText) {
+          throw new Error('CV not available after payment. Please contact support@share2inspire.pt with your receipt.');
+        }
+      }
+      // Also restore other fields from sessionStorage if lost
+      const currentLinkedinUrl = linkedinUrl || sessionStorage.getItem('studentPackLinkedinUrl') || '';
+      if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
+      const currentCountry = selectedCountry || sessionStorage.getItem('studentPackCountry') || '';
+      const currentRegion = selectedRegion || sessionStorage.getItem('studentPackRegion') || '';
+      const currentEmail = email || sessionStorage.getItem('studentPackEmail') || '';
+      const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       // ENGINE 1: CV
       let cvResponseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
         const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
         try {
-          const body: any = { mode: 'cv_extraction', language: 'en', country: selectedCountry, region: selectedRegion };
-          if (useServerExtraction) { body.file = base64Content; body.filename = file!.name; } else { body.cv_text = cvText.substring(0, 8000); }
+          const body: any = { mode: 'cv_extraction', language: 'en', country: currentCountry, region: currentRegion };
+          if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
           const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
           clearTimeout(tid);
           if (res.ok) { cvResponseData = await res.json(); if (cvResponseData.success) break; }
@@ -118,7 +156,7 @@ export default function StudentPackHomeEN() {
       for (let attempt = 0; attempt <= 2; attempt++) {
         const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
         try {
-          const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: 'en', country: selectedCountry, region: selectedRegion }), signal: ctrl.signal });
+          const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'en', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
           clearTimeout(tid);
           if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
           if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -131,10 +169,10 @@ export default function StudentPackHomeEN() {
       sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSource));
       sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseData || {}));
-      sessionStorage.setItem('studentPackEmail', email.trim().toLowerCase());
-      sessionStorage.setItem('studentPackCountry', selectedCountry);
-      sessionStorage.setItem('studentPackRegion', selectedRegion || '');
-      sessionStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('studentPackEmail', currentEmail);
+      sessionStorage.setItem('studentPackCountry', currentCountry);
+      sessionStorage.setItem('studentPackRegion', currentRegion || '');
+      sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
       sessionStorage.setItem('studentPackPaid', 'true');
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('isPaid', 'true');
@@ -142,7 +180,7 @@ export default function StudentPackHomeEN() {
 
       try {
         const cp = cvAnalysisSource?.candidate_profile || {};
-        fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResult.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSource), payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-EN-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
+        fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResult.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSource), payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-EN-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: currentEmail, linkedin_url: currentLinkedinUrl }) }).catch(() => {});
       } catch (_) {}
 
       trackPurchase('student_pack', finalPrice, `STUDPACK-EN-${Date.now()}`);

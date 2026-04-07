@@ -24,8 +24,17 @@
   background:linear-gradient(135deg,#059669 0%,#047857 100%);
   text-align:center;
   padding:10px 16px;
-  position:relative;
+  position:fixed;
+  top:56px;
+  left:0;
+  right:0;
   z-index:99;
+  transition:top 0.3s ease;
+}
+/* When navbar is scrolled (compact), move banner up too */
+.navbar.navbar-scrolled ~ .student-pack-banner,
+header:has(.navbar-scrolled) + .student-pack-banner{
+  top:28px;
 }
 .student-pack-banner a{
   color:#fff;text-decoration:none;font-size:0.82rem;font-weight:600;
@@ -45,6 +54,8 @@
 @keyframes spb-bounce{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
 @media (max-width:991px){
   .student-pack-banner{display:block}
+  /* Push hero/first content below fixed navbar (56px) + fixed banner (~40px) */
+  .hero-minimal{padding-top:96px!important}
 }
 
 footer{background-color:#212529;color:#fff;padding:20px 0;margin-top:50px;font-family:Poppins,sans-serif}.footer-container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:15px}.footer-left p{margin:0;color:#bf9a33;font-size:14px}.footer-right{display:flex;gap:30px}.footer-contact p{margin:0 0 5px 0;color:#fff;font-size:14px}.footer-contact i{color:#bf9a33;margin-right:8px}.footer-social{display:flex;gap:15px}.footer-social a{color:#bf9a33;font-size:20px;transition:color .3s;text-decoration:none}.footer-social a:hover{color:#fff}.footer-links{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:15px}.footer-links a{color:#bf9a33;font-size:14px;text-decoration:none;transition:color .3s}.footer-links a:hover{color:#fff;text-decoration:underline}@media (max-width:768px){.footer-container{flex-direction:column;text-align:center;gap:20px}.footer-right{flex-direction:column;gap:15px}.footer-social{justify-content:center}.footer-links{flex-direction:column;gap:10px}}
