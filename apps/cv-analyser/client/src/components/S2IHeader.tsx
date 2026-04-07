@@ -56,7 +56,7 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80" style={{ overflowX: 'hidden' }}>
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
         {/* Logo — hidden on mobile when scrolled */}
         <a

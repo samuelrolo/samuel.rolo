@@ -228,7 +228,7 @@ export default function LinkedInRoasterHomeEN() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background" style={{ overflowX: 'hidden' }}>
+    <div className="min-h-screen bg-background">
       <S2IHeaderEN activePage="linkedin-roaster" langToggleHref="/linkedin-roaster" />
 
       {/* Price Bar */}
