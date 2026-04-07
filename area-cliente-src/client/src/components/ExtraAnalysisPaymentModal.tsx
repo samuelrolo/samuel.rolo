@@ -20,7 +20,7 @@ type Step = 'method' | 'processing' | 'polling' | 'success' | 'error';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 export type ExtraAnalysisProduct = {
-  type: 'career_path' | 'career_intelligence';
+  type: 'career_path' | 'career_intelligence' | 'salary_reality_check';
   label: string;
   price: number;
   originalPrice: number;
