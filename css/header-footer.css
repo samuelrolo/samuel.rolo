@@ -2,11 +2,49 @@
 
 /* ── Mobile Header — compact hamburger ── */
 @media (max-width:991px){
-  .navbar{padding:0.35rem 0}
-  .navbar-brand img{height:32px}
+  .navbar{padding:0.35rem 0;transition:padding 0.3s ease}
+  .navbar-brand img{height:32px;transition:all 0.3s ease}
   .navbar-toggler{padding:0.25rem 0.5rem;font-size:0.85rem;border:1px solid rgba(0,0,0,0.1)}
   .navbar-collapse{background:#fff;padding:0.5rem 0;border-top:1px solid #f0f0f0;margin-top:0.35rem}
   .navbar-nav .nav-link{font-size:0.8rem!important;padding:0.6rem 1rem!important;letter-spacing:0.5px!important}
+  /* On scroll: hide logo, minimal header */
+  .navbar.navbar-scrolled{padding:0.15rem 0;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+  .navbar.navbar-scrolled .navbar-brand img{height:0;opacity:0;width:0;overflow:hidden;margin:0;padding:0}
+  .navbar.navbar-scrolled .navbar-brand{width:0;padding:0;margin:0;overflow:hidden}
+  /* Language selector outside hamburger */
+  .lang-toggle-mobile{display:inline-flex!important;align-items:center;gap:4px;font-size:0.75rem;font-weight:500;color:#666;text-decoration:none;padding:0.25rem 0.5rem;letter-spacing:1px;text-transform:uppercase}
+  .lang-toggle-mobile:hover{color:#C9A961}
+  /* Hide the language item inside the collapsed menu on mobile */
+  .navbar-nav .nav-item.lang-inside-hamburger{display:none!important}
+}
+
+/* ── Mobile Student Pack Promo Banner ── */
+.student-pack-banner{
+  display:none;
+  background:linear-gradient(135deg,#059669 0%,#047857 100%);
+  text-align:center;
+  padding:10px 16px;
+  position:relative;
+  z-index:99;
+}
+.student-pack-banner a{
+  color:#fff;text-decoration:none;font-size:0.82rem;font-weight:600;
+  font-family:'Poppins',sans-serif;display:flex;align-items:center;
+  justify-content:center;gap:8px;
+}
+.student-pack-banner .spb-badge{
+  background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px;
+  font-size:0.65rem;font-weight:700;letter-spacing:0.5px;
+}
+.student-pack-banner .spb-price{
+  font-weight:400;font-size:0.75rem;opacity:0.9;
+}
+.student-pack-banner .spb-arrow{
+  font-size:1rem;animation:spb-bounce 1.5s ease-in-out infinite;
+}
+@keyframes spb-bounce{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+@media (max-width:991px){
+  .student-pack-banner{display:block}
 }
 
 footer{background-color:#212529;color:#fff;padding:20px 0;margin-top:50px;font-family:Poppins,sans-serif}.footer-container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:15px}.footer-left p{margin:0;color:#bf9a33;font-size:14px}.footer-right{display:flex;gap:30px}.footer-contact p{margin:0 0 5px 0;color:#fff;font-size:14px}.footer-contact i{color:#bf9a33;margin-right:8px}.footer-social{display:flex;gap:15px}.footer-social a{color:#bf9a33;font-size:20px;transition:color .3s;text-decoration:none}.footer-social a:hover{color:#fff}.footer-links{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:15px}.footer-links a{color:#bf9a33;font-size:14px;text-decoration:none;transition:color .3s}.footer-links a:hover{color:#fff;text-decoration:underline}@media (max-width:768px){.footer-container{flex-direction:column;text-align:center;gap:20px}.footer-right{flex-direction:column;gap:15px}.footer-social{justify-content:center}.footer-links{flex-direction:column;gap:10px}}

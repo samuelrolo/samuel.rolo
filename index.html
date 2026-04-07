@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -1751,6 +1751,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 <a class="navbar-brand" href="index.html">
                     <img fetchpriority="high" src="images/logo-s.png" alt="Share2Inspire Logo" class="logo-img" style="height:50px;">
                 </a>
+                <a href="/en/pages/home" class="lang-toggle-mobile d-lg-none"><i class="fas fa-globe"></i> EN</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -1767,7 +1768,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         <li class="nav-item"><a class="nav-link" href="pages/sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
                         <li class="nav-item"><a class="nav-link" href="/pages/contactos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
                         <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Login</a></li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown lang-inside-hamburger">
                             <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
                                 <i class="fas fa-globe"></i> PT
                             </a>
@@ -1780,6 +1781,18 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Student Pack Banner -->
+    <div class="student-pack-banner">
+        <a href="/estudante">
+            🎓 Pack Estudante <span class="spb-badge">-43%</span> <span class="spb-price">CV + LinkedIn por 7,99€</span> <span class="spb-arrow">→</span>
+        </a>
+    </div>
+
+    <!-- Scroll: hide logo on mobile -->
+    <script>
+    (function(){var n=document.querySelector('.navbar');if(!n||window.innerWidth>991)return;var last=0;window.addEventListener('scroll',function(){var y=window.scrollY;if(y>50){n.classList.add('navbar-scrolled')}else{n.classList.remove('navbar-scrolled')}last=y},{passive:true})})();
+    </script>
 
     <!-- ============================
          SECÇÃO 1 — HERO: VISÃO + DIREÇÃO
