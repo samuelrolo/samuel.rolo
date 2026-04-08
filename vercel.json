@@ -126,7 +126,7 @@
       ]
     },
     {
-      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack)(.*)",
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|pages/sobre|en/pages/about|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
