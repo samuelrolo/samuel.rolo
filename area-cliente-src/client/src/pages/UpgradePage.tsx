@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
+import SalaryRealityCheck from '@/components/SalaryRealityCheck';
 import { useState, useEffect, useMemo } from 'react';
 
 type Tier = 'essential' | 'growth' | 'pro';
@@ -501,6 +502,15 @@ export default function UpgradePage() {
               );
             })}
           </div>
+        </div>
+
+        {/* ─── Salary Benchmark (Freemium) ─── */}
+        <div id="salary-section" className="mb-16">
+          <SalaryRealityCheck
+            userEmail={profile?.email || user?.email || ''}
+            userName={profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : ''}
+            isPro={false}
+          />
         </div>
 
         {/* ─── Saved Jobs Tracker (Chrome Extension) ─── */}
