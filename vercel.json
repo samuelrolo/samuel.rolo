@@ -331,11 +331,11 @@
     },
     {
       "source": "/sobre",
-      "destination": "/pages/sobre/index.html"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/pages/sobre",
-      "destination": "/pages/sobre/index.html"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/servicos",
@@ -363,11 +363,11 @@
     },
     {
       "source": "/contactos",
-      "destination": "/pages/contactos/index.html"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/pages/contactos",
-      "destination": "/pages/contactos/index.html"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/politica-privacidade",

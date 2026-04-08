@@ -23,6 +23,7 @@ function Routes() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/sobre" component={ClientAreaLanding} />
+      <Route path="/contactos" component={ClientAreaLanding} />
       <Route path="/auth" component={Auth} />
       <Route path="/planos" component={Plans} />
       <Route path="/perfil">
