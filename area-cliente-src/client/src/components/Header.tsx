@@ -40,16 +40,64 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Center: Nav */}
-        <nav className="hidden md:flex items-center gap-0.5 mx-auto">
+        <nav className="hidden xl:flex items-center gap-0.5 mx-auto">
           {/* Início → site principal */}
           <a
             href="https://share2inspire.pt"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[13px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
           >
-            <Home className="w-3.5 h-3.5" />
             {lang === 'pt' ? 'Início' : 'Home'}
           </a>
+          <a
+            href="/cv-analyser"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            CV Analyser
+          </a>
+          <a
+            href="/career-path"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            Career Path
+          </a>
+          <a
+            href="/career-intelligence"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            Career Intelligence
+          </a>
+          <a
+            href="/linkedin-roaster"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            LinkedIn Roaster
+          </a>
+          <a
+            href="/estudante"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            {lang === 'pt' ? 'Pack Estudante' : 'Student Pack'}
+          </a>
+          <a
+            href="https://share2inspire.pt/servicos"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            {lang === 'pt' ? 'Serviços' : 'Services'}
+          </a>
+          <a
+            href="https://share2inspire.pt/sobre"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            {lang === 'pt' ? 'Sobre' : 'About'}
+          </a>
+          <a
+            href="https://share2inspire.pt/contactos"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
+          >
+            {lang === 'pt' ? 'Contactos' : 'Contact'}
+          </a>
+
+          <div className="w-[1px] h-4 bg-slate-200 mx-2" />
 
           {navLinks.map(link => {
             const Icon = link.icon;
@@ -57,13 +105,12 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[13px] font-light tracking-wide transition-all duration-300 ${
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-bold tracking-wide transition-all duration-300 ${
                   isActive(link.href)
                     ? 'text-gold bg-gold/5'
                     : 'text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
                 {link.label}
               </Link>
             );
@@ -128,44 +175,53 @@ export default function Header() {
         <div className="md:hidden bg-[#FAFAF9]/98 backdrop-blur-md border-t border-[#e5e5e5] animate-in slide-in-from-top-2 duration-200">
           <div className="container py-4 flex flex-col gap-1">
             {/* Início → site principal */}
-            <a
-              href="https://share2inspire.pt"
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-light text-[#555] hover:bg-[#f0f0ef] transition-all"
-            >
-              <Home className="w-4 h-4" />
+            <a href="https://share2inspire.pt" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
               {lang === 'pt' ? 'Início' : 'Home'}
             </a>
+            <a href="/cv-analyser" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">CV Analyser</a>
+            <a href="/career-path" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">Career Path</a>
+            <a href="/career-intelligence" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">Career Intelligence</a>
+            <a href="/linkedin-roaster" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">LinkedIn Roaster</a>
+            <a href="/estudante" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
+              {lang === 'pt' ? 'Pack Estudante' : 'Student Pack'}
+            </a>
+            <a href="https://share2inspire.pt/servicos" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
+              {lang === 'pt' ? 'Serviços' : 'Services'}
+            </a>
+            <a href="https://share2inspire.pt/sobre" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
+              {lang === 'pt' ? 'Sobre' : 'About'}
+            </a>
+            <a href="https://share2inspire.pt/contactos" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
+              {lang === 'pt' ? 'Contactos' : 'Contact'}
+            </a>
 
-            {navLinks.map(link => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-light transition-all ${
-                    isActive(link.href)
-                      ? 'text-gold bg-gold/5'
-                      : 'text-[#555] hover:bg-[#f0f0ef]'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {link.label}
-                </Link>
-              );
-            })}
+            <div className="h-px bg-slate-100 my-1 mx-3" />
+
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`px-3 py-2 text-sm font-semibold rounded-md transition-all ${
+                  isActive(link.href)
+                    ? 'text-gold bg-gold/5'
+                    : 'text-[#555] hover:bg-[#f0f0ef]'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
             {user && (
               <Link
                 href="/perfil"
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-light transition-all ${
+                className={`px-3 py-2 text-sm font-semibold rounded-md transition-all ${
                   isActive('/perfil')
                     ? 'text-gold bg-gold/5'
                     : 'text-[#555] hover:bg-[#f0f0ef]'
                 }`}
               >
-                <User className="w-4 h-4" />
                 {lang === 'pt' ? 'Meu perfil' : 'My profile'}
               </Link>
             )}
