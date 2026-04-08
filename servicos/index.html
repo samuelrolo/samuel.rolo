@@ -1,5 +1,5 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
+<!DOCTYPE html>
+<html lang="pt-PT">
 
 <head>
     <meta charset="UTF-8">
@@ -9,15 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO Tags -->
-    <link rel="canonical" href="https://www.share2inspire.pt/pages/servicos" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <!-- /SEO Tags -->
-
     <title>Serviços | CV com IA, Career Path e Career Intelligence | Share2Inspire</title>
     <meta name="description" content="Análise de CV gratuita com IA, Career Path desde 19,99€, Career Intelligence e coaching. Dá o próximo passo na tua carreira com a Share2Inspire.">
     <meta name="author" content="Samuel Rolo">
     <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.share2inspire.pt/pages/servicos">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.share2inspire.pt/pages/servicos">
     <meta property="og:title" content="Serviços de Consultoria de Carreira | Share2Inspire">
@@ -63,10 +59,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/consolidated-styles.css">
-    <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/consolidated-styles.css">
+    <link rel="stylesheet" href="/css/header-footer.css?v=20260407_transparent">
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <style>
         iframe[src*="vercel-insights"],iframe[src*="_vercel"],div[id*="vercel-live-feedback-button"],.__vercel-live-feedback-button,#vercel-live-feedback-button{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
 
@@ -160,15 +157,15 @@
         @media (max-width: 640px) { .bundle-banner { flex-direction: column; text-align: center; padding: 1.5rem; gap: 1.2rem; } }
 
         /* --- For Whom --- */
-        .profile-card { background: #fff; border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; text-align: center; height: 100%; transition: border-color 0.3s, box-shadow 0.3s; }
-        .profile-card:hover { border-color: #e8d5a8; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
-        .profile-card .profile-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--gold-light); color: var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1rem; }
-        .profile-card h4 { font-size: 0.88rem; font-weight: 600; color: var(--dark); margin-bottom: 0.3rem; }
+        .profile-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 1.8rem 1.5rem; text-align: center; height: 100%; transition: border-color 0.3s, box-shadow 0.3s; }
+        .profile-card:hover { border-color: rgba(201,169,97,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .profile-card .profile-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--gold-light); color: var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 0.9rem; }
+        .profile-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--dark); margin-bottom: 0.4rem; }
         .profile-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin: 0; }
 
         /* --- Before/After --- */
         .ba-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .ba-card { flex: 1; min-width: 260px; border-radius: 12px; padding: 1.5rem; }
+        .ba-card { flex: 1; min-width: 260px; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; }
         .ba-card.before { background: #fef2f2; border: 1px solid #fecaca; }
         .ba-card.after { background: #f0fdf4; border: 1px solid #bbf7d0; }
         .ba-card h4 { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.5rem; }
@@ -196,21 +193,25 @@
         .final-cta h2 strong { font-weight: 700; color: var(--gold); }
         .final-cta p { color: rgba(255,255,255,0.6); font-size: 0.88rem; margin-bottom: 1.8rem; max-width: 480px; margin-left: auto; margin-right: auto; }
 
-        /* --- Marquee --- */
-        .marquee-section { overflow: hidden; padding: 50px 0; background: var(--light-bg); }
-        .marquee-section .section-label { text-align: center; font-size: 1.05rem; font-weight: 400; color: #555; margin-bottom: 2rem; }
-        .marquee-wrapper { overflow: hidden; width: 100%; -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%); }
-        .marquee-track { display: flex; gap: 1rem; width: max-content; animation: marquee-scroll 38s linear infinite; }
-        .marquee-track:hover { animation-play-state: paused; }
-        @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .marquee-stat { flex-shrink: 0; background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 1.2rem 1.8rem; text-align: center; min-width: 140px; }
-        .marquee-stat .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1.1; }
-        .marquee-stat .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-        .marquee-testi { flex-shrink: 0; background: #fff; border: 1px solid #f0f0f0; border-radius: 10px; padding: 1.4rem 1.6rem; width: 280px; }
-        .marquee-testi .testi-stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 0.6rem; }
-        .marquee-testi .testi-text { font-size: 0.78rem; color: #555; line-height: 1.6; margin-bottom: 0.8rem; font-style: italic; }
-        .marquee-testi .testi-author { font-size: 0.72rem; font-weight: 600; color: #333; }
-        .marquee-testi .testi-author span { font-weight: 400; color: #999; }
+        /* --- Social Proof Section (Redesigned) --- */
+        .social-proof-section { padding: 50px 0 20px; background: var(--light-bg); }
+        .social-proof-section .section-label { text-align: center; font-size: 1.05rem; font-weight: 400; color: #555; margin-bottom: 2.5rem; }
+
+        /* Metrics Strip */
+        .metrics-strip { display: flex; justify-content: center; gap: 3rem; margin-bottom: 2.5rem; padding: 0 1rem; }
+        .metric-item { text-align: center; position: relative; }
+        .metric-item:not(:last-child)::after { content: ''; position: absolute; right: -1.5rem; top: 15%; height: 70%; width: 1px; background: #e0e0e0; }
+        .metric-item .metric-num { font-size: 2rem; font-weight: 700; color: var(--gold); line-height: 1.1; }
+        .metric-item .metric-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.3px; }
+
+        /* Testimonial Cards Grid */
+        .testi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+        .testi-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; transition: box-shadow 0.3s ease, transform 0.2s ease; }
+        .testi-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .testi-card .testi-stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 0.8rem; }
+        .testi-card .testi-text { font-size: 0.8rem; color: #555; line-height: 1.65; font-style: italic; flex: 1; margin-bottom: 1rem; }
+        .testi-card .testi-author { font-size: 0.75rem; font-weight: 600; color: #333; border-top: 1px solid #f5f5f5; padding-top: 0.8rem; }
+        .testi-card .testi-author span { font-weight: 400; color: #999; }
 
         /* --- Fade animation --- */
         .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -225,25 +226,10 @@
             .proof-bar .proof-items { gap: 1.5rem; }
             .ba-row { flex-direction: column; }
             /* Mobile fix: marquee */
-            .marquee-track {
-                animation: none !important;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scroll-snap-type: x mandatory;
-                padding-bottom: 0.5rem;
-            }
-            .marquee-wrapper {
-                overflow: visible;
-                -webkit-mask-image: none;
-                mask-image: none;
-            }
-            .marquee-stat, .marquee-testi {
-                scroll-snap-align: start;
-            }
-            /* Hide duplicated marquee items on mobile */
-            .marquee-track > :nth-child(n+8) {
-                display: none;
-            }
+            .metrics-strip { gap: 1.5rem; flex-wrap: wrap; }
+            .metric-item:not(:last-child)::after { display: none; }
+            .testi-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .testi-card { padding: 1.2rem; }
         }
     </style>
 <!-- Meta Pixel Code -->
@@ -263,30 +249,34 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-    <script src="/js/webview-detect.js" defer></script>
-  </head>
+<script>
+/* header-scroll: toggle .navbar-scrolled on scroll */
+document.addEventListener('DOMContentLoaded',function(){var n=document.querySelector('.navbar');if(!n)return;var t=50,l=false;function s(){var x=window.scrollY>t;if(x!==l){n.classList.toggle('navbar-scrolled',x);l=x}}window.addEventListener('scroll',s,{passive:true});s()});
+</script>
+</head>
 
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 12px 0;">
         <div class="container">
-            <a class="navbar-brand" href="/index.html">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height: 40px;">
+            <a class="navbar-brand" href="../index.html">
+                <img loading="lazy" src="../images/logo-s.png" alt="Share2Inspire" style="height:50px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
                     <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
                     <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/pages/servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/conhecimento" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Knowledge Hub</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/career-intelligence" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Intelligence</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/linkedin-roaster" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">LinkedIn Roaster</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/estudante" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Pack Estudante</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/servicos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold,#C9A961);">Serviços</a></li>
                     <li class="nav-item"><a class="nav-link" href="/sobre" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contactos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/area-cliente/sobre" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Membro</a></li>
-                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Login</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Login</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
                             <i class="fas fa-globe"></i> PT
@@ -407,8 +397,53 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
 
+            <!-- Pack Estudante -->
+            <div class="row g-4 mt-3">
+                <div class="col-12">
+                    <div class="svc-card" style="cursor:default;flex-direction:row;align-items:center;gap:2rem;flex-wrap:wrap;border-color:#10b981;background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);">
+                        <div style="flex:1;min-width:240px;">
+                            <div class="card-icon" style="background:rgba(16,185,129,0.1);color:#10b981;"><i class="fas fa-graduation-cap"></i></div>
+                            <h3>Pack Estudante <span class="badge-sm" style="background:#10b981;">-43%</span></h3>
+                            <p class="card-tagline">CV Analyser + LinkedIn Roaster juntos. Prepara-te para o primeiro emprego.</p>
+                            <ul class="card-bullets" style="margin-bottom:0;">
+                                <li><i class="fas fa-check"></i> Análise completa do CV com IA</li>
+                                <li><i class="fas fa-check"></i> Auditoria do perfil LinkedIn</li>
+                                <li><i class="fas fa-check"></i> Relatório de consistência CV ↔ LinkedIn (exclusivo)</li>
+                                <li><i class="fas fa-check"></i> Plano de acção integrado por semanas</li>
+                            </ul>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="card-price" style="margin-bottom:0.3rem;"><span style="text-decoration:line-through;color:#aaa;font-size:0.82rem;">13,98€</span> <strong style="font-size:1.3rem;color:#10b981;">7,99€</strong></div>
+                            <p style="font-size:0.68rem;color:#10b981;font-weight:600;margin:0 0 0.6rem;">Poupas 43%</p>
+                            <a href="/estudante" class="btn-gold" style="background:#10b981;">Quero o Pack Estudante <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="step-transition">
                 <a href="#etapa2">Já sabes onde estás? Decide para onde vais <i class="fas fa-arrow-down"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BUNDLE (entre Fase 1 e 2) ===== -->
+    <section style="padding:30px 0;" class="fade-up">
+        <div class="container" style="max-width:720px;">
+            <div class="bundle-banner">
+                <div style="flex:1;min-width:200px;position:relative;z-index:1;">
+                    <span style="display:inline-block;background:linear-gradient(135deg,#C9A961,#E8D5A3);color:#1a1a2e;font-size:0.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:12px;margin-bottom:0.5rem;">Mais popular</span>
+                    <h3 style="color:#fff;font-size:1.1rem;font-weight:400;margin:0 0 0.3rem;line-height:1.3;">CV Analyser <span style="color:#C9A961;font-weight:600;">+</span> Career Path</h3>
+                    <p style="color:rgba(255,255,255,0.55);font-size:0.78rem;margin:0;">Diagn&oacute;stico completo + roadmap personalizado. Tudo o que precisas para come&ccedil;ar.</p>
+                </div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                    <div style="display:flex;align-items:baseline;gap:0.4rem;justify-content:center;">
+                        <span style="color:rgba(255,255,255,0.4);font-size:0.85rem;text-decoration:line-through;">38&euro;</span>
+                        <span style="color:#fff;font-size:1.5rem;font-weight:700;">29&euro;</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,0.4);font-size:0.65rem;margin:0.2rem 0 0.6rem;">Poupas 9&euro;</p>
+                    <a href="/bundle" class="btn-gold">Quero os dois <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                </div>
             </div>
         </div>
     </section>
@@ -479,119 +514,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- ===== 5. BUNDLE ===== -->
-    <section style="padding:50px 0;" class="fade-up">
-        <div class="container" style="max-width:720px;">
-            <div class="bundle-banner">
-                <div style="flex:1;min-width:200px;position:relative;z-index:1;">
-                    <span style="display:inline-block;background:linear-gradient(135deg,#C9A961,#E8D5A3);color:#1a1a2e;font-size:0.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:12px;margin-bottom:0.5rem;">Mais popular</span>
-                    <h3 style="color:#fff;font-size:1.1rem;font-weight:400;margin:0 0 0.3rem;line-height:1.3;">CV Analyser <span style="color:#C9A961;font-weight:600;">+</span> Career Path</h3>
-                    <p style="color:rgba(255,255,255,0.55);font-size:0.78rem;margin:0;">Diagnóstico completo + roadmap personalizado. Tudo o que precisas para começar.</p>
-                </div>
-                <div style="text-align:center;position:relative;z-index:1;">
-                    <div style="display:flex;align-items:baseline;gap:0.4rem;justify-content:center;">
-                        <span style="color:rgba(255,255,255,0.4);font-size:0.85rem;text-decoration:line-through;">38€</span>
-                        <span style="color:#fff;font-size:1.5rem;font-weight:700;">29€</span>
-                    </div>
-                    <p style="color:rgba(255,255,255,0.4);font-size:0.65rem;margin:0.2rem 0 0.6rem;">Poupas 9€</p>
-                    <a href="/bundle" class="btn-gold">Quero os dois <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ===== 6. PARA QUEM É ISTO ===== -->
-    <section class="svc-section alt-bg fade-up">
-        <div class="container" style="max-width:960px;">
-            <div style="text-align:center;margin-bottom:2rem;">
-                <h2 style="font-size:1.5rem;font-weight:300;color:var(--dark);">Para quem é <strong>isto</strong>?</h2>
-                <p style="font-size:0.88rem;color:var(--muted);max-width:480px;margin:0.5rem auto 0;">Se te identificas com algum destes cenários, estás no sítio certo.</p>
-            </div>
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-3">
-                    <div class="profile-card">
-                        <div class="profile-icon"><i class="fas fa-question"></i></div>
-                        <h4>Sem respostas</h4>
-                        <p>Envias CVs e não recebes retorno. Não sabes o que está errado.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="profile-card">
-                        <div class="profile-icon"><i class="fas fa-exchange-alt"></i></div>
-                        <h4>Em transição</h4>
-                        <p>Queres mudar de área ou de empresa mas não sabes por onde começar.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="profile-card">
-                        <div class="profile-icon"><i class="fas fa-chart-line"></i></div>
-                        <h4>Quer crescer</h4>
-                        <p>Sabes que podes mais, mas não tens um plano claro para o próximo nível.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="profile-card">
-                        <div class="profile-icon"><i class="fas fa-crosshairs"></i></div>
-                        <h4>Decisão difícil</h4>
-                        <p>Tens opções na mesa mas não sabes qual escolher. Precisas de dados, não de opiniões.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ===== 7. O QUE MUDA DEPOIS DISTO ===== -->
-    <section class="svc-section fade-up">
-        <div class="container" style="max-width:800px;">
-            <div style="text-align:center;margin-bottom:2rem;">
-                <h2 style="font-size:1.5rem;font-weight:300;color:var(--dark);">O que muda <strong>depois disto</strong></h2>
-            </div>
-
-            <div style="margin-bottom:1.5rem;">
-                <p style="font-size:0.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;">Fase 1 — Diagnóstico</p>
-                <div class="ba-row">
-                    <div class="ba-card before">
-                        <h4>Antes</h4>
-                        <ul>
-                            <li>Envias CVs sem saber se estão a funcionar</li>
-                            <li>O teu LinkedIn não aparece nas pesquisas</li>
-                            <li>Não sabes o que os recrutadores veem</li>
-                        </ul>
-                    </div>
-                    <div class="ba-card after">
-                        <h4>Depois</h4>
-                        <ul>
-                            <li>Sabes exactamente o que corrigir no CV</li>
-                            <li>O teu perfil está optimizado para ser encontrado</li>
-                            <li>Tens um score claro e um plano de melhoria</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <p style="font-size:0.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;">Fase 2 — Decisão</p>
-                <div class="ba-row">
-                    <div class="ba-card before">
-                        <h4>Antes</h4>
-                        <ul>
-                            <li>Não sabes qual é o próximo passo na carreira</li>
-                            <li>Decides com base em intuição ou pressão</li>
-                            <li>Sentes que estás a perder tempo</li>
-                        </ul>
-                    </div>
-                    <div class="ba-card after">
-                        <h4>Depois</h4>
-                        <ul>
-                            <li>Tens um roadmap claro com etapas definidas</li>
-                            <li>Decides com base em dados e comparações</li>
-                            <li>Sabes quanto podes ganhar e o que precisas de fazer</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- ===== KICKSTART PRO ===== -->
     <section class="svc-section alt-bg fade-up">
@@ -651,25 +575,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="faq-item">
-                <div class="faq-q">
-                    <h4>Os meus dados estão seguros?</h4>
-                    <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span>
-                </div>
-                <div class="faq-a">
-                    <p>Absolutamente. Os teus dados são processados de forma segura e nunca são partilhados com terceiros. Cumprimos o RGPD e podes solicitar a eliminação dos teus dados a qualquer momento.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-q">
-                    <h4>Já tentei ferramentas de carreira antes e não funcionaram.</h4>
-                    <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span>
-                </div>
-                <div class="faq-a">
-                    <p>A maioria das ferramentas dá-te conselhos genéricos. As nossas análises são personalizadas ao teu perfil, experiência e mercado. Não te dizemos "melhora o teu CV" — dizemos-te exactamente o quê, porquê e como. E começas grátis, sem risco.</p>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -685,27 +590,47 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- ===== SOCIAL PROOF — MARQUEE ===== -->
-    <section class="marquee-section fade-up">
+    <!-- ===== SOCIAL PROOF — REDESIGNED ===== -->
+    <section class="social-proof-section fade-up">
         <p class="section-label">O que dizem os nossos clientes</p>
-        <div class="marquee-wrapper">
-            <div class="marquee-track">
-                <!-- Set 1 -->
-                <div class="marquee-stat"><div class="stat-num">+500</div><div class="stat-label">Profissionais ajudados</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O Career Path deu-me uma vis&atilde;o clara do pr&oacute;ximo passo. Recomendo a qualquer profissional em transi&ccedil;&atilde;o.&rdquo;</p><div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div></div>
-                <div class="marquee-stat"><div class="stat-num">5&#9733;</div><div class="stat-label">Avalia&ccedil;&atilde;o m&eacute;dia</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente &uacute;til.&rdquo;</p><div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div></div>
-                <div class="marquee-stat"><div class="stat-num">98%</div><div class="stat-label">Taxa de satisfa&ccedil;&atilde;o</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;A sess&atilde;o KickStart Pro foi transformadora. Em 30 minutos tinha um plano de ac&ccedil;&atilde;o concreto.&rdquo;</p><div class="testi-author">Marta S. &mdash; <span>HR Director</span></div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p><div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div></div>
-                <!-- Set 2 (duplicate for seamless loop) -->
-                <div class="marquee-stat"><div class="stat-num">+500</div><div class="stat-label">Profissionais ajudados</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O Career Path deu-me uma vis&atilde;o clara do pr&oacute;ximo passo. Recomendo a qualquer profissional em transi&ccedil;&atilde;o.&rdquo;</p><div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div></div>
-                <div class="marquee-stat"><div class="stat-num">5&#9733;</div><div class="stat-label">Avalia&ccedil;&atilde;o m&eacute;dia</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente &uacute;til.&rdquo;</p><div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div></div>
-                <div class="marquee-stat"><div class="stat-num">98%</div><div class="stat-label">Taxa de satisfa&ccedil;&atilde;o</div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;A sess&atilde;o KickStart Pro foi transformadora. Em 30 minutos tinha um plano de ac&ccedil;&atilde;o concreto.&rdquo;</p><div class="testi-author">Marta S. &mdash; <span>HR Director</span></div></div>
-                <div class="marquee-testi"><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p><div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div></div>
+
+        <!-- Metrics Strip -->
+        <div class="metrics-strip">
+            <div class="metric-item">
+                <div class="metric-num">+500</div>
+                <div class="metric-label">Profissionais ajudados</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-num">5&#9733;</div>
+                <div class="metric-label">Avalia&ccedil;&atilde;o m&eacute;dia</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-num">98%</div>
+                <div class="metric-label">Taxa de satisfa&ccedil;&atilde;o</div>
+            </div>
+        </div>
+
+        <!-- Testimonial Cards -->
+        <div class="testi-grid">
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">&ldquo;A sess&atilde;o KickStart Pro foi transformadora. Em 30 minutos tinha um plano de ac&ccedil;&atilde;o concreto.&rdquo;</p>
+                <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p>
+                <div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">&ldquo;O Career Path deu-me uma vis&atilde;o clara do pr&oacute;ximo passo. Recomendo a qualquer profissional em transi&ccedil;&atilde;o.&rdquo;</p>
+                <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente &uacute;til.&rdquo;</p>
+                <div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div>
             </div>
         </div>
     </section>
@@ -758,7 +683,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
                                         <label class="form-check-label small text-muted" for="kickstartTerms">
-                                            Aceito a <a href="/politica-privacidade" target="_blank" class="text-decoration-none">Política de Privacidade</a>
+                                            Aceito a <a href="politica-privacidade.html" target="_blank" class="text-decoration-none">Política de Privacidade</a>
                                         </label>
                                     </div>
                                 </div>
@@ -824,8 +749,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4 col-12">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:16px;">
-                <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;margin:0;">Partilhar conhecimento, Inspirar Carreiras.</p>
+                <img loading="lazy" src="/images/logo-s.png" alt="Share2Inspire" style="height:50px;margin-bottom:16px;">
+                
             </div>
             <div class="col-lg-2 col-md-4 col-6">
                 <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Navegação</h5>
@@ -839,7 +764,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 <a href="/cv-analyser" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">CV Analyser</a>
                 <a href="/linkedin-roaster" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">LinkedIn Roaster</a>
                 <a href="/career-path" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Career Path</a>
-                <a href="/career-intelligence" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Career Intelligence</a>
+                <a href="/career-intelligence" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Career Intelligence</a>
+                <a href="/estudante" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Pack Estudante</a>
             </div>
             <div class="col-lg-2 col-md-4 col-6">
                 <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Legal</h5>
@@ -868,10 +794,10 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/ifthenpay-integration.js"></script>
-    <script src="/js/contact-form.js?v=2.0"></script>
-    <script src="/js/brevo-integration.js?v=2.0"></script>
-    <script src="/js/feedback-widget.js?v=2.0"></script>
+    <script src="../js/ifthenpay-integration.js"></script>
+    <script src="../js/contact-form.js?v=2.0"></script>
+    <script src="../js/brevo-integration.js?v=2.0"></script>
+    <script src="../js/feedback-widget.js?v=2.0"></script>
     <script src="js/email-flows.js?v=2.0"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -999,9 +925,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             }
         });
     </script>
-    <script src="/js/coupon-system.js"></script>
-    <script src="/js/coupon-handler.js"></script>
-    <script src="/js/hub-widget.js"></script>
+    <script src="../js/coupon-system.js"></script>
+    <script src="../js/coupon-handler.js"></script>
+    <script src="../js/hub-widget.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 

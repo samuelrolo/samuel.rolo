@@ -1,5 +1,5 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
+<!DOCTYPE html>
+<html lang="pt-PT">
 
 <head>
     <meta charset="utf-8" />
@@ -10,15 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <!-- SEO Tags -->
-    <link rel="canonical" href="https://www.share2inspire.pt/pages/sobre" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <!-- /SEO Tags -->
-
     <title>Sobre Samuel Rolo | Consultor de Carreira | Share2Inspire</title>
     <meta name="description" content="Consultor de carreira com +12 anos em Deloitte, BNP Paribas e Galp. Autor, formador e criador do CV Analyser — a ferramenta de IA para análise de CVs.">
     <meta name="author" content="Samuel Rolo">
     <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.share2inspire.pt/pages/sobre">
     <!-- Open Graph -->
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://www.share2inspire.pt/pages/sobre">
@@ -54,15 +50,32 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: '#C9A961',
+              'gold-hover': '#b8960c',
+              'gold-btn': '#BF9A33',
+              dark: '#1A1A1A',
+            },
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
 
     <!-- Consolidated Styles -->
-    <link href="/css/consolidated-styles.css" rel="stylesheet" />
+    <link href="../css/consolidated-styles.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" / media="print" onload="this.media='all'">
-    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" /></noscript>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" /></noscript>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -486,8 +499,8 @@
     </style>
 <noscript>
 </noscript>
-    <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>
@@ -500,20 +513,10 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
         crossorigin="anonymous"></script>
 <!-- Hreflang -->
+    <link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre">
+    <link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about">
+    <link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/sobre">
   
-    <style>
-    /* Mega Menu Serviços */
-    .nav-item.mega-dropdown{position:relative}
-    .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,0.08);padding:16px 20px;min-width:360px;z-index:1050}
-    .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
-    .mega-menu .mega-col{margin-bottom:10px}.mega-menu .mega-col:last-child{margin-bottom:0}
-    .mega-menu .mega-step-label{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:4px}
-    .mega-menu .mega-link{display:block;padding:3px 0;font-size:0.8rem;font-weight:400;color:#555;text-decoration:none;transition:color 0.2s}
-    .mega-menu .mega-link:hover{color:#C9A961}
-    
-    .mega-menu .mega-divider{height:1px;background:#f0f0f0;margin:8px 0}
-    @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;min-width:auto;padding:8px 12px;background:#fafafa}}
-    </style>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -531,47 +534,59 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-    <script src="/js/webview-detect.js" defer></script>
-  </head>
+</head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top"
-        style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
-        <div class="container">
-            <a class="navbar-brand" href="/index.html">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height: 40px;">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/conhecimento" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Knowledge Hub</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/sobre" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Sobre</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/contactos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/area-cliente/sobre" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Membro</a></li>
-                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Login</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
-                                <i class="fas fa-globe"></i> PT
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                                <li><a class="dropdown-item" href="/en/pages/home">EN</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    <!-- Header — identical to CV Analyser / Career Path React pages -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm font-sans">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <a href="https://www.share2inspire.pt" class="flex items-center gap-2 shrink-0">
+          <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" class="h-8" />
+        </a>
+        <nav class="hidden lg:flex items-center gap-2.5 text-[0.7rem] font-medium tracking-wide uppercase">
+          <a href="https://www.share2inspire.pt" class="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
+          <a href="/cv-analyser" class="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
+          <a href="/career-path" class="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
+          <a href="/career-intelligence" class="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
+          <a href="/linkedin-roaster" class="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
+          <a href="/bundle" class="text-slate-500 hover:text-[#C9A961] transition-colors">Bundle</a>
+          <a href="/estudante" class="text-slate-500 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
+          <a href="/servicos" class="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
+          <a href="/sobre" class="text-[#C9A961]">Sobre</a>
+          <a href="/contactos" class="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
         </nav>
+        <div class="hidden lg:flex items-center gap-3">
+          <a href="/area-cliente/" class="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
+          <a href="/en/pages/about/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
+            <i class="fas fa-globe text-[0.7rem]"></i><span>EN</span>
+          </a>
+        </div>
+        <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-600 hover:text-slate-900" id="menuToggleBtn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
+        <a href="https://www.share2inspire.pt" class="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
+        <a href="/cv-analyser" class="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
+        <a href="/career-path" class="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
+        <a href="/career-intelligence" class="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
+        <a href="/linkedin-roaster" class="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
+        <a href="/bundle" class="block text-sm text-slate-600 hover:text-[#C9A961]">Bundle</a>
+        <a href="/estudante" class="block text-sm text-slate-600 hover:text-[#C9A961]">Pack Estudante</a>
+        <a href="/servicos" class="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
+        <a href="/sobre" class="block text-sm text-[#C9A961] font-semibold">Sobre</a>
+        <a href="/contactos" class="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
+        <div class="flex items-center gap-3 pt-2 border-t border-slate-100">
+          <a href="/area-cliente/" class="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
+          <a href="/en/pages/about/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><i class="fas fa-globe text-[0.7rem]"></i> EN</a>
+        </div>
+      </div>
+    </header>
 
     <!-- Hero Section -->
     <section class="page-hero">
-        <div class="container">
+        <div class="max-w-7xl mx-auto px-4">
             <p class="section-label">O Humano por Trás da Máquina</p>
             <h1>Sobre</h1>
             <p>Humanizar a tecnologia. Tornar a inovação organizacional sustentável. Liderar com intenção.</p>
@@ -580,11 +595,11 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
     <!-- Main Content: Manifesto / Visão -->
     <section class="content-section">
-        <div class="container">
+        <div class="max-w-7xl mx-auto px-4">
             <div class="narrative-container">
                 <h2 class="visually-hidden">Visão e Manifesto</h2>
                 <div class="founder-image-container">
-                    <img fetchpriority="high" src="/images/samuel-hero.jpg" alt="Samuel Rolo" class="founder-image">
+                    <img fetchpriority="high" src="../images/samuel-hero.jpg" alt="Samuel Rolo" class="founder-image">
                 </div>
 
                 <div class="narrative-highlight" style="font-style: normal; font-size: 1.15rem; line-height: 1.8; margin-bottom: 2.5rem;">
@@ -602,6 +617,13 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
                     <div class="narrative-highlight">
                         "O futuro do trabalho não será definido apenas por inteligência artificial, automação ou eficiência operacional. Será definido por quem souber integrar pensamento crítico, empatia e visão estratégica num mundo cada vez mais algorítmico."
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2.5rem; margin-bottom: 1rem;">
+                        <a href="share2inspire.html" style="display: inline-flex; align-items: center; gap: 12px; color: var(--s2i-dark); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; border: 1.5px solid var(--s2i-gold); padding: 14px 32px; border-radius: 100px; transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.background='var(--s2i-gold)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='var(--s2i-dark)';">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Sobre a Share 2Inspire</span>
+                        </a>
                     </div>
 
                     <p>A minha abordagem assenta em três pilares:</p>
@@ -835,55 +857,59 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </section>
 
     <!-- Footer -->
-    <footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-4 col-12">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:16px;">
-                <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;margin:0;">Partilhar conhecimento, Inspirar Carreiras.</p>
+    <!-- Footer — matching analysis pages -->
+    <footer class="bg-[#1A1A1A] text-white pt-16 pb-8 font-sans">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <!-- Brand -->
+          <div class="col-span-2 md:col-span-1">
+            <img loading="lazy" src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" class="h-8 mb-4" />
+          </div>
+          <!-- Navegação -->
+          <div>
+            <h5 class="text-[0.75rem] uppercase tracking-[1.5px] text-[#C9A961] font-semibold mb-5">Navegação</h5>
+            <a href="/" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Início</a>
+            <a href="/sobre" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Sobre</a>
+            <a href="/servicos" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Serviços</a>
+            <a href="/contactos" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] transition-colors">Contactos</a>
+          </div>
+          <!-- Ferramentas -->
+          <div>
+            <h5 class="text-[0.75rem] uppercase tracking-[1.5px] text-[#C9A961] font-semibold mb-5">Ferramentas</h5>
+            <a href="/cv-analyser" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">CV Analyser</a>
+            <a href="/linkedin-roaster" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">LinkedIn Roaster</a>
+            <a href="/career-path" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Career Path</a>
+            <a href="/career-intelligence" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Career Intelligence</a>
+            <a href="/estudante" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] transition-colors">Pack Estudante</a>
+          </div>
+          <!-- Legal -->
+          <div>
+            <h5 class="text-[0.75rem] uppercase tracking-[1.5px] text-[#C9A961] font-semibold mb-5">Legal</h5>
+            <a href="/politica-privacidade" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Privacidade</a>
+            <a href="/politica-cookies" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Cookies</a>
+            <a href="/informacao-legal" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Informação Legal</a>
+            <a href="/termos-condicoes" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] mb-2.5 transition-colors">Termos e Condições</a>
+            <a href="/tratamento-dados" class="block text-[0.82rem] text-white/60 hover:text-[#C9A961] transition-colors">Tratamento de Dados</a>
+          </div>
+          <!-- Contacto -->
+          <div>
+            <h5 class="text-[0.75rem] uppercase tracking-[1.5px] text-[#C9A961] font-semibold mb-5">Contacto</h5>
+            <p class="text-white/60 text-[0.82rem] mb-4">
+              <i class="fas fa-envelope text-[#C9A961] mr-2"></i>geral@share2inspire.pt
+            </p>
+            <div class="flex gap-3">
+              <a href="https://www.linkedin.com/company/107046213" target="_blank" rel="noopener" class="text-[#C9A961] text-lg hover:text-[#d4af5a] transition-colors"><i class="fab fa-linkedin"></i></a>
+              <a href="https://www.instagram.com/share2inspire_/" target="_blank" rel="noopener" class="text-[#C9A961] text-lg hover:text-[#d4af5a] transition-colors"><i class="fab fa-instagram"></i></a>
             </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Navegação</h5>
-                <a href="/" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Início</a>
-                <a href="/sobre" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Sobre</a>
-                <a href="/servicos" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Serviços</a>
-                <a href="/conhecimento" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Knowledge Hub</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Ferramentas</h5>
-                <a href="/cv-analyser" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">CV Analyser</a>
-                <a href="/linkedin-roaster" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">LinkedIn Roaster</a>
-                <a href="/career-path" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Career Path</a>
-                <a href="/career-intelligence" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Career Intelligence</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Legal</h5>
-                <a href="/politica-privacidade" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Privacidade</a>
-                <a href="/politica-cookies" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Cookies</a>
-                <a href="/informacao-legal" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Informação Legal</a>
-                <a href="/termos-condicoes" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Termos e Condições</a>
-                <a href="/tratamento-dados" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Tratamento de Dados</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Contacto</h5>
-                <p style="color:rgba(255,255,255,0.6);font-size:0.82rem;margin-bottom:15px;">
-                    <i class="fas fa-envelope" style="color:#C9A961;margin-right:8px;"></i>geral@share2inspire.pt
-                </p>
-                <div style="display:flex;gap:12px;">
-                    <a href="https://www.linkedin.com/company/107046213" target="_blank" style="color:#C9A961;font-size:1.1rem;transition:color .3s;"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:#C9A961;font-size:1.1rem;transition:color .3s;"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
+          </div>
         </div>
-        <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:40px;padding-top:25px;text-align:center;">
-            <p style="color:rgba(255,255,255,0.35);font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;margin:0;">&copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
+        <div class="border-t border-white/[0.08] mt-10 pt-6 text-center">
+          <p class="text-white/[0.35] text-[0.7rem] uppercase tracking-[1.5px]">&copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
         </div>
-    </div>
-</footer>
+      </div>
+    </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/hub-widget.js"></script>
+    <script src="../js/hub-widget.js"></script>
 
     <!-- Accordion Animation Script -->
     <script>
