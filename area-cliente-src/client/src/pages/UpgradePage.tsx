@@ -14,6 +14,7 @@ import {
   FileSearch, Compass, Loader2, CheckCircle
 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
+import SavedJobsTracker from '@/components/SavedJobsTracker';
 import { useState, useEffect, useMemo } from 'react';
 
 type Tier = 'essential' | 'growth' | 'pro';
@@ -89,12 +90,14 @@ const testimonials = [
 ];
 
 const previewFeatures = [
-  { icon: FileText, labelPt: 'CV Analyser', labelEn: 'CV Analyser', descPt: 'Análise detalhada do teu CV com score ATS', descEn: 'Detailed CV analysis with ATS score' },
-  { icon: Linkedin, labelPt: 'LinkedIn Roaster', labelEn: 'LinkedIn Roaster', descPt: 'Feedback profundo ao teu perfil LinkedIn', descEn: 'Deep feedback on your LinkedIn profile' },
-  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant' },
-  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources' },
-  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching' },
-  { icon: BarChart3, labelPt: 'Career Path', labelEn: 'Career Path', descPt: 'Planeamento estratégico de carreira com IA', descEn: 'AI-powered strategic career planning' },
+  { icon: FileText, labelPt: 'CV Analyser', labelEn: 'CV Analyser', descPt: 'Análise detalhada do teu CV com score ATS', descEn: 'Detailed CV analysis with ATS score', href: '/cv-analyser', pricePt: '4,99€', priceEn: '€4.99' },
+  { icon: Linkedin, labelPt: 'LinkedIn Roaster', labelEn: 'LinkedIn Roaster', descPt: 'Feedback profundo ao teu perfil LinkedIn', descEn: 'Deep feedback on your LinkedIn profile', href: '/linkedin-roaster', pricePt: '4,99€', priceEn: '€4.99' },
+  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant', href: '/area-cliente/career-bot', pricePt: null, priceEn: null },
+  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources', href: '/knowledge-hub', pricePt: null, priceEn: null },
+  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching', href: '#jobs-section', pricePt: null, priceEn: null },
+  { icon: BarChart3, labelPt: 'Career Path', labelEn: 'Career Path', descPt: 'Planeamento estratégico de carreira com IA', descEn: 'AI-powered strategic career planning', href: '/career-path', pricePt: '6,99€', priceEn: '€6.99' },
+  { icon: Compass, labelPt: 'Career Intelligence', labelEn: 'Career Intelligence', descPt: 'Relatório estratégico de mercado e posicionamento', descEn: 'Strategic market positioning report', href: '/career-intelligence', pricePt: '6,99€', priceEn: '€6.99' },
+  { icon: Sparkles, labelPt: 'Pack Estudante', labelEn: 'Student Pack', descPt: 'CV + LinkedIn num só relatório cruzado', descEn: 'CV + LinkedIn in one cross report', href: '/pack-estudante', pricePt: '7,99€', priceEn: '€7.99' },
 ];
 
 /* ─── Mini AnalysisResult viewer (simplified for free users) ─── */
@@ -460,39 +463,47 @@ export default function UpgradePage() {
           </div>
         )}
 
-        {/* ─── Preview: Locked Features ─── */}
+        {/* ─── Tools: Accessible with normal prices ─── */}
         <div className="mb-16">
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1 text-center">
-            {lang === 'pt' ? 'O que vais desbloquear' : 'What you will unlock'}
+            {lang === 'pt' ? 'As nossas ferramentas' : 'Our tools'}
           </h2>
           <p className="text-xs text-[#999] font-light text-center mb-8">
-            {lang === 'pt' ? 'Ferramentas exclusivas para membros Share2Inspire' : 'Exclusive tools for Share2Inspire members'}
+            {lang === 'pt' ? 'Experimenta cada ferramenta individualmente ou subscreve para acesso ilimitado' : 'Try each tool individually or subscribe for unlimited access'}
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {previewFeatures.map((feat, i) => {
               const Icon = feat.icon;
+              const price = lang === 'pt' ? (feat as any).pricePt : (feat as any).priceEn;
               return (
-                <div key={i} className="relative p-4 border border-[#e5e5e5] rounded-xl bg-[#fafaf9] overflow-hidden group">
-                  {/* Lock overlay */}
-                  <div className="absolute inset-0 bg-[#fafaf9]/80 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
-                    <div className="flex items-center gap-1.5 text-xs text-[#999]">
-                      <Lock className="w-3.5 h-3.5" />
-                      {lang === 'pt' ? 'Requer subscrição' : 'Requires subscription'}
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
+                <a key={i} href={(feat as any).href || '#'} className="relative p-4 border border-[#e5e5e5] rounded-xl bg-white hover:border-gold/40 hover:shadow-md transition-all duration-300 group block">
+                  <div className="flex flex-col gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-4 h-4 text-gold" />
                     </div>
                     <div>
                       <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? feat.labelPt : feat.labelEn}</p>
                       <p className="text-[10px] text-[#999] font-light mt-0.5">{lang === 'pt' ? feat.descPt : feat.descEn}</p>
+                      {price && (
+                        <p className="text-[11px] text-gold font-semibold mt-2">{price}</p>
+                      )}
+                      {!price && (
+                        <p className="text-[10px] text-emerald-600 font-medium mt-2">{lang === 'pt' ? 'Incluído na subscrição' : 'Included in subscription'}</p>
+                      )}
                     </div>
                   </div>
-                </div>
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowRight className="w-3.5 h-3.5 text-gold" />
+                  </div>
+                </a>
               );
             })}
           </div>
+        </div>
+
+        {/* ─── Saved Jobs Tracker (Chrome Extension) ─── */}
+        <div id="jobs-section" className="mb-16">
+          <SavedJobsTracker lang={lang} />
         </div>
 
         {/* ─── Period Toggle ─── */}
