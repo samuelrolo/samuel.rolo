@@ -208,13 +208,13 @@ export default function ServicosPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <S2IHeader />
+      <S2IHeader activePage="servicos" langToggleHref="/en/pages/services" />
 
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-16 px-6 text-center">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-light text-slate-900 mb-2 leading-tight">
-            Pára de adivinhar.
+            Para de adivinhar.
           </h1>
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
             Toma o controlo da tua carreira.
@@ -243,7 +243,7 @@ export default function ServicosPage() {
       </section>
 
       {/* ─── PHASE STEPPER ─── */}
-      <section className="pb-6 px-6">
+      <section id="servicos" className="pb-6 px-6">
         <div className="max-w-md mx-auto flex items-center justify-center gap-8">
           <a href="#fase1" className="flex flex-col items-center gap-1 group">
             <span className="w-10 h-10 rounded-full border-2 border-[#C9A961] flex items-center justify-center text-sm font-bold text-[#C9A961] group-hover:bg-[#C9A961] group-hover:text-white transition-all">1</span>

@@ -22,10 +22,10 @@ const navItems = [
   { href: "/linkedin-roaster", label: "LinkedIn Roaster", id: "linkedin-roaster" },
   { href: "/bundle", label: "Bundle", id: "bundle" },
   { href: "/estudante", label: "Pack Estudante", id: "estudante" },
-  { href: "https://www.share2inspire.pt/servicos", label: "Serviços", id: "servicos" },
-  { href: "https://www.share2inspire.pt/conhecimento", label: "Knowledge Hub", id: "knowledge-hub" },
-  { href: "https://www.share2inspire.pt/sobre", label: "Sobre", id: "sobre" },
-  { href: "https://www.share2inspire.pt/contactos", label: "Contactos", id: "contactos" },
+  { href: "/servicos", label: "Serviços", id: "servicos" },
+  { href: "/conhecimento", label: "Knowledge Hub", id: "knowledge-hub" },
+  { href: "/sobre", label: "Sobre", id: "sobre" },
+  { href: "/contactos", label: "Contactos", id: "contactos" },
 ];
 
 export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeaderProps) {
