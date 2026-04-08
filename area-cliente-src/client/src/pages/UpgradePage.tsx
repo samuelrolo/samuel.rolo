@@ -11,7 +11,7 @@ import {
   Sparkles, Check, BarChart3, Zap, Star, ArrowRight,
   FileText, Linkedin, Bot, BookOpen, Briefcase, Lock,
   Shield, RefreshCcw, Users, Clock, ChevronDown, ChevronUp,
-  FileSearch, Compass, Loader2, CheckCircle
+  FileSearch, Compass, Loader2, CheckCircle, PenTool, Euro
 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
@@ -92,9 +92,11 @@ const testimonials = [
 const previewFeatures = [
   { icon: FileText, labelPt: 'CV Analyser', labelEn: 'CV Analyser', descPt: 'Análise detalhada do teu CV com score ATS', descEn: 'Detailed CV analysis with ATS score', href: '/cv-analyser', pricePt: '4,99€', priceEn: '€4.99' },
   { icon: Linkedin, labelPt: 'LinkedIn Roaster', labelEn: 'LinkedIn Roaster', descPt: 'Feedback profundo ao teu perfil LinkedIn', descEn: 'Deep feedback on your LinkedIn profile', href: '/linkedin-roaster', pricePt: '4,99€', priceEn: '€4.99' },
-  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant', href: '/area-cliente/career-bot', pricePt: null, priceEn: null },
-  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources', href: '/knowledge-hub', pricePt: null, priceEn: null },
-  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching', href: '#jobs-section', pricePt: null, priceEn: null },
+  { icon: PenTool, labelPt: 'CV Maker', labelEn: 'CV Maker', descPt: 'Cria e edita o teu CV profissional', descEn: 'Create and edit your professional CV', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: Euro, labelPt: 'Salary Benchmark', labelEn: 'Salary Benchmark', descPt: 'Descobre onde o teu salário se posiciona no mercado', descEn: 'Discover where your salary stands in the market', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching', href: '#plans-section', pricePt: null, priceEn: null },
   { icon: BarChart3, labelPt: 'Career Path', labelEn: 'Career Path', descPt: 'Planeamento estratégico de carreira com IA', descEn: 'AI-powered strategic career planning', href: '/career-path', pricePt: '6,99€', priceEn: '€6.99' },
   { icon: Compass, labelPt: 'Career Intelligence', labelEn: 'Career Intelligence', descPt: 'Relatório estratégico de mercado e posicionamento', descEn: 'Strategic market positioning report', href: '/career-intelligence', pricePt: '6,99€', priceEn: '€6.99' },
   { icon: Sparkles, labelPt: 'Pack Estudante', labelEn: 'Student Pack', descPt: 'CV + LinkedIn num só relatório cruzado', descEn: 'CV + LinkedIn in one cross report', href: '/pack-estudante', pricePt: '7,99€', priceEn: '€7.99' },
@@ -507,7 +509,7 @@ export default function UpgradePage() {
         </div>
 
         {/* ─── Period Toggle ─── */}
-        <div id="plans" className="flex justify-center mb-10">
+        <div id="plans" className="flex justify-center mb-10"><span id="plans-section" />
           <div className="inline-flex items-center gap-1 p-1 bg-[#f0f0ef] rounded-lg border border-[#e5e5e5]">
             {(['monthly','semiannual','annual'] as Period[]).map(p => (
               <button
