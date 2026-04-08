@@ -10,7 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { Globe, Menu, X } from "lucide-react";
 
 interface S2IHeaderProps {
-  activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'estudante' | 'servicos' | 'sobre' | 'contactos' | 'home' | '';
+  activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'estudante' | 'servicos' | 'knowledge-hub' | 'sobre' | 'contactos' | 'home' | '';
   langToggleHref?: string;
 }
 
@@ -23,6 +23,7 @@ const navItems = [
   { href: "/bundle", label: "Bundle", id: "bundle" },
   { href: "/estudante", label: "Pack Estudante", id: "estudante" },
   { href: "https://www.share2inspire.pt/servicos", label: "Serviços", id: "servicos" },
+  { href: "https://www.share2inspire.pt/conhecimento", label: "Knowledge Hub", id: "knowledge-hub" },
   { href: "https://www.share2inspire.pt/sobre", label: "Sobre", id: "sobre" },
   { href: "https://www.share2inspire.pt/contactos", label: "Contactos", id: "contactos" },
 ];

@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { Globe, Menu, X } from "lucide-react";
 
 interface S2IHeaderENProps {
-  activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'student-pack' | 'services' | 'about' | 'contact' | 'home' | '';
+  activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'student-pack' | 'services' | 'knowledge-hub' | 'about' | 'contact' | 'home' | '';
   langToggleHref?: string;
 }
 
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/en/bundle", label: "Bundle", id: "bundle" },
   { href: "/en/student-pack", label: "Student Pack", id: "student-pack" },
   { href: "https://www.share2inspire.pt/en/pages/services", label: "Services", id: "services" },
+  { href: "https://www.share2inspire.pt/en/pages/knowledge", label: "Knowledge Hub", id: "knowledge-hub" },
   { href: "https://www.share2inspire.pt/en/pages/about", label: "About", id: "about" },
   { href: "https://www.share2inspire.pt/en/pages/contact", label: "Contact", id: "contact" },
 ];
