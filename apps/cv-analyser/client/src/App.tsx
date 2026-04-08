@@ -31,6 +31,8 @@ const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LandingPageEN = lazy(() => import("./pages/LandingPageEN"));
 const ServicosPage = lazy(() => import("./pages/ServicosPage"));
 const ServicesPageEN = lazy(() => import("./pages/ServicesPageEN"));
+const KnowledgeHubPage = lazy(() => import("./pages/KnowledgeHubPage"));
+const KnowledgeHubPageEN = lazy(() => import("./pages/en/KnowledgeHubPageEN"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -137,6 +139,18 @@ function AppRouter() {
     );
   }
 
+  // EN Knowledge Hub: /en/pages/knowledge
+  if (pathname.startsWith('/en/pages/knowledge')) {
+    return (
+      <Router base="/en/pages/knowledge">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   // EN Services Page: /en/pages/services
   if (pathname.startsWith('/en/pages/services')) {
     return (
@@ -235,6 +249,18 @@ function AppRouter() {
         <Switch>
           <Route path={"/"} component={CareerPathHome} />
           <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Knowledge Hub PT: /conhecimento
+  if (pathname.startsWith('/conhecimento')) {
+    return (
+      <Router base="/conhecimento">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPage} />
           <Route component={NotFound} />
         </Switch>
       </Router>

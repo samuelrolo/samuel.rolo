@@ -199,11 +199,11 @@
     },
     {
       "source": "/en/pages/knowledge",
-      "destination": "/en/pages/knowledge.html"
+      "destination": "/en/pages/knowledge"
     },
     {
       "source": "/en/knowledge",
-      "destination": "/en/pages/knowledge.html"
+      "destination": "/en/pages/knowledge"
     },
     {
       "source": "/en/pages/services",
@@ -363,11 +363,11 @@
     },
     {
       "source": "/conhecimento",
-      "destination": "/pages/conhecimento"
+      "destination": "/conhecimento"
     },
     {
       "source": "/pages/conhecimento",
-      "destination": "/pages/conhecimento"
+      "destination": "/conhecimento"
     },
     {
       "source": "/contactos",
