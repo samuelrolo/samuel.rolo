@@ -541,8 +541,17 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
 
           {freeResult.p50_base && (
             <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-3">
-              <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Benchmark — Base anual</p>
-              <p className="text-[10px] text-[#888] mb-2 leading-relaxed">Os percentis mostram como o teu salário se compara ao mercado: <strong>P25</strong> = 25% ganham menos que este valor, <strong>P50</strong> = mediana do mercado, <strong>P75</strong> = apenas 25% ganham mais, <strong>P90</strong> = top 10% do mercado.</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Benchmark — Base anual</p>
+                <div className="relative group">
+                  <svg className="w-3.5 h-3.5 text-[#bbb] cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 rounded-lg bg-[#333] text-white text-[10px] leading-relaxed opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-50 shadow-lg">
+                    Os percentis mostram como o teu salário se compara ao mercado: <strong>P25</strong> = 25% ganham menos, <strong>P50</strong> = mediana, <strong>P75</strong> = apenas 25% ganham mais, <strong>P90</strong> = top 10%.
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#333]" />
+                  </div>
+                </div>
+              </div>
+
               {[
                 { label:'P25', val: freeResult.p25_base, desc: '25% do mercado ganha abaixo deste valor' },
                 { label:'P50', val: freeResult.p50_base, desc: 'Mediana — valor central do mercado' },

@@ -15,8 +15,9 @@ import {
 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
-import SalaryRealityCheck from '@/components/SalaryRealityCheck';
-import { useState, useEffect, useMemo } from 'react';
+import SalaryRealityCheck, { type SalaryRealityCheckRef } from '@/components/SalaryRealityCheck';
+import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 type Tier = 'essential' | 'growth' | 'pro';
 type Period = 'monthly' | 'semiannual' | 'annual';
@@ -225,6 +226,9 @@ export default function UpgradePage() {
   const { t, lang } = useI18n();
   const [period, setPeriod] = useState<Period>('monthly');
   const [payModal, setPayModal] = useState<{ open: boolean; planKey: string; price: number } | null>(null);
+  const srcRef = useRef<SalaryRealityCheckRef>(null);
+  const [srcPendingId, setSrcPendingId] = useState<number | null>(null);
+  const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
 
   // ─── Analysis history for free users ───
   const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
@@ -507,11 +511,38 @@ export default function UpgradePage() {
         {/* ─── Salary Benchmark (Freemium) ─── */}
         <div id="salary-section" className="mb-16">
           <SalaryRealityCheck
+            ref={srcRef}
             userEmail={profile?.email || user?.email || ''}
             userName={profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : ''}
             isPro={false}
+            onPaymentRequest={(analysisId, amount) => {
+              setSrcPendingId(analysisId);
+              setPaymentProduct({
+                type: 'salary_reality_check',
+                label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
+                price: amount,
+                originalPrice: 2.49,
+                discountLabel: '',
+                stripeProductType: 'salary_reality_check_premium',
+              });
+            }}
           />
         </div>
+
+        {/* ─── Payment Modal for Salary Benchmark ─── */}
+        {paymentProduct && (
+          <ExtraAnalysisPaymentModal
+            product={paymentProduct}
+            onClose={() => setPaymentProduct(null)}
+            onPaymentSuccess={async () => {
+              setPaymentProduct(null);
+              if (srcPendingId) {
+                srcRef.current?.unlockPremium(srcPendingId);
+                setSrcPendingId(null);
+              }
+            }}
+          />
+        )}
 
         {/* ─── Saved Jobs Tracker (Chrome Extension) ─── */}
         <div id="jobs-section" className="mb-16">
