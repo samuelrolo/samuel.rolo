@@ -1,22 +1,17 @@
 /**
- * SalaryRealityCheck — Ferramenta de benchmark salarial
+ * SalaryRealityCheck — Ferramenta de benchmark salarial (totalmente gratuita)
  * Passos: Contexto → Remuneração → Benefícios → Resultados
  */
-import { useState, useImperativeHandle, forwardRef } from 'react';
+import { useState } from 'react';
 import {
-  ChevronRight, ChevronLeft, Loader2, AlertCircle, Lock,
+  ChevronRight, ChevronLeft, Loader2, AlertCircle,
   CheckCircle, TrendingUp, Plus, Trash2, Smartphone, Wifi,
 } from 'lucide-react';
-
-export interface SalaryRealityCheckRef {
-  unlockPremium: (analysisId: number) => void;
-}
 
 interface SalaryRealityCheckProps {
   userEmail?: string;
   userName?: string;
   isPro?: boolean;
-  onPaymentRequest?: (analysisId: number, amount: number) => void;
 }
 
 interface OtherIncome {
@@ -69,8 +64,7 @@ function computeCTC(
   return { base, bonus, car: carVal, health: healthV, pension, meal, flex, phone: phoneV, remote: remoteV, other, ctc };
 }
 
-const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckProps>(
-  ({ userEmail = '', userName = '', isPro = false, onPaymentRequest }, ref) => {
+export default function SalaryRealityCheck({ userEmail = '', userName = '' }: SalaryRealityCheckProps) {
 
   const [step, setStep] = useState(0);
 
@@ -98,33 +92,9 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
   const [remote, setRemote]         = useState('presencial');
 
   // Results
-  const [loading, setLoading]       = useState(false);
-  const [error, setError]           = useState<string | null>(null);
-  const [freeResult, setFreeResult] = useState<any>(null);
-  const [premiumResult, setPremiumResult] = useState<any>(null);
-  const [analysisId, setAnalysisId] = useState<number | null>(null);
-  const [unlocking, setUnlocking]   = useState(false);
-
-  useImperativeHandle(ref, () => ({
-    unlockPremium: async (aid: number) => {
-      setUnlocking(true);
-      try {
-        const pkg = buildPackage('premium', aid);
-        const res = await fetch(SRC_URL, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(pkg),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro na análise premium');
-        setPremiumResult(data);
-      } catch (e: any) {
-        setError(e.message || 'Erro ao desbloquear análise premium');
-      } finally {
-        setUnlocking(false);
-      }
-    },
-  }));
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState<string | null>(null);
+  const [result, setResult]     = useState<any>(null);
 
   const otherAnnual = computeOtherIncomeAnnual(otherIncome);
   const computed = computeCTC(
@@ -144,7 +114,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
   const updateOtherIncome = (id: string, field: keyof OtherIncome, value: string) =>
     setOtherIncome(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
 
-  function buildPackage(tier: 'free' | 'premium', aid?: number) {
+  function buildPackage() {
     return {
       country, fn, industry, seniority,
       monthly: parseFloat(monthly) || 0,
@@ -165,8 +135,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
           description: i.description,
           amount_annual: i.period === 'monthly' ? (parseFloat(i.amount) || 0) * 12 : parseFloat(i.amount) || 0,
         })),
-      tier,
-      ...(aid ? { analysis_id: aid } : {}),
+      tier: 'premium',
       user_email: userEmail,
       user_name: userName,
     };
@@ -178,12 +147,11 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
       const res = await fetch(SRC_URL, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildPackage('free')),
+        body: JSON.stringify(buildPackage()),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erro na análise');
-      setFreeResult(data);
-      if (data.analysis_id) setAnalysisId(data.analysis_id);
+      setResult(data);
       setStep(3);
     } catch (e: any) {
       setError(e.message || 'Erro na análise. Verifica os dados e tenta novamente.');
@@ -244,8 +212,10 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
               {SENIORITIES.map(s => <option key={s}>{s}</option>)}
             </select>
           </div>
-          <button onClick={() => setStep(1)} disabled={!step0Valid}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+          <button
+            onClick={() => setStep(1)}
+            disabled={!step0Valid}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-40 transition-all hover:opacity-90">
             Continuar <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -256,106 +226,72 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Salário base (mensal)</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#999]">{sym}</span>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Salário base mensal</label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-[#999]">{sym}</span>
                 <input type="number" value={monthly} onChange={e => setMonthly(e.target.value)}
-                  placeholder="0" className={`${inputCls} pl-6`} />
+                  placeholder="0" className={inputCls} />
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Moeda</label>
-              <select value={currency} onChange={e => setCurrency(e.target.value)} className={inputCls}>
-                {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Meses/ano</label>
+              <select value={months} onChange={e => setMonths(e.target.value)} className={inputCls}>
+                {['12','13','14'].map(m => <option key={m}>{m}</option>)}
               </select>
             </div>
           </div>
-
           <div>
-            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Nº de meses / ano</label>
-            <div className="grid grid-cols-4 gap-2">
-              {['12','13','14','15'].map(m => (
-                <button key={m} onClick={() => setMonths(m)}
-                  className={`py-2 border rounded-lg text-xs font-medium transition-all ${months === m ? 'border-[#C8A02A] bg-[#C8A02A]/5 text-[#C8A02A]' : 'border-[#e5e5e5] text-[#666] hover:border-[#C8A02A]/30'}`}>
-                  {m}m
-                </button>
-              ))}
-            </div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Moeda</label>
+            <select value={currency} onChange={e => setCurrency(e.target.value)} className={inputCls}>
+              {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+            </select>
           </div>
-
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Bónus (%)</label>
-              <input type="number" value={bonusPct} onChange={e => setBonusPct(e.target.value)}
-                placeholder="0" className={inputCls} />
+              <div className="flex items-center gap-1">
+                <input type="number" value={bonusPct} onChange={e => setBonusPct(e.target.value)}
+                  placeholder="0" className={inputCls} />
+                <span className="text-xs text-[#999]">%</span>
+              </div>
             </div>
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">Tipo de bónus</label>
               <select value={bonusType} onChange={e => setBonusType(e.target.value)} className={inputCls}>
                 <option value="performance">Performance</option>
-                <option value="commercial">Comercial</option>
                 <option value="guaranteed">Garantido</option>
-                <option value="profit_share">Profit share</option>
+                <option value="discretionary">Discricionário</option>
               </select>
             </div>
           </div>
 
-          {/* Outros Rendimentos */}
+          {/* Outros rendimentos */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[10px] text-[#999] uppercase tracking-wider">Outros Rendimentos</label>
-              <button onClick={addOtherIncome}
-                className="flex items-center gap-1 text-[10px] text-[#C8A02A] hover:text-[#b8960c] font-medium transition-colors">
+              <label className="text-[10px] text-[#999] uppercase tracking-wider">Outros rendimentos</label>
+              <button onClick={addOtherIncome} className="flex items-center gap-1 text-[10px] text-[#C8A02A] hover:opacity-80">
                 <Plus className="w-3 h-3" /> Adicionar
               </button>
             </div>
-            {otherIncome.length === 0 && (
-              <p className="text-[10px] text-[#bbb] italic">Ex: freelance, rendas, consultoria, RSU, comissões...</p>
-            )}
-            {otherIncome.map((item) => (
+            {otherIncome.map(item => (
               <div key={item.id} className="flex gap-2 mb-2 items-center">
-                <input
-                  type="text" value={item.description}
+                <input type="text" placeholder="Descrição" value={item.description}
                   onChange={e => updateOtherIncome(item.id, 'description', e.target.value)}
-                  placeholder="Descrição (ex: freelance)"
-                  className="flex-1 px-2 py-1.5 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-[#C8A02A]/40 focus:outline-none bg-white placeholder:text-[#bbb]"
-                />
-                <div className="relative w-24">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-[#999]">{sym}</span>
-                  <input
-                    type="number" value={item.amount}
-                    onChange={e => updateOtherIncome(item.id, 'amount', e.target.value)}
-                    placeholder="0"
-                    className="w-full pl-5 pr-2 py-1.5 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-[#C8A02A]/40 focus:outline-none bg-white"
-                  />
-                </div>
-                <select
-                  value={item.period}
-                  onChange={e => updateOtherIncome(item.id, 'period', e.target.value as 'monthly' | 'annual')}
-                  className="w-20 px-1 py-1.5 border border-[#e5e5e5] rounded text-[10px] text-[#666] focus:border-[#C8A02A]/40 focus:outline-none bg-white"
-                >
+                  className={`${inputCls} flex-1`} />
+                <input type="number" placeholder="Valor" value={item.amount}
+                  onChange={e => updateOtherIncome(item.id, 'amount', e.target.value)}
+                  className={`${inputCls} w-20`} />
+                <select value={item.period} onChange={e => updateOtherIncome(item.id, 'period', e.target.value as any)}
+                  className={`${inputCls} w-24`}>
                   <option value="monthly">Mensal</option>
                   <option value="annual">Anual</option>
                 </select>
-                <button onClick={() => removeOtherIncome(item.id)}
-                  className="text-[#ddd] hover:text-red-400 transition-colors shrink-0">
+                <button onClick={() => removeOtherIncome(item.id)} className="text-[#bbb] hover:text-red-400">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            {otherIncome.length > 0 && otherAnnual > 0 && (
-              <p className="text-[10px] text-[#C8A02A] font-medium mt-1">
-                Total: {fmt(otherAnnual, currency)}/ano
-              </p>
-            )}
           </div>
-
-          {parseFloat(monthly) > 0 && (
-            <div className="p-3 bg-[#0B1929]/5 border border-[#0B1929]/10 rounded-lg">
-              <p className="text-[10px] text-[#999] uppercase tracking-wider mb-1">Estimativa (antes de benefícios)</p>
-              <p className="text-sm font-bold text-[#1a1a1a]">{fmt(computed.base + computed.bonus + computed.other, currency)}/ano</p>
-            </div>
-          )}
 
           <div className="flex gap-2">
             <button onClick={() => setStep(0)}
@@ -363,7 +299,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
               <ChevronLeft className="w-3.5 h-3.5" /> Voltar
             </button>
             <button onClick={() => setStep(2)} disabled={!step1Valid}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-40 transition-all hover:opacity-90">
               Continuar <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -372,17 +308,16 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
 
       {/* STEP 2: BENEFÍCIOS */}
       {step === 2 && (
-        <div className="space-y-5">
-
+        <div className="space-y-4">
           {/* Viatura */}
           <div>
             <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2">Viatura de empresa</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { key:'none', label:'Sem viatura', sub:'—' },
                 { key:'conventional', label:'Convencional', sub:'~€6k/ano' },
-                { key:'ev_partial', label:'EV parcial', sub:'~€9k/ano' },
-                { key:'ev_full', label:'EV full use', sub:'~€14k/ano' },
+                { key:'ev_partial', label:'Eléctrico parcial', sub:'~€9k/ano' },
+                { key:'ev_full', label:'Eléctrico total', sub:'~€14k/ano' },
               ].map(o => (
                 <button key={o.key} onClick={() => setCar(o.key)} className={cardBtn(car === o.key)}>
                   <p className={`text-xs font-medium ${car === o.key ? 'text-[#C8A02A]' : 'text-[#1a1a1a]'}`}>{o.label}</p>
@@ -392,9 +327,9 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
             </div>
           </div>
 
-          {/* Seguro saúde */}
+          {/* Saúde */}
           <div>
-            <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2">Seguro de Saúde</p>
+            <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2">Seguro de saúde</p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { key:'none', label:'Sem seguro', sub:'—' },
@@ -497,7 +432,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all hover:opacity-90">
               {loading
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> A analisar...</>
-                : <><TrendingUp className="w-4 h-4" /> Ver posicionamento</>
+                : <><TrendingUp className="w-4 h-4" /> Ver análise completa — GRÁTIS</>
               }
             </button>
           </div>
@@ -505,8 +440,14 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
       )}
 
       {/* STEP 3: RESULTADOS */}
-      {step === 3 && freeResult && (
+      {step === 3 && result && (
         <div className="space-y-4">
+          {/* Badge gratuito */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            <p className="text-xs text-emerald-700 font-medium">Análise completa — <strong>GRÁTIS</strong> para membros</p>
+          </div>
+
           {/* CTC breakdown */}
           <div className="p-4 bg-[#0B1929] text-white rounded-xl">
             <p className="text-[10px] text-white/60 uppercase tracking-wider mb-1">Pacote Total Calculado</p>
@@ -532,14 +473,14 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
             </div>
           </div>
 
-          {freeResult.market_label && (
+          {result.market_label && (
             <div className="p-3 bg-[#C8A02A]/5 border border-[#C8A02A]/20 rounded-lg">
               <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider mb-0.5 font-medium">Posicionamento de mercado</p>
-              <p className="text-sm text-[#1a1a1a] font-semibold">{freeResult.market_label}</p>
+              <p className="text-sm text-[#1a1a1a] font-semibold">{result.market_label}</p>
             </div>
           )}
 
-          {freeResult.p50_base && (
+          {result.p50_base && (
             <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-3">
               <div className="flex items-center gap-1.5">
                 <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Benchmark — Base anual</p>
@@ -553,10 +494,10 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
               </div>
 
               {[
-                { label:'P25', val: freeResult.p25_base, desc: '25% do mercado ganha abaixo deste valor' },
-                { label:'P50', val: freeResult.p50_base, desc: 'Mediana — valor central do mercado' },
-                { label:'P75', val: freeResult.p75_base, desc: 'Apenas 25% ganha acima deste valor' },
-                { label:'P90', val: freeResult.p90_base, desc: 'Top 10% — os mais bem pagos' },
+                { label:'P25', val: result.p25_base, desc: '25% do mercado ganha abaixo deste valor' },
+                { label:'P50', val: result.p50_base, desc: 'Mediana — valor central do mercado' },
+                { label:'P75', val: result.p75_base, desc: 'Apenas 25% ganha acima deste valor' },
+                { label:'P90', val: result.p90_base, desc: 'Top 10% — os mais bem pagos' },
               ].map(b => (
                 <div key={b.label}>
                   <div className="flex justify-between text-[10px] mb-0.5">
@@ -565,7 +506,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
                   </div>
                   <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
                     <div className="h-full bg-[#C8A02A]/40 rounded-full"
-                      style={{ width: `${Math.min(100, (b.val / (freeResult.p90_base * 1.1)) * 100)}%` }} />
+                      style={{ width: `${Math.min(100, (b.val / (result.p90_base * 1.1)) * 100)}%` }} />
                   </div>
                 </div>
               ))}
@@ -576,118 +517,85 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
                 </div>
                 <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
                   <div className="h-full bg-[#C8A02A] rounded-full"
-                    style={{ width: `${Math.min(100, (computed.base / (freeResult.p90_base * 1.1)) * 100)}%` }} />
+                    style={{ width: `${Math.min(100, (computed.base / (result.p90_base * 1.1)) * 100)}%` }} />
                 </div>
               </div>
             </div>
           )}
 
-          {freeResult.differentiators && (
+          {/* Percentil total (premium) */}
+          {result.percentile_total !== undefined && (
+            <div className="p-4 bg-[#C8A02A]/5 border border-[#C8A02A]/20 rounded-xl text-center">
+              <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider mb-1">Percentil no mercado (CTC total)</p>
+              <p className="text-3xl font-bold text-[#1a1a1a]">P{result.percentile_total}</p>
+              <p className="text-xs text-[#666] mt-1">Estás acima de {result.percentile_total}% dos profissionais com este perfil</p>
+            </div>
+          )}
+
+          {result.differentiators && (
             <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-2">
               <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Diferenciais detectados</p>
-              {freeResult.differentiators.slice(0, 2).map((d: string, i: number) => (
+              {result.differentiators.map((d: string, i: number) => (
                 <div key={i} className="flex items-start gap-2 text-xs text-[#555]">
                   <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" /><span>{d}</span>
                 </div>
               ))}
-              {freeResult.differentiators.length > 2 && (
-                <p className="text-[10px] text-[#bbb]">+ {freeResult.differentiators.length - 2} mais na análise completa</p>
-              )}
             </div>
           )}
 
-          {freeResult.strategic_advice && (
+          {result.strengths && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+              <p className="text-[10px] text-emerald-700 uppercase tracking-wider font-medium mb-2">Pontos fortes do pacote</p>
+              <p className="text-xs text-[#555] leading-relaxed">{result.strengths}</p>
+            </div>
+          )}
+
+          {result.considerations && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+              <p className="text-[10px] text-amber-700 uppercase tracking-wider font-medium mb-2">Considerações</p>
+              <p className="text-xs text-[#555] leading-relaxed">{result.considerations}</p>
+            </div>
+          )}
+
+          {result.strategic_advice && (
             <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
               <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium mb-1">Conselho estratégico</p>
-              <p className="text-xs text-[#555] leading-relaxed">{freeResult.strategic_advice}</p>
+              <p className="text-xs text-[#555] leading-relaxed">{result.strategic_advice}</p>
             </div>
           )}
 
-          {!premiumResult && (
-            <div className="p-4 bg-[#0B1929]/3 border-2 border-[#C8A02A]/20 rounded-xl space-y-3">
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#C8A02A]" />
-                <p className="text-sm font-semibold text-[#1a1a1a]">Análise Premium</p>
-                <span className="ml-auto text-xs font-bold text-[#C8A02A]">
-                  {isPro ? '€1.49' : '€2.49'}
-                  {isPro && <span className="ml-1 text-[10px] text-emerald-600">-40% Pro</span>}
-                </span>
-              </div>
-              <ul className="space-y-1.5">
-                {['Percentil exacto vs mercado global','3 insights de negociação personalizados','Riscos e red flags do teu pacote','Próximos passos accionáveis'].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-[#666]">
-                    <span className="w-3.5 h-3.5 rounded-full bg-[#C8A02A]/10 flex items-center justify-center shrink-0">
-                      <span className="text-[8px] text-[#C8A02A] font-bold">✓</span>
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => { if (analysisId && onPaymentRequest) { onPaymentRequest(analysisId, isPro ? 1.49 : 2.49); } else if (analysisId) { unlockPremium(analysisId); } }}
-                disabled={!analysisId || unlocking}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-40 transition-all hover:opacity-90">
-                {unlocking
-                  ? <><Loader2 className="w-4 h-4 animate-spin" /> A desbloquear...</>
-                  : <>Ver análise completa — {isPro ? '€1.49' : '€2.49'}</>
-                }
-              </button>
+          {result.negotiation_tips && (
+            <div className="p-4 border border-[#C8A02A]/20 bg-[#C8A02A]/3 rounded-lg">
+              <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider font-medium mb-2">Dicas de negociação</p>
+              <p className="text-xs text-[#555] leading-relaxed">{result.negotiation_tips}</p>
             </div>
           )}
 
-          {premiumResult && (
-            <div className="space-y-3">
-              {premiumResult.percentile_total !== undefined && (
-                <div className="p-4 bg-[#C8A02A]/5 border border-[#C8A02A]/20 rounded-xl text-center">
-                  <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider mb-1">Percentil no mercado (CTC total)</p>
-                  <p className="text-3xl font-bold text-[#1a1a1a]">P{premiumResult.percentile_total}</p>
-                  <p className="text-xs text-[#666] mt-1">Estás acima de {premiumResult.percentile_total}% dos profissionais com este perfil</p>
+          {result.red_flags && result.red_flags.length > 0 && result.red_flags[0] && (
+            <div className="p-4 border border-red-100 bg-red-50/50 rounded-lg">
+              <p className="text-[10px] text-red-700 uppercase tracking-wider font-medium mb-2">Red flags</p>
+              {result.red_flags.map((f: string, i: number) => (
+                <div key={i} className="flex items-start gap-2 text-xs text-red-700 mb-1">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" /><span>{f}</span>
                 </div>
-              )}
-              {premiumResult.strengths && (
-                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
-                  <p className="text-[10px] text-emerald-700 uppercase tracking-wider font-medium mb-2">Pontos fortes do pacote</p>
-                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.strengths}</p>
+              ))}
+            </div>
+          )}
+
+          {result.next_steps && result.next_steps.length > 0 && (
+            <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium mb-2">Próximos passos</p>
+              {result.next_steps.map((s: string, i: number) => (
+                <div key={i} className="flex items-start gap-2 text-xs text-[#555] mb-1.5">
+                  <span className="w-4 h-4 rounded-full bg-[#0B1929]/10 flex items-center justify-center shrink-0 text-[9px] font-bold text-[#0B1929]">{i+1}</span>
+                  <span>{s}</span>
                 </div>
-              )}
-              {premiumResult.considerations && (
-                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
-                  <p className="text-[10px] text-amber-700 uppercase tracking-wider font-medium mb-2">Considerações</p>
-                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.considerations}</p>
-                </div>
-              )}
-              {premiumResult.negotiation_tips && (
-                <div className="p-4 border border-[#C8A02A]/20 bg-[#C8A02A]/3 rounded-lg">
-                  <p className="text-[10px] text-[#C8A02A] uppercase tracking-wider font-medium mb-2">Dicas de negociação</p>
-                  <p className="text-xs text-[#555] leading-relaxed">{premiumResult.negotiation_tips}</p>
-                </div>
-              )}
-              {premiumResult.red_flags && premiumResult.red_flags.length > 0 && premiumResult.red_flags[0] && (
-                <div className="p-4 border border-red-100 bg-red-50/50 rounded-lg">
-                  <p className="text-[10px] text-red-700 uppercase tracking-wider font-medium mb-2">Red flags</p>
-                  {premiumResult.red_flags.map((f: string, i: number) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-red-700 mb-1">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" /><span>{f}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {premiumResult.next_steps && premiumResult.next_steps.length > 0 && (
-                <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white">
-                  <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium mb-2">Próximos passos</p>
-                  {premiumResult.next_steps.map((s: string, i: number) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-[#555] mb-1.5">
-                      <span className="w-4 h-4 rounded-full bg-[#0B1929]/10 flex items-center justify-center shrink-0 text-[9px] font-bold text-[#0B1929]">{i+1}</span>
-                      <span>{s}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
           )}
 
           <button
-            onClick={() => { setStep(0); setFreeResult(null); setPremiumResult(null); setAnalysisId(null); setError(null); }}
+            onClick={() => { setStep(0); setResult(null); setError(null); }}
             className="w-full text-[11px] text-[#999] hover:text-[#C8A02A] transition-colors py-1">
             ← Nova análise
           </button>
@@ -695,7 +603,4 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
       )}
     </div>
   );
-});
-
-SalaryRealityCheck.displayName = 'SalaryRealityCheck';
-export default SalaryRealityCheck;
+}

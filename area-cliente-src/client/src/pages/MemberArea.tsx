@@ -18,7 +18,7 @@ import SavedJobsTracker from '@/components/SavedJobsTracker';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
-import SalaryRealityCheck, { type SalaryRealityCheckRef } from '@/components/SalaryRealityCheck';
+import SalaryRealityCheck from '@/components/SalaryRealityCheck';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
@@ -818,8 +818,7 @@ export default function MemberArea() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [pendingExtraRun, setPendingExtraRun] = useState<'career_path' | 'career_intelligence' | null>(null);
   const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
-  const srcRef = useRef<SalaryRealityCheckRef>(null);
-  const [srcPendingId, setSrcPendingId] = useState<number | null>(null);
+
   const [autoTriggerAnalysis, setAutoTriggerAnalysis] = useState<string | null>(null);
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -869,26 +868,7 @@ export default function MemberArea() {
     if (params.get('payment') === 'success') {
       const orderId = sessionStorage.getItem('s2iExtraOrderId');
       const orderType = sessionStorage.getItem('s2iExtraType');
-      const savedSrcId = sessionStorage.getItem('s2iSrcPendingId');
-
-      // ── Salary Reality Check: mark paid directly and unlock ──
-      if (orderId && orderType === 'salary_reality_check' && savedSrcId) {
-        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
-        window.history.replaceState({}, '', window.location.pathname + '#salary-section');
-        const aid = parseInt(savedSrcId, 10);
-        (async () => {
-          await supabase.from('cv_analysis').update({
-            payment_status: 'paid',
-            payment_method: 'stripe',
-            updated_at: new Date().toISOString(),
-          }).eq('id', aid).eq('analysis_type', 'salary_reality_check');
-          sessionStorage.removeItem('s2iExtraOrderId');
-          sessionStorage.removeItem('s2iExtraType');
-          sessionStorage.removeItem('s2iSrcPendingId');
-          toast.success(lang === 'pt' ? 'Pagamento confirmado! A desbloquear análise...' : 'Payment confirmed! Unlocking analysis...');
-          srcRef.current?.unlockPremium(aid);
-        })();
-      } else if (orderId && orderType) {
+      if (orderId && orderType) {
         // ── Other extra analyses: poll backend ──
         toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
         window.history.replaceState({}, '', window.location.pathname);
@@ -1419,23 +1399,8 @@ export default function MemberArea() {
     if (tool.action === 'salaryRealityCheck') {
   return (
     <SalaryRealityCheck
-      ref={srcRef}
       userEmail={profile?.email || user?.email || ''}
       userName={profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : ''}
-      isPro={isProPlan}
-      onPaymentRequest={(analysisId, amount) => {
-        setSrcPendingId(analysisId);
-        // Persist for Stripe redirect return
-        sessionStorage.setItem('s2iSrcPendingId', String(analysisId));
-        setPaymentProduct({
-          type: 'salary_reality_check',
-          label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
-          price: amount,
-          originalPrice: 9.99,
-          discountLabel: isProPlan ? '-50%' : '',
-          stripeProductType: 'salary_reality_check_premium',
-        });
-      }}
     />
   );
 }
@@ -2166,14 +2131,6 @@ return null;
         runCareerPath();
       } else if (paymentProduct.type === 'career_intelligence') {
         runCareerIntelligence();
-      } else if (paymentProduct.type === 'salary_reality_check' && srcPendingId) {
-        await supabase
-          .from('cv_analysis')
-          .update({ payment_status: 'paid', payment_method: 'stripe', updated_at: new Date().toISOString() })
-          .eq('id', srcPendingId);
-        sessionStorage.removeItem('s2iSrcPendingId');
-        srcRef.current?.unlockPremium(srcPendingId);
-        setSrcPendingId(null);
       }
     }}
   />
