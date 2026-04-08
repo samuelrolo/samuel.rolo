@@ -542,15 +542,16 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
           {freeResult.p50_base && (
             <div className="p-4 border border-[#e5e5e5] rounded-lg bg-white space-y-3">
               <p className="text-[10px] text-[#999] uppercase tracking-wider font-medium">Benchmark — Base anual</p>
+              <p className="text-[10px] text-[#888] mb-2 leading-relaxed">Os percentis mostram como o teu salário se compara ao mercado: <strong>P25</strong> = 25% ganham menos que este valor, <strong>P50</strong> = mediana do mercado, <strong>P75</strong> = apenas 25% ganham mais, <strong>P90</strong> = top 10% do mercado.</p>
               {[
-                { label:'P25', val: freeResult.p25_base },
-                { label:'P50', val: freeResult.p50_base },
-                { label:'P75', val: freeResult.p75_base },
-                { label:'P90', val: freeResult.p90_base },
+                { label:'P25', val: freeResult.p25_base, desc: '25% do mercado ganha abaixo deste valor' },
+                { label:'P50', val: freeResult.p50_base, desc: 'Mediana — valor central do mercado' },
+                { label:'P75', val: freeResult.p75_base, desc: 'Apenas 25% ganha acima deste valor' },
+                { label:'P90', val: freeResult.p90_base, desc: 'Top 10% — os mais bem pagos' },
               ].map(b => (
                 <div key={b.label}>
-                  <div className="flex justify-between text-[10px] mb-1">
-                    <span className="text-[#999]">{b.label}</span>
+                  <div className="flex justify-between text-[10px] mb-0.5">
+                    <span className="text-[#999] font-medium" title={b.desc}>{b.label}</span>
                     <span className="font-medium text-[#666]">{fmt(b.val, currency)}</span>
                   </div>
                   <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
@@ -599,8 +600,8 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
                 <Lock className="w-4 h-4 text-[#C8A02A]" />
                 <p className="text-sm font-semibold text-[#1a1a1a]">Análise Premium</p>
                 <span className="ml-auto text-xs font-bold text-[#C8A02A]">
-                  {isPro ? '€4.99' : '€9.99'}
-                  {isPro && <span className="ml-1 text-[10px] text-emerald-600">-50% Pro</span>}
+                  {isPro ? '€1.49' : '€2.49'}
+                  {isPro && <span className="ml-1 text-[10px] text-emerald-600">-40% Pro</span>}
                 </span>
               </div>
               <ul className="space-y-1.5">
@@ -614,12 +615,12 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
                 ))}
               </ul>
               <button
-                onClick={() => analysisId && onPaymentRequest?.(analysisId, isPro ? 4.99 : 9.99)}
+                onClick={() => { if (analysisId && onPaymentRequest) { onPaymentRequest(analysisId, isPro ? 1.49 : 2.49); } else if (analysisId) { unlockPremium(analysisId); } }}
                 disabled={!analysisId || unlocking}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-40 transition-all hover:opacity-90">
                 {unlocking
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> A desbloquear...</>
-                  : <>Ver análise completa — {isPro ? '€4.99' : '€9.99'}</>
+                  : <>Ver análise completa — {isPro ? '€1.49' : '€2.49'}</>
                 }
               </button>
             </div>
