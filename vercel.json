@@ -207,7 +207,7 @@
     },
     {
       "source": "/en/pages/services",
-      "destination": "/en/pages/services"
+      "destination": "/cv-analyser/index.html"
     },
     {
       "source": "/en/pages/privacy-policy",
@@ -347,11 +347,11 @@
     },
     {
       "source": "/servicos",
-      "destination": "/pages/servicos/index.html"
+      "destination": "/cv-analyser/index.html"
     },
     {
       "source": "/pages/servicos",
-      "destination": "/pages/servicos/index.html"
+      "destination": "/cv-analyser/index.html"
     },
     {
       "source": "/loja",

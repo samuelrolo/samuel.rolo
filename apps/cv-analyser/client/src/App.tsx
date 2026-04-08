@@ -29,6 +29,8 @@ const LinkedInRoasterHomeEN = lazy(() => import("./pages/en/LinkedInRoasterHomeE
 const LinkedInRoasterResults = lazy(() => import("./pages/LinkedInRoasterResults"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LandingPageEN = lazy(() => import("./pages/LandingPageEN"));
+const ServicosPage = lazy(() => import("./pages/ServicosPage"));
+const ServicesPageEN = lazy(() => import("./pages/ServicesPageEN"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -135,6 +137,18 @@ function AppRouter() {
     );
   }
 
+  // EN Services Page: /en/pages/services
+  if (pathname.startsWith('/en/pages/services')) {
+    return (
+      <Router base="/en/pages/services">
+        <Switch>
+          <Route path="/" component={ServicesPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   // EN Landing Page: /en (exact match only)
   if (pathname === '/en' || pathname === '/en/') {
     return (
@@ -221,6 +235,18 @@ function AppRouter() {
         <Switch>
           <Route path={"/"} component={CareerPathHome} />
           <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Servicos PT: /servicos
+  if (pathname.startsWith('/servicos')) {
+    return (
+      <Router base="/servicos">
+        <Switch>
+          <Route path="/" component={ServicosPage} />
           <Route component={NotFound} />
         </Switch>
       </Router>
