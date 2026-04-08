@@ -14,6 +14,7 @@ import {
   FileSearch, Compass, Loader2, CheckCircle, PenTool, Euro
 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
+import { toast } from 'sonner';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
 import SalaryRealityCheck, { type SalaryRealityCheckRef } from '@/components/SalaryRealityCheck';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
@@ -229,6 +230,57 @@ export default function UpgradePage() {
   const srcRef = useRef<SalaryRealityCheckRef>(null);
   const [srcPendingId, setSrcPendingId] = useState<number | null>(null);
   const [paymentProduct, setPaymentProduct] = useState<ExtraAnalysisProduct | null>(null);
+
+  // ─── Handle Stripe return after redirect ───
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      const orderId = sessionStorage.getItem('s2iExtraOrderId');
+      const orderType = sessionStorage.getItem('s2iExtraType');
+      const savedSrcId = sessionStorage.getItem('s2iSrcPendingId');
+      if (orderId && orderType === 'salary_reality_check' && savedSrcId) {
+        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
+        window.history.replaceState({}, '', window.location.pathname + '#salary-section');
+        const aid = parseInt(savedSrcId, 10);
+        // Mark as paid directly then unlock
+        (async () => {
+          await supabase.from('cv_analysis').update({
+            payment_status: 'paid',
+            payment_method: 'stripe',
+            updated_at: new Date().toISOString(),
+          }).eq('id', aid).eq('analysis_type', 'salary_reality_check');
+          sessionStorage.removeItem('s2iExtraOrderId');
+          sessionStorage.removeItem('s2iExtraType');
+          sessionStorage.removeItem('s2iSrcPendingId');
+          toast.success(lang === 'pt' ? 'Pagamento confirmado! A desbloquear análise...' : 'Payment confirmed! Unlocking analysis...');
+          srcRef.current?.unlockPremium(aid);
+        })();
+      } else if (orderId && orderType) {
+        // Non-salary payment return — poll backend
+        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
+        window.history.replaceState({}, '', window.location.pathname);
+        let attempts = 0;
+        const checkStatus = () => {
+          fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.paid) {
+                sessionStorage.removeItem('s2iExtraOrderId');
+                sessionStorage.removeItem('s2iExtraType');
+                toast.success(lang === 'pt' ? 'Pagamento confirmado!' : 'Payment confirmed!');
+              } else if (attempts < 5) {
+                attempts++;
+                setTimeout(checkStatus, 2000);
+              } else {
+                toast.error(lang === 'pt' ? 'Demorou muito tempo. Atualiza a página e tenta novamente.' : 'Taking too long. Refresh and try again.');
+              }
+            })
+            .catch(e => console.error('Failed to verify payment', e));
+        };
+        setTimeout(checkStatus, 1500);
+      }
+    }
+  }, [lang]);
 
   // ─── Analysis history for free users ───
   const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
@@ -517,6 +569,8 @@ export default function UpgradePage() {
             isPro={false}
             onPaymentRequest={(analysisId, amount) => {
               setSrcPendingId(analysisId);
+              // Persist for Stripe redirect return
+              sessionStorage.setItem('s2iSrcPendingId', String(analysisId));
               setPaymentProduct({
                 type: 'salary_reality_check',
                 label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
@@ -537,6 +591,13 @@ export default function UpgradePage() {
             onPaymentSuccess={async () => {
               setPaymentProduct(null);
               if (srcPendingId) {
+                // Mark payment as paid in cv_analysis before calling unlockPremium
+                await supabase.from('cv_analysis').update({
+                  payment_status: 'paid',
+                  payment_method: 'stripe',
+                  updated_at: new Date().toISOString(),
+                }).eq('id', srcPendingId).eq('analysis_type', 'salary_reality_check');
+                sessionStorage.removeItem('s2iSrcPendingId');
                 srcRef.current?.unlockPremium(srcPendingId);
                 setSrcPendingId(null);
               }

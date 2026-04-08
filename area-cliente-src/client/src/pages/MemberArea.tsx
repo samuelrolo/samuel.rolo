@@ -869,7 +869,27 @@ export default function MemberArea() {
     if (params.get('payment') === 'success') {
       const orderId = sessionStorage.getItem('s2iExtraOrderId');
       const orderType = sessionStorage.getItem('s2iExtraType');
-      if (orderId && orderType) {
+      const savedSrcId = sessionStorage.getItem('s2iSrcPendingId');
+
+      // ── Salary Reality Check: mark paid directly and unlock ──
+      if (orderId && orderType === 'salary_reality_check' && savedSrcId) {
+        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
+        window.history.replaceState({}, '', window.location.pathname + '#salary-section');
+        const aid = parseInt(savedSrcId, 10);
+        (async () => {
+          await supabase.from('cv_analysis').update({
+            payment_status: 'paid',
+            payment_method: 'stripe',
+            updated_at: new Date().toISOString(),
+          }).eq('id', aid).eq('analysis_type', 'salary_reality_check');
+          sessionStorage.removeItem('s2iExtraOrderId');
+          sessionStorage.removeItem('s2iExtraType');
+          sessionStorage.removeItem('s2iSrcPendingId');
+          toast.success(lang === 'pt' ? 'Pagamento confirmado! A desbloquear análise...' : 'Payment confirmed! Unlocking analysis...');
+          srcRef.current?.unlockPremium(aid);
+        })();
+      } else if (orderId && orderType) {
+        // ── Other extra analyses: poll backend ──
         toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
         window.history.replaceState({}, '', window.location.pathname);
         
@@ -1405,6 +1425,8 @@ export default function MemberArea() {
       isPro={isProPlan}
       onPaymentRequest={(analysisId, amount) => {
         setSrcPendingId(analysisId);
+        // Persist for Stripe redirect return
+        sessionStorage.setItem('s2iSrcPendingId', String(analysisId));
         setPaymentProduct({
           type: 'salary_reality_check',
           label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
@@ -2149,6 +2171,7 @@ return null;
           .from('cv_analysis')
           .update({ payment_status: 'paid', payment_method: 'stripe', updated_at: new Date().toISOString() })
           .eq('id', srcPendingId);
+        sessionStorage.removeItem('s2iSrcPendingId');
         srcRef.current?.unlockPremium(srcPendingId);
         setSrcPendingId(null);
       }
