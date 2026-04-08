@@ -18,6 +18,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
+import S2IHeaderEN from "@/components/S2IHeaderEN";
 import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -289,7 +290,6 @@ export default function HomeEN() {
   const [liPaywallLoading, setLiPaywallLoading] = useState(false);
   const [liPaywallStatus, setLiPaywallStatus] = useState<'idle' | 'polling' | 'success' | 'error'>('idle');
   const [liPaywallError, setLiPaywallError] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Rotating headlines — conversion-focused
   const headlines = [
@@ -764,10 +764,13 @@ export default function HomeEN() {
           amount: plan.price,
           currency: currencyCode,
           email: liPaywallEmail,
+          name: liPaywallEmail.split('@')[0],
+          product_type: 'cv_analysis',
+          language: 'en',
           product: `CV Analyser - ${plan.name} (LinkedIn)`,
           description: `LinkedIn ${plan.name} - ${plan.analyses} analysis(es)`,
-          successUrl: `${window.location.origin}/en/cv-analyser?li_payment=success&li_email=${encodeURIComponent(liPaywallEmail)}&li_plan=${liPaywallPlan}&li_url=${encodeURIComponent(linkedInUrl)}`,
-          cancelUrl: `${window.location.origin}/en/cv-analyser?li_payment=cancelled`,
+          success_url: `${window.location.origin}/en/cv-analyser?li_payment=success&li_email=${encodeURIComponent(liPaywallEmail)}&li_plan=${liPaywallPlan}&li_url=${encodeURIComponent(linkedInUrl)}`,
+          cancel_url: `${window.location.origin}/en/cv-analyser?li_payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -806,10 +809,13 @@ export default function HomeEN() {
           amount: plan.price,
           currency: currencyCode,
           email: voucherEmail,
+          name: voucherEmail.split('@')[0],
+          product_type: 'cv_analysis',
+          language: 'en',
           product: `CV Analyser - ${plan.name} (Voucher)`,
           description: `Voucher ${plan.name} - ${plan.analyses} analysis(es)`,
-          successUrl: `${window.location.origin}/en/cv-analyser?voucher_payment=success&voucher_email=${encodeURIComponent(voucherEmail)}&voucher_plan=${voucherSelectedPlan}`,
-          cancelUrl: `${window.location.origin}/en/cv-analyser?voucher_payment=cancelled`,
+          success_url: `${window.location.origin}/en/cv-analyser?voucher_payment=success&voucher_email=${encodeURIComponent(voucherEmail)}&voucher_plan=${voucherSelectedPlan}`,
+          cancel_url: `${window.location.origin}/en/cv-analyser?voucher_payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -963,50 +969,7 @@ export default function HomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header — Unified */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <a href="https://www.share2inspire.pt/en/pages/home" className="flex items-center gap-2 shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-12" style={{ width: "auto" }} />
-          </a>
-          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
-            <a href="https://www.share2inspire.pt/en/pages/home" className="text-slate-500 hover:text-[#C9A961] transition-colors">Home</a>
-            <a href="/en/cv-analyser" className="text-[#C9A961]">CV Analyser</a>
-            <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
-            <a href="/en/career-intelligence" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Intelligence</a>
-            <a href="/en/linkedin-roaster" className="text-slate-500 hover:text-[#C9A961] transition-colors">LinkedIn Roaster</a>
-            <a href="/en/student-pack" className="text-slate-500 hover:text-[#C9A961] transition-colors">Student Pack</a>
-            <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
-            <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
-          </nav>
-          <div className="hidden lg:flex items-center gap-3">
-            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Login</a>
-            <a href="/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
-              <Globe className="w-3.5 h-3.5" /><span>PT</span>
-            </a>
-          </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
-            <a href="https://www.share2inspire.pt/en/pages/home" className="block text-sm text-slate-600 hover:text-[#C9A961]">Home</a>
-            <a href="/en/cv-analyser" className="block text-sm text-[#C9A961] font-semibold">CV Analyser</a>
-            <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
-            <a href="/en/career-intelligence" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Intelligence</a>
-            <a href="/en/linkedin-roaster" className="block text-sm text-slate-600 hover:text-[#C9A961]">LinkedIn Roaster</a>
-            <a href="/en/student-pack" className="block text-sm text-slate-600 hover:text-[#C9A961]">Student Pack</a>
-            <a href="/en/student-pack" className="text-slate-500 hover:text-[#C9A961] transition-colors">Student Pack</a>
-            <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
-            <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
-            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold uppercase">Login</a>
-              <a href="/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />PT</a>
-            </div>
-          </div>
-        )}
-      </header>
+      <S2IHeaderEN activePage="cv-analyser" langToggleHref="/cv-analyser" />
 
       {/* Bundle Banner — Value-focused, no explicit price */}
       <a href="/en/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">

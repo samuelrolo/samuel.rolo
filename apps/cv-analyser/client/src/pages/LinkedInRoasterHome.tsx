@@ -263,7 +263,7 @@ export default function LinkedInRoasterHome() {
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'eur', description: 'LinkedIn Roaster — Roast Brutal — Share2Inspire', orderId, success_url: `${window.location.origin}/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/linkedin-roaster` }),
+        body: JSON.stringify({ email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'eur', product_type: 'linkedin_roast', description: 'LinkedIn Roaster — Roast Brutal — Share2Inspire', orderId, success_url: `${window.location.origin}/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/linkedin-roaster` }),
       });
       const data = await response.json();
       if (data.url) { localStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }

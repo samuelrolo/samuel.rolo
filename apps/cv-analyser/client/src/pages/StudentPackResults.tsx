@@ -686,7 +686,7 @@ export default function StudentPackResults() {
                             <h5 className="font-semibold text-slate-900 text-sm">{cargo.titulo}</h5>
                             <div className="flex items-center gap-2 mt-0.5">
                               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{cargo.tipo}</span>
-                              {cargo.salary_range && <span className="text-xs text-emerald-600 font-medium">€{cargo.salary_range}/mês</span>}
+                              {cargo.salary_range && <span className="text-xs text-emerald-600 font-medium">{typeof cargo.salary_range === 'object' ? `${cargo.salary_range.moeda || '€'}${cargo.salary_range.min || '?'}–${cargo.salary_range.max || '?'}/${cargo.salary_range.periodo || 'mês'}` : `€${cargo.salary_range}/mês`}</span>}
                             </div>
                           </div>
                         </div>

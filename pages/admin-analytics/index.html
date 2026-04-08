@@ -468,9 +468,9 @@
 
     <!-- Funil KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
-        <div class="kpi-card" style="text-align:center;border-top:3px solid #0077B5;">
-            <div class="kpi-label">LinkedIn Roaster</div>
-            <div class="kpi-value" style="color:#0077B5;" id="funnelLR">--</div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #059669;">
+            <div class="kpi-label">Student Pack</div>
+            <div class="kpi-value" style="color:#059669;" id="funnelLR">--</div>
             <div class="kpi-sub" id="funnelLRConv">topo do funil</div>
         </div>
         <!-- Career Energy hidden
@@ -603,6 +603,7 @@
                 <option value="all">Todos</option>
                 <option value="cv_free">CV Grátis</option>
                 <option value="cv_paid">CV Pago</option>
+                <option value="student_pack">Student Pack</option>
                 <option value="career_path">Career Path</option>
                 <option value="career_intelligence">Career Intelligence</option>
             </select>
@@ -821,6 +822,7 @@
                                 <option value="">— Personalizado —</option>
                                 <option value="upsell_cv">Upsell — CV Analyser</option>
                                 <option value="upsell_cp">Upsell — Career Path</option>
+                                <option value="upsell_student_pack">Upsell — Student Pack</option>
                                 <option value="upsell_ci">Upsell — Career Intelligence</option>
                                 <option value="followup">Follow-up</option>
                                 <option value="testimonial">Pedir Testemunho</option>
@@ -1274,6 +1276,7 @@
                     <option value="">— Selecionar template —</option>
                     <option value="upsell_cv">Upsell — Análise Completa CV</option>
                     <option value="upsell_cp">Upsell — Career Path</option>
+                    <option value="upsell_student_pack">Upsell — Student Pack</option>
                     <option value="upsell_ci">Upsell — Career Intelligence</option>
                     <option value="followup">Follow-up</option>
                     <option value="testimonial">Pedir Testemunho</option>
@@ -1316,6 +1319,7 @@
                     <option value="Career Intelligence Full|1|49.00|career_intelligence_full|false">Career Intelligence Full — (49,00€)</option>
                     <option value="Bundle CV + Career Path|1|29.00|career_path|true">Bundle CV + Career Path (29,00€)</option>
                     <option value="LinkedIn Roaster|1|4.99|linkedin_roaster|false">LinkedIn Roaster (4,99€)</option>
+                    <option value="Pack Estudante|1|7.99|student_pack|false">Pack Estudante — 1 voucher (7,99€)</option>
                     <option value="PACK_TESTE_PARCERIA">Pack Teste Parceria (CV + Career + Roaster)</option>
                 </select>
             </div>
@@ -1388,6 +1392,10 @@
                         <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">Career Intelligence</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="student-pack" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="aff-product-cb" value="linkedin-roaster" onchange="updateAffLinkPreview()">
                         <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
                     </label>
@@ -1458,6 +1466,10 @@
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="career_intelligence_full" checked>
                         <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full (49€)</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="student_pack" checked>
+                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack (7,99€)</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="bundle" checked>

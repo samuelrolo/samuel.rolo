@@ -494,7 +494,7 @@ const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckP
               <ChevronLeft className="w-3.5 h-3.5" /> Voltar
             </button>
             <button onClick={runAnalysis} disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all hover:opacity-90">
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#C8A02A] to-[#a07c1e] text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all hover:opacity-90">
               {loading
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> A analisar...</>
                 : <><TrendingUp className="w-4 h-4" /> Ver posicionamento</>

@@ -954,7 +954,10 @@ export default function Results() {
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: getDiscountedPriceNum(selectedPlan.price)
+          amount: getDiscountedPriceNum(selectedPlan.price),
+          description: `CV Analyser — ${selectedPlan.name} — Share2Inspire`,
+          success_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -1419,7 +1422,10 @@ export default function Results() {
             country: sessionStorage.getItem('analysisCountry') || '',
             region: sessionStorage.getItem('analysisRegion') || '',
             currency: cpCurrencyCode,
-            amount: parseFloat(cpAmount)
+            amount: parseFloat(cpAmount),
+            description: 'Career Path — Share2Inspire',
+            success_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=success&session_id={CHECKOUT_SESSION_ID}&product=career_path`,
+            cancel_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=cancelled`,
           })
         });
         const stripeData = await stripeRes.json();
