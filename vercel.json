@@ -162,6 +162,14 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/en",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
       "source": "/cv-analyser/llms.txt",
       "destination": "/cv-analyser/llms.txt"
     },
