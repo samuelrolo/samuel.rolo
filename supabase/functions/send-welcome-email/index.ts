@@ -341,8 +341,11 @@ Deno.serve(async (req: Request) => {
     const email = payload?.email;
     const name = payload?.name;
     const lang = payload?.lang || payload?.language;
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
-    if (!email) {
+    if (!normalizedEmail) {
       return new Response(
         JSON.stringify({ success: false, error: "Email is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -364,6 +367,11 @@ Deno.serve(async (req: Request) => {
     }
 
     const language = lang || "pt";
+    const emailType = type === "cv_analysis"
+      ? "welcome_cv_analysis"
+      : type === "student_pack"
+        ? "welcome_student_pack"
+        : "welcome_member_signup";
     let subject: string;
     let bodyHtml: string;
 
@@ -386,6 +394,30 @@ Deno.serve(async (req: Request) => {
 
     const htmlContent = wrapTemplate(bodyHtml, language);
 
+    if (supabaseUrl && supabaseKey) {
+      const dedupUrl = `${supabaseUrl}/rest/v1/welcome_emails_log?select=id,email&type=eq.${encodeURIComponent(type)}&email=eq.${encodeURIComponent(normalizedEmail)}&status=eq.sent&limit=1`;
+      const dedupRes = await fetch(dedupUrl, {
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+        },
+      });
+
+      if (dedupRes.ok) {
+        const existing = await dedupRes.json();
+        if (Array.isArray(existing) && existing.length > 0) {
+          console.log(`Skipping duplicate welcome email (${type}) for ${normalizedEmail}`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "duplicate_welcome_email" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      } else {
+        console.warn("Welcome email dedup check failed:", dedupRes.status, await dedupRes.text());
+      }
+    }
+
     // Send via Brevo API
     const brevoRes = await fetch(BREVO_API_URL, {
       method: "POST",
@@ -396,7 +428,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         sender: SENDER,
-        to: [{ email, name: name || email }],
+        to: [{ email: normalizedEmail, name: name || normalizedEmail }],
         subject,
         htmlContent,
         replyTo: SENDER,
@@ -413,12 +445,10 @@ Deno.serve(async (req: Request) => {
     }
 
     const brevoData = await brevoRes.json();
-    console.log(`Welcome email (${type}) sent to ${email}:`, brevoData);
+    console.log(`Welcome email (${type}) sent to ${normalizedEmail}:`, brevoData);
 
     // Log to welcome_emails_log + email_history (fire-and-forget)
     try {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
       if (supabaseUrl && supabaseKey) {
         // Log to welcome_emails_log (dashboard monitoring)
         await fetch(`${supabaseUrl}/rest/v1/welcome_emails_log`, {
@@ -430,7 +460,7 @@ Deno.serve(async (req: Request) => {
             "Prefer": "return=minimal",
           },
           body: JSON.stringify({
-            email,
+            email: normalizedEmail,
             name: name || null,
             type,
             lang: language,
@@ -449,14 +479,10 @@ Deno.serve(async (req: Request) => {
             "Prefer": "return=minimal",
           },
           body: JSON.stringify({
-            recipient_email: email,
+            recipient_email: normalizedEmail,
             subject,
             body: bodyHtml,
-              email_type: type === "cv_analysis"
-                ? "welcome_cv_analysis"
-                : type === "student_pack"
-                  ? "welcome_student_pack"
-                  : "welcome_member_signup",
+              email_type: emailType,
 
             sent_at: new Date().toISOString(),
             status: "sent",
