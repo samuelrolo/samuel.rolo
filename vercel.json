@@ -41,11 +41,6 @@
       "permanent": true
     },
     {
-      "source": "/pages/admin-analytics",
-      "destination": "/",
-      "permanent": false
-    },
-    {
       "source": "/area-cliente/membro",
       "destination": "/area-cliente/membros",
       "permanent": true
@@ -201,6 +196,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/pages/admin-analytics",
+      "destination": "/admin-analytics/index.html"
+    },
     {
       "source": "/",
       "destination": "/cv-analyser"
