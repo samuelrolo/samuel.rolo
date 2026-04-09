@@ -19,8 +19,8 @@ const pathMap: Record<string, Record<string, string>> = {
   '/estudante':           { en: '/en/student-pack',        es: '/es/student-pack' },
   '/conhecimento':        { en: '/en/pages/knowledge',     es: '/es/pages/knowledge' },
   '/servicos':            { en: '/en/pages/services',      es: '/es/pages/services' },
-  '/sobre':               { en: '/en/pages/about',         es: '/es/pages/about' },
-  '/contactos':           { en: '/en/pages/contact',       es: '/es/pages/contact' },
+  '/sobre':               { en: '/en/about',               es: '/es/sobre' },
+  '/contactos':           { en: '/en/contact',             es: '/es/contacto' },
   '/area-cliente':        { en: '/area-cliente/?lang=en',   es: '/area-cliente/?lang=es' },
 };
 

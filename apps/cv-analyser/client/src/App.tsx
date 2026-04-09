@@ -33,6 +33,8 @@ const ServicosPage = lazy(() => import("./pages/ServicosPage"));
 const ServicesPageEN = lazy(() => import("./pages/ServicesPageEN"));
 const KnowledgeHubPage = lazy(() => import("./pages/KnowledgeHubPage"));
 const KnowledgeHubPageEN = lazy(() => import("./pages/en/KnowledgeHubPageEN"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -172,6 +174,30 @@ function AppRouter() {
     );
   }
 
+  // EN About: /en/about
+  if (pathname.startsWith('/en/about')) {
+    return (
+      <Router base="/en/about">
+        <Switch>
+          <Route path="/" component={AboutPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN Contact: /en/contact
+  if (pathname.startsWith('/en/contact')) {
+    return (
+      <Router base="/en/contact">
+        <Switch>
+          <Route path="/" component={ContactPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   // EN Landing Page: /en (exact match only)
   if (pathname === '/en' || pathname === '/en/') {
     return (
@@ -290,6 +316,30 @@ function AppRouter() {
     );
   }
 
+  // ES Sobre: /es/sobre
+  if (pathname.startsWith('/es/sobre')) {
+    return (
+      <Router base="/es/sobre">
+        <Switch>
+          <Route path="/" component={AboutPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Contacto: /es/contacto
+  if (pathname.startsWith('/es/contacto')) {
+    return (
+      <Router base="/es/contacto">
+        <Switch>
+          <Route path="/" component={ContactPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   // ES Landing Page: /es (exact match only)
   if (pathname === '/es' || pathname === '/es/') {
     return (
@@ -400,6 +450,30 @@ function AppRouter() {
       <Router base="/servicos">
         <Switch>
           <Route path="/" component={ServicosPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Sobre PT: /sobre
+  if (pathname.startsWith('/sobre')) {
+    return (
+      <Router base="/sobre">
+        <Switch>
+          <Route path="/" component={AboutPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Contactos PT: /contactos
+  if (pathname.startsWith('/contactos')) {
+    return (
+      <Router base="/contactos">
+        <Switch>
+          <Route path="/" component={ContactPage} />
           <Route component={NotFound} />
         </Switch>
       </Router>

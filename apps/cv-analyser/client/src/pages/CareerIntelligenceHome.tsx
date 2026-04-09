@@ -975,14 +975,14 @@ export default function CareerIntelligenceHome() {
 
               {/* País e Região */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
+                <p className="text-sm font-medium">{pick('4. País e região', '4. Country and region', '4. País y región')} <span className="text-red-500">*</span></p>
                 <div className="grid grid-cols-1 gap-3">
                   <select
                     value={country}
                     onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
-                    <option value="">Selecciona o teu país...</option>
+                    <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                     {localizedCountries.map(c => (
                       <option key={c.code} value={c.country}>{c.label}</option>
                     ))}
@@ -993,7 +993,7 @@ export default function CareerIntelligenceHome() {
                       onChange={(e) => setRegion(e.target.value)}
                       className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                     >
-                      <option value="">Selecciona a região (opcional)...</option>
+                      <option value="">{pick('Selecciona a região (opcional)...', 'Select the region (optional)...', 'Selecciona la región (opcional)...')}</option>
                       {countryData.regions.map(r => (
                         <option key={r.value} value={r.value}>{r.label}</option>
                       ))}
@@ -1025,11 +1025,11 @@ export default function CareerIntelligenceHome() {
                   className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]"
                 />
                 <label htmlFor="ci-terms" className="text-sm text-muted-foreground cursor-pointer">
-                  Concordo com a{" "}
+                  {pick('Concordo com a', 'I agree with the', 'Acepto la')}{' '}
                   <a href="https://www.share2inspire.pt/pages/politica-privacidade.html" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
-                    Política de Privacidade
-                  </a>{" "}
-                  e autorizo o processamento dos meus dados para análise de carreira.
+                    {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
+                  </a>{' '}
+                  {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para el análisis de carrera.')}
                 </label>
               </div>
 
@@ -1067,7 +1067,7 @@ export default function CareerIntelligenceHome() {
                 onClick={() => setStep('hero')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
               >
-                ← Voltar
+                {pick('← Voltar', '← Back', '← Volver')}
               </button>
             </div>
           </div>
@@ -1156,7 +1156,7 @@ export default function CareerIntelligenceHome() {
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
               >
-                ← Voltar
+                {pick('← Voltar', '← Back', '← Volver')}
               </button>
             </div>
           </div>

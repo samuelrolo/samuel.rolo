@@ -207,19 +207,19 @@ export default function StudentPackResults() {
           >
             {t('concluir')}
           </button>
-          <button onClick={() => { sessionStorage.clear(); window.location.href = '/estudante'; }}
+          <button onClick={() => { sessionStorage.clear(); window.location.href = t('estudante'); }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-sm font-medium text-emerald-700 transition-colors">
-            <RefreshCw className="w-4 h-4" /> Nova análise
+            <RefreshCw className="w-4 h-4" /> {t('nova_anlise')}
           </button>
         </div>
 
         {!hasData ? (
           <div className="text-center py-20">
             <GraduationCap className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-            <h2 className="text-xl font-bold text-slate-700 mb-2">Sem dados de análise</h2>
-            <p className="text-slate-500 mb-6">A análise não retornou resultados. Tenta novamente.</p>
-            <a href="/estudante" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold">
-              <GraduationCap className="w-5 h-5" /> Tentar novamente
+            <h2 className="text-xl font-bold text-slate-700 mb-2">{pick('Sem dados de análise', 'No analysis data', 'Sin datos de análisis')}</h2>
+            <p className="text-slate-500 mb-6">{pick('A análise não retornou resultados. Tenta novamente.', 'The analysis did not return any results. Please try again.', 'El análisis no devolvió resultados. Inténtalo de nuevo.')}</p>
+            <a href={t('estudante')} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold">
+              <GraduationCap className="w-5 h-5" /> {pick('Tentar novamente', 'Try again', 'Intentar de nuevo')}
             </a>
           </div>
         ) : (

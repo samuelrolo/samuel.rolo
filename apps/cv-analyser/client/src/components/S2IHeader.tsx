@@ -31,8 +31,8 @@ function getNavItems(lang: Lang): NavItem[] {
       { href: lp('/estudante'), label: "Student Pack", id: "estudante" },
       { href: "https://www.share2inspire.pt/en/pages/services", label: "Services", id: "servicos" },
       { href: "https://www.share2inspire.pt/en/pages/knowledge", label: "Knowledge Hub", id: "knowledge-hub" },
-      { href: "https://www.share2inspire.pt/en/pages/about", label: "About", id: "sobre" },
-      { href: "https://www.share2inspire.pt/en/pages/contact", label: "Contact", id: "contactos" },
+      { href: lp('/sobre'), label: "About", id: "sobre" },
+      { href: lp('/contactos'), label: "Contact", id: "contactos" },
     ];
   }
   if (lang === 'es') {
@@ -73,8 +73,9 @@ const langOptions: { code: Lang; label: string }[] = [
 ];
 
 function getHomeUrl(lang: Lang): string {
-  if (lang === 'en') return "https://www.share2inspire.pt/en/pages/home";
-  return "https://www.share2inspire.pt";
+  if (lang === 'en') return localePath('/', 'en');
+  if (lang === 'es') return localePath('/', 'es');
+  return localePath('/', 'pt');
 }
 
 export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
