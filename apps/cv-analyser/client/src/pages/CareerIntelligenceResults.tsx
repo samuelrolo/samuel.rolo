@@ -74,7 +74,7 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 }
 
 export default function CareerIntelligenceResults() {
-  useEffect(() => { document.title = window.location.pathname.startsWith('/en/') ? "Career Intelligence — Results | Share2Inspire" : "Career Intelligence — Resultados | Share2Inspire"; }, []);
+  useEffect(() => { document.title = pick("Career Intelligence — Resultados | Share2Inspire", "Career Intelligence — Results | Share2Inspire", "Career Intelligence — Resultados | Share2Inspire"); }, []);
 
   const [, setLocation] = useLocation();
 
@@ -137,31 +137,21 @@ export default function CareerIntelligenceResults() {
     }
   };
 
-  const genMessagesPT = [
-    "A analisar o teu perfil profissional...",
-    "A mapear competências e experiência...",
-    "A identificar caminhos estratégicos...",
-    "A calcular probabilidades de sucesso...",
-    "A avaliar trade-offs por caminho...",
-    "A comparar cenários de carreira...",
-    "A construir a recomendação de decisão...",
-    "A gerar o teu relatório Career Intelligence...",
-  ];
-  const genMessagesEN = [
-    "Analysing your professional profile...",
-    "Mapping competencies and experience...",
-    "Identifying strategic career paths...",
-    "Calculating success probabilities...",
-    "Evaluating trade-offs per path...",
-    "Comparing career scenarios...",
-    "Building your decision recommendation...",
-    "Generating your Career Intelligence report...",
+  const genMessages = [
+    pick("A analisar o teu perfil profissional...", "Analysing your professional profile...", "Analizando tu perfil profesional..."),
+    pick("A mapear competências e experiência...", "Mapping competencies and experience...", "Mapeando competencias y experiencia..."),
+    pick("A identificar caminhos estratégicos...", "Identifying strategic career paths...", "Identificando caminos estratégicos..."),
+    pick("A calcular probabilidades de sucesso...", "Calculating success probabilities...", "Calculando probabilidades de éxito..."),
+    pick("A avaliar trade-offs por caminho...", "Evaluating trade-offs per path...", "Evaluando trade-offs por camino..."),
+    pick("A comparar cenários de carreira...", "Comparing career scenarios...", "Comparando escenarios profesionales..."),
+    pick("A construir a recomendação de decisão...", "Building your decision recommendation...", "Construyendo tu recomendación de decisión..."),
+    pick("A gerar o teu relatório Career Intelligence...", "Generating your Career Intelligence report...", "Generando tu informe de Career Intelligence..."),
   ];
 
   useEffect(() => {
     if (!isGenerating) { setGenStep(0); return; }
     const interval = setInterval(() => {
-      setGenStep(prev => prev < genMessagesPT.length - 1 ? prev + 1 : prev);
+      setGenStep(prev => prev < genMessages.length - 1 ? prev + 1 : prev);
     }, 5000);
     return () => clearInterval(interval);
   }, [isGenerating]);
@@ -467,7 +457,7 @@ export default function CareerIntelligenceResults() {
   };
 
   const handleStripePayment = async () => {
-    if (!email) { setPaymentError('Please enter your email'); return; }
+    if (!email) { setPaymentError(pick('Por favor, introduz o teu email', 'Please enter your email', 'Por favor, introduce tu correo electrónico')); return; }
     setPaymentLoading(true);
     setPaymentError(null);
     try {
@@ -486,7 +476,7 @@ export default function CareerIntelligenceResults() {
         }),
       });
       const data = await response.json();
-      if (!data.success || !data.url) throw new Error(data.error || 'Error creating checkout session');
+      if (!data.success || !data.url) throw new Error(data.error || pick('Erro ao criar sessão de checkout', 'Error creating checkout session', 'Error al crear la sesión de checkout'));
       localStorage.setItem('ciOrderId', orderId);
       localStorage.setItem('cpPaymentEmail', email);
       localStorage.setItem('stripeSessionId', data.sessionId);
@@ -737,17 +727,17 @@ export default function CareerIntelligenceResults() {
             </div>
             <div className="space-y-2">
               <p className="text-lg font-bold text-foreground transition-all duration-500">
-                {lang === 'en' ? genMessagesEN[genStep] : genMessagesPT[genStep]}
+                {genMessages[genStep]}
               </p>
               <p className="text-xs text-muted-foreground">
-                {pick(`Passo ${genStep + 1} de ${genMessagesPT.length}`, `Step ${genStep + 1} of ${genMessagesEN.length}`, `Passo ${genStep + 1} de ${genMessagesPT.length}`)}
+                {pick(`Passo ${genStep + 1} de ${genMessages.length}`, `Step ${genStep + 1} of ${genMessages.length}`, `Paso ${genStep + 1} de ${genMessages.length}`)}
               </p>
             </div>
             <div className="max-w-sm mx-auto">
               <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${Math.min(((genStep + 1) / genMessagesPT.length) * 100, 95)}%` }}
+                  style={{ width: `${Math.min(((genStep + 1) / genMessages.length) * 100, 95)}%` }}
                 />
               </div>
             </div>
@@ -1112,16 +1102,17 @@ export default function CareerIntelligenceResults() {
             {/* ═══ Share Career Intelligence Result on LinkedIn ═══ */}
             {(() => {
               const score = careerData?.career_potential_score?.overall_score || 70;
-              const label = score >= 80 ? 'Excellent' : score >= 65 ? 'Strong' : score >= 50 ? 'Promising' : 'Developing';
+              const label = score >= 80 ? pick('Excelente', 'Excellent', 'Excelente') : score >= 65 ? pick('Forte', 'Strong', 'Sólido') : score >= 50 ? pick('Promissor', 'Promising', 'Prometedor') : pick('Em desenvolvimento', 'Developing', 'En desarrollo');
               const topPct = Math.max(5, 100 - score);
               const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
               const recommendedPath = careerData?.decision_recommendation?.recommended_path || (t('career_intelligence'));
 
               const generatePostText = () => {
-                if (isEN) {
-                  return `I just had my career strategically analysed by @share2inspire_'s AI Career Intelligence tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me 3 strategic career paths, a full comparison with trade-offs, and a clear recommendation on which path to take.\n\nIf you're deciding your next career move — I highly recommend it.\n\n🔗 https://share2inspire.pt/en/career-intelligence\n\n#CareerIntelligence #CareerStrategy #ProfessionalGrowth #Share2Inspire`;
-                }
-                return `Acabei de ter a minha carreira analisada estrategicamente pelo Career Intelligence da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me 3 caminhos estratégicos de carreira, uma comparação completa com trade-offs e uma recomendação clara sobre qual caminho seguir.\n\nSe estás a decidir o teu próximo passo de carreira — recomendo.\n\n🔗 https://share2inspire.pt/career-intelligence\n\n#CareerIntelligence #EstratégiaDeCarreira #Carreira #Share2Inspire`;
+                return pick(
+                  `Acabei de ter a minha carreira analisada estrategicamente pelo Career Intelligence da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me 3 caminhos estratégicos de carreira, uma comparação completa com trade-offs e uma recomendação clara sobre qual caminho seguir.\n\nSe estás a decidir o teu próximo passo de carreira — recomendo.\n\n🔗 https://share2inspire.pt/career-intelligence\n\n#CareerIntelligence #EstratégiaDeCarreira #Carreira #Share2Inspire`,
+                  `I just had my career strategically analysed by @share2inspire_'s AI Career Intelligence tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me 3 strategic career paths, a full comparison with trade-offs, and a clear recommendation on which path to take.\n\nIf you're deciding your next career move — I highly recommend it.\n\n🔗 https://share2inspire.pt/en/career-intelligence\n\n#CareerIntelligence #CareerStrategy #ProfessionalGrowth #Share2Inspire`,
+                  `Acabo de analizar estratégicamente mi carrera con la herramienta de IA Career Intelligence de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio 3 caminos estratégicos de carrera, una comparación completa con trade-offs y una recomendación clara sobre qué camino seguir.\n\nSi estás decidiendo tu próximo paso profesional — lo recomiendo.\n\n🔗 https://share2inspire.pt/career-intelligence\n\n#CareerIntelligence #EstrategiaProfesional #Carrera #Share2Inspire`
+                );
               };
 
               const generateCertImage = () => {
@@ -1319,21 +1310,14 @@ export default function CareerIntelligenceResults() {
                 <p className="text-sm font-semibold text-foreground">{t('o_que_o_career_intelligence')}</p>
               </div>
               <div className="space-y-2">
-                {(lang === 'en' ? [
-                  'Market context and competitive positioning',
-                  '3 strategic career paths tailored to your profile',
-                  'Action plan for each path',
-                  'Full comparison table (probability, effort, risk, salary)',
-                  'Trade-offs analysis per path',
-                  'Clear recommended decision with justification',
-                ] : [
-                  'Contexto de mercado e posicionamento competitivo',
-                  '3 caminhos estratégicos de carreira adaptados ao teu perfil',
-                  'Plano de acção para cada caminho',
-                  'Tabela comparativa completa (probabilidade, esforço, risco, salário)',
-                  'Análise de trade-offs por caminho',
-                  'Decisão recomendada clara com justificação',
-                ]).map((item, i) => (
+                {[
+                  pick('Contexto de mercado e posicionamento competitivo', 'Market context and competitive positioning', 'Contexto de mercado y posicionamiento competitivo'),
+                  pick('3 caminhos estratégicos de carreira adaptados ao teu perfil', '3 strategic career paths tailored to your profile', '3 caminos estratégicos de carrera adaptados a tu perfil'),
+                  pick('Plano de acção para cada caminho', 'Action plan for each path', 'Plan de acción para cada camino'),
+                  pick('Tabela comparativa completa (probabilidade, esforço, risco, salário)', 'Full comparison table (probability, effort, risk, salary)', 'Tabla comparativa completa (probabilidad, esfuerzo, riesgo, salario)'),
+                  pick('Análise de trade-offs por caminho', 'Trade-offs analysis per path', 'Análisis de trade-offs por camino'),
+                  pick('Decisão recomendada clara com justificação', 'Clear recommended decision with justification', 'Decisión recomendada clara con justificación'),
+                ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 py-1.5">
                     <CheckCircle2 className="w-4 h-4 text-[#C9A961] shrink-0" />
                     <span className="text-sm text-foreground">{item}</span>
@@ -1410,7 +1394,7 @@ export default function CareerIntelligenceResults() {
                         className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
                           paymentMethod === 'stripe' ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#635BFF]/50'
                         }`}
-                      >Card</button>
+                      >{pick('Cartão', 'Card', 'Tarjeta')}</button>
                       <button
                         onClick={() => setPaymentMethod('paypal')}
                         className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
@@ -1428,7 +1412,7 @@ export default function CareerIntelligenceResults() {
                             paymentMethod === method ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
                         </button>
                       ))}
                     </>
