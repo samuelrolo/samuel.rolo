@@ -182,6 +182,10 @@
       "destination": "/en/cv-analyser/llms.txt"
     },
     {
+      "source": "/share2inspire",
+      "destination": "/pages/share2inspire.html"
+    },
+    {
       "source": "/en/career-path/llms.txt",
       "destination": "/en/career-path/llms.txt"
     },
