@@ -284,7 +284,7 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
               text={t('estimativa_baseada_no_perfil_profissional')}
             />
           </div>
-          <p className="text-xs text-muted-foreground">{pick(`Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`, `Based on profile (${perceivedSeniority || 'N/A'}) and market data`, `Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`)}</p>
+          <p className="text-xs text-muted-foreground">{pick(`Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`, `Based on profile (${perceivedSeniority || 'N/A'}) and market data`, `Basado en el perfil (${perceivedSeniority || 'N/D'}) y los datos del mercado`)}</p>
         </div>
       </div>
 
@@ -323,7 +323,7 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
           {/* Benefits section - only when paid */}
           {!blurred && sd.benefits && sd.benefits.length > 0 && (
             <div className="mt-5 pt-4 border-t border-border">
-              <p className="text-xs font-semibold text-foreground mb-3">{pick(`Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`, `Typical benefits for ${perceivedSeniority || 'this level'} in the industry:`, `Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`)}</p>
+              <p className="text-xs font-semibold text-foreground mb-3">{pick(`Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`, `Typical benefits for ${perceivedSeniority || 'this level'} in the industry:`, `Beneficios típicos para ${perceivedSeniority || 'este nivel'} en la industria:`)}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {sd.benefits.map((b: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -461,7 +461,7 @@ export default function Results() {
     const pEN = window.location.pathname.startsWith('/en/');
     const pPT = !pEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));
     const en = pEN ? true : pPT ? false : sessionStorage.getItem('analysisLang') === 'en';
-    return en ? 'Waiting for MB WAY approval...' : 'A aguardar aprovação no MB WAY...';
+    return pick('A aguardar aprovação no MB WAY...', 'Waiting for MB WAY approval...', 'Esperando la aprobación en MB WAY...');
   });
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
     name: t('relatrio_cv'),
@@ -569,25 +569,15 @@ export default function Results() {
   const [jobScrapeStatus, setJobScrapeStatus] = useState<'idle' | 'scraping' | 'reanalyzing' | 'done' | 'error'>('idle');
   const [jobScrapeMessage, setJobScrapeMessage] = useState('');
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
-  const loadingMessages = isEN
-    ? [
-        'Analysing your professional profile...',
-        'Mapping career progression paths...',
-        'Identifying recommended next roles...',
-        'Cross-referencing CV with LinkedIn...',
-        'Generating personalised training plan...',
-        'Building your 5-year career roadmap...',
-        'Preparing your Career Path report...',
-      ]
-    : [
-        'A analisar o teu perfil profissional...',
-        'A mapear trajectórias de progressão...',
-        'A identificar próximos cargos recomendados...',
-        'A cruzar CV com LinkedIn...',
-        'A gerar plano de formação personalizado...',
-        'A construir o teu roadmap de carreira a 5 anos...',
-        'A preparar o teu relatório Career Path...',
-      ];
+  const loadingMessages = [
+    pick('A analisar o teu perfil profissional...', 'Analysing your professional profile...', 'Analizando tu perfil profesional...'),
+    pick('A mapear trajectórias de progressão...', 'Mapping career progression paths...', 'Mapeando trayectorias de progresión...'),
+    pick('A identificar próximos cargos recomendados...', 'Identifying recommended next roles...', 'Identificando los próximos puestos recomendados...'),
+    pick('A cruzar CV com LinkedIn...', 'Cross-referencing CV with LinkedIn...', 'Cruzando el CV con LinkedIn...'),
+    pick('A gerar plano de formação personalizado...', 'Generating personalised training plan...', 'Generando un plan de formación personalizado...'),
+    pick('A construir o teu roadmap de carreira a 5 anos...', 'Building your 5-year career roadmap...', 'Construyendo tu hoja de ruta profesional a 5 años...'),
+    pick('A preparar o teu relatório Career Path...', 'Preparing your Career Path report...', 'Preparando tu informe de Career Path...'),
+  ];
   useEffect(() => {
     if (careerPathPaymentStep !== 'generating') return;
     const interval = setInterval(() => {
@@ -846,11 +836,11 @@ export default function Results() {
                 sessionStorage.setItem('cvAnalysis', JSON.stringify(newResult));
 
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(pick(`Análise atualizada com dados reais de "${scrapeData.job_data.title}"`, `Analysis updated with real data from "${scrapeData.job_data.title}"`, `Análise atualizada com dados reais de "${scrapeData.job_data.title}"`));
+                setJobScrapeMessage(pick(`Análise atualizada com dados reais de "${scrapeData.job_data.title}"`, `Analysis updated with real data from "${scrapeData.job_data.title}"`, `Análisis actualizado con datos reales de "${scrapeData.job_data.title}"`));
               } else {
                 console.warn('[JOB_SCRAPE] Re-analysis failed:', reanalysisData.error);
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`));
+                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa Live Match para una comparación detallada`));
               }
             } else {
               console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
@@ -916,12 +906,12 @@ export default function Results() {
 
   const handleStripePayment = async () => {
     if (!email) {
-      setPaymentError('Please enter your email');
+      setPaymentError(pick('Por favor, introduz o teu email', 'Please enter your email', 'Por favor, introduce tu correo electrónico'));
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setPaymentError('Please enter a valid email');
+      setPaymentError(pick('Por favor, introduz um email válido', 'Please enter a valid email', 'Por favor, introduce un correo electrónico válido'));
       return;
     }
     setLoading(true);
@@ -951,7 +941,7 @@ export default function Results() {
       });
       const data = await response.json();
       if (!data.success || !data.url) {
-        throw new Error(data.error || 'Error creating checkout session');
+        throw new Error(data.error || pick('Erro ao criar sessão de checkout', 'Error creating checkout session', 'Error al crear la sesión de checkout'));
       }
       sessionStorage.setItem('orderId', orderId);
       sessionStorage.setItem('paymentEmail', email);
@@ -962,7 +952,7 @@ export default function Results() {
       if (appliedCoupon) sessionStorage.setItem('appliedCouponBeforeStripe', JSON.stringify(appliedCoupon));
       redirectToCheckout(data.url);
     } catch (err) {
-      setPaymentError(err instanceof Error ? err.message : 'Error processing payment');
+      setPaymentError(err instanceof Error ? err.message : pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setLoading(false);
     }
@@ -1419,7 +1409,7 @@ export default function Results() {
         });
         const stripeData = await stripeRes.json();
         if (!stripeData.success || !stripeData.url) {
-          throw new Error(stripeData.error || 'Error creating checkout session');
+          throw new Error(stripeData.error || pick('Erro ao criar sessão de checkout', 'Error creating checkout session', 'Error al crear la sesión de checkout'));
         }
         sessionStorage.setItem('orderId', orderId);
         sessionStorage.setItem('paymentEmail', careerPathEmail);
@@ -1958,14 +1948,16 @@ export default function Results() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
-                    <p className="text-xs text-muted-foreground">{pick(`3 problemas específicos que estão a prejudicar o teu CV`, `3 specific issues that are hurting your CV`, `3 problemas específicos que estão a prejudicar o teu CV`)}</p>
+                    <p className="text-xs text-muted-foreground">{pick(`3 problemas específicos que estão a prejudicar o teu CV`, `3 specific issues that are hurting your CV`, `3 problemas específicos que están perjudicando tu CV`)}</p>
                   </div>
                 </div>
                 <div className="space-y-3 mb-4">
                   {[0, 1, 2].map((i: number) => {
-                    const areaLabels = isEN
-                      ? ['Issue found in your Experience section', 'Issue found in your Profile/Summary section', 'Issue found in your Skills & Credentials']
-                      : ['Problema detetado na secção de Experiência', 'Problema detetado na secção de Perfil/Resumo', 'Problema detetado nas Competências e Credenciais'];
+                    const areaLabels = [
+                      pick('Problema detetado na secção de Experiência', 'Issue found in your Experience section', 'Problema detectado en la sección de Experiencia'),
+                      pick('Problema detetado na secção de Perfil/Resumo', 'Issue found in your Profile/Summary section', 'Problema detectado en la sección de Perfil/Resumen'),
+                      pick('Problema detetado nas Competências e Credenciais', 'Issue found in your Skills & Credentials', 'Problema detectado en Competencias y Credenciales'),
+                    ];
                     const label = areaLabels[i];
                     return (
                       <div key={i} className="border border-border rounded-lg overflow-hidden cursor-pointer hover:border-[#C9A961]/50 transition-colors" onClick={() => openPaymentModal()}>
@@ -2017,10 +2009,11 @@ export default function Results() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground text-center max-w-sm">
-                    {isEN
-                      ? <>Your CV has <span className="font-semibold text-foreground">{atsScore}/100</span> ATS compatibility.</>
-                      : <>O teu CV tem <span className="font-semibold text-foreground">{atsScore}/100</span> de compatibilidade ATS.</>
-                    }
+                    {pick(
+                      `O teu CV tem ${atsScore}/100 de compatibilidade ATS.`,
+                      `Your CV has ${atsScore}/100 ATS compatibility.`,
+                      `Tu CV tiene ${atsScore}/100 de compatibilidad ATS.`
+                    )}
                   </p>
                 </div>
 
@@ -2074,15 +2067,11 @@ export default function Results() {
 
                 {/* Free items */}
                 <div className="space-y-2">
-                  {(lang === 'en' ? [
-                    'ATS compatibility score',
-                    '3 critical issues detected',
-                    'Missing keywords',
-                  ] : [
-                    'Score de compatibilidade ATS',
-                    '3 problemas críticos detetados',
-                    'Palavras-chave em falta',
-                  ]).map((item, i) => (
+                  {[
+                    pick('Score de compatibilidade ATS', 'ATS compatibility score', 'Puntuación de compatibilidad ATS'),
+                    pick('3 problemas críticos detetados', '3 critical issues detected', '3 problemas críticos detectados'),
+                    pick('Palavras-chave em falta', 'Missing keywords', 'Palabras clave que faltan'),
+                  ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 py-1.5">
                       <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                       <span className="text-sm text-foreground">{item}</span>
@@ -2096,33 +2085,20 @@ export default function Results() {
 
                 {/* Locked items */}
                 <div className="space-y-2">
-                  {(lang === 'en' ? [
-                    'Live Match (real-time JD keyword matching)',
-                    'ATS Deep Scan (keywords + format checklist)',
-                    'Detailed analysis by quadrant',
-                    'Complete ATS diagnosis',
-                    'Personalised improvement suggestions',
-                    'Detailed salary estimate',
-                    'Recruiter perception simulation',
-                    'Market positioning (normal curve)',
-                    'Automation risk analysis',
-                    '30-day action plan',
-                    'Compatible job opportunities',
-                    'Optimised CV (rewrite suggestions)',
-                  ] : [
-                    'Live Match (matching de keywords da vaga em tempo real)',
-                    'ATS Deep Scan (keywords + checklist de formato)',
-                    'Análise detalhada por quadrante',
-                    'Diagnóstico ATS completo',
-                    'Sugestões de melhoria personalizadas',
-                    'Estimativa salarial detalhada',
-                    'Simulação de percepção do recrutador',
-                    'Posicionamento no mercado (curva normal)',
-                    'Análise de risco de automação',
-                    'Plano de acção de 30 dias',
-                    'Vagas compatíveis',
-                    'CV optimizado (sugestões de reescrita)',
-                  ]).map((item, i) => (
+                  {[
+                    pick('Live Match (matching de keywords da vaga em tempo real)', 'Live Match (real-time JD keyword matching)', 'Live Match (matching de keywords de la oferta en tiempo real)'),
+                    pick('ATS Deep Scan (keywords + checklist de formato)', 'ATS Deep Scan (keywords + format checklist)', 'ATS Deep Scan (keywords + checklist de formato)'),
+                    pick('Análise detalhada por quadrante', 'Detailed analysis by quadrant', 'Análisis detallado por cuadrante'),
+                    pick('Diagnóstico ATS completo', 'Complete ATS diagnosis', 'Diagnóstico ATS completo'),
+                    pick('Sugestões de melhoria personalizadas', 'Personalised improvement suggestions', 'Sugerencias de mejora personalizadas'),
+                    pick('Estimativa salarial detalhada', 'Detailed salary estimate', 'Estimación salarial detallada'),
+                    pick('Simulação de percepção do recrutador', 'Recruiter perception simulation', 'Simulación de percepción del reclutador'),
+                    pick('Posicionamento no mercado (curva normal)', 'Market positioning (normal curve)', 'Posicionamiento en el mercado (curva normal)'),
+                    pick('Análise de risco de automação', 'Automation risk analysis', 'Análisis de riesgo de automatización'),
+                    pick('Plano de acção de 30 dias', '30-day action plan', 'Plan de acción de 30 días'),
+                    pick('Vagas compatíveis', 'Compatible job opportunities', 'Ofertas compatibles'),
+                    pick('CV optimizado (sugestões de reescrita)', 'Optimised CV (rewrite suggestions)', 'CV optimizado (sugerencias de reescritura)'),
+                  ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 py-1.5 opacity-70">
                       <Lock className="w-4 h-4 text-[#C9A961] shrink-0" />
                       <span className="text-sm text-muted-foreground">{item}</span>
@@ -2136,7 +2112,7 @@ export default function Results() {
                     onClick={() => openPaymentModal()}
                     className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-base"
                   >
-                    {pick(`Desbloquear Relatório Completo — desde ${CUR}${P.cv}`, `Unlock Full Report — from ${CUR}${P.cv}`, `Desbloquear Relatório Completo — desde ${CUR}${P.cv}`)}
+                    {pick(`Desbloquear Relatório Completo — desde ${CUR}${P.cv}`, `Unlock Full Report — from ${CUR}${P.cv}`, `Desbloquear Informe Completo — desde ${CUR}${P.cv}`)}
                   </Button>
                   <p className="text-xs text-muted-foreground text-center">
                     {t('pagamento_seguro_via_mb_way')}
