@@ -16,6 +16,7 @@ import { countries } from "./countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -51,6 +52,7 @@ export default function StudentPackHomeEN() {
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -73,7 +75,20 @@ export default function StudentPackHomeEN() {
   const finalPriceStr = finalPrice.toFixed(2);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
-  
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      }
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
 
   const isValidLinkedinUrl = (url: string) => url.trim().toLowerCase().includes('linkedin.com/in/') && url.trim().length > 25;
 
@@ -308,6 +323,25 @@ export default function StudentPackHomeEN() {
                 <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) setFile(e.target.files[0]); }} />
                 {file ? <div className="flex items-center gap-2 text-green-700"><CheckCircle2 className="w-5 h-5" /><span className="text-sm font-medium">{file.name}</span></div> : <div className="text-center"><Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" /><p className="text-sm text-slate-500">Click or drag your CV</p></div>}
               </label>
+              {!file && savedCvInfo && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(savedCvInfo.url);
+                      const blob = await res.blob();
+                      const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                      setFile(f);
+                      setError(null);
+                    } catch {
+                      setError('Could not load the saved CV.');
+                    }
+                  }}
+                  className="mt-3 text-sm font-medium text-emerald-700 hover:text-emerald-800 underline"
+                >
+                  Use saved CV: {savedCvInfo.filename}
+                </button>
+              )}
             </div>
             <div><label className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> LinkedIn Profile</label><input type="url" placeholder="https://linkedin.com/in/your-profile" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" /></div>
             <div><label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> Email</label><input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" /></div>

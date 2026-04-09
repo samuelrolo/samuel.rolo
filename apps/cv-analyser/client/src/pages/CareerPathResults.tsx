@@ -18,7 +18,7 @@ import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
-import { t, pick, getLang } from './en/translations';
+import { t, pick, getLang } from '@/i18n/translations';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -250,35 +250,23 @@ export default function CareerPathResults() {
   const [generateError, setGenerateError] = useState<string | null>(null);
 
 
-  const genMessagesPT = [
-    "A analisar o teu perfil profissional...",
-    "A mapear compet\u00eancias e experi\u00eancia...",
-    "A identificar oportunidades de carreira...",
-    "A calcular risco de automa\u00e7\u00e3o...",
-    "A estimar faixas salariais para o teu perfil...",
-    "A construir o teu roadmap de desenvolvimento...",
-    "A selecionar forma\u00e7\u00f5es e certifica\u00e7\u00f5es...",
-    "A definir estrat\u00e9gia de networking...",
-    "A gerar recomenda\u00e7\u00f5es personalizadas...",
-    "A finalizar o teu Career Path..."
-  ];
-  const genMessagesEN = [
-    "Analysing your professional profile...",
-    "Mapping competencies and experience...",
-    "Identifying career opportunities...",
-    "Calculating automation risk...",
-    "Estimating salary ranges for your profile...",
-    "Building your development roadmap...",
-    "Selecting training and certifications...",
-    "Defining networking strategy...",
-    "Generating personalised recommendations...",
-    "Finalising your Career Path..."
+  const genMessages = [
+    t('career_path_results_loading_profile'),
+    t('career_path_results_loading_skills_experience'),
+    t('career_path_results_loading_opportunities'),
+    t('career_path_results_loading_automation_risk'),
+    t('career_path_results_loading_salary_ranges'),
+    t('career_path_results_loading_roadmap'),
+    t('career_path_results_loading_training'),
+    t('career_path_results_loading_networking'),
+    t('career_path_results_loading_recommendations'),
+    t('career_path_results_loading_finalizing')
   ];
 
   useEffect(() => {
     if (!isGenerating) { setGenStep(0); return; }
     const interval = setInterval(() => {
-      setGenStep(prev => prev < genMessagesPT.length - 1 ? prev + 1 : prev);
+      setGenStep(prev => prev < genMessages.length - 1 ? prev + 1 : prev);
     }, 5000);
     return () => clearInterval(interval);
   }, [isGenerating]);
@@ -975,17 +963,17 @@ export default function CareerPathResults() {
             </div>
             <div className="space-y-2">
               <p className="text-lg font-bold text-foreground transition-all duration-500">
-                {lang === 'en' ? genMessagesEN[genStep] : genMessagesPT[genStep]}
+                {genMessages[genStep]}
               </p>
               <p className="text-xs text-muted-foreground">
-                {pick(`Passo ${genStep + 1} de ${genMessagesPT.length}`, `Step ${genStep + 1} of ${genMessagesEN.length}`, `Passo ${genStep + 1} de ${genMessagesPT.length}`)}
+                {t('career_path_results_step_of', undefined, { current: String(genStep + 1), total: String(genMessages.length) })}
               </p>
             </div>
             <div className="max-w-sm mx-auto">
               <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${Math.min(((genStep + 1) / genMessagesPT.length) * 100, 95)}%` }}
+                  style={{ width: `${Math.min(((genStep + 1) / genMessages.length) * 100, 95)}%` }}
                 />
               </div>
             </div>

@@ -17,6 +17,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -78,6 +79,7 @@ export default function CareerPathHomeEN() {
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -117,6 +119,21 @@ export default function CareerPathHomeEN() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal'>('stripe');
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      }
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
+
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'success'>('payment');
