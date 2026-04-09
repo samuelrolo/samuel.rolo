@@ -1,41 +1,28 @@
-# robots.txt for share2inspire.pt
-# Updated: 2026-04-03
-
 User-agent: *
 Allow: /
 
-# Admin & internal pages
-Disallow: /pages/admin-analytics
-Disallow: /pages/hr-analytics
-Disallow: /pages/hr-dashboard
-Disallow: /pages/hr-downloads-dashboard
-Disallow: /pages/samuel-rolo-report
-Disallow: /pages/lifestyle-sections
-Disallow: /pages/pagamento
-Disallow: /pages/pagamento_sucesso
-Disallow: /pages/payment-confirmation
+# Private, admin and payment-related routes
 Disallow: /admin/
 Disallow: /api/
-
-# Test & results pages (dynamic SPA content)
-Disallow: /linkedin-roaster/test-preview
-Disallow: /hr-report/
+Disallow: /pages/
+Disallow: /area-cliente/
+Disallow: /linkedin-roaster/results
 Disallow: /career-path/results
 Disallow: /career-path/example
 Disallow: /career-intelligence/results
 Disallow: /career-intelligence/demo
 Disallow: /cv-analyser/results
-Disallow: /cv-analyser/test
 Disallow: /bundle/results
+Disallow: /student-pack/results
+Disallow: /estudante/results
 Disallow: /en/career-path/results
 Disallow: /en/career-path/example
 Disallow: /en/career-intelligence/results
-Disallow: /en/career-intelligence/demo
 Disallow: /en/cv-analyser/results
-Disallow: /en/cv-analyser/test
 Disallow: /en/bundle/results
-
-# Area de cliente (SPA)
-Disallow: /area-cliente/
+Disallow: /es/career-path/results
+Disallow: /es/career-intelligence/results
+Disallow: /es/cv-analyser/results
+Disallow: /es/bundle/results
 
 Sitemap: https://www.share2inspire.pt/sitemap.xml
