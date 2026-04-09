@@ -1202,13 +1202,13 @@ export default function MemberArea() {
   type ToolDef = { key: string; icon: any; color: string; type: 'external' | 'inline' | 'locked' | 'discount' | 'widget'; action?: string; url?: string; discount?: string | null; discountOriginal?: string | null; label: string; desc: string; badge?: number };
 
   const tools: ToolDef[] = [
-    { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'inline', action: 'cvMaker', label: 'CV Maker', desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : lang === 'es' ? 'Crea CV profesionales con plantillas optimizadas' : 'Create professional CVs with optimized templates' },
-    { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: 'CV Analyser', desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : lang === 'es' ? 'Análisis completo y detallado de tu CV con IA' : 'Complete AI-powered analysis of your CV', badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
-    { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: 'LinkedIn Roaster', desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : lang === 'es' ? 'Optimiza tu perfil de LinkedIn con feedback de IA' : 'Optimize your LinkedIn profile with AI feedback', badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
-    { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : lang === 'es' ? 'Asistente personal de carrera con IA' : 'Personal AI career assistant' },
-    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : lang === 'es' ? 'Planificación estratégica de tu carrera' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
-    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : lang === 'es' ? 'Análisis avanzado de mercado y posicionamiento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
-    { key: 'salaryRealityCheck',  icon: Euro,  color: 'from-amber-500/15 to-amber-500/5',  type: 'inline' as const,  action: 'salaryRealityCheck',  label: 'Salary Reality Check',  desc: lang === 'pt' ? 'Descobre onde o teu pacote se posiciona no mercado global' : lang === 'es' ? 'Descubre dónde se posiciona tu paquete en el mercado global' : 'Discover where your compensation stands in the global market',
+    { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'inline', action: 'cvMaker', label: t('member.tools.cvMakerLabel'), desc: t('member.tools.cvMakerDesc') },
+    { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: t('member.tools.cvAnalyzerLabel'), desc: t('member.tools.cvAnalyzerDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
+    { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: t('member.tools.linkedinRoasterLabel'), desc: t('member.tools.linkedinRoasterDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
+    { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: t('member.tools.careerAdvisoryLabel'), desc: t('member.tools.careerAdvisoryDesc') },
+    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: t('member.tools.careerPathLabel'), desc: t('member.tools.careerPathDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
+    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: t('member.tools.careerIntelligenceLabel'), desc: t('member.tools.careerIntelligenceDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
+    { key: 'salaryRealityCheck',  icon: Euro,  color: 'from-amber-500/15 to-amber-500/5',  type: 'inline' as const,  action: 'salaryRealityCheck',  label: t('member.tools.salaryRealityCheckLabel'),  desc: t('member.tools.salaryRealityCheckDesc'),
   badge: savedAnalyses.filter(a => a.analysis_type === 'salary_reality_check').length || undefined,
 },
   ];
@@ -1223,8 +1223,8 @@ export default function MemberArea() {
         <div className="space-y-4">
           <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${weeklyAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
             {weeklyAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-            <span>{lang === 'pt' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana no plano ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : lang === 'es' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana en el plan ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : `${weeklyLimit === 999 ? 'Unlimited' : `${weeklyLimit}/week on ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'} plan`}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
-            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido esta semana)' : lang === 'es' ? '(límite alcanzado esta semana)' : '(limit reached this week)'}</span>}
+            <span>{`${weeklyLimit === 999 ? t('member.usage.unlimited') : t('member.usage.weeklyPlanLabel').replace('{limit}', String(weeklyLimit)).replace('{plan}', planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential')}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
+            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{t('member.usage.weeklyLimitReached')}</span>}
           </div>
           <div>
             {profile?.cv_url ? (
@@ -1259,8 +1259,8 @@ export default function MemberArea() {
         <div className="space-y-4">
           <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${weeklyAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
             {weeklyAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-            <span>{lang === 'pt' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana no plano ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : lang === 'es' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana en el plan ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : `${weeklyLimit === 999 ? 'Unlimited' : `${weeklyLimit}/week on ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'} plan`}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
-            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido esta semana)' : lang === 'es' ? '(límite alcanzado esta semana)' : '(limit reached this week)'}</span>}
+            <span>{`${weeklyLimit === 999 ? t('member.usage.unlimited') : t('member.usage.weeklyPlanLabel').replace('{limit}', String(weeklyLimit)).replace('{plan}', planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential')}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
+            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{t('member.usage.weeklyLimitReached')}</span>}
           </div>
           <div>
             {profile?.linkedin_url ? (
@@ -1291,13 +1291,13 @@ export default function MemberArea() {
         <div className="space-y-4">
           <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${cpAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
             {cpAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-            <span>{lang === 'pt' ? `${cpLimit} Career Path incluído${cpLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : lang === 'es' ? `${cpLimit} Career Path incluido${cpLimit > 1 ? 's' : ''} por mes en el plan ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${cpLimit} Career Path included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerPathUsed}/{cpLimit})</span>
-            {!cpAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido este mês)' : lang === 'es' ? '(límite alcanzado este mes)' : '(limit reached this month)'}</span>}
+            <span>{t(cpLimit > 1 ? 'member.usage.careerPathIncludedPlural' : 'member.usage.careerPathIncludedSingular').replace('{count}', String(cpLimit)).replace('{plan}', planTier === 'pro' ? 'Pro' : 'Growth')} ({monthlyCareerPathUsed}/{cpLimit})</span>
+            {!cpAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{t('member.usage.monthlyLimitReached')}</span>}
           </div>
           {!cpAvailable && (
             <div className="flex items-center gap-2 text-xs text-[#666] bg-[#fafaf9] border border-[#e5e5e5] rounded px-3 py-2">
               <Sparkles className="w-3.5 h-3.5 text-gold" />
-              <span>{lang === 'pt' ? `Análise extra disponível por ${cpExtraPrice}` : `Extra analysis available for ${cpExtraPrice}`} <span className="line-through text-[10px] text-[#999]">{cpOriginalPrice}</span></span>
+              <span>{t('member.lib.extraAnalysisAvailableFor')} {cpExtraPrice} <span className="line-through text-[10px] text-[#999]">{cpOriginalPrice}</span></span>
             </div>
           )}
           <div>
@@ -1313,7 +1313,7 @@ export default function MemberArea() {
           </div>
           <div>
             <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{t('member.li.profileLabel')} <span className="text-red-400">*</span></label>
-            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/o-teu-perfil" className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
+            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder={t('member.form.linkedinPlaceholder')} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
             <p className="text-[9px] text-[#999] mt-1">{t('member.cp.systemAnalyze')}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1327,7 +1327,7 @@ export default function MemberArea() {
             </div>
           </div>
           <button onClick={() => { if (!cpAvailable) { setPendingExtraRun('career_path'); } else { runCareerPath(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.cp.generating')}</>) : (<><Route className="w-4 h-4" />{cpAvailable ? (t('member.cp.generate')) : (lang === 'pt' ? `Gerar Career Path — ${cpExtraPrice}` : `Generate Career Path — ${cpExtraPrice}`)}</>)}
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.cp.generating')}</>) : (<><Route className="w-4 h-4" />{cpAvailable ? t('member.cp.generate') : t('member.lib.generateCareerPathWithPrice').replace('{price}', cpExtraPrice)}</>)}
           </button>
         </div>
       );
@@ -1342,13 +1342,13 @@ export default function MemberArea() {
         <div className="space-y-4">
           <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${ciAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
             {ciAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-            <span>{lang === 'pt' ? `${ciLimit} Career Intelligence incluído${ciLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : lang === 'es' ? `${ciLimit} Career Intelligence incluido${ciLimit > 1 ? 's' : ''} por mes en el plan ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${ciLimit} Career Intelligence included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerIntelUsed}/{ciLimit})</span>
-            {!ciAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido este mês)' : lang === 'es' ? '(límite alcanzado este mes)' : '(limit reached this month)'}</span>}
+            <span>{t(ciLimit > 1 ? 'member.usage.careerIntelligenceIncludedPlural' : 'member.usage.careerIntelligenceIncludedSingular').replace('{count}', String(ciLimit)).replace('{plan}', planTier === 'pro' ? 'Pro' : 'Growth')} ({monthlyCareerIntelUsed}/{ciLimit})</span>
+            {!ciAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{t('member.usage.monthlyLimitReached')}</span>}
           </div>
           {!ciAvailable && (
             <div className="flex items-center gap-2 text-xs text-[#666] bg-[#fafaf9] border border-[#e5e5e5] rounded px-3 py-2">
               <Sparkles className="w-3.5 h-3.5 text-gold" />
-              <span>{lang === 'pt' ? `Análise extra disponível por ${ciExtraPrice}` : `Extra analysis available for ${ciExtraPrice}`} <span className="line-through text-[10px] text-[#999]">{ciOriginalPrice}</span></span>
+              <span>{t('member.lib.extraAnalysisAvailableFor')} {ciExtraPrice} <span className="line-through text-[10px] text-[#999]">{ciOriginalPrice}</span></span>
             </div>
           )}
           <div>
@@ -1364,7 +1364,7 @@ export default function MemberArea() {
           </div>
           <div>
             <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{t('member.li.profileLabel')} <span className="text-red-400">*</span></label>
-            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/o-teu-perfil" className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
+            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder={t('member.form.linkedinPlaceholder')} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
             <p className="text-[9px] text-[#999] mt-1">{t('member.cp.systemAnalyze')}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1378,7 +1378,7 @@ export default function MemberArea() {
             </div>
           </div>
           <button onClick={() => { if (!ciAvailable) { setPendingExtraRun('career_intelligence'); } else { runCareerIntelligence(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.cv.generating')}</>) : (<><Sparkles className="w-4 h-4" />{ciAvailable ? (t('member.ci.generate')) : (lang === 'pt' ? `Gerar Career Intelligence — ${ciExtraPrice}` : `Generate Career Intelligence — ${ciExtraPrice}`)}</>)}
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.cv.generating')}</>) : (<><Sparkles className="w-4 h-4" />{ciAvailable ? t('member.ci.generate') : t('member.lib.generateCareerIntelligenceWithPrice').replace('{price}', ciExtraPrice)}</>)}
           </button>
         </div>
       );
@@ -1878,7 +1878,7 @@ return null;
                       {rest.length > 0 && (
                         <>
                           <button onClick={() => setExpandedAnalysisType(isExpanded ? null : type)} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-[#f0f0f0] text-[11px] text-[#888] hover:text-gold hover:bg-[#fafaf9] transition-all">
-                            <span>{isExpanded ? (t('member.lib.hideOlder')) : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : lang === 'es' ? `Ver ${rest.length} más` : `Show ${rest.length} more`)}</span>
+                            <span>{isExpanded ? t('member.lib.hideOlder') : t(rest.length > 1 ? 'member.lib.showMorePlural' : 'member.lib.showMoreSingular').replace('{count}', String(rest.length))}</span>
                             {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                           </button>
                           {isExpanded && (
