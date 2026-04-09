@@ -5,8 +5,8 @@ export type Lang = 'pt' | 'en' | 'es';
 
 export function getLang(): Lang {
   const path = window.location.pathname;
-  if (path.startsWith('/en/')) return 'en';
-  if (path.startsWith('/es/')) return 'es';
+  if (path === '/en' || path.startsWith('/en/')) return 'en';
+  if (path === '/es' || path.startsWith('/es/')) return 'es';
   // Fallback to session storage
   const stored = sessionStorage.getItem('analysisLang') || sessionStorage.getItem('careerPathLang') || 'pt';
   if (stored === 'en') return 'en';
