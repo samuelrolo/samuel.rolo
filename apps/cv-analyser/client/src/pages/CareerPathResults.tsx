@@ -1686,10 +1686,11 @@ export default function CareerPathResults() {
                   <p className="text-xs text-muted-foreground">{t('o_cv_analyser_analisa_o')}</p>
                 </div>
               </div>
-              <a
-                href="/cv-analyser"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
-              >
+                <a
+                  href={getLang() === 'en' ? '/en/cv-analyser' : getLang() === 'es' ? '/es/cv-analyser' : '/cv-analyser'}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
+                >
+
                 <FileCheck className="w-4 h-4" />
                 {t('experimentar_cv_analyser_grtis')}
               </a>

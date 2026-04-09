@@ -118,6 +118,7 @@ const ciHeadlinesES = [
 export default function CareerIntelligenceHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
+  const careerIntelligenceDemoHref = lang === 'en' ? '/en/career-intelligence/demo' : '/career-intelligence/demo';
   const isPT = lang === 'pt';
   const ciHeadlines = pick(ciHeadlinesPT, ciHeadlinesEN, ciHeadlinesES);
   useEffect(() => { document.title = "Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire"; }, []);
@@ -757,7 +758,7 @@ export default function CareerIntelligenceHome() {
               </div>
               <div className="text-center space-y-2">
                 <a
-                  href="/career-intelligence/demo"
+                  href={careerIntelligenceDemoHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[#C9A961]/60 hover:bg-[#C9A961]/10 text-[#C9A961] font-semibold text-sm transition-all group"
@@ -768,7 +769,7 @@ export default function CareerIntelligenceHome() {
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
                 <p className="text-xs text-muted-foreground">
-                  {pick('Só o diagnóstico?', 'Just the diagnosis?', '¿Solo el diagnóstico?')} <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
+                  {pick('Só o diagnóstico?', 'Just the diagnosis?', '¿Solo el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
                 </p>
               </div>
             </div>
@@ -836,7 +837,7 @@ export default function CareerIntelligenceHome() {
                 {pick('Obter a minha recomendação de carreira', 'Get my career recommendation', 'Obtener mi recomendación de carrera')}
               </Button>
               <p className="text-xs text-muted-foreground">
-                {pick('Só precisas do diagnóstico?', 'Just need the diagnosis?', '¿Solo necesitas el diagnóstico?')} <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
+                {pick('Só precisas do diagnóstico?', 'Just need the diagnosis?', '¿Solo necesitas el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
               </p>
             </div>
           </div>
