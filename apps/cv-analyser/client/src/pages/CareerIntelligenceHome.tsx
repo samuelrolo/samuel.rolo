@@ -12,7 +12,7 @@ import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
-import { countries } from "./en/countries";
+import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
@@ -156,9 +156,14 @@ export default function CareerIntelligenceHome() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
-  const [country, setCountry] = useState<string>('Portugal');
+  const localizedCountries = getLocalizedCountries(lang);
+  const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [region, setRegion] = useState<string>('');
-  const countryData = countries.find(c => c.country === country);
+  const countryData = localizedCountries.find(c => c.country === country);
+
+  useEffect(() => {
+    setCountry((current) => current || getDefaultCountryByLanguage(lang));
+  }, [lang]);
   const [previewData, setPreviewData] = useState<any>(null);
 
   const loadingMessages = [
@@ -978,8 +983,8 @@ export default function CareerIntelligenceHome() {
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
                     <option value="">Selecciona o teu país...</option>
-                    {countries.map(c => (
-                      <option key={c.code} value={c.country}>{c.country}</option>
+                    {localizedCountries.map(c => (
+                      <option key={c.code} value={c.country}>{c.label}</option>
                     ))}
                   </select>
                   {countryData && countryData.regions.length > 1 && (
@@ -990,7 +995,7 @@ export default function CareerIntelligenceHome() {
                     >
                       <option value="">Selecciona a região (opcional)...</option>
                       {countryData.regions.map(r => (
-                        <option key={r} value={r}>{r}</option>
+                        <option key={r.value} value={r.value}>{r.label}</option>
                       ))}
                     </select>
                   )}

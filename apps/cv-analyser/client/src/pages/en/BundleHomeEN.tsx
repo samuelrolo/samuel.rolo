@@ -12,7 +12,7 @@ import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { useCurrency } from "@/hooks/useCurrency";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { countries } from "./countries";
+import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
@@ -89,9 +89,10 @@ export default function BundleHomeEN() {
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const localizedCountries = getLocalizedCountries('en');
+  const [selectedCountry, setSelectedCountry] = useState(() => getDefaultCountryByLanguage('en'));
   const [selectedRegion, setSelectedRegion] = useState("");
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const countryData = localizedCountries.find(c => c.country === selectedCountry);
   const [step, setStep] = useState<'hero' | 'upload' | 'payment' | 'analyzing' | 'done'>('hero');
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -634,8 +635,8 @@ export default function BundleHomeEN() {
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
                 >
                   <option value="">Select your country...</option>
-                  {countries.map(c => (
-                    <option key={c.code} value={c.country}>{c.country}</option>
+                  {localizedCountries.map(c => (
+                    <option key={c.code} value={c.country}>{c.label}</option>
                   ))}
                 </select>
                 {countryData && countryData.regions.length > 1 && (
@@ -646,7 +647,7 @@ export default function BundleHomeEN() {
                   >
                     <option value="">Select region (optional)...</option>
                     {countryData.regions.map(r => (
-                      <option key={r} value={r}>{r}</option>
+                      <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>
                 )}

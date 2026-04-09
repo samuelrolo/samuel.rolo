@@ -15,7 +15,7 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { countries } from "./countries";
+import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
@@ -242,7 +242,8 @@ export default function HomeEN() {
   const [pricingOpen, setPricingOpen] = useState(false);
   const [wantsJobMatch, setWantsJobMatch] = useState(false);
   const [jobInput, setJobInput] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const localizedCountries = getLocalizedCountries('en');
+  const [selectedCountry, setSelectedCountry] = useState(() => getDefaultCountryByLanguage('en'));
   const [selectedRegion, setSelectedRegion] = useState("");
   const [showEmailLink, setShowEmailLink] = useState(false);
   const [emailForLink, setEmailForLink] = useState("");
@@ -324,7 +325,7 @@ export default function HomeEN() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const countryData = localizedCountries.find(c => c.country === selectedCountry);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -1035,8 +1036,8 @@ export default function HomeEN() {
                 className="w-full px-3 py-2.5 md:px-4 md:py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
               >
                 <option value="">Select country...</option>
-                {countries.map(c => (
-                  <option key={c.code} value={c.country}>{c.country}</option>
+                {localizedCountries.map(c => (
+                  <option key={c.code} value={c.country}>{c.label}</option>
                 ))}
               </select>
               {countryData && countryData.regions.length > 1 && (
@@ -1047,7 +1048,7 @@ export default function HomeEN() {
                 >
                   <option value="">Select region (optional)...</option>
                   {countryData.regions.map(r => (
-                    <option key={r} value={r}>{r}</option>
+                    <option key={r.value} value={r.value}>{r.label}</option>
                   ))}
                 </select>
               )}

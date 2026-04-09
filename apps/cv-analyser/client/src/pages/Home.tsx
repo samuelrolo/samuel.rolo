@@ -16,7 +16,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import { trackCVUpload, trackAnalysisStart, trackAnalysisComplete, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import mammoth from "mammoth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { countries } from "./en/countries";
+import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import useTranslation from "@/i18n/useTranslation";
@@ -333,9 +333,14 @@ export default function Home() {
   const [linkedInVoucherValidating, setLinkedInVoucherValidating] = useState(false);
   // LinkedIn paywall inline payment
   // Country and region for localised analysis
-  const [selectedCountry, setSelectedCountry] = useState<string>('Portugal');
+  const localizedCountries = getLocalizedCountries(lang);
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const countryData = localizedCountries.find(c => c.country === selectedCountry);
+
+  useEffect(() => {
+    setSelectedCountry((current) => current || getDefaultCountryByLanguage(lang));
+  }, [lang]);
 
   // Mandatory email for analysis
   const [analysisEmail, setAnalysisEmail] = useState("");
@@ -1523,8 +1528,8 @@ export default function Home() {
                 disabled={loading}
               >
                 <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
-                {countries.map(c => (
-                  <option key={c.code} value={c.country}>{c.country}</option>
+                {localizedCountries.map(c => (
+                  <option key={c.code} value={c.country}>{c.label}</option>
                 ))}
               </select>
               {countryData && countryData.regions.length > 1 && (
@@ -1536,7 +1541,7 @@ export default function Home() {
                 >
                   <option value="">{pick('Selecciona a região (opcional)...', 'Select region (optional)...', 'Selecciona la región (opcional)...')}</option>
                   {countryData.regions.map(r => (
-                    <option key={r} value={r}>{r}</option>
+                    <option key={r.value} value={r.value}>{r.label}</option>
                   ))}
                 </select>
               )}

@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
-import { countries } from "./countries";
+import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
@@ -89,7 +89,8 @@ export default function CareerPathHomeEN() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const localizedCountries = getLocalizedCountries('en');
+  const [selectedCountry, setSelectedCountry] = useState(() => getDefaultCountryByLanguage('en'));
   const [selectedRegion, setSelectedRegion] = useState("");
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
@@ -158,7 +159,7 @@ export default function CareerPathHomeEN() {
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
 
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const countryData = localizedCountries.find(c => c.country === selectedCountry);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -647,8 +648,8 @@ export default function CareerPathHomeEN() {
                     className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
                   >
                     <option value="">Select country...</option>
-                    {countries.map(c => (
-                      <option key={c.code} value={c.country}>{c.country}</option>
+                    {localizedCountries.map(c => (
+                      <option key={c.code} value={c.country}>{c.label}</option>
                     ))}
                   </select>
                   {countryData && countryData.regions.length > 1 && (
@@ -659,7 +660,7 @@ export default function CareerPathHomeEN() {
                     >
                       <option value="">Select region (optional)...</option>
                       {countryData.regions.map(r => (
-                        <option key={r} value={r}>{r}</option>
+                        <option key={r.value} value={r.value}>{r.label}</option>
                       ))}
                     </select>
                   )}
