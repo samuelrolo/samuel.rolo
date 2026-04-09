@@ -312,9 +312,9 @@ export default function Home() {
 
   // Rotating headlines — conversion-focused
   const headlines = [
-    { text: "O teu CV está a ser rejeitado por", highlight: "robôs?" },
-    { text: "87% dos CVs nunca chegam ao", highlight: "recrutador" },
-    { text: "Descobre o que os recrutadores realmente", highlight: "veem" },
+    { text: pick("O teu CV está a ser rejeitado por", "Is your CV being rejected by", "¿Tu CV está siendo rechazado por"), highlight: pick("robôs?", "robots?", "robots?") },
+    { text: pick("87% dos CVs nunca chegam ao", "87% of CVs never reach the", "El 87% de los CVs nunca llegan al"), highlight: pick("recrutador", "recruiter", "reclutador") },
+    { text: pick("Descobre o que os recrutadores realmente", "Find out what recruiters really", "Descubre lo que los reclutadores realmente"), highlight: pick("veem", "see", "ven") },
   ];
   const [headlineIdx, setHeadlineIdx] = useState(0);
   useEffect(() => {
@@ -1096,18 +1096,18 @@ export default function Home() {
             {headlines[headlineIdx].text} <span className="text-[#C9A961]">{headlines[headlineIdx].highlight}</span>
           </h1>
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Análise gratuita em 30 segundos. Descobre se o teu CV passa nos sistemas de recrutamento.
+            {pick('Análise gratuita em 30 segundos. Descobre se o teu CV passa nos sistemas de recrutamento.', 'Free analysis in 30 seconds. Find out if your CV passes recruitment systems.', 'Análisis gratuito en 30 segundos. Descubre si tu CV pasa los sistemas de selección.')}
           </p>
 
           {/* Feature Cards — what you get */}
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 max-w-3xl mx-auto pt-2">
             {[
-              { icon: <BarChart3 className="w-5 h-5 text-[#C9A961]" />, label: "Score ATS" },
-              { icon: <Grid2x2 className="w-5 h-5 text-[#C9A961]" />, label: "4 Quadrantes" },
+              { icon: <BarChart3 className="w-5 h-5 text-[#C9A961]" />, label: pick("Score ATS", "ATS Score", "Score ATS") },
+              { icon: <Grid2x2 className="w-5 h-5 text-[#C9A961]" />, label: pick("4 Quadrantes", "4 Quadrants", "4 Cuadrantes") },
               { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, label: "Benchmarks" },
-              { icon: <Eye className="w-5 h-5 text-[#C9A961]" />, label: "Visão Recrutador" },
+              { icon: <Eye className="w-5 h-5 text-[#C9A961]" />, label: pick("Visão Recrutador", "Recruiter View", "Vista Reclutador") },
               { icon: <Target className="w-5 h-5 text-[#C9A961]" />, label: "Keywords" },
-              { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, label: "Em 30 segundos" },
+              { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, label: pick("Em 30 segundos", "In 30 seconds", "En 30 segundos") },
             ].map((card, i) => (
               <div key={i} className="flex flex-col items-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-muted/30 border border-border hover:border-[#C9A961]/40 transition-all">
                 {card.icon}
@@ -1123,7 +1123,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-all text-sm font-medium text-[#C9A961] hover:scale-105"
           >
             <Eye className="w-4 h-4" />
-            Vê o que vais receber
+            {pick('Vê o que vais receber', 'See what you will get', 'Ve lo que vas a recibir')}
           </a>
         </div>
 
@@ -1519,7 +1519,7 @@ export default function Home() {
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground flex items-center gap-1">
               <Globe className="w-4 h-4 text-[#C9A961]" />
-              País e região <span className="text-red-500">*</span>
+              {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-1 gap-2">
               <select
@@ -1547,14 +1547,14 @@ export default function Home() {
                 </select>
               )}
             </div>
-            <p className="text-[11px] text-muted-foreground/70">Para estimativas salariais e recomendações adaptadas ao teu mercado.</p>
+            <p className="text-[11px] text-muted-foreground/70">{pick('Para estimativas salariais e recomendações adaptadas ao teu mercado.', 'For salary estimates and recommendations tailored to your market.', 'Para estimaciones salariales y recomendaciones adaptadas a tu mercado.')}</p>
           </div>
 
           {/* Mandatory Email Field */}
           <div className="space-y-1">
             <label htmlFor="analysis-email" className="text-sm font-medium text-foreground flex items-center gap-1">
               <svg className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              O teu email <span className="text-red-500">*</span>
+              {pick('O teu email', 'Your email', 'Tu email')} <span className="text-red-500">*</span>
             </label>
             <input
               id="analysis-email"
@@ -1571,7 +1571,7 @@ export default function Home() {
                 {analysisEmailError}
               </p>
             )}
-            <p className="text-[11px] text-muted-foreground/70">Necessário para receberes os resultados e certificação.</p>
+            <p className="text-[11px] text-muted-foreground/70">{pick('Necessário para receberes os resultados e certificação.', 'Required to receive your results and certification.', 'Necesario para recibir tus resultados y certificación.')}</p>
           </div>
 
           {/* Privacy Terms Checkbox */}
@@ -1584,16 +1584,16 @@ export default function Home() {
               className="mt-1 w-4 h-4 rounded border-border text-[#C9A961] focus:ring-[#C9A961] cursor-pointer"
             />
             <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
-              Concordo com a{' '}
+              {pick('Concordo com a', 'I agree to the', 'Acepto la')}{' '}
               <a 
                 href="https://www.share2inspire.pt/pages/politica-privacidade" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#C9A961] hover:underline"
               >
-                Política de Privacidade
+                {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
               </a>
-              {' '}e autorizo o processamento dos meus dados para análise do CV.
+              {' '}{pick('e autorizo o processamento dos meus dados para análise do CV.', 'and authorise the processing of my data for CV analysis.', 'y autorizo el procesamiento de mis datos para el análisis del CV.')}
             </label>
           </div>
 
@@ -1834,22 +1834,22 @@ export default function Home() {
               <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto">
                 <Zap className="w-5 h-5 text-[#C9A961]" />
               </div>
-              <p className="text-sm font-medium text-foreground">Análise instantânea</p>
-              <p className="text-xs text-muted-foreground">Resultados em 30 segundos</p>
+              <p className="text-sm font-medium text-foreground">{pick('Análise instantânea', 'Instant Analysis', 'Análisis Instantáneo')}</p>
+              <p className="text-xs text-muted-foreground">{pick('Resultados em 30 segundos', 'Results in 30 seconds', 'Resultados en 30 segundos')}</p>
             </div>
             <div className="text-center space-y-2">
               <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto">
                 <Target className="w-5 h-5 text-[#C9A961]" />
               </div>
               <p className="text-sm font-medium text-foreground">Powered by AI</p>
-              <p className="text-xs text-muted-foreground">Análise com Google Gemini</p>
+              <p className="text-xs text-muted-foreground">{pick('Análise com Google Gemini', 'Analysis with Google Gemini', 'Análisis con Google Gemini')}</p>
             </div>
             <div className="text-center space-y-2">
               <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto">
                 <Shield className="w-5 h-5 text-[#C9A961]" />
               </div>
-              <p className="text-sm font-medium text-foreground">100% Privado</p>
-              <p className="text-xs text-muted-foreground">Os teus dados são seguros</p>
+              <p className="text-sm font-medium text-foreground">{pick('100% Privado', '100% Private', '100% Privado')}</p>
+              <p className="text-xs text-muted-foreground">{pick('Os teus dados são seguros', 'Your data is secure', 'Tus datos están seguros')}</p>
             </div>
           </div>
         </div>
@@ -1859,16 +1859,16 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="mt-20 space-y-8">
           <h2 className="text-2xl font-bold text-center text-foreground">
-            O que inclui a análise gratuita?
+            {pick('O que inclui a análise gratuita?', "What's included in the free analysis?", '¿Qué incluye el análisis gratuito?')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <BarChart3 className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Score ATS</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick('Score ATS', 'ATS Score', 'Score ATS')}</h3>
               <p className="text-sm text-muted-foreground">
-                Probabilidade de rejeição automática por sistemas de recrutamento
+                {pick('Probabilidade de rejeição automática por sistemas de recrutamento', 'Probability of automatic rejection by recruitment systems', 'Probabilidad de rechazo automático por sistemas de selección')}
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
@@ -1877,16 +1877,16 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold text-foreground">ATS Deep Scan</h3>
               <p className="text-sm text-muted-foreground">
-                Análise profunda com 3 scores: ATS Global, Keywords e Formato
+                {pick('Análise profunda com 3 scores: ATS Global, Keywords e Formato', 'Deep analysis with 3 scores: Global ATS, Keywords and Format', 'Análisis profundo con 3 scores: ATS Global, Keywords y Formato')}
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <Search className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Análise de Keywords</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick('Análise de Keywords', 'Keyword Analysis', 'Análisis de Keywords')}</h3>
               <p className="text-sm text-muted-foreground">
-                Tabela detalhada de keywords encontradas, parciais e em falta no teu CV
+                {pick('Tabela detalhada de keywords encontradas, parciais e em falta no teu CV', 'Detailed table of keywords found, partial and missing in your CV', 'Tabla detallada de keywords encontradas, parciales y ausentes en tu CV')}
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
@@ -1895,25 +1895,25 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold text-foreground">Live Match</h3>
               <p className="text-sm text-muted-foreground">
-                Cola a descrição da vaga e vê a compatibilidade em tempo real
+                {pick('Cola a descrição da vaga e vê a compatibilidade em tempo real', 'Paste the job description and see the compatibility in real time', 'Pega la descripción del puesto y ve la compatibilidad en tiempo real')}
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <Grid2x2 className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">4 Quadrantes</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick('4 Quadrantes', '4 Quadrants', '4 Cuadrantes')}</h3>
               <p className="text-sm text-muted-foreground">
-                Análise de estrutura, conteúdo, formação e experiência
+                {pick('Análise de estrutura, conteúdo, formação e experiência', 'Analysis of structure, content, education and experience', 'Análisis de estructura, contenido, formación y experiencia')}
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <Eye className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Percepção + Benchmarks</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick('Percepção + Benchmarks', 'Perception + Benchmarks', 'Percepción + Benchmarks')}</h3>
               <p className="text-sm text-muted-foreground">
-                Como os recrutadores vêem o teu perfil e comparação com médias do mercado
+                {pick('Como os recrutadores vêem o teu perfil e comparação com médias do mercado', 'How recruiters see your profile and comparison with market averages', 'Cómo los reclutadores ven tu perfil y comparación con medias del mercado')}
               </p>
             </div>
           </div>
@@ -1930,7 +1930,7 @@ export default function Home() {
                 <Users className="w-6 h-6 text-[#C9A961]" />
               </div>
               <p className="text-3xl font-bold text-foreground">5.000+</p>
-              <p className="text-sm text-muted-foreground">Profissionais ajudados</p>
+              <p className="text-sm text-muted-foreground">{pick('Profissionais ajudados', 'Professionals helped', 'Profesionales ayudados')}</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 text-center space-y-2">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center mx-auto">
@@ -1942,20 +1942,20 @@ export default function Home() {
                   <Star key={i} className={`w-4 h-4 ${i <= 4 ? 'text-[#C9A961] fill-[#C9A961]' : 'text-[#C9A961]/40 fill-[#C9A961]/40'}`} />
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground">Avaliação média</p>
+              <p className="text-sm text-muted-foreground">{pick('Avaliação média', 'Average rating', 'Valoración media')}</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 text-center space-y-2">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center mx-auto">
                 <Award className="w-6 h-6 text-[#C9A961]" />
               </div>
               <p className="text-3xl font-bold text-foreground">87%</p>
-              <p className="text-sm text-muted-foreground">Conseguiram entrevista</p>
+              <p className="text-sm text-muted-foreground">{pick('Conseguiram entrevista', 'Got an interview', 'Consiguieron entrevista')}</p>
             </div>
           </div>
 
           {/* Testimonials */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-center text-foreground">O que dizem os nossos utilizadores</h3>
+            <h3 className="text-xl font-bold text-center text-foreground">{pick('O que dizem os nossos utilizadores', 'What our users say', 'Lo que dicen nuestros usuarios')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((t, i) => (
                 <div key={i} className="bg-card border border-border rounded-xl p-6 space-y-4">
@@ -2073,14 +2073,14 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="mt-20 space-y-8">
           <h2 className="text-2xl font-bold text-center text-foreground">
-            Porquê o CV Analyser?
+            {pick('Porquê o CV Analyser?', 'Why CV Analyser?', '¿Por qué CV Analyser?')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { icon: <Target className="w-6 h-6 text-[#C9A961]" />, title: "Feito para Portugal", desc: "Análise adaptada ao mercado português. Relatórios em português de Portugal, com benchmarks locais e referências salariais nacionais." },
-              { icon: <TrendingUp className="w-6 h-6 text-[#C9A961]" />, title: "Curva Normal Exclusiva", desc: "Vê exactamente onde te posicionas face a outros candidatos. Nenhum outro serviço oferece este nível de comparação visual." },
-              { icon: <Clock className="w-6 h-6 text-[#C9A961]" />, title: "Resultados em 30 Segundos", desc: "Enquanto outros serviços demoram horas ou dias, o CV Analyser dá-te feedback imediato com IA de última geração." },
-              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: "Preço Justo, Sem Subscrição", desc: "Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa." },
+              { icon: <Target className="w-6 h-6 text-[#C9A961]" />, title: pick("Feito para Portugal", "Made for Your Market", "Hecho para tu Mercado"), desc: pick("Análise adaptada ao mercado português. Relatórios em português de Portugal, com benchmarks locais e referências salariais nacionais.", "Analysis tailored to your local market. Reports in your language, with local benchmarks and salary references.", "Análisis adaptado a tu mercado local. Informes en tu idioma, con benchmarks locales y referencias salariales.") },
+              { icon: <TrendingUp className="w-6 h-6 text-[#C9A961]" />, title: pick("Curva Normal Exclusiva", "Exclusive Normal Curve", "Curva Normal Exclusiva"), desc: pick("Vê exactamente onde te posicionas face a outros candidatos. Nenhum outro serviço oferece este nível de comparação visual.", "See exactly where you stand against other candidates. No other service offers this level of visual comparison.", "Ve exactamente dónde te posicionas frente a otros candidatos. Ningún otro servicio ofrece este nivel de comparación visual.") },
+              { icon: <Clock className="w-6 h-6 text-[#C9A961]" />, title: pick("Resultados em 30 Segundos", "Results in 30 Seconds", "Resultados en 30 Segundos"), desc: pick("Enquanto outros serviços demoram horas ou dias, o CV Analyser dá-te feedback imediato com IA de última geração.", "While other services take hours or days, CV Analyser gives you immediate feedback with cutting-edge AI.", "Mientras otros servicios tardan horas o días, CV Analyser te da feedback inmediato con IA de última generación.") },
+              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: pick("Preço Justo, Sem Subscrição", "Fair Price, No Subscription", "Precio Justo, Sin Suscripción"), desc: pick("Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.", "Pay only when you need it. No monthly fees, no commitments. From €9.99 per full analysis.", "Paga solo cuando lo necesitas. Sin mensualidades, sin compromisos. Desde €9,99 por análisis completo.") },
             ].map((card, i) => (
               <div key={i} className="bg-card border border-border rounded-xl p-6 space-y-3 flex flex-col min-h-[180px]">
                 <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0">
@@ -2098,16 +2098,16 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">
-            Pronto para melhorar o teu CV?
+            {pick('Pronto para melhorar o teu CV?', 'Ready to improve your CV?', '¿Listo para mejorar tu CV?')}
           </h2>
           <p className="text-white/80 max-w-lg mx-auto">
-            Começa com a análise gratuita. Sem cartão de crédito, sem compromisso. Descobre o que os recrutadores realmente pensam.
+            {pick('Começa com a análise gratuita. Sem cartão de crédito, sem compromisso. Descobre o que os recrutadores realmente pensam.', 'Start with the free analysis. No credit card, no commitment. Find out what recruiters really think.', 'Empieza con el análisis gratuito. Sin tarjeta de crédito, sin compromiso. Descubre lo que los reclutadores realmente piensan.')}
           </p>
           <Button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="bg-white text-[#C9A961] hover:bg-white/90 font-semibold px-8 py-3 text-base"
           >
-            Começar Análise Gratuita
+            {pick('Começar Análise Gratuita', 'Start Free Analysis', 'Comenzar Análisis Gratuito')}
           </Button>
         </div>
 
@@ -2117,14 +2117,14 @@ export default function Home() {
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
             <p className="text-base font-bold text-slate-800">{pick('Queres acesso regular a esta ferramenta?', 'Want regular access to this tool?', '¿Quieres acceso regular a esta herramienta?')}</p>
           </div>
-          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.</p>
+          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">{pick('Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.', 'With a subscription plan, you get weekly CV analyses, Career Path, exclusive content, personalised job feed and much more.', 'Con un plan de suscripción, tienes análisis de CV incluidos cada semana, Career Path, contenidos exclusivos, feed de empleos personalizado y mucho más.')}</p>
           <a
             href="https://www.share2inspire.pt/area-cliente/planos"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
           >
             {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">A partir de 9,99€/mês · Cancela quando quiseres</p>
+          <p className="text-xs text-slate-400 mt-3">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
         </div>
 
       </main>
