@@ -1575,11 +1575,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'cp.task.returned30': 'Regresó tras 30 días',
     'cp.task.profileComplete': 'Perfil completado al 100%',
     'cp.task.bonus': 'bono',
-    'cp.linkedin.shareText': '${icon} Nivel ${name} en Share2Inspire!
-
-Estoy invirtiendo en mi posicionamiento profesional con Share2Inspire. He alcanzado ${score}/1000 puntos en mi Perfil de Carrera.
-
-#Share2Inspire #CareerStrategy #ProfessionalDevelopment',
+    'cp.linkedin.shareText': '${icon} Nivel ${name} en Share2Inspire!\n\nEstoy invirtiendo en mi posicionamiento profesional con Share2Inspire. He alcanzado ${score}/1000 puntos en mi Perfil de Carrera.\n\n#Share2Inspire #CareerStrategy #ProfessionalDevelopment',
     'cp.info.title': '¿Cómo funciona el Career Score?',
     'cp.info.desc': 'Tu Career Score mide tu progreso profesional basado en las herramientas que usas. Cuanto más analices y optimices, más subirás.',
     'cp.info.howToEarn': 'Cómo ganar puntos',
