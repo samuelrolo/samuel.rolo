@@ -213,23 +213,15 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
       priceNum: parseFloat(p.cp.replace(',', '.')),
       badge: null,
       popular: false,
-      description: en ? 'Complete and personalised career roadmap' : 'Roadmap de carreira completo e personalizado',
-      features: en ? [
-        'Current positioning and market analysis',
-        'Next 3 recommended roles with roadmap',
-        'Skills gap analysis',
-        'Recommended training and certifications',
-        'Networking strategy',
-        'Prioritised immediate actions (30/60/90 days)',
-        '5-year vision',
-      ] : [
-        'Posicionamento atual e análise de mercado',
-        'Próximos 3 cargos recomendados com roadmap',
-        'Análise de gaps de competências',
-        'Formações e certificações recomendadas',
-        'Estratégia de networking',
-        'Acções imediatas priorizadas (30/60/90 dias)',
-        'Visão a 5 anos',
+      description: pick('Roadmap de carreira completo e personalizado', 'Complete and personalised career roadmap', 'Hoja de ruta profesional completa y personalizada'),
+      features: [
+        pick('Posicionamento atual e análise de mercado', 'Current positioning and market analysis', 'Posicionamiento actual y análisis de mercado'),
+        pick('Próximos 3 cargos recomendados com roadmap', 'Next 3 recommended roles with roadmap', 'Próximos 3 puestos recomendados con hoja de ruta'),
+        pick('Análise de gaps de competências', 'Skills gap analysis', 'Análisis de brechas de competencias'),
+        pick('Formações e certificações recomendadas', 'Recommended training and certifications', 'Formaciones y certificaciones recomendadas'),
+        pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking'),
+        pick('Acções imediatas priorizadas (30/60/90 dias)', 'Prioritised immediate actions (30/60/90 days)', 'Acciones inmediatas priorizadas (30/60/90 días)'),
+        pick('Visão a 5 anos', '5-year vision', 'Visión a 5 años'),
       ],
     },
   ];
@@ -646,9 +638,9 @@ export default function CareerPathResults() {
   };
 
   const handleStripePayment = async () => {
-    if (!email) { setPaymentError('Please enter your email'); return; }
+    if (!email) { setPaymentError(pick('Por favor, introduz o teu email', 'Please enter your email', 'Por favor, introduce tu correo electrónico')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Please enter a valid email'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Por favor, introduz um email válido', 'Please enter a valid email', 'Por favor, introduce un correo electrónico válido')); return; }
     setPaymentLoading(true);
     setPaymentError(null);
     try {
@@ -672,7 +664,7 @@ export default function CareerPathResults() {
       });
       const data = await response.json();
       if (!data.success || !data.url) {
-        throw new Error(data.error || 'Error creating checkout session');
+        throw new Error(data.error || pick('Erro ao criar sessão de checkout', 'Error creating checkout session', 'Error al crear la sesión de checkout'));
       }
       localStorage.setItem('cpOrderId', orderId);
       localStorage.setItem('cpPaymentEmail', email);
@@ -680,7 +672,7 @@ export default function CareerPathResults() {
       if (appliedCoupon) localStorage.setItem('cpAppliedCoupon', JSON.stringify(appliedCoupon));
       redirectToCheckout(data.url);
     } catch (err: any) {
-      setPaymentError(err.message || 'Error processing payment');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
@@ -1043,15 +1035,11 @@ export default function CareerPathResults() {
                     <div className="border-t border-[#C9A961]/20 pt-5 space-y-3">
                       <p className="text-xs font-semibold tracking-wider text-center text-muted-foreground">{t('caminhos_de_carreira_mais_compatveis')}</p>
                       <div className="space-y-2">
-                        {(lang === 'en' ? [
-                          { path: cvAnalysis.perceivedRole ? `${cvAnalysis.perceivedRole} Lead` : 'Digital Transformation Lead', fit: Math.min(energyScore + 15, 95) },
-                          { path: cvAnalysis.keywords?.[0] ? `${cvAnalysis.keywords[0]} Specialist` : 'People Analytics', fit: Math.min(energyScore + 8, 90) },
-                          { path: 'Strategic Advisor', fit: Math.min(energyScore + 2, 85) },
-                        ] : [
-                          { path: cvAnalysis.perceivedRole ? `${cvAnalysis.perceivedRole} Lead` : 'Transformação Digital Lead', fit: Math.min(energyScore + 15, 95) },
-                          { path: cvAnalysis.keywords?.[0] ? `Especialista em ${cvAnalysis.keywords[0]}` : 'People Analytics', fit: Math.min(energyScore + 8, 90) },
-                          { path: 'Consultor Estratégico', fit: Math.min(energyScore + 2, 85) },
-                        ]).map((item, i) => (
+                        {[
+                          { path: cvAnalysis.perceivedRole ? `${cvAnalysis.perceivedRole} Lead` : pick('Transformação Digital Lead', 'Digital Transformation Lead', 'Líder de Transformación Digital'), fit: Math.min(energyScore + 15, 95) },
+                          { path: cvAnalysis.keywords?.[0] ? pick(`Especialista em ${cvAnalysis.keywords[0]}`, `${cvAnalysis.keywords[0]} Specialist`, `Especialista en ${cvAnalysis.keywords[0]}`) : 'People Analytics', fit: Math.min(energyScore + 8, 90) },
+                          { path: pick('Consultor Estratégico', 'Strategic Advisor', 'Asesor Estratégico'), fit: Math.min(energyScore + 2, 85) },
+                        ].map((item, i) => (
                           <div key={i} className="flex items-center justify-between p-3 bg-card rounded-xl border border-border">
                             <div className="flex items-center gap-3">
                               <span className="text-xs font-bold text-white bg-[#C9A961] w-6 h-6 rounded-full flex items-center justify-center">#{i + 1}</span>
@@ -1106,15 +1094,11 @@ export default function CareerPathResults() {
 
                     {/* Free items */}
                     <div className="space-y-2">
-                      {(lang === 'en' ? [
-                        'Career energy score',
-                        'Top compatible next roles',
-                        'Estimated salary progression',
-                      ] : [
-                        'Energia de carreira',
-                        'Próximos cargos mais compatíveis',
-                        'Progressão salarial estimada',
-                      ]).map((item, i) => (
+                      {[
+                        pick('Energia de carreira', 'Career energy score', 'Energía profesional'),
+                        pick('Próximos cargos mais compatíveis', 'Top compatible next roles', 'Próximos puestos más compatibles'),
+                        pick('Progressão salarial estimada', 'Estimated salary progression', 'Progresión salarial estimada'),
+                      ].map((item, i) => (
                         <div key={i} className="flex items-center gap-3 py-1.5">
                           <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                           <span className="text-sm text-foreground">{item}</span>
@@ -1127,29 +1111,18 @@ export default function CareerPathResults() {
 
                     {/* Locked items */}
                     <div className="space-y-2">
-                      {(lang === 'en' ? [
-                        'Progression roadmap with timeline',
-                        'Skills gap analysis (have vs need)',
-                        'Career Potential Score (detailed)',
-                        'Personalised salary estimate by stage',
-                        'Recommended training and certifications',
-                        'Average progression time per stage',
-                        'Networking strategy',
-                        'Visibility exercises',
-                        'Immediate actions (30/60/90 days)',
-                        '5-year career vision',
-                      ] : [
-                        'Roadmap de progressão com timeline',
-                        'Análise de skills gap (tens vs precisas)',
-                        'Career Potential Score (detalhado)',
-                        'Estimativa salarial personalizada por etapa',
-                        'Formações e certificações recomendadas',
-                        'Tempo médio de progressão por etapa',
-                        'Estratégia de networking',
-                        'Exercícios de visibilidade',
-                        'Acções imediatas (30/60/90 dias)',
-                        'Visão de carreira a 5 anos',
-                      ]).map((item, i) => (
+                      {[
+                        pick('Roadmap de progressão com timeline', 'Progression roadmap with timeline', 'Hoja de ruta de progresión con cronograma'),
+                        pick('Análise de skills gap (tens vs precisas)', 'Skills gap analysis (have vs need)', 'Análisis de brechas de habilidades (tienes vs necesitas)'),
+                        pick('Career Potential Score (detalhado)', 'Career Potential Score (detailed)', 'Career Potential Score (detallado)'),
+                        pick('Estimativa salarial personalizada por etapa', 'Personalised salary estimate by stage', 'Estimación salarial personalizada por etapa'),
+                        pick('Formações e certificações recomendadas', 'Recommended training and certifications', 'Formaciones y certificaciones recomendadas'),
+                        pick('Tempo médio de progressão por etapa', 'Average progression time per stage', 'Tiempo medio de progresión por etapa'),
+                        pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking'),
+                        pick('Exercícios de visibilidade', 'Visibility exercises', 'Ejercicios de visibilidad'),
+                        pick('Acções imediatas (30/60/90 dias)', 'Immediate actions (30/60/90 days)', 'Acciones inmediatas (30/60/90 días)'),
+                        pick('Visão de carreira a 5 anos', '5-year career vision', 'Visión profesional a 5 años'),
+                      ].map((item, i) => (
                         <div key={i} className="flex items-center gap-3 py-1.5 opacity-70">
                           <Lock className="w-4 h-4 text-[#C9A961] shrink-0" />
                           <span className="text-sm text-muted-foreground">{item}</span>
@@ -1184,17 +1157,12 @@ export default function CareerPathResults() {
                     {/* Factor bars (blurred) */}
                     <div className="relative">
                       <div className="space-y-2 filter blur-[3px] select-none pointer-events-none">
-                        {(lang === 'en' ? [
-                          { label: 'Experience', val: 74 },
-                          { label: 'Transferable skills', val: 71 },
-                          { label: 'Professional positioning', val: 59 },
-                          { label: 'Career clarity', val: 65 },
-                        ] : [
-                          { label: 'Experiência', val: 74 },
-                          { label: 'Competências transferíveis', val: 71 },
-                          { label: 'Posicionamento profissional', val: 59 },
-                          { label: 'Clareza de carreira', val: 65 },
-                        ]).map((f, i) => (
+                        {[
+                          { label: pick('Experiência', 'Experience', 'Experiencia'), val: 74 },
+                          { label: pick('Competências transferíveis', 'Transferable skills', 'Competencias transferibles'), val: 71 },
+                          { label: pick('Posicionamento profissional', 'Professional positioning', 'Posicionamiento profesional'), val: 59 },
+                          { label: pick('Clareza de carreira', 'Career clarity', 'Claridad profesional'), val: 65 },
+                        ].map((f, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <span className="text-xs text-muted-foreground w-40 text-right">{f.label}</span>
                             <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
@@ -1394,7 +1362,7 @@ export default function CareerPathResults() {
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5]/10 text-[#0077B5] text-xs font-semibold hover:bg-[#0077B5]/20 transition-colors border border-[#0077B5]/20"
                           >
                             <Linkedin className="w-3.5 h-3.5" />
-                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Procurar "${role.role_title}" no LinkedIn`)}
+                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Buscar "${role.role_title}" en LinkedIn`)}
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </div>
@@ -2083,7 +2051,7 @@ export default function CareerPathResults() {
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
                 {appliedCoupon ? (
-                  lang === 'en' ? <>Continue with {selectedPlan.name} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</> : <>Continuar com {selectedPlan.name} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</>
+                  <>{pick(`Continuar com ${selectedPlan.name}`, `Continue with ${selectedPlan.name}`, `Continuar con ${selectedPlan.name}`)} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</>
                 ) : (
                   pick(`Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`)
                 )}
@@ -2132,7 +2100,7 @@ export default function CareerPathResults() {
                             : 'border-border text-muted-foreground hover:border-[#635BFF]/50'
                         }`}
                       >
-                        Card
+                        {pick('Cartão', 'Card', 'Tarjeta')}
                       </button>
                       <button
                         onClick={() => setPaymentMethod('paypal')}
@@ -2157,7 +2125,7 @@ export default function CareerPathResults() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
                         </button>
                       ))}
                     </>
