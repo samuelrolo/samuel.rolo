@@ -1308,15 +1308,15 @@ export default function CareerIntelligenceHome() {
       {/* ─── Member Area CTA ─── */}
       <div className="max-w-4xl mx-auto px-6 mt-12 mb-8">
         <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
-          <p className="text-base font-bold text-slate-800 mb-2">Queres acesso regular ao Career Intelligence?</p>
-          <p className="text-sm text-slate-500 mb-4 leading-relaxed">Com o plano Pro, tens Career Intelligence incluído mensalmente + todas as outras ferramentas, conteúdos exclusivos e muito mais.</p>
+          <p className="text-base font-bold text-slate-800 mb-2">{pick('Queres acesso regular ao Career Intelligence?', 'Want regular access to Career Intelligence?', '¿Quieres acceso regular al Career Intelligence?')}</p>
+          <p className="text-sm text-slate-500 mb-4 leading-relaxed">{pick('Com o plano Pro, tens Career Intelligence incluído mensalmente + todas as outras ferramentas, conteúdos exclusivos e muito mais.', 'With the Pro plan, you get Career Intelligence included monthly + all other tools, exclusive content and much more.', 'Con el plan Pro, tienes Career Intelligence incluido mensualmente + todas las demás herramientas, contenidos exclusivos y mucho más.')}</p>
           <a
-            href="https://www.share2inspire.pt/area-cliente/planos"
+            href={localePath('/area-cliente/planos')}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
           >
-            Ver planos de subscrição →
+            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">Career Intelligence incluído no plano Pro (39,99€/mês)</p>
+          <p className="text-xs text-slate-400 mt-3">{pick('Career Intelligence incluído no plano Pro (39,99€/mês)', 'Career Intelligence included in the Pro plan (€39.99/month)', 'Career Intelligence incluido en el plan Pro (39,99€/mes)')}</p>
         </div>
       </div>
 
