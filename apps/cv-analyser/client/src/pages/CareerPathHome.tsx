@@ -17,6 +17,8 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
+import useTranslation from "@/i18n/useTranslation";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -72,13 +74,27 @@ const PRICE_DISPLAY_PRO = '19,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
-const careerPathHeadlines = [
+const careerPathHeadlinesPT = [
   { text: "Define o teu próximo passo com um plano claro,", highlight: "não com tentativa e erro" },
   { text: "Sai da estagnação e avança com um caminho", highlight: "estruturado para a tua carreira" },
   { text: "Deixa de adivinhar o futuro, constrói um percurso", highlight: "com direção e intenção" },
 ];
+const careerPathHeadlinesEN = [
+  { text: "Define your next step with a clear plan,", highlight: "not trial and error" },
+  { text: "Break free from stagnation with a", highlight: "structured career path" },
+  { text: "Stop guessing the future, build a path", highlight: "with direction and purpose" },
+];
+const careerPathHeadlinesES = [
+  { text: "Define tu próximo paso con un plan claro,", highlight: "no con prueba y error" },
+  { text: "Sal del estancamiento y avanza con un camino", highlight: "estructurado para tu carrera" },
+  { text: "Deja de adivinar el futuro, construye un recorrido", highlight: "con dirección e intención" },
+];
 
 export default function CareerPathHome() {
+  const { pick, lang, localePath } = useTranslation();
+  const { symbol: CUR } = useCurrency();
+  const isPT = lang === 'pt';
+  const careerPathHeadlines = pick(careerPathHeadlinesPT, careerPathHeadlinesEN, careerPathHeadlinesES);
   useEffect(() => { document.title = "Career Path — Roadmap de Carreira com IA | Share2Inspire"; }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
@@ -103,15 +119,15 @@ export default function CareerPathHome() {
 
   // Progressive loading messages for Career Path
   const loadingMessages = [
-    "A extrair o teu perfil profissional...",
-    "A mapear competências e experiência...",
-    "A analisar tendências do mercado...",
-    "A identificar oportunidades de carreira...",
-    "A calcular risco de automação...",
-    "A estimar faixas salariais...",
-    "A construir o teu roadmap de desenvolvimento...",
-    "A gerar recomendações de formação...",
-    "A finalizar o teu Career Path..."
+    pick("A extrair o teu perfil profissional...", "Extracting your professional profile...", "Extrayendo tu perfil profesional..."),
+    pick("A mapear competências e experiência...", "Mapping skills and experience...", "Mapeando competencias y experiencia..."),
+    pick("A analisar tendências do mercado...", "Analysing market trends...", "Analizando tendencias del mercado..."),
+    pick("A identificar oportunidades de carreira...", "Identifying career opportunities...", "Identificando oportunidades de carrera..."),
+    pick("A calcular risco de automação...", "Calculating automation risk...", "Calculando riesgo de automatización..."),
+    pick("A estimar faixas salariais...", "Estimating salary ranges...", "Estimando rangos salariales..."),
+    pick("A construir o teu roadmap de desenvolvimento...", "Building your development roadmap...", "Construyendo tu roadmap de desarrollo..."),
+    pick("A gerar recomendações de formação...", "Generating training recommendations...", "Generando recomendaciones de formación..."),
+    pick("A finalizar o teu Career Path...", "Finalising your Career Path...", "Finalizando tu Career Path..."),
   ];
 
   useEffect(() => {
@@ -124,7 +140,7 @@ export default function CareerPathHome() {
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(isPT ? 'mbway' : 'stripe');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -147,24 +163,24 @@ export default function CareerPathHome() {
   const isMemberPro = memberTier === 'pro';
   const hasMemberDiscount = isMemberGrowth || isMemberPro;
 
-  const PRICE = '19,99';
+  const PRICE = pick('19,99', '19.99', '19,99');
   const PRICE_NUM = 19.99;
-  const PRICE_DISPLAY = PRICE_DISPLAY_BASE;
+  const PRICE_DISPLAY = `${CUR}${PRICE}`;
   const memberProductType = 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
-  const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
+  const FINAL_PRICE_DISPLAY = isPT ? FINAL_PRICE.toFixed(2).replace('.', ',') : FINAL_PRICE.toFixed(2);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (!validTypes.includes(selectedFile.type)) {
-        setError('Por favor, carregue um ficheiro PDF ou DOCX');
+        setError(pick('Por favor, carregue um ficheiro PDF ou DOCX', 'Please upload a PDF or DOCX file', 'Por favor, sube un fichero PDF o DOCX'));
         setFile(null);
         return;
       }
       if (selectedFile.size > 5 * 1024 * 1024) {
-        setError('O ficheiro não pode exceder 5MB');
+        setError(pick('O ficheiro não pode exceder 5MB', 'File cannot exceed 5MB', 'El fichero no puede exceder 5MB'));
         setFile(null);
         return;
       }
@@ -600,13 +616,13 @@ export default function CareerPathHome() {
             <div className="text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Compass className="w-4 h-4" />
-                Powered by IA Avançada
+                {pick('Powered by IA Avançada', 'Powered by Advanced AI', 'Powered by IA Avanzada')}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
                 {careerPathHeadlines[headlineIndex].text} <span className="text-[#C9A961]">{careerPathHeadlines[headlineIndex].highlight}</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.
+                {pick('A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.', 'Our AI analyses your CV and LinkedIn to map your career roadmap with the highest growth potential — in less than 1 minute.', 'Nuestra IA analiza tu CV y LinkedIn para trazar tu roadmap de carrera con mayor potencial de crecimiento — en menos de 1 minuto.')}
               </p>
 
               {/* Primary CTA — immediately visible above the fold */}
@@ -616,17 +632,17 @@ export default function CareerPathHome() {
                   className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
                 >
                   <Compass className="w-5 h-5 mr-2" />
-                  Descobrir o meu Career Path
+                  {pick('Descobrir o meu Career Path', 'Discover my Career Path', 'Descubrir mi Career Path')}
                 </Button>
-                <p className="text-xs text-muted-foreground">Pagamento único de {PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto</p>
+                <p className="text-xs text-muted-foreground">{pick(`Pagamento único de ${PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto`, `One-time payment of ${PRICE_DISPLAY} · No subscription · Results in less than 1 minute`, `Pago único de ${PRICE_DISPLAY} · Sin suscripción · Resultado en menos de 1 minuto`)}</p>
               </div>
 
               {/* Trust badges — inline */}
               <div className="flex flex-wrap justify-center gap-6 pt-1">
                 {[
-                  { icon: <Shield className="w-4 h-4" />, label: "Dados 100% privados" },
-                  { icon: <Zap className="w-4 h-4" />, label: "Resultado em < 1 min" },
-                  { icon: <Award className="w-4 h-4" />, label: "Criado por especialistas RH" },
+                  { icon: <Shield className="w-4 h-4" />, label: pick("Dados 100% privados", "100% private data", "Datos 100% privados") },
+                  { icon: <Zap className="w-4 h-4" />, label: pick("Resultado em < 1 min", "Results in < 1 min", "Resultado en < 1 min") },
+                  { icon: <Award className="w-4 h-4" />, label: pick("Criado por especialistas RH", "Created by HR specialists", "Creado por especialistas RH") },
                 ].map((badge, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="text-[#C9A961]">{badge.icon}</span>
@@ -657,21 +673,21 @@ export default function CareerPathHome() {
                       className="inline-flex items-center gap-2 h-10 px-5 text-sm font-medium rounded-lg bg-white text-[#9a7d3e] border border-[#C9A961]/30 hover:border-[#C9A961] transition-all"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      Ver Exemplo
+                      {pick('Ver Exemplo', 'View Example', 'Ver Ejemplo')}
                     </a>
                     <button
                       onClick={() => setStep('upload')}
                       className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white transition-all"
                     >
                       <Compass className="w-3.5 h-3.5" />
-                      Descobrir o meu Career Path
+                      {pick('Descobrir o meu Career Path', 'Discover my Career Path', 'Descubrir mi Career Path')}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA</p>
+                  <p className="text-xs text-muted-foreground">{pick('Relatório real gerado pela nossa IA', 'Real report generated by our AI', 'Informe real generado por nuestra IA')}</p>
                 </div>
                 {/* Competitive statement */}
                 <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
-                  {`O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por ${PRICE_DISPLAY}.`}
+                  {pick(`O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por ${PRICE_DISPLAY}.`, `What others charge €600, Share2Inspire delivers in 30 seconds for ${PRICE_DISPLAY}.`, `Lo que otros cobran 600€, Share2Inspire lo entrega en 30 segundos por ${PRICE_DISPLAY}.`)}
                 </p>
               </div>
             </div>
@@ -679,9 +695,9 @@ export default function CareerPathHome() {
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { icon: <Shield className="w-5 h-5" />, label: "Dados 100% privados" },
-                { icon: <Zap className="w-5 h-5" />, label: "Resultado em < 1 minuto" },
-                { icon: <Award className="w-5 h-5" />, label: "Criado por especialistas RH" },
+                { icon: <Shield className="w-5 h-5" />, label: pick("Dados 100% privados", "100% private data", "Datos 100% privados") },
+                { icon: <Zap className="w-5 h-5" />, label: pick("Resultado em < 1 minuto", "Results in < 1 minute", "Resultado en < 1 minuto") },
+                { icon: <Award className="w-5 h-5" />, label: pick("Criado por especialistas RH", "Created by HR specialists", "Creado por especialistas RH") },
               ].map((badge, i) => (
                 <div key={i} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 text-center">
                   <span className="text-[#C9A961]">{badge.icon}</span>
@@ -692,15 +708,15 @@ export default function CareerPathHome() {
 
             {/* What's Included — Preview */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">O que vais receber</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('O que vais receber', 'What you will receive', 'Lo que vas a recibir')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
-                  { icon: <Compass className="w-4 h-4" />, title: "Roadmap de Carreira", desc: "Plano passo-a-passo para os próximos 1-3 anos" },
-                  { icon: <Target className="w-4 h-4" />, title: "Análise de Gaps", desc: "Competências que te faltam para o próximo nível" },
-                  { icon: <DollarSign className="w-4 h-4" />, title: "Estimativa Salarial", desc: "Progressão salarial estimada por etapa" },
-                  { icon: <BookOpen className="w-4 h-4" />, title: "Formações Recomendadas", desc: "Certificações com maior impacto na tua carreira" },
-                  { icon: <Users className="w-4 h-4" />, title: "Estratégia de Networking", desc: "Quem conhecer e como posicionares-te" },
-                  { icon: <Calendar className="w-4 h-4" />, title: "Plano 30-60-90 Dias", desc: "Ações concretas e calendarizadas" },
+                  { icon: <Compass className="w-4 h-4" />, title: pick("Roadmap de Carreira", "Career Roadmap", "Roadmap de Carrera"), desc: pick("Plano passo-a-passo para os próximos 1-3 anos", "Step-by-step plan for the next 1-3 years", "Plan paso a paso para los próximos 1-3 años") },
+                  { icon: <Target className="w-4 h-4" />, title: pick("Análise de Gaps", "Gap Analysis", "Análisis de Gaps"), desc: pick("Competências que te faltam para o próximo nível", "Skills you need for the next level", "Competencias que te faltan para el próximo nivel") },
+                  { icon: <DollarSign className="w-4 h-4" />, title: pick("Estimativa Salarial", "Salary Estimate", "Estimación Salarial"), desc: pick("Progressão salarial estimada por etapa", "Estimated salary progression per stage", "Progresión salarial estimada por etapa") },
+                  { icon: <BookOpen className="w-4 h-4" />, title: pick("Formações Recomendadas", "Recommended Training", "Formaciones Recomendadas"), desc: pick("Certificações com maior impacto na tua carreira", "Certifications with the highest career impact", "Certificaciones con mayor impacto en tu carrera") },
+                  { icon: <Users className="w-4 h-4" />, title: pick("Estratégia de Networking", "Networking Strategy", "Estrategia de Networking"), desc: pick("Quem conhecer e como posicionares-te", "Who to meet and how to position yourself", "A quién conocer y cómo posicionarte") },
+                  { icon: <Calendar className="w-4 h-4" />, title: pick("Plano 30-60-90 Dias", "30-60-90 Day Plan", "Plan 30-60-90 Días"), desc: pick("Ações concretas e calendarizadas", "Concrete and scheduled actions", "Acciones concretas y calendarizadas") },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 p-4 rounded-xl bg-card border border-border">
                     <span className="text-[#C9A961] mt-0.5 shrink-0">{item.icon}</span>
@@ -715,12 +731,12 @@ export default function CareerPathHome() {
 
             {/* Como funciona — 3 passos */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">3 passos. 1 minuto. O teu Career Path.</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('3 passos. 1 minuto. O teu Career Path.', '3 steps. 1 minute. Your Career Path.', '3 pasos. 1 minuto. Tu Career Path.')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { step: "1", title: "Carrega o teu CV", desc: "Faz upload do CV e partilha o teu LinkedIn.", time: "30 seg" },
-                  { step: "2", title: "A IA analisa tudo", desc: "Cruzamos experiência, competências e mercado.", time: "30 seg" },
-                  { step: "3", title: "Recebe o teu Career Path", desc: "Roadmap completo com gaps, formações e acções.", time: "Imediato" },
+                  { step: "1", title: pick("Carrega o teu CV", "Upload your CV", "Sube tu CV"), desc: pick("Faz upload do CV e partilha o teu LinkedIn.", "Upload your CV and share your LinkedIn.", "Sube tu CV y comparte tu LinkedIn."), time: pick("30 seg", "30 sec", "30 seg") },
+                  { step: "2", title: pick("A IA analisa tudo", "AI analyses everything", "La IA analiza todo"), desc: pick("Cruzamos experiência, competências e mercado.", "We cross-reference experience, skills and market.", "Cruzamos experiencia, competencias y mercado."), time: pick("30 seg", "30 sec", "30 seg") },
+                  { step: "3", title: pick("Recebe o teu Career Path", "Get your Career Path", "Recibe tu Career Path"), desc: pick("Roadmap completo com gaps, formações e acções.", "Complete roadmap with gaps, training and actions.", "Roadmap completo con gaps, formaciones y acciones."), time: pick("Imediato", "Instant", "Inmediato") },
                 ].map((item, i) => (
                   <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
                     <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
@@ -749,9 +765,9 @@ export default function CareerPathHome() {
                   <div className="p-4 rounded-xl bg-white border border-border flex flex-col h-full">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">POUPAR</span>
-                      <span className="text-sm font-semibold text-foreground">Começa com Career Path</span>
+                      <span className="text-sm font-semibold text-foreground">{pick('Começa com Career Path', 'Start with Career Path', 'Empieza con Career Path')}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 flex-1">Obtém o teu Career Path por {PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.</p>
+                    <p className="text-xs text-muted-foreground mt-2 flex-1">{pick(`Obtém o teu Career Path por ${PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.`, `Get your Career Path for ${PRICE_DISPLAY} and upgrade to Career Intelligence for just €29.`, `Obtén tu Career Path por ${PRICE_DISPLAY} y haz upgrade a Career Intelligence por solo 29€.`)}</p>
                     <div className="flex items-baseline gap-1.5 mt-2">
                       <span className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</span>
                       <span className="text-xs text-muted-foreground">depois +€29 upgrade</span>
@@ -763,14 +779,14 @@ export default function CareerPathHome() {
                       <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">COMPLETO</span>
                       <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 flex-1">Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.</p>
+                    <p className="text-xs text-muted-foreground mt-2 flex-1">{pick('Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.', 'Everything in Career Path + strategic comparison, trade-offs and final recommendation.', 'Todo del Career Path + comparación estratégica, trade-offs y recomendación final.')}</p>
                     <div className="flex items-center gap-3 mt-2">
                       <span className="text-lg font-bold text-purple-600">€49</span>
                       <a
                         href="/career-intelligence"
                         className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"
                       >
-                        Saber mais <ArrowRight className="w-3 h-3" />
+                        {pick('Saber mais', 'Learn more', 'Saber más')} <ArrowRight className="w-3 h-3" />
                       </a>
                     </div>
                   </div>
@@ -780,7 +796,7 @@ export default function CareerPathHome() {
 
             {/* Testimonials */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">O que dizem os utilizadores</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('O que dizem os utilizadores', 'What users say', 'Lo que dicen los usuarios')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {testimonials.map((t, i) => (
                   <div key={i} className="p-5 rounded-xl bg-card border border-border space-y-3">
@@ -801,31 +817,30 @@ export default function CareerPathHome() {
 
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Começa pelo diagnóstico. A decisão vem depois.</h2>
-              <p className="text-muted-foreground">Análise completa por {PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
+              <h2 className="text-2xl font-bold text-foreground">{pick('Começa pelo diagnóstico. A decisão vem depois.', 'Start with the diagnosis. The decision comes later.', 'Empieza por el diagnóstico. La decisión viene después.')}</h2>
+              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Descobrir o meu Career Path
+                 {pick('Descobrir o meu Career Path', 'Discover my Career Path', 'Descubrir mi Career Path')}
               </Button>
             </div>
           </div>
         )}
-
         {/* ═══ STEP 2: UPLOAD — CV + LinkedIn + Career Goal ═══ */}
         {step === 'upload' && (
           <div className="max-w-xl mx-auto space-y-8 animate-in fade-in">
             <div className="text-center space-y-3">
-              <h2 className="text-2xl font-bold text-foreground">Gerar o teu Career Path</h2>
-              <p className="text-sm text-muted-foreground">Carrega o teu CV e partilha o teu LinkedIn para uma análise completa.</p>
+              <h2 className="text-2xl font-bold text-foreground">{pick('Gerar o teu Career Path', 'Generate your Career Path', 'Generar tu Career Path')}</h2>
+              <p className="text-sm text-muted-foreground">{pick('Carrega o teu CV e partilha o teu LinkedIn para uma análise completa.', 'Upload your CV and share your LinkedIn for a complete analysis.', 'Sube tu CV y comparte tu LinkedIn para un análisis completo.')}</p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
               {/* CV Upload */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground">1. Carrega o teu CV</label>
+                <label className="text-sm font-semibold text-foreground">{pick('1. Carrega o teu CV', '1. Upload your CV', '1. Sube tu CV')}</label>
                 <label
                   htmlFor="cp-cv-upload"
                   className={`relative block w-full border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${file ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border hover:border-[#C9A961]/50 hover:bg-muted/50'}`}
@@ -914,7 +929,7 @@ export default function CareerPathHome() {
                     onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
-                    <option value="">Selecciona o teu país...</option>
+                    <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                     {countries.map(c => (
                       <option key={c.code} value={c.country}>{c.country}</option>
                     ))}
@@ -939,7 +954,7 @@ export default function CareerPathHome() {
                 <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
                 <input
                   type="email"
-                  placeholder="o-teu@email.com"
+                    placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
@@ -982,7 +997,7 @@ export default function CareerPathHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  "Iniciar análise"
+                  pick('Iniciar análise', 'Start analysis', 'Iniciar análisis')
                 )}
               </Button>
 
@@ -1002,11 +1017,10 @@ export default function CareerPathHome() {
                 onClick={() => setStep('hero')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
               >
-                ← Voltar
+                {pick('← Voltar', '← Back', '← Volver')}
               </button>
             </div>
-
-            {/* Comparison table removed — simplifying homepage */}
+            {/* Comparison table removedd — simplifying homepage */}
           </div>
         )}
 
@@ -1114,7 +1128,7 @@ export default function CareerPathHome() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Compass className="w-5 h-5 text-[#C9A961]" />
-              Career Path — Pagamento
+              {pick('Career Path — Pagamento', 'Career Path — Payment', 'Career Path — Pago')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1123,7 +1137,7 @@ export default function CareerPathHome() {
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Career Path</p>
-                  <p className="text-xs text-muted-foreground">Mapa de carreira personalizado</p>
+                  <p className="text-xs text-muted-foreground">{pick('Mapa de carreira personalizado', 'Personalised career map', 'Mapa de carrera personalizado')}</p>
                 </div>
                 <div className="text-right">
                   {discountPercent > 0 ? (
@@ -1140,13 +1154,13 @@ export default function CareerPathHome() {
 
               {/* Unified discount code */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Código de desconto (opcional)</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Código de desconto (opcional)', 'Discount code (optional)', 'Código de descuento (opcional)')}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={discountCode}
                     onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); }}
-                    placeholder="CÓDIGO"
+                    placeholder={pick('CÓDIGO', 'CODE', 'CÓDIGO')}
                     className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                     onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidate()}
                   />
@@ -1156,11 +1170,11 @@ export default function CareerPathHome() {
                     variant="outline"
                     className="text-sm"
                   >
-                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : 'Aplicar'}
+                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : pick('Aplicar', 'Apply', 'Aplicar')}
                   </Button>
                 </div>
                 {discountError && <p className="text-xs text-red-500">{discountError}</p>}
-                {discountValid && <p className="text-xs text-green-600 font-semibold">Desconto de {discountPercent}% aplicado!</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">{pick(`Desconto de ${discountPercent}% aplicado!`, `${discountPercent}% discount applied!`, `¡Descuento del ${discountPercent}% aplicado!`)}</p>}
               </div>
 
               {/* Email */}
@@ -1179,7 +1193,7 @@ export default function CareerPathHome() {
                 <>
                   {/* Payment method */}
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
+                    <label className="text-xs font-semibold text-foreground">{pick('Método de pagamento', 'Payment method', 'Método de pago')}</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
                         <button
@@ -1191,7 +1205,7 @@ export default function CareerPathHome() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
                         </button>
                       ))}
                     </div>
@@ -1200,7 +1214,7 @@ export default function CareerPathHome() {
                   {/* Phone (MB WAY only) */}
                   {paymentMethod === 'mbway' && (
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
+                      <label className="text-xs font-semibold text-foreground">{pick('Telemóvel (MB WAY)', 'Phone (MB WAY)', 'Móvil (MB WAY)')}</label>
                       <input
                         type="tel"
                         value={phone}
@@ -1223,16 +1237,16 @@ export default function CareerPathHome() {
                       onClick={() => setShowPaymentModal(false)}
                       className="flex-1"
                     >
-                      Voltar
-                    </Button>
-                    <Button
-                      onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
+                    {pick('Voltar', 'Back', 'Volver')}
+                  </Button>
+                  <Button
+                    onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
                       disabled={paymentLoading}
                       className={`flex-1 font-semibold text-white ${
                         paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${FINAL_PRICE_DISPLAY}`}
                     </Button>
                   </div>
                 </>
@@ -1243,7 +1257,7 @@ export default function CareerPathHome() {
                     onClick={() => setShowPaymentModal(false)}
                     className="flex-1"
                   >
-                    Voltar
+                    {pick('Voltar', 'Back', 'Volver')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -1255,7 +1269,7 @@ export default function CareerPathHome() {
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >
-                    <Unlock className="w-4 h-4 mr-2" /> Desbloquear grátis
+                    <Unlock className="w-4 h-4 mr-2" /> {pick('Desbloquear grátis', 'Unlock for free', 'Desbloquear gratis')}
                   </Button>
                 </div>
               )}
@@ -1281,7 +1295,7 @@ export default function CareerPathHome() {
                   className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Já paguei — verificar novamente
+                  {pick('Já paguei — verificar novamente', 'I already paid — verify again', 'Ya pagué — verificar de nuevo')}
                 </Button>
               )}
             </div>
@@ -1290,13 +1304,13 @@ export default function CareerPathHome() {
           {paymentStep === 'success' && (
             <div className="text-center space-y-4 py-4">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-base font-bold text-foreground">Pagamento confirmado!</p>
-              <p className="text-sm text-muted-foreground">A gerar o teu Career Path personalizado...</p>
+              <p className="text-base font-bold text-foreground">{pick('Pagamento confirmado!', 'Payment confirmed!', '¡Pago confirmado!')}</p>
+              <p className="text-sm text-muted-foreground">{pick('A gerar o teu Career Path personalizado...', 'Generating your personalised Career Path...', 'Generando tu Career Path personalizado...')}</p>
               <Button
                 onClick={handlePaymentSuccess}
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
-                Gerar Career Path
+                {pick('Gerar Career Path', 'Generate Career Path', 'Generar Career Path')}
               </Button>
             </div>
           )}
@@ -1308,15 +1322,15 @@ export default function CareerPathHome() {
       {/* ─── Member Area CTA ─── */}
       <div className="max-w-3xl mx-auto px-6 mt-12 mb-8">
         <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
-          <p className="text-base font-bold text-slate-800 mb-2">Queres acesso regular ao Career Path?</p>
-          <p className="text-sm text-slate-500 mb-4 leading-relaxed">Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.</p>
+          <p className="text-base font-bold text-slate-800 mb-2">{pick('Queres acesso regular ao Career Path?', 'Want regular access to Career Path?', '¿Quieres acceso regular al Career Path?')}</p>
+          <p className="text-sm text-slate-500 mb-4 leading-relaxed">{pick('Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.', 'With a Growth or Pro plan, get Career Path included monthly + weekly CV Analyser, exclusive content and much more.', 'Con un plan Growth o Pro, tienes Career Path incluido mensualmente + CV Analyser semanal, contenidos exclusivos y mucho más.')}</p>
           <a
             href="https://www.share2inspire.pt/area-cliente/planos"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
           >
-            Ver planos de subscrição →
+            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">Career Path incluído a partir do plano Growth (19,99€/mês)</p>
+          <p className="text-xs text-slate-400 mt-3">{pick('Career Path incluído a partir do plano Growth (19,99€/mês)', 'Career Path included from the Growth plan (€19.99/month)', 'Career Path incluido a partir del plan Growth (19,99€/mes)')}</p>
         </div>
       </div>
 

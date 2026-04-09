@@ -24,6 +24,18 @@ interface Article {
 }
 
 const articles: Article[] = [
+  // IA & Liderança
+  {
+    category: "carreira",
+    tag: { pt: "IA & LIDERANÇA · PRODUTIVIDADE", en: "AI & LEADERSHIP · PRODUCTIVITY", es: "IA & LIDERAZGO · PRODUCTIVIDAD" },
+    title: { pt: "O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", en: "The AI Productivity Paradox: Why Human Leadership is the Missing Link", es: "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido" },
+    excerpt: { pt: "As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", en: "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", es: "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo." },
+    author: "Samuel Rolo",
+    date: "Abr 2026",
+    readTime: "12 min",
+    link: "/blog/artigos/ai-productivity-paradox.html",
+    featured: true,
+  },
   // Big4 & Consultoria
   {
     category: "big4",
@@ -193,9 +205,20 @@ interface VideoItem {
   guideLink: string;
   guideLabel: { pt: string; en: string; es: string };
   ytLink: string;
+  featured?: boolean;
 }
 
 const videos: VideoItem[] = [
+  {
+    id: "Tribuqg2Hzk",
+    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
+    title: { pt: "O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", en: "The AI Productivity Paradox: Why Human Leadership is the Missing Link", es: "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido" },
+    desc: { pt: "As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", en: "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", es: "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo." },
+    guideLink: "/blog/artigos/ai-productivity-paradox.html",
+    guideLabel: { pt: "LER ARTIGO COMPLETO →", en: "READ FULL ARTICLE →", es: "LEER ARTÍCULO COMPLETO →" },
+    ytLink: "https://www.youtube.com/watch?v=Tribuqg2Hzk",
+    featured: true,
+  },
   {
     id: "cFw11WRjuxM",
     badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
@@ -204,6 +227,7 @@ const videos: VideoItem[] = [
     guideLink: "/blog/artigos/futuro-consultoria-big4-2030.html",
     guideLabel: { pt: "LER ARTIGO COMPLETO →", en: "READ FULL ARTICLE →", es: "LEER ARTÍCULO COMPLETO →" },
     ytLink: "https://www.youtube.com/watch?v=cFw11WRjuxM",
+    featured: true,
   },
   {
     id: "LhLmgE1noC8",
@@ -508,7 +532,7 @@ export default function KnowledgeHubPage() {
         </div>
       </section>
 
-      {/* ─── VÍDEO ─── */}
+      {/* ─── VÍDEO — NETFLIX LAYOUT ─── */}
       <section id="video" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="mb-2 text-xs font-semibold tracking-widest uppercase text-[#C9A961]">{pick("Vídeo", "Video", "Vídeo")}</div>
@@ -519,12 +543,13 @@ export default function KnowledgeHubPage() {
               <>En <strong className="font-semibold">destaque</strong></>
             )}
           </h2>
-          <div className="space-y-8">
-            {videos.map((video, idx) => (
+
+          {/* ── FEATURED / HERO VIDEOS (large cards) ── */}
+          <div className="space-y-8 mb-12">
+            {videos.filter(v => v.featured).map((video, idx) => (
               <div key={idx} className="bg-[#f9f7f4] rounded-xl overflow-hidden">
                 <div className="flex flex-col md:flex-row">
-                  {/* Video embed */}
-                  <div className="md:w-2/5 flex-shrink-0">
+                  <div className="md:w-3/5 flex-shrink-0">
                     {activeVideo === video.id ? (
                       <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                         <iframe
@@ -543,26 +568,25 @@ export default function KnowledgeHubPage() {
                         aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${p(video.title)}`}
                       >
                         <img
-                          src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
+                          src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
                           alt={p(video.title)}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
-                            <Play className="w-6 h-6 text-[#1a1a2e] ml-1" />
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                            <Play className="w-7 h-7 text-[#1a1a2e] ml-1" />
                           </div>
                         </div>
                       </button>
                     )}
                   </div>
-                  {/* Info */}
                   <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
                     {video.badge && (
                       <div className="text-xs font-semibold tracking-widest uppercase text-[#C9A961] mb-3">
                         {p(video.badge)}
                       </div>
                     )}
-                    <h3 className="text-lg md:text-xl font-semibold text-[#1a1a2e] mb-3">
+                    <h3 className="text-xl md:text-2xl font-semibold text-[#1a1a2e] mb-3">
                       {p(video.title)}
                     </h3>
                     <p className="text-sm text-gray-500 mb-5 leading-relaxed">{p(video.desc)}</p>
@@ -590,6 +614,71 @@ export default function KnowledgeHubPage() {
               </div>
             ))}
           </div>
+
+          {/* ── REMAINING VIDEOS (smaller thumbnail grid) ── */}
+          {videos.filter(v => !v.featured).length > 0 && (
+            <>
+              <h3 className="text-xl font-semibold text-[#1a1a2e] mb-6">
+                {pick("Mais vídeos", "More videos", "Más vídeos")}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {videos.filter(v => !v.featured).map((video, idx) => (
+                  <div key={idx} className="bg-[#f9f7f4] rounded-xl overflow-hidden group hover:shadow-md transition-shadow">
+                    {activeVideo === video.id ? (
+                      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                        <iframe
+                          className="absolute inset-0 w-full h-full"
+                          src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
+                          title={p(video.title)}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setActiveVideo(video.id)}
+                        className="relative w-full"
+                        style={{ paddingBottom: "56.25%", display: "block" }}
+                        aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${p(video.title)}`}
+                      >
+                        <img
+                          src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
+                          alt={p(video.title)}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                            <Play className="w-5 h-5 text-[#1a1a2e] ml-0.5" />
+                          </div>
+                        </div>
+                      </button>
+                    )}
+                    <div className="p-4">
+                      {video.badge && (
+                        <div className="text-[10px] font-semibold tracking-widest uppercase text-[#C9A961] mb-2">
+                          {p(video.badge)}
+                        </div>
+                      )}
+                      <h4 className="text-sm font-semibold text-[#1a1a2e] mb-2 line-clamp-2">
+                        {p(video.title)}
+                      </h4>
+                      <div className="flex gap-2">
+                        <a
+                          href={video.ytLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] font-semibold tracking-wide text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-gray-400 transition-colors flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          YouTube
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 

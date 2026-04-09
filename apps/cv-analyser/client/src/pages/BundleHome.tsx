@@ -16,6 +16,8 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
+import useTranslation from "@/i18n/useTranslation";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -45,7 +47,6 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
 }
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const PRICE = '29,00';
 const PRICE_NUM = 29.00;
 
 
@@ -69,13 +70,28 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 // transformGeminiResponse imported from @/lib/transformGeminiResponse
 
-const bundleHeadlines = [
+const bundleHeadlinesPT = [
   { text: "Do diagnóstico à ação, tudo o que precisas para", highlight: "acelerar a tua carreira" },
   { text: "Percebe onde estás e define exatamente", highlight: "para onde vais" },
   { text: "Analisa o teu CV, traça o teu caminho e", highlight: "avança com confiança" },
 ];
+const bundleHeadlinesEN = [
+  { text: "From diagnosis to action, everything you need to", highlight: "accelerate your career" },
+  { text: "Understand where you are and define exactly", highlight: "where you're going" },
+  { text: "Analyse your CV, map your path and", highlight: "move forward with confidence" },
+];
+const bundleHeadlinesES = [
+  { text: "Del diagnóstico a la acción, todo lo que necesitas para", highlight: "acelerar tu carrera" },
+  { text: "Entiende dónde estás y define exactamente", highlight: "hacia dónde vas" },
+  { text: "Analiza tu CV, traza tu camino y", highlight: "avanza con confianza" },
+];
 
 export default function BundleHome() {
+  const { pick, lang, localePath } = useTranslation();
+  const { symbol: CUR } = useCurrency();
+  const PRICE = pick('29,00', '29', '29');
+  const bundleHeadlines = pick(bundleHeadlinesPT, bundleHeadlinesEN, bundleHeadlinesES);
+  const isPT = lang === 'pt';
   useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % bundleHeadlines.length), 4000); return () => clearInterval(t); }, []);
@@ -96,7 +112,7 @@ export default function BundleHome() {
 
   // Payment
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(isPT ? 'mbway' : 'stripe');
   const [phone, setPhone] = useState("");
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -113,7 +129,7 @@ export default function BundleHome() {
   // Applied discount state
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
-  const finalPriceStr = finalPrice.toFixed(2).replace('.', ',');
+  const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
 
   // Analysis
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -125,22 +141,22 @@ export default function BundleHome() {
   };
 
   const loadingMessages = [
-    "A extrair dados do teu CV...",
-    "A analisar competências e experiência...",
-    "A calcular score ATS...",
-    "A gerar estimativa salarial...",
-    "A mapear o teu Career Path...",
-    "A criar roadmap personalizado...",
-    "A preparar os teus resultados..."
+    pick("A extrair dados do teu CV...", "Extracting data from your CV...", "Extrayendo datos de tu CV..."),
+    pick("A analisar competências e experiência...", "Analysing skills and experience...", "Analizando competencias y experiencia..."),
+    pick("A calcular score ATS...", "Calculating ATS score...", "Calculando puntuación ATS..."),
+    pick("A gerar estimativa salarial...", "Generating salary estimate...", "Generando estimación salarial..."),
+    pick("A mapear o teu Career Path...", "Mapping your Career Path...", "Mapeando tu Career Path..."),
+    pick("A criar roadmap personalizado...", "Creating personalised roadmap...", "Creando roadmap personalizado..."),
+    pick("A preparar os teus resultados...", "Preparing your results...", "Preparando tus resultados..."),
   ];
 
   /* ─── Handle Upload & Proceed to Payment ─── */
   const handleProceedToPayment = async () => {
-    if (!file) { setError('Faz upload do teu CV (PDF ou DOCX)'); return; }
-    if (!isValidLinkedinUrl(linkedinUrl)) { setError('Introduz um URL de LinkedIn válido'); return; }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
-    if (!selectedCountry) { setError('Selecciona o teu país para resultados localizados'); return; }
-    if (!acceptedTerms) { setError('Aceita a Política de Privacidade'); return; }
+    if (!file) { setError(pick('Faz upload do teu CV (PDF ou DOCX)', 'Upload your CV (PDF or DOCX)', 'Sube tu CV (PDF o DOCX)')); return; }
+    if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick('Introduz um URL de LinkedIn válido', 'Enter a valid LinkedIn URL', 'Introduce una URL de LinkedIn válida')); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
+    if (!selectedCountry) { setError(pick('Selecciona o teu país para resultados localizados', 'Please select your country for localised results', 'Selecciona tu país para resultados localizados')); return; }
+    if (!acceptedTerms) { setError(pick('Aceita a Política de Privacidade', 'Accept the Privacy Policy', 'Acepta la Política de Privacidad')); return; }
     setError(null);
 
     try {
@@ -150,7 +166,7 @@ export default function BundleHome() {
       localStorage.setItem('bundleCvText', cvText);
       localStorage.setItem('bundleLinkedinUrl', linkedinUrl);
       localStorage.setItem('bundleEmail', email.trim().toLowerCase());
-      localStorage.setItem('bundleCountry', selectedCountry || 'Portugal');
+      localStorage.setItem('bundleCountry', selectedCountry || (isPT ? 'Portugal' : ''));
       localStorage.setItem('bundleRegion', selectedRegion || '');
     } catch (e) { console.warn('[Bundle] Pre-extraction error', e); }
 
@@ -597,27 +613,27 @@ export default function BundleHome() {
           <div className="text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 text-[#C9A961] text-xs font-bold px-4 py-2 rounded-full border border-[#C9A961]/20 uppercase tracking-wider">
               <Sparkles className="w-4 h-4" />
-              Bundle mais popular
+              {pick('Bundle mais popular', 'Most popular bundle', 'Bundle más popular')}
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
               {bundleHeadlines[headlineIndex].text} <span className="text-[#C9A961]">{bundleHeadlines[headlineIndex].highlight}</span>
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              CV Analyser + Career Path. Diagnóstico completo do teu CV e roadmap de carreira personalizado. Tudo num só passo, com um único pagamento.
+              {pick('CV Analyser + Career Path. Diagnóstico completo do teu CV e roadmap de carreira personalizado. Tudo num só passo, com um único pagamento.', 'CV Analyser + Career Path. Complete diagnosis of your CV and personalised career roadmap. All in one step, with a single payment.', 'CV Analyser + Career Path. Diagnóstico completo de tu CV y roadmap de carrera personalizado. Todo en un solo paso, con un único pago.')}
             </p>
 
             {/* Price */}
             <div className="flex items-center justify-center gap-4">
               {appliedCoupon ? (
                 <>
-                  <span className="text-2xl line-through text-slate-400">{PRICE}€</span>
-                  <span className="text-4xl font-bold text-green-600">{finalPriceStr}€</span>
+                  <span className="text-2xl line-through text-slate-400">{CUR}{PRICE}</span>
+                  <span className="text-4xl font-bold text-green-600">{CUR}{finalPriceStr}</span>
                 </>
               ) : (
                 <>
-                  <span className="text-lg line-through text-slate-400">38€</span>
-                  <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
-                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Poupas 9€</span>
+                  <span className="text-lg line-through text-slate-400">{CUR}38</span>
+                  <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
+                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">{pick('Poupas 9€', 'Save €9', 'Ahorras 9€')}</span>
                 </>
               )}
             </div>
@@ -627,9 +643,9 @@ export default function BundleHome() {
               onClick={() => setStep('upload')}
               className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] mt-4"
             >
-              Começar agora <ArrowRight className="w-6 h-6 ml-2" />
+              {pick('Começar agora', 'Start now', 'Empezar ahora')} <ArrowRight className="w-6 h-6 ml-2" />
             </Button>
-            <p className="text-xs text-slate-400">Pagamento único · Sem subscrição · Resultados imediatos</p>
+            <p className="text-xs text-slate-400">{pick('Pagamento único · Sem subscrição · Resultados imediatos', 'One-time payment · No subscription · Instant results', 'Pago único · Sin suscripción · Resultados inmediatos')}</p>
           </div>
 
           {/* ─── What's included ─── */}
@@ -642,12 +658,12 @@ export default function BundleHome() {
                 <h3 className="font-bold text-slate-900">CV Analyser</h3>
               </div>
               <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Análise ATS completa</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> ATS Deep Scan + Análise de Keywords</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Live Match — compara CV vs vaga</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de posicionamento</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estimativa salarial detalhada</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Certificação LinkedIn</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Análise ATS completa', 'Complete ATS analysis', 'Análisis ATS completo')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('ATS Deep Scan + Análise de Keywords', 'ATS Deep Scan + Keyword Analysis', 'ATS Deep Scan + Análisis de Keywords')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Live Match — compara CV vs vaga', 'Live Match — compare CV vs job', 'Live Match — compara CV vs oferta')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Score de posicionamento', 'Positioning score', 'Score de posicionamiento')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Estimativa salarial detalhada', 'Detailed salary estimate', 'Estimación salarial detallada')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Certificação LinkedIn', 'LinkedIn Certification', 'Certificación LinkedIn')}</li>
               </ul>
             </div>
             <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
@@ -658,10 +674,10 @@ export default function BundleHome() {
                 <h3 className="font-bold text-slate-900">Career Path</h3>
               </div>
               <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Roadmap de carreira a 5 anos</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Próximos cargos recomendados</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Formações sugeridas</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estratégia de networking</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Roadmap de carreira a 5 anos', '5-year career roadmap', 'Roadmap de carrera a 5 años')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Próximos cargos recomendados', 'Recommended next roles', 'Próximos cargos recomendados')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Formações sugeridas', 'Suggested training', 'Formaciones sugeridas')}</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking')}</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Skills gap analysis</li>
               </ul>
             </div>
@@ -669,12 +685,12 @@ export default function BundleHome() {
 
           {/* ─── How it works ─── */}
           <div className="mt-16 max-w-3xl mx-auto">
-            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Como funciona?</h2>
+            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">{pick('Como funciona?', 'How it works', '¿Cómo funciona?')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { num: "1", icon: <Upload className="w-5 h-5 text-[#C9A961]" />, title: "Carrega o teu CV", desc: "Faz upload do teu CV em PDF ou DOCX e indica o teu perfil LinkedIn." },
-                { num: "2", icon: <CreditCard className="w-5 h-5 text-[#C9A961]" />, title: "Pagamento seguro", desc: "Paga via MB WAY ou PayPal. Pagamento único, sem subscrição." },
-                { num: "3", icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Resultados imediatos", desc: "Recebe o diagnóstico do CV e o roadmap de carreira em menos de 1 minuto." },
+                { num: "1", icon: <Upload className="w-5 h-5 text-[#C9A961]" />, title: pick("Carrega o teu CV", "Upload your CV", "Sube tu CV"), desc: pick("Faz upload do teu CV em PDF ou DOCX e indica o teu perfil LinkedIn.", "Upload your CV in PDF or DOCX and enter your LinkedIn profile.", "Sube tu CV en PDF o DOCX e indica tu perfil LinkedIn.") },
+                { num: "2", icon: <CreditCard className="w-5 h-5 text-[#C9A961]" />, title: pick("Pagamento seguro", "Secure payment", "Pago seguro"), desc: pick("Paga via MB WAY ou PayPal. Pagamento único, sem subscrição.", "Pay via card or PayPal. One-time payment, no subscription.", "Paga con tarjeta o PayPal. Pago único, sin suscripción.") },
+                { num: "3", icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: pick("Resultados imediatos", "Instant results", "Resultados inmediatos"), desc: pick("Recebe o diagnóstico do CV e o roadmap de carreira em menos de 1 minuto.", "Get your CV diagnosis and career roadmap in less than 1 minute.", "Recibe el diagnóstico del CV y el roadmap de carrera en menos de 1 minuto.") },
               ].map((s, i) => (
                 <div key={i} className="text-center space-y-3">
                   <div className="w-12 h-12 mx-auto rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 flex items-center justify-center">
@@ -689,13 +705,13 @@ export default function BundleHome() {
 
           {/* ─── Why the bundle ─── */}
           <div className="mt-16 max-w-3xl mx-auto">
-            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Porquê o Bundle?</h2>
+            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">{pick('Porquê o Bundle?', 'Why the Bundle?', '¿Por qué el Bundle?')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: "Poupas 9€", desc: "Separadamente custariam 38€. Em bundle, pagas apenas 29€." },
-                { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Upload único", desc: "Carregas o CV uma vez e os dois motores correm em paralelo." },
-                { icon: <Target className="w-5 h-5 text-[#C9A961]" />, title: "Visão completa", desc: "Sabes onde estás (CV Analyser) e para onde ir (Career Path)." },
-                { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, title: "Decisões com dados", desc: "Relatório integrado com score, salários e roadmap num só lugar." },
+                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: pick("Poupas 9€", "Save €9", "Ahorras 9€"), desc: pick("Separadamente custariam 38€. Em bundle, pagas apenas 29€.", "Separately they would cost €38. In a bundle, you pay only €29.", "Por separado costarían 38€. En bundle, pagas solo 29€.") },
+                { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: pick("Upload único", "Single upload", "Carga única"), desc: pick("Carregas o CV uma vez e os dois motores correm em paralelo.", "Upload your CV once and both engines run in parallel.", "Subes el CV una vez y los dos motores corren en paralelo.") },
+                { icon: <Target className="w-5 h-5 text-[#C9A961]" />, title: pick("Visão completa", "Complete vision", "Visión completa"), desc: pick("Sabes onde estás (CV Analyser) e para onde ir (Career Path).", "Know where you are (CV Analyser) and where to go (Career Path).", "Sabes dónde estás (CV Analyser) y hacia dónde ir (Career Path).") },
+                { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, title: pick("Decisões com dados", "Data-driven decisions", "Decisiones con datos"), desc: pick("Relatório integrado com score, salários e roadmap num só lugar.", "Integrated report with score, salaries and roadmap in one place.", "Informe integrado con score, salarios y roadmap en un solo lugar.") },
               ].map((card, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 bg-white border border-slate-100 rounded-xl">
                   <div className="w-10 h-10 shrink-0 rounded-lg bg-[#C9A961]/10 flex items-center justify-center">{card.icon}</div>
@@ -713,15 +729,15 @@ export default function BundleHome() {
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
                 <p className="text-3xl font-bold text-[#C9A961]">+500</p>
-                <p className="text-xs text-slate-500 mt-1">Profissionais ajudados</p>
+                <p className="text-xs text-slate-500 mt-1">{pick('Profissionais ajudados', 'Professionals helped', 'Profesionales ayudados')}</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-[#C9A961]">5★</p>
-                <p className="text-xs text-slate-500 mt-1">Avaliação média</p>
+                <p className="text-xs text-slate-500 mt-1">{pick('Avaliação média', 'Average rating', 'Valoración media')}</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-[#C9A961]">98%</p>
-                <p className="text-xs text-slate-500 mt-1">Taxa de satisfação</p>
+                <p className="text-xs text-slate-500 mt-1">{pick('Taxa de satisfação', 'Satisfaction rate', 'Tasa de satisfacción')}</p>
               </div>
             </div>
           </div>
@@ -732,25 +748,25 @@ export default function BundleHome() {
               onClick={() => setStep('upload')}
               className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
             >
-              Começar agora <ArrowRight className="w-6 h-6 ml-2" />
+              {pick('Começar agora', 'Start now', 'Empezar ahora')} <ArrowRight className="w-6 h-6 ml-2" />
             </Button>
-            <p className="text-xs text-slate-400 mt-3">Pagamento seguro via MB WAY ou PayPal</p>
+            <p className="text-xs text-slate-400 mt-3">{pick('Pagamento seguro via MB WAY ou PayPal', 'Secure payment via card or PayPal', 'Pago seguro con tarjeta o PayPal')}</p>
           </div>
 
           {/* ─── Member Area CTA ─── */}
           <div className="mt-14 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Sparkles className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-sm font-bold text-slate-800">Queres acesso regular a estas ferramentas?</p>
+              <p className="text-sm font-bold text-slate-800">{pick('Queres acesso regular a estas ferramentas?', 'Want regular access to these tools?', '¿Quieres acceso regular a estas herramientas?')}</p>
             </div>
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.</p>
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">{pick('Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.', 'With a subscription plan, get weekly analyses, exclusive content, personalised job feed and much more — all in one platform.', 'Con un plan de suscripción, tienes análisis incluidos cada semana, contenidos exclusivos, feed de ofertas personalizado y mucho más — todo en una única plataforma.')}</p>
             <a
               href="https://www.share2inspire.pt/area-cliente/planos"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
             >
-              Ver planos de subscrição <ArrowRight className="w-4 h-4" />
+              {pick('Ver planos de subscrição', 'View subscription plans', 'Ver planes de suscripción')} <ArrowRight className="w-4 h-4" />
             </a>
-            <p className="text-[10px] text-slate-400 mt-2">A partir de 9,99€/mês · Cancela quando quiseres</p>
+            <p className="text-[10px] text-slate-400 mt-2">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
           </div>
         </div>
       )}
@@ -759,15 +775,15 @@ export default function BundleHome() {
       {step === 'upload' && (
         <div className="max-w-lg mx-auto px-6 py-10">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-slate-900">Insere os teus dados</h2>
-            <p className="text-sm text-slate-500 mt-1">CV + LinkedIn — uma só vez para os dois motores</p>
+            <h2 className="text-2xl font-bold text-slate-900">{pick('Insere os teus dados', 'Enter your details', 'Introduce tus datos')}</h2>
+            <p className="text-sm text-slate-500 mt-1">{pick('CV + LinkedIn — uma só vez para os dois motores', 'CV + LinkedIn — one upload for both engines', 'CV + LinkedIn — una sola vez para los dos motores')}</p>
           </div>
 
           <div className="space-y-5">
             {/* CV Upload */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                <FileText className="w-4 h-4 inline mr-1" /> Currículo (PDF ou DOCX)
+                <FileText className="w-4 h-4 inline mr-1" /> {pick('Currículo (PDF ou DOCX)', 'CV (PDF or DOCX)', 'Currículum (PDF o DOCX)')}
               </label>
               <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-[#C9A961] bg-white'}`}>
                 <input
@@ -784,7 +800,7 @@ export default function BundleHome() {
                 ) : (
                   <div className="text-center">
                     <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-sm text-slate-500">Clica ou arrasta o teu CV</p>
+                    <p className="text-sm text-slate-500">{pick('Clica ou arrasta o teu CV', 'Click or drag your CV', 'Haz clic o arrastra tu CV')}</p>
                   </div>
                 )}
               </label>
@@ -793,11 +809,11 @@ export default function BundleHome() {
             {/* LinkedIn URL */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                <Linkedin className="w-4 h-4 inline mr-1" /> Perfil LinkedIn
+                <Linkedin className="w-4 h-4 inline mr-1" /> {pick('Perfil LinkedIn', 'LinkedIn Profile', 'Perfil LinkedIn')}
               </label>
               <input
                 type="url"
-                placeholder="https://linkedin.com/in/o-teu-perfil"
+                placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
                 className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all"
@@ -811,7 +827,7 @@ export default function BundleHome() {
               </label>
               <input
                 type="email"
-                placeholder="o-teu@email.com"
+                placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all"
@@ -821,7 +837,7 @@ export default function BundleHome() {
             {/* Country/Region Selector */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-700">
-                <Globe className="w-4 h-4 inline mr-1 text-[#C9A961]" /> País <span className="text-slate-400 font-normal text-xs">(para dados salariais e recomendações localizadas)</span>
+                <Globe className="w-4 h-4 inline mr-1 text-[#C9A961]" /> {pick('País', 'Country', 'País')} <span className="text-slate-400 font-normal text-xs">{pick('(para dados salariais e recomendações localizadas)', '(for salary data and localised recommendations)', '(para datos salariales y recomendaciones localizadas)')}</span>
               </label>
               <div className="grid grid-cols-1 gap-3">
                 <select
@@ -829,7 +845,7 @@ export default function BundleHome() {
                   onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }}
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
                 >
-                  <option value="">Selecciona o teu país...</option>
+                  <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                   {countries.map(c => (
                     <option key={c.code} value={c.country}>{c.country}</option>
                   ))}
@@ -840,7 +856,7 @@ export default function BundleHome() {
                     onChange={(e) => setSelectedRegion(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
                   >
-                    <option value="">Selecciona a região (opcional)...</option>
+                    <option value="">{pick('Selecciona a região (opcional)...', 'Select your region (optional)...', 'Selecciona la región (opcional)...')}</option>
                     {countryData.regions.map(r => (
                       <option key={r} value={r}>{r}</option>
                     ))}
@@ -858,7 +874,7 @@ export default function BundleHome() {
                 className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]"
               />
               <span className="text-xs text-slate-500">
-                Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-[#C9A961] underline">Política de Privacidade</a> e os <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">Termos e Condições</a>.
+                {pick('Li e aceito a', 'I have read and accept the', 'He leído y acepto la')} <a href="/politica-privacidade" target="_blank" className="text-[#C9A961] underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a> {pick('e os', 'and the', 'y los')} <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">{pick('Termos e Condições', 'Terms and Conditions', 'Términos y Condiciones')}</a>.
               </span>
             </label>
 
@@ -876,9 +892,9 @@ export default function BundleHome() {
               className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all"
             >
               {appliedCoupon ? (
-                <>Pagar e analisar — <span className="line-through text-slate-400 mr-1">{PRICE}€</span> {finalPriceStr}€</>
+                <>{pick('Pagar e analisar', 'Pay and analyse', 'Pagar y analizar')} — <span className="line-through text-slate-400 mr-1">{CUR}{PRICE}</span> {CUR}{finalPriceStr}</>
               ) : (
-                <>Pagar e analisar — {PRICE}€</>
+                <>{pick('Pagar e analisar', 'Pay and analyse', 'Pagar y analizar')} — {CUR}{PRICE}</>
               )}
             </Button>
 
@@ -886,22 +902,22 @@ export default function BundleHome() {
             {appliedCoupon ? (
               <div className="w-full text-center text-sm text-green-600 bg-green-50 rounded-xl py-2 px-3 flex items-center justify-center gap-2">
                 <Check className="w-4 h-4" />
-                Cupão <span className="font-bold">{appliedCoupon.code}</span> aplicado — {appliedCoupon.percent}% desconto
-                <button onClick={() => setAppliedCoupon(null)} className="ml-2 text-xs text-slate-400 hover:text-red-500 underline">remover</button>
+                {pick('Cupão', 'Coupon', 'Cupón')} <span className="font-bold">{appliedCoupon.code}</span> {pick('aplicado', 'applied', 'aplicado')} — {appliedCoupon.percent}% {pick('desconto', 'discount', 'descuento')}
+                <button onClick={() => setAppliedCoupon(null)} className="ml-2 text-xs text-slate-400 hover:text-red-500 underline">{pick('remover', 'remove', 'eliminar')}</button>
               </div>
             ) : (
               <button
                 onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }}
                 className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2"
               >
-                <Ticket className="w-4 h-4" /> Tenho um código de desconto
+                <Ticket className="w-4 h-4" /> {pick('Tenho um código de desconto', 'I have a discount code', 'Tengo un código de descuento')}
               </button>
             )}
 
-            <p className="text-center text-xs text-slate-400">Pagamento seguro via MB WAY ou PayPal</p>
+            <p className="text-center text-xs text-slate-400">{pick('Pagamento seguro via MB WAY ou PayPal', 'Secure payment via card or PayPal', 'Pago seguro con tarjeta o PayPal')}</p>
 
             <button onClick={() => setStep('hero')} className="w-full text-center text-sm text-slate-400 hover:text-slate-600 transition-colors">
-              ← Voltar
+              {pick('← Voltar', '← Back', '← Volver')}
             </button>
           </div>
         </div>
@@ -914,7 +930,7 @@ export default function BundleHome() {
             {step === 'analyzing' ? (
               <>
                 <Loader2 className="w-12 h-12 text-[#C9A961] animate-spin mx-auto" />
-                <h2 className="text-xl font-bold text-slate-900">A processar o teu Bundle</h2>
+                <h2 className="text-xl font-bold text-slate-900">{pick('A processar o teu Bundle', 'Processing your Bundle', 'Procesando tu Bundle')}</h2>
                 <p className="text-sm text-slate-500">{analysisMsg}</p>
                 <div className="w-full bg-slate-200 rounded-full h-2">
                   <div
@@ -926,8 +942,8 @@ export default function BundleHome() {
             ) : (
               <>
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-                <h2 className="text-xl font-bold text-slate-900">Tudo pronto!</h2>
-                <p className="text-sm text-slate-500">A redirecionar para os teus resultados...</p>
+                <h2 className="text-xl font-bold text-slate-900">{pick('Tudo pronto!', 'All done!', '¡Todo listo!')}</h2>
+                <p className="text-sm text-slate-500">{pick('A redirecionar para os teus resultados...', 'Redirecting to your results...', 'Redirigiendo a tus resultados...')}</p>
               </>
             )}
           </div>
@@ -939,9 +955,9 @@ export default function BundleHome() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center">
-              {paymentStep === 'payment' && 'Pagamento — Bundle completo'}
-              {paymentStep === 'polling' && 'A aguardar confirmação...'}
-              {paymentStep === 'success' && 'Pagamento confirmado!'}
+              {paymentStep === 'payment' && pick('Pagamento — Bundle completo', 'Payment — Complete Bundle', 'Pago — Bundle completo')}
+              {paymentStep === 'polling' && pick('A aguardar confirmação...', 'Waiting for confirmation...', 'Esperando confirmación...')}
+              {paymentStep === 'success' && pick('Pagamento confirmado!', 'Payment confirmed!', '¡Pago confirmado!')}
             </DialogTitle>
           </DialogHeader>
 
@@ -966,13 +982,13 @@ export default function BundleHome() {
 
               {/* Payment method tabs */}
               <div className="flex gap-2">
-                {(['mbway', 'stripe', 'paypal'] as const).map(m => (
+                {(isPT ? ['mbway', 'stripe', 'paypal'] as const : ['stripe', 'paypal'] as const).map(m => (
                   <button
                     key={m}
                     onClick={() => setPaymentMethod(m)}
                     className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${paymentMethod === m ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
                   >
-                    {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? 'Cartão' : 'PayPal'}
+                    {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
                   </button>
                 ))}
               </div>
@@ -981,7 +997,7 @@ export default function BundleHome() {
                 <div className="space-y-3">
                   <input
                     type="tel"
-                    placeholder="Número de telemóvel"
+                    placeholder={pick('Número de telemóvel', 'Phone number', 'Número de móvil')}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none"
@@ -991,7 +1007,7 @@ export default function BundleHome() {
                     disabled={paymentLoading}
                     className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                   >
-                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${finalPriceStr}€ com MB WAY`}
+                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${finalPriceStr} ${pick('com MB WAY', 'with MB WAY', 'con MB WAY')}`}
                   </Button>
                 </div>
               )}
@@ -1002,7 +1018,7 @@ export default function BundleHome() {
                   disabled={paymentLoading}
                   className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${finalPriceStr}€ com Cartão`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${finalPriceStr} ${pick('com Cartão', 'with Card', 'con Tarjeta')}`}
                 </Button>
               )}
 
@@ -1011,7 +1027,7 @@ export default function BundleHome() {
                   onClick={handlePayPalPayment}
                   className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl"
                 >
-                  Pagar {finalPriceStr}€ com PayPal
+                  {pick('Pagar', 'Pay', 'Pagar')} {CUR}{finalPriceStr} {pick('com PayPal', 'with PayPal', 'con PayPal')}
                 </Button>
               )}
 
@@ -1030,7 +1046,7 @@ export default function BundleHome() {
               <p className="text-sm text-slate-600">{pollingMsg}</p>
               {pollingExpired && (
                 <Button onClick={handleManualCheck} variant="outline" className="text-sm">
-                  Já paguei — verificar
+                  {pick('Já paguei — verificar', 'I already paid — verify', 'Ya pagué — verificar')}
                 </Button>
               )}
             </div>
@@ -1039,7 +1055,7 @@ export default function BundleHome() {
           {paymentStep === 'success' && (
             <div className="text-center space-y-4 py-4">
               <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
-              <p className="text-sm text-slate-600">Pagamento confirmado! A iniciar análise...</p>
+              <p className="text-sm text-slate-600">{pick('Pagamento confirmado! A iniciar análise...', 'Payment confirmed! Starting analysis...', '¡Pago confirmado! Iniciando análisis...')}</p>
             </div>
           )}
         </DialogContent>
@@ -1049,12 +1065,12 @@ export default function BundleHome() {
       <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-center">Código de desconto</DialogTitle>
+            <DialogTitle className="text-center">{pick('Código de desconto', 'Discount code', 'Código de descuento')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <input
               type="text"
-              placeholder="Introduz o código"
+              placeholder={pick('Introduz o código', 'Enter the code', 'Introduce el código')}
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
               className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-center tracking-widest font-mono focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none"
@@ -1068,7 +1084,7 @@ export default function BundleHome() {
               disabled={discountLoading}
               className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
             >
-              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Validar código'}
+              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : pick('Validar código', 'Validate code', 'Validar código')}
             </Button>
           </div>
         </DialogContent>

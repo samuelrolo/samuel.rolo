@@ -19,6 +19,8 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
+import useTranslation from "@/i18n/useTranslation";
+import { useCurrency } from "@/hooks/useCurrency";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -205,6 +207,9 @@ const comparisonFeatures = [
 ];
 
 export default function Home() {
+  const { pick, lang, localePath } = useTranslation();
+  const { symbol: CUR } = useCurrency();
+  const isPT = lang === 'pt';
   useEffect(() => { document.title = "CV Analyser — Análise de CV com IA | Share2Inspire"; }, []);
 
   const [, setLocation] = useLocation();
@@ -279,14 +284,14 @@ export default function Home() {
 
   // Progressive loading messages for CV Analyser
   const loadingMessages = [
-    "A extrair dados do teu CV...",
-    "A identificar competências-chave...",
-    "A analisar experiência profissional...",
-    "A comparar com o mercado de trabalho...",
-    "A calcular compatibilidade ATS...",
-    "A avaliar pontos fortes e áreas de melhoria...",
-    "A gerar recomendações personalizadas...",
-    "A finalizar o relatório..."
+    pick("A extrair dados do teu CV...", "Extracting data from your CV...", "Extrayendo datos de tu CV..."),
+    pick("A identificar competências-chave...", "Identifying key skills...", "Identificando competencias clave..."),
+    pick("A analisar experiência profissional...", "Analysing professional experience...", "Analizando experiencia profesional..."),
+    pick("A comparar com o mercado de trabalho...", "Comparing with the job market...", "Comparando con el mercado laboral..."),
+    pick("A calcular compatibilidade ATS...", "Calculating ATS compatibility...", "Calculando compatibilidad ATS..."),
+    pick("A avaliar pontos fortes e áreas de melhoria...", "Evaluating strengths and areas for improvement...", "Evaluando puntos fuertes y áreas de mejora..."),
+    pick("A gerar recomendações personalizadas...", "Generating personalised recommendations...", "Generando recomendaciones personalizadas..."),
+    pick("A finalizar o relatório...", "Finalising the report...", "Finalizando el informe..."),
   ];
 
   useEffect(() => {
@@ -345,7 +350,7 @@ export default function Home() {
   // Email validation: must be real format, reject obvious fakes
   const validateEmail = (email: string): { valid: boolean; error?: string } => {
     const trimmed = email.trim().toLowerCase();
-    if (!trimmed) return { valid: false, error: 'Introduz o teu email para continuar.' };
+    if (!trimmed) return { valid: false, error: pick('Introduz o teu email para continuar.', 'Enter your email to continue.', 'Introduce tu email para continuar.') };
     // Basic format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(trimmed)) return { valid: false, error: 'Formato de email inválido.' };
@@ -396,7 +401,7 @@ export default function Home() {
   const handleAnalyze = async () => {
     if (!file) return;
     if (!selectedCountry) {
-      setError('Selecciona o teu país para resultados localizados.');
+      setError(pick('Selecciona o teu país para resultados localizados.', 'Select your country for localised results.', 'Selecciona tu país para resultados localizados.'));
       return;
     }
     // Validate mandatory email
@@ -673,15 +678,15 @@ export default function Home() {
   // Handle LinkedIn URL analysis (analyse profile without CV file)
   const handleLinkedInAnalyze = async () => {
     if (!linkedInUrl.toLowerCase().includes('linkedin.com')) {
-      setError('Introduz um URL de LinkedIn válido (ex: https://linkedin.com/in/o-teu-perfil)');
+      setError(pick('Introduz um URL de LinkedIn válido (ex: https://linkedin.com/in/o-teu-perfil)', 'Enter a valid LinkedIn URL (e.g. https://linkedin.com/in/your-profile)', 'Introduce un URL de LinkedIn válido (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
     if (!selectedCountry) {
-      setError('Selecciona o teu país para resultados localizados.');
+      setError(pick('Selecciona o teu país para resultados localizados.', 'Select your country for localised results.', 'Selecciona tu país para resultados localizados.'));
       return;
     }
     if (!acceptedTerms) {
-      setError('Aceita a Política de Privacidade para continuar.');
+      setError(pick('Aceita a Política de Privacidade para continuar.', 'Accept the Privacy Policy to continue.', 'Acepta la Política de Privacidad para continuar.'));
       return;
     }
     // Validate mandatory email
@@ -1399,7 +1404,7 @@ export default function Home() {
               {voucherPaymentStatus === 'success' && voucherCode ? (
                 <div className="text-center space-y-2">
                   <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
-                  <p className="text-sm font-semibold text-foreground">Pagamento confirmado!</p>
+                  <p className="text-sm font-semibold text-foreground">{pick('Pagamento confirmado!', 'Payment confirmed!', '¡Pago confirmado!')}</p>
                   <p className="text-xs text-muted-foreground">O teu código de voucher:</p>
                   <p className="text-lg font-bold text-[#C9A961] bg-[#C9A961]/10 rounded-lg py-2 px-4 inline-block tracking-wider">{voucherCode}</p>
                   <p className="text-xs text-muted-foreground">Enviámos o código para <strong>{voucherEmail}</strong>. Usa-o na página de resultados após fazeres upload do teu CV.</p>
@@ -1440,7 +1445,7 @@ export default function Home() {
                       type="tel"
                       value={voucherPhone}
                       onChange={(e) => setVoucherPhone(e.target.value)}
-                      placeholder="Telemóvel MB Way (9xxxxxxxx)"
+                      placeholder={pick('Telemóvel MB Way (9xxxxxxxx)', 'MB Way phone (9xxxxxxxx)', 'Móvil MB Way (9xxxxxxxx)')}
                       className="px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                     />
                   </div>
@@ -1523,7 +1528,7 @@ export default function Home() {
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                 disabled={loading}
               >
-                <option value="">Selecciona o teu país...</option>
+                <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                 {countries.map(c => (
                   <option key={c.code} value={c.country}>{c.country}</option>
                 ))}
@@ -1535,7 +1540,7 @@ export default function Home() {
                   className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                   disabled={loading}
                 >
-                  <option value="">Selecciona a região (opcional)...</option>
+                  <option value="">{pick('Selecciona a região (opcional)...', 'Select region (optional)...', 'Selecciona la región (opcional)...')}</option>
                   {countryData.regions.map(r => (
                     <option key={r} value={r}>{r}</option>
                   ))}
@@ -1701,7 +1706,7 @@ export default function Home() {
                       onClick={() => setLiPaywallStep('choose')}
                       className="text-xs text-white/50 hover:text-white/80 transition-colors"
                     >
-                      ← Voltar
+                      {pick('← Voltar', '← Back', '← Volver')}
                     </button>
                     <span className="text-sm font-semibold text-[#C9A961]">
                       {pricingPlans[liPaywallPlan].name} — {pricingPlans[liPaywallPlan].price}€
@@ -1719,7 +1724,7 @@ export default function Home() {
                     type="tel"
                     value={liPaywallPhone}
                     onChange={(e) => setLiPaywallPhone(e.target.value)}
-                    placeholder="Telemóvel MB Way (9xxxxxxxx)"
+                    placeholder={pick('Telemóvel MB Way (9xxxxxxxx)', 'MB Way phone (9xxxxxxxx)', 'Móvil MB Way (9xxxxxxxx)')}
                     className="w-full px-3 py-2.5 rounded-lg border border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                   />
 
@@ -2110,14 +2115,14 @@ export default function Home() {
         <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-            <p className="text-base font-bold text-slate-800">Queres acesso regular a esta ferramenta?</p>
+            <p className="text-base font-bold text-slate-800">{pick('Queres acesso regular a esta ferramenta?', 'Want regular access to this tool?', '¿Quieres acceso regular a esta herramienta?')}</p>
           </div>
           <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.</p>
           <a
             href="https://www.share2inspire.pt/area-cliente/planos"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
           >
-            Ver planos de subscrição →
+            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
           <p className="text-xs text-slate-400 mt-3">A partir de 9,99€/mês · Cancela quando quiseres</p>
         </div>

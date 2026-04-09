@@ -17,6 +17,8 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
+import useTranslation from "@/i18n/useTranslation";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -97,13 +99,27 @@ const PRICE_DISPLAY_MEMBER_PRO = '9,99€';
 const PRICE_MEMBER_PRO = '9,99';
 const PRICE_NUM_MEMBER_PRO = 9.99;
 
-const ciHeadlines = [
+const ciHeadlinesPT = [
   { text: "Toma decisões de carreira com dados,", highlight: "não com intuição" },
   { text: "Percebe para onde o mercado está a ir", highlight: "antes de todos os outros" },
   { text: "Transforma informação em vantagem real", highlight: "na tua evolução profissional" },
 ];
+const ciHeadlinesEN = [
+  { text: "Make career decisions with data,", highlight: "not intuition" },
+  { text: "Understand where the market is heading", highlight: "before everyone else" },
+  { text: "Turn information into real advantage", highlight: "in your professional growth" },
+];
+const ciHeadlinesES = [
+  { text: "Toma decisiones de carrera con datos,", highlight: "no con intuición" },
+  { text: "Entiende hacia dónde va el mercado", highlight: "antes que todos los demás" },
+  { text: "Transforma información en ventaja real", highlight: "en tu evolución profesional" },
+];
 
 export default function CareerIntelligenceHome() {
+  const { pick, lang, localePath } = useTranslation();
+  const { symbol: CUR } = useCurrency();
+  const isPT = lang === 'pt';
+  const ciHeadlines = pick(ciHeadlinesPT, ciHeadlinesEN, ciHeadlinesES);
   useEffect(() => { document.title = "Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire"; }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % ciHeadlines.length), 4000); return () => clearInterval(t); }, []);
@@ -143,15 +159,15 @@ export default function CareerIntelligenceHome() {
   const [previewData, setPreviewData] = useState<any>(null);
 
   const loadingMessages = [
-    "A extrair o teu perfil profissional...",
-    "A mapear competências e experiência...",
-    "A analisar tendências do mercado...",
-    "A identificar oportunidades de carreira...",
-    "A comparar caminhos estratégicos...",
-    "A calcular probabilidades de sucesso...",
-    "A analisar trade-offs por caminho...",
-    "A construir recomendação final...",
-    "A finalizar o teu Career Intelligence..."
+    pick("A extrair o teu perfil profissional...", "Extracting your professional profile...", "Extrayendo tu perfil profesional..."),
+    pick("A mapear competências e experiência...", "Mapping skills and experience...", "Mapeando competencias y experiencia..."),
+    pick("A analisar tendências do mercado...", "Analysing market trends...", "Analizando tendencias del mercado..."),
+    pick("A identificar oportunidades de carreira...", "Identifying career opportunities...", "Identificando oportunidades de carrera..."),
+    pick("A comparar caminhos estratégicos...", "Comparing strategic paths...", "Comparando caminos estratégicos..."),
+    pick("A calcular probabilidades de sucesso...", "Calculating success probabilities...", "Calculando probabilidades de éxito..."),
+    pick("A analisar trade-offs por caminho...", "Analysing trade-offs per path...", "Analizando trade-offs por camino..."),
+    pick("A construir recomendação final...", "Building final recommendation...", "Construyendo recomendación final..."),
+    pick("A finalizar o teu Career Intelligence...", "Finalising your Career Intelligence...", "Finalizando tu Career Intelligence..."),
   ];
 
   useEffect(() => {
@@ -173,7 +189,7 @@ export default function CareerIntelligenceHome() {
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(isPT ? 'mbway' : 'stripe');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -192,7 +208,7 @@ export default function CareerIntelligenceHome() {
   const [discountType, setDiscountType] = useState<'coupon' | 'voucher' | null>(null);
 
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
-  const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
+  const FINAL_PRICE_DISPLAY = isPT ? FINAL_PRICE.toFixed(2).replace('.', ',') : FINAL_PRICE.toFixed(2);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -1216,7 +1232,9 @@ export default function CareerIntelligenceHome() {
                   )}
 
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Voltar</Button>
+                    <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">
+                      {pick('Voltar', 'Back', 'Volver')}
+                    </Button>
                     <Button
                       onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
                       disabled={paymentLoading}
@@ -1224,7 +1242,7 @@ export default function CareerIntelligenceHome() {
                         paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${FINAL_PRICE_DISPLAY}`}
                     </Button>
                   </div>
                 </>
@@ -1266,7 +1284,7 @@ export default function CareerIntelligenceHome() {
               {!pollingExpired && <p className="text-xs text-muted-foreground">A aguardar confirmação do pagamento...</p>}
               {pollingExpired && (
                 <Button onClick={handleManualCheck} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />Já paguei — verificar novamente
+                  <CheckCircle2 className="w-4 h-4 mr-2" />{pick('Já paguei — verificar novamente', 'I already paid — verify again', 'Ya pagué — verificar de nuevo')}
                 </Button>
               )}
             </div>
