@@ -933,6 +933,7 @@ function renderFunnel() {
     let data = filterByLang(allAnalyses, globalLang);
     data = filterByPeriod(data, funnelPeriodDays);
 
+    const lrFiltered = filterByPeriod(allLinkedinRoaster, funnelPeriodDays);
     const studentTotal = data.filter(a => isStudentPack(a)).length;
     const studentPaidCount = data.filter(a => isStudentPack(a) && getAnalysisType(a) !== 'free').length;
     const freeCount   = data.filter(a => isCvAnalyser(a) && getAnalysisType(a) === 'free').length;
@@ -1038,7 +1039,7 @@ function renderFunnel() {
         const cvRev = data.filter(a => isCvAnalyser(a) && getAnalysisType(a) === 'paid').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const cpRev = data.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const ciRevFunnel = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-        const lrRev = lrPeriod.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+        const lrRev = lrFiltered.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
         const vRev = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
         const total = studentRev + cvRev + cpRev + ciRevFunnel + lrRev + vRev;
 
