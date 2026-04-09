@@ -60,6 +60,9 @@ function usePageTitle() {
       '/es/linkedin-roaster': 'Share2Inspire — LinkedIn Roaster (ES)',
       '/es/student-pack': 'Share2Inspire — Student Pack (ES)',
       '/es/bundle': 'Share2Inspire — Bundle (ES)',
+      '/es/pages/knowledge': 'Share2Inspire — Knowledge Hub (ES)',
+      '/es/pages/services': 'Share2Inspire — Services (ES)',
+      '/es': 'Share2Inspire (ES)',
       '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
@@ -257,6 +260,42 @@ function AppRouter() {
         <Switch>
           <Route path={"/"} component={CareerPathHome} />
           <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Knowledge Hub: /es/pages/knowledge
+  if (pathname.startsWith('/es/pages/knowledge')) {
+    return (
+      <Router base="/es/pages/knowledge">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Services: /es/pages/services
+  if (pathname.startsWith('/es/pages/services')) {
+    return (
+      <Router base="/es/pages/services">
+        <Switch>
+          <Route path="/" component={ServicosPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Landing Page: /es (exact match only)
+  if (pathname === '/es' || pathname === '/es/') {
+    return (
+      <Router base="/es">
+        <Switch>
+          <Route path="/" component={LandingPage} />
           <Route component={NotFound} />
         </Switch>
       </Router>
