@@ -7,3 +7,4 @@
  */
 export { useTranslation, localePath, switchLangUrl } from './useTranslation';
 export { t, pick, getLang, getCountry, getRegion, type Lang } from './translations';
+// i18n Phase 3: unified header
