@@ -360,7 +360,7 @@ export default function LinkedInRoasterHome() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeader activePage="linkedin-roaster" langToggleHref="/en/linkedin-roaster" />
+      <S2IHeader activePage="linkedin-roaster" />
       <PromoBanner />
 
       {/* Price Bar */}

@@ -184,7 +184,7 @@ export default function StudentPackResults() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <S2IHeader activePage="estudante" langToggleHref="/en/student-pack" />
+      <S2IHeader activePage="estudante" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
         {/* Action buttons */}

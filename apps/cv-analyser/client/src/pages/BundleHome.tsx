@@ -587,7 +587,7 @@ export default function BundleHome() {
   /* ─── RENDER ─── */
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <S2IHeader activePage="bundle" langToggleHref="/en/bundle" />
+      <S2IHeader activePage="bundle" />
       <PromoBanner />
 
       {/* ─── HERO ─── */}

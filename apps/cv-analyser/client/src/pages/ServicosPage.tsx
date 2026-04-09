@@ -209,7 +209,7 @@ export default function ServicosPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <S2IHeader activePage="servicos" langToggleHref="/en/pages/services" />
+      <S2IHeader activePage="servicos" />
       <PromoBanner />
 
       {/* ─── HERO ─── */}

@@ -588,7 +588,7 @@ export default function CareerPathHome() {
     <div className="min-h-screen bg-background">
       {/* Bundle banner removed — one page, one product, one decision */}
 
-      <S2IHeader activePage="career-path" langToggleHref="/en/career-path" />
+      <S2IHeader activePage="career-path" />
       <PromoBanner />
 
       <main className="max-w-4xl mx-auto px-6 py-16">

@@ -654,7 +654,7 @@ export default function CareerIntelligenceHome() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeader activePage="career-intelligence" langToggleHref="/en/career-intelligence" />
+      <S2IHeader activePage="career-intelligence" />
       <PromoBanner />
 
       <main className="max-w-4xl mx-auto px-6 py-16">

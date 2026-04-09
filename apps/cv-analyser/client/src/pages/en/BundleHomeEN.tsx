@@ -14,7 +14,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
-import S2IHeaderEN from "@/components/S2IHeaderEN";
+import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -400,7 +400,7 @@ export default function BundleHomeEN() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <S2IHeaderEN activePage="bundle" langToggleHref="/bundle" />
+      <S2IHeader activePage="bundle" />
 
       {step === 'hero' && (
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">

@@ -15,7 +15,7 @@ import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
-import S2IHeaderEN from "@/components/S2IHeaderEN";
+import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -418,7 +418,7 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeaderEN activePage="career-path" langToggleHref="/career-path" />
+      <S2IHeader activePage="career-path" />
 
       <main className="max-w-4xl mx-auto px-6 py-12">
 

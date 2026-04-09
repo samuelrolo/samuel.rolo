@@ -113,7 +113,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <S2IHeader activePage="home" langToggleHref="/en" />
+      <S2IHeader activePage="home" />
       <PromoBanner />
 
       {/* ─── HERO ─── */}

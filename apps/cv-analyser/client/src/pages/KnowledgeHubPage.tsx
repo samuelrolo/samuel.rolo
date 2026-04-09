@@ -270,7 +270,7 @@ export default function KnowledgeHubPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <S2IHeader activePage="conhecimento" langToggleHref="/en/pages/knowledge" />
+      <S2IHeader activePage="knowledge-hub" />
       <PromoBanner />
 
       {/* ─── HERO ─── */}

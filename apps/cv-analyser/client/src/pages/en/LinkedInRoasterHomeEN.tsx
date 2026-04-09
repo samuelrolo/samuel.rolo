@@ -6,7 +6,7 @@ import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Spa
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { sendConversion } from "@/lib/gtag";
-import S2IHeaderEN from "@/components/S2IHeaderEN";
+import S2IHeader from "@/components/S2IHeader";
 import S2IFooterEN from "@/components/S2IFooterEN";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
@@ -229,7 +229,7 @@ export default function LinkedInRoasterHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeaderEN activePage="linkedin-roaster" langToggleHref="/linkedin-roaster" />
+      <S2IHeader activePage="linkedin-roaster" />
 
       {/* Price Bar */}
       <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] text-white py-2.5 px-4 text-center text-sm">

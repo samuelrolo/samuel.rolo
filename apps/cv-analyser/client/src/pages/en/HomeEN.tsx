@@ -18,7 +18,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
-import S2IHeaderEN from "@/components/S2IHeaderEN";
+import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -969,7 +969,7 @@ export default function HomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeaderEN activePage="cv-analyser" langToggleHref="/cv-analyser" />
+      <S2IHeader activePage="cv-analyser" />
 
       {/* Bundle Banner — Value-focused, no explicit price */}
       <a href="/en/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">

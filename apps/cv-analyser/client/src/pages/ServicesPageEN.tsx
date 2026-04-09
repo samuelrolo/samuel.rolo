@@ -2,7 +2,7 @@
 // Sections: Hero, Stats, Phase 1 (Diagnose), Phase 2 (Decide), FAQ, CTA Final, Testimonials
 import { useState, useEffect } from "react";
 import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, ChevronDown, Star, Check, ArrowRight } from "lucide-react";
-import S2IHeaderEN from "@/components/S2IHeaderEN";
+import S2IHeader from "@/components/S2IHeader";
 import S2IFooterEN from "@/components/S2IFooterEN";
 
 /* ─── DATA ─── */
@@ -208,7 +208,7 @@ export default function ServicesPageEN() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <S2IHeaderEN />
+      <S2IHeader  />
 
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-16 px-6 text-center">

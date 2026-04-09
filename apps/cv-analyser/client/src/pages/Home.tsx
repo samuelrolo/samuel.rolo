@@ -1071,7 +1071,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <S2IHeader activePage="cv-analyser" langToggleHref="/en/cv-analyser" />
+      <S2IHeader activePage="cv-analyser" />
 
       {/* Bundle Banner — Value-focused, no explicit price */}
       <a href="/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">

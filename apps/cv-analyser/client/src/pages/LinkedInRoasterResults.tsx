@@ -221,7 +221,7 @@ export default function LinkedInRoasterResults() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <S2IHeader activePage="linkedin-roaster" langToggleHref="/en/linkedin-roaster" />
+      <S2IHeader activePage="linkedin-roaster" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
         {/* Action buttons */}
