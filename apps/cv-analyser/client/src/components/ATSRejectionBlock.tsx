@@ -1,6 +1,7 @@
 // ATSRejectionBlock.tsx - Estilo Share2Inspire
 import { AlertTriangle, Lock, Info, CheckCircle, ShieldAlert, TrendingDown } from "lucide-react";
 import { useState } from "react";
+import { t, pick, getLang } from '../pages/en/translations';
 
 interface ATSRejectionBlockProps {
   rejectionRate: number;
@@ -15,23 +16,23 @@ interface ATSRejectionBlockProps {
 const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedFactors, atsSystems, quickFixes, isEN = false }: ATSRejectionBlockProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const severity = rejectionRate > 60
-    ? (isEN ? 'High' : 'Elevada')
+    ? (t('elevada'))
     : rejectionRate > 40
-      ? (isEN ? 'Moderate' : 'Moderada')
-      : (isEN ? 'Low' : 'Baixa');
+      ? (t('moderada'))
+      : (t('baixa'));
 
   const visibleFactor = topFactor || (
     rejectionRate > 60 
-      ? (isEN ? 'CV structure makes automatic reading by ATS systems difficult' : 'Estrutura do CV dificulta a leitura automática por sistemas ATS')
+      ? (t('estrutura_do_cv_dificulta_a'))
       : rejectionRate > 40
-        ? (isEN ? 'Some relevant keywords missing for automatic filters' : 'Algumas palavras-chave relevantes em falta para filtros automáticos')
-        : (isEN ? 'Good compatibility with most screening systems' : 'Boa compatibilidade com a maioria dos sistemas de triagem')
+        ? (t('algumas_palavraschave_relevantes_em_falta'))
+        : (t('boa_compatibilidade_com_a_maioria'))
   );
 
   const getDetailedFactors = (): string[] => {
     if (detailedFactors && detailedFactors.length > 0) return detailedFactors;
     if (rejectionRate > 60) {
-      return isEN ? [
+      return lang === 'en' ? [
         "Complex formatting with tables or columns that confuse ATS parsers",
         "Lack of sector-specific keywords in the skills section",
         "Non-standard headers or sections that ATS cannot recognise",
@@ -43,7 +44,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         "Uso excessivo de gráficos ou elementos visuais não legíveis por ATS",
       ];
     } else if (rejectionRate > 40) {
-      return isEN ? [
+      return lang === 'en' ? [
         "Some sector keywords could be more explicit",
         "Date or location format may vary between ATS systems",
         "Skills section could be more detailed for automatic matching",
@@ -53,7 +54,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         "Secção de competências poderia ser mais detalhada para matching automático",
       ];
     }
-    return isEN ? [
+    return lang === 'en' ? [
       "Clear and well-organised structure for automatic reading",
       "Good density of relevant keywords for the sector",
       "Format compatible with most screening systems",
@@ -67,30 +68,30 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
   const getATSSystems = () => {
     if (rejectionRate > 60) {
       return [
-        { name: "Workday", compat: isEN ? "Low" : "Baixa", color: "text-red-500" },
-        { name: "SAP SF", compat: isEN ? "Low" : "Baixa", color: "text-red-500" },
-        { name: "Taleo", compat: isEN ? "Moderate" : "Moderada", color: "text-yellow-500" },
-        { name: "Greenhouse", compat: isEN ? "Moderate" : "Moderada", color: "text-yellow-500" },
+        { name: "Workday", compat: t('baixa'), color: "text-red-500" },
+        { name: "SAP SF", compat: t('baixa'), color: "text-red-500" },
+        { name: "Taleo", compat: t('moderada'), color: "text-yellow-500" },
+        { name: "Greenhouse", compat: t('moderada'), color: "text-yellow-500" },
       ];
     } else if (rejectionRate > 40) {
       return [
-        { name: "Workday", compat: isEN ? "Moderate" : "Moderada", color: "text-yellow-500" },
-        { name: "SAP SF", compat: isEN ? "Good" : "Boa", color: "text-green-500" },
-        { name: "Taleo", compat: isEN ? "Moderate" : "Moderada", color: "text-yellow-500" },
-        { name: "Greenhouse", compat: isEN ? "Good" : "Boa", color: "text-green-500" },
+        { name: "Workday", compat: t('moderada'), color: "text-yellow-500" },
+        { name: "SAP SF", compat: t('boa'), color: "text-green-500" },
+        { name: "Taleo", compat: t('moderada'), color: "text-yellow-500" },
+        { name: "Greenhouse", compat: t('boa'), color: "text-green-500" },
       ];
     }
     return [
-      { name: "Workday", compat: isEN ? "Good" : "Boa", color: "text-green-500" },
-      { name: "SAP SF", compat: isEN ? "Good" : "Boa", color: "text-green-500" },
-      { name: "Taleo", compat: isEN ? "Good" : "Boa", color: "text-green-500" },
-      { name: "Greenhouse", compat: isEN ? "Excellent" : "Excelente", color: "text-green-600" },
+      { name: "Workday", compat: t('boa'), color: "text-green-500" },
+      { name: "SAP SF", compat: t('boa'), color: "text-green-500" },
+      { name: "Taleo", compat: t('boa'), color: "text-green-500" },
+      { name: "Greenhouse", compat: t('excelente_2'), color: "text-green-600" },
     ];
   };
 
   const getReductionTips = (): string[] => {
     if (rejectionRate > 60) {
-      return isEN ? [
+      return lang === 'en' ? [
         "Convert CV to single-column format without tables",
         "Add a 'Key Skills' section with sector-specific terms",
         "Use standard headers: 'Professional Experience', 'Education', 'Skills'",
@@ -102,7 +103,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         "Remover gráficos e substituir por texto descritivo",
       ];
     } else if (rejectionRate > 40) {
-      return isEN ? [
+      return lang === 'en' ? [
         "Enrich the skills section with sector-specific technical terms",
         "Standardise date format (MM/YYYY)",
         "Add keywords from target job descriptions",
@@ -112,7 +113,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         "Adicionar palavras-chave da descrição de funções alvo",
       ];
     }
-    return isEN ? [
+    return lang === 'en' ? [
       "Keep the current structure — it is well optimised",
       "Customise keywords for each specific application",
       "Regularly update with new sector terms",
@@ -131,7 +132,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <p className="text-xs font-semibold tracking-wider text-red-500">{isEN ? 'ATS AUTOMATIC REJECTION ESTIMATE' : 'ESTIMATIVA DE REJEIÇÃO AUTOMÁTICA EM ATS'}</p>
+            <p className="text-xs font-semibold tracking-wider text-red-500">{t('estimativa_de_rejeio_automtica_em')}</p>
             <div className="relative">
               <button
                 onMouseEnter={() => setShowTooltip(true)}
@@ -143,8 +144,8 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
               </button>
               {showTooltip && (
                 <div className="absolute left-0 top-6 z-50 w-72 p-3 rounded-lg bg-foreground text-background text-xs leading-relaxed shadow-xl">
-                  <p className="font-semibold mb-1">{isEN ? 'What is ATS?' : 'O que é o ATS?'}</p>
-                  <p>{isEN ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.'}</p>
+                  <p className="font-semibold mb-1">{t('o_que_o_ats')}</p>
+                  <p>{lang === 'en' ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.' : lang === 'es' ? 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.'}</p>
                   <div className="absolute -top-1.5 left-3 w-3 h-3 bg-foreground rotate-45" />
                 </div>
               )}
@@ -152,14 +153,14 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
           </div>
           <div className="flex items-baseline gap-2 flex-wrap">
             <span className="text-4xl font-bold text-foreground">{rejectionRate}%</span>
-            <span className="text-sm text-muted-foreground">{isEN ? 'probability' : 'de probabilidade'}</span>
+            <span className="text-sm text-muted-foreground">{t('de_probabilidade')}</span>
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
               rejectionRate > 60 ? 'bg-red-500/10 text-red-500' : 
               rejectionRate > 40 ? 'bg-yellow-500/10 text-yellow-500' : 
               'bg-green-500/10 text-green-500'
             }`}>{severity}</span>
           </div>
-          <p className="text-xs text-muted-foreground">{isEN ? 'Based on parsing, keywords and structure.' : 'Com base em parsing, palavras-chave e estrutura.'}</p>
+          <p className="text-xs text-muted-foreground">{t('com_base_em_parsing_palavraschave')}</p>
         </div>
       </div>
 
@@ -178,7 +179,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
         <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/10">
           <p className="text-sm text-foreground flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-            <span>{isEN ? 'We detected a factor that is penalising your CV in ATS systems.' : 'Detetámos um fator que está a penalizar o teu CV nos sistemas ATS.'}</span>
+            <span>{t('detetmos_um_fator_que_est')}</span>
           </p>
         </div>
       )}
@@ -212,7 +213,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
           <div className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
               <ShieldAlert className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Factors affecting compatibility:' : 'Factores que afectam a compatibilidade:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('factores_que_afectam_a_compatibilidade')}</p>
             </div>
             {getDetailedFactors().map((f, i) => (
               <div key={i} className="p-2.5 rounded-lg bg-muted/30 border border-border">
@@ -228,7 +229,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
           <div className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
               <Info className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Compatibility by ATS system:' : 'Compatibilidade por sistema ATS:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('compatibilidade_por_sistema_ats')}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {getATSSystems().map((s, i) => (
@@ -244,7 +245,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
           <div className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
               <TrendingDown className="w-4 h-4 text-green-500" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'How to reduce this rate in 48h:' : 'Como reduzir esta taxa em 48h:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('como_reduzir_esta_taxa_em')}</p>
             </div>
             {getReductionTips().map((t, i) => (
               <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -257,7 +258,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
       ) : (
         <div className="p-3 rounded-lg bg-[#C9A961]/5 border border-[#C9A961]/20 flex items-center gap-2">
           <Lock className="w-3.5 h-3.5 text-[#C9A961]" />
-          <span className="text-xs text-[#C9A961] font-medium">{isEN ? 'See the detail in the full report' : 'V\u00ea o detalhe no relat\u00f3rio completo'}</span>
+          <span className="text-xs text-[#C9A961] font-medium">{t('vu00ea_o_detalhe_no_relatu00f3rio')}</span>
         </div>
       )}
     </div>

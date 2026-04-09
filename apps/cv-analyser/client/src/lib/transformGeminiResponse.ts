@@ -42,17 +42,17 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
 
     // ─── 2. QUADRANTS — prefer Gemini-provided quadrants ─────────────────
     const titleMapping: Record<string, string> = {
-      'structure': isEN ? 'Structure' : 'Estrutura',
-      'estrutura': isEN ? 'Structure' : 'Estrutura',
-      'content': isEN ? 'Content' : 'Conteúdo',
-      'conteúdo': isEN ? 'Content' : 'Conteúdo',
-      'conteudo': isEN ? 'Content' : 'Conteúdo',
-      'education': isEN ? 'Education' : 'Formação',
-      'formação': isEN ? 'Education' : 'Formação',
-      'formacao': isEN ? 'Education' : 'Formação',
-      'experience': isEN ? 'Experience' : 'Experiência',
-      'experiência': isEN ? 'Experience' : 'Experiência',
-      'experiencia': isEN ? 'Experience' : 'Experiência',
+      'structure': t('estrutura'),
+      'estrutura': t('estrutura'),
+      'content': t('contedo'),
+      'conteúdo': t('contedo'),
+      'conteudo': t('contedo'),
+      'education': t('formao'),
+      'formação': t('formao'),
+      'formacao': t('formao'),
+      'experience': t('experincia'),
+      'experiência': t('experincia'),
+      'experiencia': t('experincia'),
     };
 
     if (Array.isArray(analysis.quadrants) && analysis.quadrants.length >= 3) {
@@ -74,7 +74,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
           title: normalizedTitle,
           score: Math.min(100, Math.max(0, score)),
           benchmark: Math.min(100, Math.max(0, benchmark)),
-          impactPhrase: q.impactPhrase || q.impact_phrase || (isEN ? `Analysis of ${normalizedTitle}` : `Análise de ${normalizedTitle}`),
+          impactPhrase: q.impactPhrase || q.impact_phrase || (pick(`Análise de ${normalizedTitle}`, `Analysis of ${normalizedTitle}`, `Análise de ${normalizedTitle}`)),
           strengths: Array.isArray(q.strengths) ? q.strengths.slice(0, 3) : undefined,
           weaknesses: Array.isArray(q.weaknesses) ? q.weaknesses.slice(0, 3) : undefined,
           detailedFeedback: q.detailed_feedback || q.detailedFeedback || undefined,
@@ -83,7 +83,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
       // Recalculate overallScore from quadrant scores (weighted average)
       if (quadrants.length === 4) {
         const weights = [0.25, 0.30, 0.15, 0.30]; // Structure, Content, Education, Experience
-        const order = isEN ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
+        const order = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
         const sorted = [...quadrants].sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title));
         let weightedSum = 0;
         for (let i = 0; i < sorted.length; i++) {
@@ -163,7 +163,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
     }
 
     // Sort quadrants in standard order
-    const sortOrder = isEN ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
+    const sortOrder = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
     quadrants.sort((a: any, b: any) => sortOrder.indexOf(a.title) - sortOrder.indexOf(b.title));
 
     // ─── 2b. OVERRIDE: If Gemini returned atsRejectionRate directly, use it ───
@@ -541,6 +541,7 @@ function computeATSDeepScan(
   cvProblems: any[],
   isEN: boolean = false
 ) {
+  const lang = getLang();
   // ── 1. KEYWORD ANALYSIS ──
   const kws: { keyword: string; status: 'found' | 'missing' | 'partial'; importance: 'high' | 'medium' | 'low'; context?: string; suggestion?: string }[] = [];
 
@@ -553,7 +554,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'found',
         importance: i < 3 ? 'high' : i < 6 ? 'medium' : 'low',
-        context: isEN ? 'Found in CV' : 'Encontrada no CV',
+        context: t('encontrada_no_cv'),
         suggestion: undefined,
       });
     });
@@ -562,7 +563,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'missing',
         importance: i < 2 ? 'high' : i < 4 ? 'medium' : 'low',
-        suggestion: isEN ? `Add "${kw}" to the skills or relevant experience section` : `Adicionar "${kw}" na secção de competências ou experiência relevante`,
+        suggestion: pick(`Adicionar "${kw}" na secção de competências ou experiência relevante`, `Add "${kw}" to the skills or relevant experience section`, `Adicionar "${kw}" na secção de competências ou experiência relevante`),
       });
     });
   } else {
@@ -577,7 +578,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'found',
         importance: i < 2 ? 'high' : i < 4 ? 'medium' : 'low',
-        context: isEN ? 'Identified in CV' : 'Identificada no CV',
+        context: t('identificada_no_cv'),
       });
     });
     // Add missing keywords based on common ATS requirements
@@ -589,7 +590,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'missing',
         importance: i === 0 ? 'high' : 'medium',
-        suggestion: isEN ? `Reformulate to include: ${kw}` : `Reformular para incluir: ${kw}`,
+        suggestion: pick(`Reformular para incluir: ${kw}`, `Reformulate to include: ${kw}`, `Reformular para incluir: ${kw}`),
       });
     });
     // Add partial matches from cv_problems
@@ -615,56 +616,56 @@ function computeATSDeepScan(
   // Check: Tables/Columns
   const hasTableIssue = factors.some((f: string) => /tabela|coluna|table|column|layout/i.test(f));
   formatChecks.push({
-    check: isEN ? 'Tables and Columns' : 'Tabelas e Colunas',
+    check: t('tabelas_e_colunas'),
     status: hasTableIssue ? 'fail' : 'pass',
     detail: hasTableIssue
-      ? (isEN ? 'CV contains tables or columns that may not be read by ATS' : 'CV contém tabelas ou colunas que podem não ser lidas por ATS')
-      : (isEN ? 'No problematic tables or columns detected' : 'Sem tabelas ou colunas problemáticas detectadas'),
-    fix: hasTableIssue ? (isEN ? 'Convert to linear format without tables or columns' : 'Converter para formato linear sem tabelas nem colunas') : undefined,
+      ? (t('cv_contm_tabelas_ou_colunas'))
+      : (t('sem_tabelas_ou_colunas_problemticas')),
+    fix: hasTableIssue ? (t('converter_para_formato_linear_sem')) : undefined,
   });
 
   // Check: Headers/Section Titles
   const hasHeaderIssue = factors.some((f: string) => /header|cabeçalho|secção|section|título/i.test(f));
   formatChecks.push({
-    check: isEN ? 'Headers and Sections' : 'Cabeçalhos e Secções',
+    check: t('cabealhos_e_seces'),
     status: hasHeaderIssue ? 'warning' : 'pass',
     detail: hasHeaderIssue
-      ? (isEN ? 'Headers may not follow ATS standard conventions' : 'Cabeçalhos podem não seguir convenções ATS standard')
-      : (isEN ? 'Headers follow standard conventions' : 'Cabeçalhos seguem convenções standard'),
-    fix: hasHeaderIssue ? (isEN ? 'Use standard titles: Professional Experience, Education, Skills' : 'Usar títulos standard: Experiência Profissional, Formação, Competências') : undefined,
+      ? (t('cabealhos_podem_no_seguir_convenes'))
+      : (t('cabealhos_seguem_convenes_standard')),
+    fix: hasHeaderIssue ? (t('usar_ttulos_standard_experincia_profissional')) : undefined,
   });
 
   // Check: Font & Encoding
   const hasFontIssue = factors.some((f: string) => /font|fonte|encoding|caracter|symbol|ícone|icon/i.test(f));
   formatChecks.push({
-    check: isEN ? 'Fonts and Characters' : 'Fontes e Caracteres',
+    check: t('fontes_e_caracteres'),
     status: hasFontIssue ? 'warning' : 'pass',
     detail: hasFontIssue
-      ? (isEN ? 'Fonts or special characters may cause parsing issues' : 'Fontes ou caracteres especiais podem causar problemas de parsing')
-      : (isEN ? 'Compatible fonts and characters' : 'Fontes e caracteres compatíveis'),
-    fix: hasFontIssue ? (isEN ? 'Use standard fonts (Arial, Calibri, Times New Roman) and avoid icons/symbols' : 'Usar fontes standard (Arial, Calibri, Times New Roman) e evitar ícones/símbolos') : undefined,
+      ? (t('fontes_ou_caracteres_especiais_podem'))
+      : (t('fontes_e_caracteres_compatveis')),
+    fix: hasFontIssue ? (t('usar_fontes_standard_arial_calibri')) : undefined,
   });
 
   // Check: Chronological Order
   const hasOrderIssue = factors.some((f: string) => /cronológ|chronolog|ordem|order|data|date/i.test(f));
   formatChecks.push({
-    check: isEN ? 'Chronological Order' : 'Ordem Cronológica',
+    check: t('ordem_cronolgica'),
     status: hasOrderIssue ? 'warning' : 'pass',
     detail: hasOrderIssue
-      ? (isEN ? 'Experience order may not be in reverse chronological order' : 'A ordem das experiências pode não estar em cronologia inversa')
-      : (isEN ? 'Reverse chronological format detected' : 'Formato cronológico inverso detectado'),
-    fix: hasOrderIssue ? (isEN ? 'Organise experiences from most recent to oldest' : 'Organizar experiências da mais recente para a mais antiga') : undefined,
+      ? (t('a_ordem_das_experincias_pode'))
+      : (t('formato_cronolgico_inverso_detectado')),
+    fix: hasOrderIssue ? (t('organizar_experincias_da_mais_recente')) : undefined,
   });
 
   // Check: File Format
   const hasFormatIssue = factors.some((f: string) => /pdf|formato|format|imagem|image|scan/i.test(f));
   formatChecks.push({
-    check: isEN ? 'File Format' : 'Formato do Ficheiro',
+    check: t('formato_do_ficheiro'),
     status: hasFormatIssue ? 'warning' : 'pass',
     detail: hasFormatIssue
-      ? (isEN ? 'File format may not be ideal for ATS' : 'O formato do ficheiro pode não ser ideal para ATS')
-      : (isEN ? 'PDF with selectable text (ATS-friendly)' : 'PDF com texto seleccionável (ATS-friendly)'),
-    fix: hasFormatIssue ? (isEN ? 'Save as PDF with selectable text (not scanned)' : 'Guardar como PDF com texto seleccionável (não digitalizado)') : undefined,
+      ? (t('o_formato_do_ficheiro_pode'))
+      : (t('pdf_com_texto_seleccionvel_atsfriendly')),
+    fix: hasFormatIssue ? (t('guardar_como_pdf_com_texto')) : undefined,
   });
 
   // Check: Keywords density
@@ -672,12 +673,10 @@ function computeATSDeepScan(
   const totalCount = kws.length;
   const keywordDensity = totalCount > 0 ? foundCount / totalCount : 0;
   formatChecks.push({
-    check: isEN ? 'Keyword Density' : 'Densidade de Keywords',
+    check: t('densidade_de_keywords'),
     status: keywordDensity >= 0.7 ? 'pass' : keywordDensity >= 0.4 ? 'warning' : 'fail',
-    detail: isEN
-      ? `${foundCount} of ${totalCount} relevant keywords found (${Math.round(keywordDensity * 100)}%)`
-      : `${foundCount} de ${totalCount} keywords relevantes encontradas (${Math.round(keywordDensity * 100)}%)`,
-    fix: keywordDensity < 0.7 ? (isEN ? 'Add missing keywords to skills and experience sections' : 'Adicionar keywords em falta nas secções de competências e experiência') : undefined,
+    detail: pick(`${foundCount} de ${totalCount} keywords relevantes encontradas (${Math.round(keywordDensity * 100)}%)`, `${foundCount} of ${totalCount} relevant keywords found (${Math.round(keywordDensity * 100)}%)`, `${foundCount} de ${totalCount} keywords relevantes encontradas (${Math.round(keywordDensity * 100)}%)`),
+    fix: keywordDensity < 0.7 ? (t('adicionar_keywords_em_falta_nas')) : undefined,
   });
 
   // ── 3. SCORES ──

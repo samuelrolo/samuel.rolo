@@ -54,6 +54,12 @@ function usePageTitle() {
       '/en/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/en/career-path': 'Share2Inspire — Career Path',
       '/en/cv-analyser': 'Share2Inspire — CV Analyser (EN)',
+      '/es/career-intelligence': 'Share2Inspire — Career Intelligence (ES)',
+      '/es/career-path': 'Share2Inspire — Career Path (ES)',
+      '/es/cv-analyser': 'Share2Inspire — CV Analyser (ES)',
+      '/es/linkedin-roaster': 'Share2Inspire — LinkedIn Roaster (ES)',
+      '/es/student-pack': 'Share2Inspire — Student Pack (ES)',
+      '/es/bundle': 'Share2Inspire — Bundle (ES)',
       '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
@@ -181,6 +187,88 @@ function AppRouter() {
       <Router base="/en/cv-analyser">
         <Switch>
           <Route path={"/"} component={HomeEN} />
+          <Route path={"/results"} component={Results} />
+          <Route path={"/test"} component={TestData} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ─── Spanish Routes (ES) ───
+  // ES routes reuse PT Home components; getLang() detects /es/ in pathname
+  // Results pages already use t() with ES translations
+
+  // ES Student Pack: /es/student-pack
+  if (pathname.startsWith('/es/student-pack')) {
+    return (
+      <Router base="/es/student-pack">
+        <Switch>
+          <Route path={"/"} component={StudentPackHome} />
+          <Route path={"/results"} component={StudentPackResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES LinkedIn Roaster: /es/linkedin-roaster
+  if (pathname.startsWith('/es/linkedin-roaster')) {
+    return (
+      <Router base="/es/linkedin-roaster">
+        <Switch>
+          <Route path={"/"} component={LinkedInRoasterHome} />
+          <Route path={"/results"} component={LinkedInRoasterResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Bundle: /es/bundle
+  if (pathname.startsWith('/es/bundle')) {
+    return (
+      <Router base="/es/bundle">
+        <Switch>
+          <Route path={"/"} component={BundleHome} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Career Intelligence: /es/career-intelligence
+  if (pathname.startsWith('/es/career-intelligence')) {
+    return (
+      <Router base="/es/career-intelligence">
+        <Switch>
+          <Route path={"/"} component={CareerIntelligenceHome} />
+          <Route path={"/results"} component={CareerIntelligenceResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES Career Path: /es/career-path
+  if (pathname.startsWith('/es/career-path')) {
+    return (
+      <Router base="/es/career-path">
+        <Switch>
+          <Route path={"/"} component={CareerPathHome} />
+          <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ES CV Analyser: /es/cv-analyser
+  if (pathname.startsWith('/es/cv-analyser') || pathname.startsWith('/es')) {
+    return (
+      <Router base="/es/cv-analyser">
+        <Switch>
+          <Route path={"/"} component={Home} />
           <Route path={"/results"} component={Results} />
           <Route path={"/test"} component={TestData} />
           <Route component={NotFound} />
