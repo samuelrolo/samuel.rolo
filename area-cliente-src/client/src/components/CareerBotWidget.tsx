@@ -56,6 +56,7 @@ interface InterviewFeedback {
 export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
   const { t, lang, setLang } = useI18n();
+  const pick = (pt: string, en: string, es: string) => lang === 'pt' ? pt : lang === 'es' ? es : en;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -355,9 +356,7 @@ export default function CareerBotWidget() {
     try {
       // Check if mediaDevices API is available (requires HTTPS)
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert(lang === 'pt'
-          ? 'O teu browser não suporta gravação de áudio. Tenta usar o Chrome ou Edge numa versão recente.'
-          : 'Your browser does not support audio recording. Try using Chrome or Edge.');
+        alert(t('bot.audioNotSupported'));
         return;
       }
       let stream: MediaStream;
@@ -366,17 +365,11 @@ export default function CareerBotWidget() {
       } catch (permErr: any) {
         console.error('Microphone permission error:', permErr);
         if (permErr.name === 'NotAllowedError' || permErr.name === 'PermissionDeniedError') {
-          alert(lang === 'pt'
-            ? 'Permissão do microfone negada. Clica no ícone do cadeado na barra de endereço e permite o acesso ao microfone.'
-            : 'Microphone permission denied. Click the lock icon in the address bar and allow microphone access.');
+          alert(t('bot.micPermDenied'));
         } else if (permErr.name === 'NotFoundError') {
-          alert(lang === 'pt'
-            ? 'Nenhum microfone encontrado. Verifica se tens um microfone ligado ao dispositivo.'
-            : 'No microphone found. Check that a microphone is connected to your device.');
+          alert(t('bot.micNotFound'));
         } else {
-          alert(lang === 'pt'
-            ? `Erro ao aceder ao microfone: ${permErr.message || permErr.name}. Verifica as permissões do browser.`
-            : `Error accessing microphone: ${permErr.message || permErr.name}. Check browser permissions.`);
+          alert(pick(`Erro ao aceder ao microfone: ${permErr.message || permErr.name}. Verifica as permissões do browser.`, `Error accessing microphone: ${permErr.message || permErr.name}. Check browser permissions.`, `Error al acceder al micrófono: ${permErr.message || permErr.name}. Verifica los permisos del navegador.`));
         }
         return;
       }
@@ -402,9 +395,7 @@ export default function CareerBotWidget() {
       setMockRecording(true);
     } catch (err: any) {
       console.error('Microphone/MediaRecorder error:', err);
-      alert(lang === 'pt'
-        ? `Erro ao iniciar a gravação: ${err.message || 'erro desconhecido'}. Tenta usar o Chrome.`
-        : `Error starting recording: ${err.message || 'unknown error'}. Try using Chrome.`);
+      alert(pick(`Erro ao iniciar a gravação: ${err.message || 'erro desconhecido'}. Tenta usar o Chrome.`, `Error starting recording: ${err.message || 'unknown error'}. Try using Chrome.`, `Error al iniciar la grabación: ${err.message || 'error desconocido'}. Intenta usar Chrome.`));
     }
   };
 
@@ -495,23 +486,30 @@ export default function CareerBotWidget() {
     if (!company.trim() || !role.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
     
-    const msg = lang === 'pt'
-      ? `Carta de apresentação em PT-PT. Candidato: ${profileName}. Empresa: ${company}. Função: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
+    const msg = pick(
+      `Carta de apresentação em PT-PT. Candidato: ${profileName}. Empresa: ${company}. Função: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
 
 Estrutura: saudação formal personalizada → abertura com conhecimento da empresa → 2-3 realizações quantificáveis alinhadas com a função → fit cultural (porquê esta empresa) → fecho com call-to-action → despedida.
 Tom: profissional com personalidade, confiante, verbos de ação fortes, PT-PT rigoroso.
 Proibido: "Venho por este meio", linguagem genérica, repetir CV. Máx 400 palavras. Incluir dados quantificáveis.
-Gera APENAS a carta.`
-      : `Cover letter in English. Candidate: ${profileName}. Company: ${company}. Role: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notes: ${coverLetterNotes}.` : ''}
+Gera APENAS a carta.`,
+      `Cover letter in English. Candidate: ${profileName}. Company: ${company}. Role: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notes: ${coverLetterNotes}.` : ''}
 
 Structure: personalised formal greeting → opening with company knowledge → 2-3 quantifiable achievements aligned with the role → cultural fit (why this company) → closing with call-to-action → sign-off.
 Tone: professional with personality, confident, strong action verbs.
 Forbidden: "I am writing to", generic language, repeating CV. Max 400 words. Include quantifiable data.
-Generate ONLY the letter.`;
+Generate ONLY the letter.`,
+      `Carta de presentación en español. Candidato: ${profileName}. Empresa: ${company}. Puesto: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
 
-    const display = lang === 'pt'
-      ? `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`
-      : `✉️ Generate cover letter for ${role} at ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`;
+Estructura: saludo formal personalizado → apertura con conocimiento de la empresa → 2-3 logros cuantificables alineados con el puesto → encaje cultural (por qué esta empresa) → cierre con call-to-action → despedida.
+Tono: profesional con personalidad, seguro, verbos de acción fuertes.
+Prohibido: "Me dirijo a usted", lenguaje genérico, repetir CV. Máx 400 palabras. Incluir datos cuantificables.
+Genera SOLO la carta.`);
+
+    const display = pick(
+      `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`,
+      `✉️ Generate cover letter for ${role} at ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`,
+      `✉️ Generar carta de presentación para ${role} en ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`);
     setView('chat');
     sendMessage(msg, display);
   };
@@ -521,23 +519,30 @@ Generate ONLY the letter.`;
     if (!netRecipient.trim() || !netPurpose.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
     
-    const msg = lang === 'pt'
-      ? `E-mail de networking em PT-PT. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
+    const msg = pick(
+      `E-mail de networking em PT-PT. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
 
 Estrutura: assunto curto e específico → saudação → referência concreta ao trabalho do destinatário → motivo do contacto direto → pedido específico (15min conversa, conselho) → facilitar resposta → assinatura.
 Tom: respeitoso sem ser subserviente, direto, valor mútuo, autêntico, PT-PT rigoroso.
 Proibido: "Espero que o encontre bem", ser vago, pedir desculpa por contactar. Máx 200 palavras no corpo. Incluir razão concreta para o contacto.
-Gera APENAS o e-mail com assunto.`
-      : `Networking email in English. From: ${profileName}. To: ${netRecipient}. Purpose: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Context: ${netNotes}.` : ''}
+Gera APENAS o e-mail com assunto.`,
+      `Networking email in English. From: ${profileName}. To: ${netRecipient}. Purpose: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Context: ${netNotes}.` : ''}
 
 Structure: short specific subject line → greeting → concrete reference to recipient's work → reason for direct contact → specific ask (15min chat, advice) → make it easy to reply → signature.
 Tone: respectful without being subservient, direct, mutual value, authentic.
 Forbidden: "I hope this finds you well", being vague, apologising for reaching out. Max 200 words in body. Include concrete reason for contact.
-Generate ONLY the email with subject line.`;
+Generate ONLY the email with subject line.`,
+      `E-mail de networking en español. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
 
-    const display = lang === 'pt'
-      ? `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`
-      : `🤝 Generate networking email to ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`;
+Estructura: asunto corto y específico → saludo → referencia concreta al trabajo del destinatario → motivo del contacto directo → petición específica (15min conversación, consejo) → facilitar respuesta → firma.
+Tono: respetuoso sin ser servil, directo, valor mutuo, auténtico.
+Prohibido: "Espero que se encuentre bien", ser vago, pedir disculpas por contactar. Máx 200 palabras en el cuerpo. Incluir razón concreta para el contacto.
+Genera SOLO el e-mail con asunto.`);
+
+    const display = pick(
+      `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`,
+      `🤝 Generate networking email to ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`,
+      `🤝 Generar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`);
     setView('chat');
     sendMessage(msg, display);
   };
@@ -547,31 +552,38 @@ Generate ONLY the email with subject line.`;
     if (!liNewCompany.trim() || !liNewRole.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
     const toneDescriptions: Record<string, Record<string, string>> = {
-      'profissional': { pt: 'Profissional e sóbrio, com confiança discreta', en: 'Professional and sober, with understated confidence' },
-      'entusiasmado': { pt: 'Entusiasmado e energético, com emoção genuína mas sem exagero', en: 'Enthusiastic and energetic, with genuine emotion but no exaggeration' },
-      'humilde e grato': { pt: 'Humilde e grato, reconhecendo quem ajudou no percurso', en: 'Humble and grateful, acknowledging those who helped along the way' },
-      'inspirador': { pt: 'Inspirador e motivacional, partilhando lições aprendidas', en: 'Inspiring and motivational, sharing lessons learned' },
-      'casual e autêntico': { pt: 'Casual e autêntico, como se falasse com um amigo próximo', en: 'Casual and authentic, as if talking to a close friend' },
+      'profissional': { pt: 'Profissional e sóbrio, com confiança discreta', en: 'Professional and sober, with understated confidence', es: 'Profesional y sobrio, con confianza discreta' },
+      'entusiasmado': { pt: 'Entusiasmado e energético, com emoção genuína mas sem exagero', en: 'Enthusiastic and energetic, with genuine emotion but no exaggeration', es: 'Entusiasmado y enérgico, con emoción genuina pero sin exageración' },
+      'humilde e grato': { pt: 'Humilde e grato, reconhecendo quem ajudou no percurso', en: 'Humble and grateful, acknowledging those who helped along the way', es: 'Humilde y agradecido, reconociendo a quienes ayudaron en el camino' },
+      'inspirador': { pt: 'Inspirador e motivacional, partilhando lições aprendidas', en: 'Inspiring and motivational, sharing lessons learned', es: 'Inspirador y motivacional, compartiendo lecciones aprendidas' },
+      'casual e autêntico': { pt: 'Casual e autêntico, como se falasse com um amigo próximo', en: 'Casual and authentic, as if talking to a close friend', es: 'Casual y auténtico, como si hablaras con un amigo cercano' },
     };
     const toneDesc = toneDescriptions[liTone]?.[lang] || liTone;
     
-    const msg = lang === 'pt'
-      ? `Post LinkedIn em PT-PT a anunciar mudança profissional. Autor: ${profileName}. Nova empresa: ${liNewCompany}. Nova função: ${liNewRole}. Tom: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
+    const msg = pick(
+      `Post LinkedIn em PT-PT a anunciar mudança profissional. Autor: ${profileName}. Nova empresa: ${liNewCompany}. Nova função: ${liNewRole}. Tom: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
 
 Estrutura: gancho forte na 1ª linha (LinkedIn mostra só 2 linhas antes do "ver mais") → percurso anterior → anúncio da nova posição → reflexão genuína sobre transições → agradecimento específico → call-to-action → 3-5 hashtags.
 Tom: ${toneDesc}. Autêntico, parágrafos curtos (1-2 frases), momento de vulnerabilidade, PT-PT rigoroso.
 Proibido: "Tenho o prazer de anunciar", emojis em excesso (máx 3), comunicado de imprensa. 150-250 palavras. Espaçamento entre parágrafos.
-Gera APENAS o post.`
-      : `LinkedIn post in English announcing a career change. Author: ${profileName}. New company: ${liNewCompany}. New role: ${liNewRole}. Tone: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notes: ${liNotes}.` : ''}
+Gera APENAS o post.`,
+      `LinkedIn post in English announcing a career change. Author: ${profileName}. New company: ${liNewCompany}. New role: ${liNewRole}. Tone: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notes: ${liNotes}.` : ''}
 
 Structure: strong hook in the 1st line (LinkedIn shows only 2 lines before "see more") → previous journey → new position announcement → genuine reflection on transitions → specific thanks → call-to-action → 3-5 hashtags.
 Tone: ${toneDesc}. Authentic, short paragraphs (1-2 sentences), moment of vulnerability.
 Forbidden: "I am pleased to announce", excessive emojis (max 3), press release style. 150-250 words. Spacing between paragraphs.
-Generate ONLY the post.`;
+Generate ONLY the post.`,
+      `Post LinkedIn en español anunciando cambio profesional. Autor: ${profileName}. Nueva empresa: ${liNewCompany}. Nuevo puesto: ${liNewRole}. Tono: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
 
-    const display = lang === 'pt'
-      ? `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`
-      : `📢 Generate LinkedIn post: ${liNewRole} at ${liNewCompany} (tone: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`;
+Estructura: gancho fuerte en la 1ª línea (LinkedIn muestra solo 2 líneas antes de "ver más") → recorrido anterior → anuncio de la nueva posición → reflexión genuina sobre transiciones → agradecimiento específico → call-to-action → 3-5 hashtags.
+Tono: ${toneDesc}. Auténtico, párrafos cortos (1-2 frases), momento de vulnerabilidad.
+Prohibido: "Me complace anunciar", emojis en exceso (máx 3), estilo comunicado de prensa. 150-250 palabras. Espaciado entre párrafos.
+Genera SOLO el post.`);
+
+    const display = pick(
+      `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`,
+      `📢 Generate LinkedIn post: ${liNewRole} at ${liNewCompany} (tone: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`,
+      `📢 Generar post LinkedIn: ${liNewRole} en ${liNewCompany} (tono: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`);
     setView('chat');
     sendMessage(msg, display);
   };
@@ -791,7 +803,7 @@ Generate ONLY the post.`;
                 className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#BFA14A] transition-colors"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-                {lang === 'pt' ? 'Voltar às ferramentas' : 'Back to tools'}
+                {t('bot.backToTools')}
               </button>
             </div>
           )}
@@ -967,7 +979,7 @@ Generate ONLY the post.`;
                   <div>
                     <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.sector')} *</label>
                     <input type="text" value={hlArea} onChange={e => setHlArea(e.target.value)}
-                      placeholder={lang === 'pt' ? 'Ex: Tecnologia, Saúde' : 'E.g.: Technology, Health'}
+                      placeholder={t('bot.placeholderSector')}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                 </div>
@@ -978,17 +990,17 @@ Generate ONLY the post.`;
                     <select value={hlAnos} onChange={e => setHlAnos(e.target.value)}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
                       <option value="">{t('bot.selectExperience')}</option>
-                      <option value={lang === 'pt' ? 'Menos de 2 anos' : 'Less than 2 years'}>&lt; 2 {lang === 'pt' ? 'anos' : 'years'}</option>
-                      <option value={lang === 'pt' ? '2-5 anos' : '2-5 years'}>2–5 {lang === 'pt' ? 'anos' : 'years'}</option>
-                      <option value={lang === 'pt' ? '5-10 anos' : '5-10 years'}>5–10 {lang === 'pt' ? 'anos' : 'years'}</option>
-                      <option value={lang === 'pt' ? '10-15 anos' : '10-15 years'}>10–15 {lang === 'pt' ? 'anos' : 'years'}</option>
-                      <option value={lang === 'pt' ? 'Mais de 15 anos' : 'More than 15 years'}>&gt; 15 {lang === 'pt' ? 'anos' : 'years'}</option>
+                      <option value={t('bot.expLessThan2')}>&lt; 2 {t('bot.years')}</option>
+                      <option value={t('bot.exp2to5')}>2–5 {t('bot.years')}</option>
+                      <option value={t('bot.exp5to10')}>5–10 {t('bot.years')}</option>
+                      <option value={t('bot.exp10to15')}>10–15 {t('bot.years')}</option>
+                      <option value={t('bot.expMoreThan15')}>&gt; 15 {t('bot.years')}</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.targetAudience')}</label>
                     <input type="text" value={hlPublico} onChange={e => setHlPublico(e.target.value)}
-                      placeholder={lang === 'pt' ? 'Ex: Recrutadores' : 'E.g.: Recruiters'}
+                      placeholder={t('bot.placeholderAudience')}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                 </div>
@@ -996,7 +1008,7 @@ Generate ONLY the post.`;
                 <div>
                   <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.valueProposition')}</label>
                   <textarea value={hlValor} onChange={e => setHlValor(e.target.value)}
-                    placeholder={lang === 'pt' ? 'Ex: Ajudo profissionais a reposicionar a sua carreira...' : 'E.g.: I help professionals reposition their career...'}
+                    placeholder={t('bot.placeholderBio')}
                     rows={2}
                     className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
@@ -1004,7 +1016,7 @@ Generate ONLY the post.`;
                 <div>
                   <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.keywords')}</label>
                   <input type="text" value={hlKeywords} onChange={e => setHlKeywords(e.target.value)}
-                    placeholder={lang === 'pt' ? 'Ex: liderança, transformação, RH' : 'E.g.: leadership, transformation, HR'}
+                    placeholder={t('bot.placeholderKeywords')}
                     className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
 
@@ -1014,8 +1026,8 @@ Generate ONLY the post.`;
                     <select value={hlTone} onChange={e => setHlTone(e.target.value)}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
                       <option value="profissional">{t('bot.toneProfessional')}</option>
-                      <option value="criativo">{lang === 'pt' ? 'Criativo' : 'Creative'}</option>
-                      <option value="direto">{lang === 'pt' ? 'Direto' : 'Direct'}</option>
+                      <option value="criativo">{t('bot.toneCreative')}</option>
+                      <option value="direto">{t('bot.toneDirect')}</option>
                       <option value="inspirador">{t('bot.toneInspiring')}</option>
                     </select>
                   </div>
@@ -1153,7 +1165,7 @@ Generate ONLY the post.`;
                           {t('bot.copy')} JSON
                         </button>
                         <button onClick={() => setShowCvPreview(false)} className="text-[10px] px-2 py-0.5 rounded border border-gray-200 text-gray-400 hover:text-gray-600 transition-all">
-                          {lang === 'pt' ? 'Fechar' : 'Close'}
+                          {t('bot.close')}
                         </button>
                       </div>
                     </div>
@@ -1170,13 +1182,13 @@ Generate ONLY the post.`;
                     )}
                     {cvData.summary && (
                       <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Resumo Profissional' : 'Professional Summary'}</p>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{t('bot.professionalSummary')}</p>
                         <p className="text-[11px] text-gray-700 leading-relaxed">{cvData.summary}</p>
                       </div>
                     )}
                     {cvData.experiences && cvData.experiences.length > 0 && (
                       <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Experiência Profissional' : 'Work Experience'}</p>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{t('bot.workExperience')}</p>
                         {cvData.experiences.map((exp, i) => (
                           <div key={i} className="mb-2 pl-2 border-l-2 border-[#BFA14A]/30">
                             <p className="text-[11px] font-semibold text-gray-800">{exp.role}{exp.company ? ` — ${exp.company}` : ''}</p>
@@ -1190,7 +1202,7 @@ Generate ONLY the post.`;
                     )}
                     {cvData.education && cvData.education.length > 0 && (
                       <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Formação Académica' : 'Education'}</p>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{t('bot.education')}</p>
                         {cvData.education.map((edu, i) => (
                           <p key={i} className="text-[11px] text-gray-700">{edu.degree}{edu.institution ? ` — ${edu.institution}` : ''}{(edu.year || edu.period) ? ` (${edu.year || edu.period})` : ''}</p>
                         ))}
@@ -1198,7 +1210,7 @@ Generate ONLY the post.`;
                     )}
                     {cvData.skills && cvData.skills.length > 0 && (
                       <div>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Competências' : 'Skills'}</p>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{t('bot.skills')}</p>
                         <div className="flex flex-wrap gap-1">
                           {cvData.skills.map((skill, i) => (
                             <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[#BFA14A]/10 text-[#BFA14A] font-medium">{skill}</span>
@@ -1297,7 +1309,7 @@ Generate ONLY the post.`;
                       <span className="text-[9px] font-bold text-[#BFA14A] uppercase tracking-wider">{t('bot.mockCurrentQuestion')}</span>
                       <div className="flex items-center gap-2">
                         {mockHistory.length > 0 && (
-                          <span className="text-[9px] text-gray-400">{mockHistory.length} {lang === 'pt' ? 'respondida(s)' : 'answered'}</span>
+                          <span className="text-[9px] text-gray-400">{mockHistory.length} {t('bot.answered')}</span>
                         )}
                         <button onClick={() => { setMockStarted(false); setMockFeedback(null); setMockHistory([]); }} className="text-[9px] text-gray-400 hover:text-gray-600 transition-colors">
                           {t('bot.mockNewSession')}
@@ -1419,7 +1431,7 @@ Generate ONLY the post.`;
                     {/* ── Tool chips (centred) ── */}
                     <div className="w-full">
                       <p className="text-[10px] uppercase tracking-wider text-gray-300 font-medium mb-2">
-                        {lang === 'pt' ? 'Ferramentas' : 'Tools'}
+                        {t('bot.toolsLabel')}
                       </p>
                       <div className="flex flex-wrap justify-center gap-1.5">
                         {tabs.filter(t => t.key !== 'chat').map(tab => (
