@@ -11,6 +11,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
+import { t, pick, getLang } from './en/translations';
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -139,7 +140,7 @@ function ProgressBar({ value, max = 100, color = 'emerald' }: { value: number; m
 export default function StudentPackResults() {
   const [, setLocation] = useLocation();
   const isEN = window.location.pathname.includes('/en/');
-  useEffect(() => { document.title = isEN ? "Results — Student Pack | Share2Inspire" : "Resultados — Pack Estudante | Share2Inspire"; }, [isEN]);
+  useEffect(() => { document.title = t('resultados_pack_estudante_share2inspire'); }, [isEN]);
 
   const rawData = useMemo(() => {
     try {
@@ -189,22 +190,22 @@ export default function StudentPackResults() {
         {/* Action buttons */}
         <div className="flex justify-end gap-2 mb-6">
           <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 transition-colors">
-            <Download className="w-4 h-4" /> {isEN ? 'Export PDF' : 'Exportar PDF'}
+            <Download className="w-4 h-4" /> {t('exportar_pdf')}
           </button>
           <button 
             onClick={() => { 
                 clearSensitiveData(); 
-                window.location.href = isEN ? '/en/student-pack' : '/estudante'; 
+                window.location.href = t('estudante'); 
             }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-sm font-medium text-emerald-700 transition-colors"
           >
-            <RefreshCw className="w-4 h-4" /> {isEN ? 'New Analysis' : 'Nova Análise'}
+            <RefreshCw className="w-4 h-4" /> {t('nova_anlise')}
           </button>
           <button 
             onClick={() => finishAndClean(setLocation)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sm font-semibold text-white transition-all shadow-sm hover:shadow-md"
           >
-            {isEN ? 'Finish' : 'Concluir'}
+            {t('concluir')}
           </button>
           <button onClick={() => { sessionStorage.clear(); window.location.href = '/estudante'; }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-sm font-medium text-emerald-700 transition-colors">

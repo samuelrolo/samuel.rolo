@@ -1,5 +1,6 @@
 // RecruiterPerception.tsx - Estilo Share2Inspire
 import { Lock, Eye, Clock, AlertCircle, MessageSquare } from "lucide-react";
+import { t, pick, getLang } from '../pages/en/translations';
 
 interface RecruiterPerceptionProps {
   roles: string[];
@@ -15,10 +16,10 @@ interface RecruiterPerceptionProps {
 }
 
 const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid = false, deepAnalysis, isEN = false }: RecruiterPerceptionProps) => {
-  const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : (isEN ? 'Professional' : 'Profissional'));
+  const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : (t('profissional')));
   const displaySeniority = perceivedSeniority || 'Mid-level';
 
-  const defaultAttentionMap = isEN ? [
+  const defaultAttentionMap = lang === 'en' ? [
     "Name and professional title — first impression in 2 seconds",
     "Latest professional experience — role and company",
     "Key skills listed — quick matching with the vacancy",
@@ -30,7 +31,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
     "Formação académica — validação de qualificações base",
   ];
 
-  const defaultFrictionPoints = isEN ? [
+  const defaultFrictionPoints = lang === 'en' ? [
     "High text density may hinder quick reading",
     "Long sections without bullets or visual highlights",
     "Contact information may not be sufficiently visible",
@@ -40,7 +41,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
     "Informação de contacto pode não estar suficientemente visível",
   ];
 
-  const defaultInvoluntaryMessages = isEN ? [
+  const defaultInvoluntaryMessages = lang === 'en' ? [
     "Professional with consistent trajectory and career progression",
     "Results-oriented profile with diversified experience",
     "Candidate with leadership potential and strategic vision",
@@ -61,8 +62,8 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
           <Eye className="w-5 h-5 text-[#C9A961]" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-card-foreground">{isEN ? 'First 5 seconds of reading' : 'Primeiros 5 segundos de leitura'}</h3>
-          <p className="text-xs text-muted-foreground">{isEN ? 'What a recruiter retains from your CV' : 'O que um recrutador retém do teu CV'}</p>
+          <h3 className="text-sm font-semibold text-card-foreground">{t('primeiros_5_segundos_de_leitura')}</h3>
+          <p className="text-xs text-muted-foreground">{t('o_que_um_recrutador_retm')}</p>
         </div>
       </div>
 
@@ -98,7 +99,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Attention map of the first 30 seconds:' : 'Mapa de atenção dos primeiros 30 segundos:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('mapa_de_ateno_dos_primeiros')}</p>
             </div>
             {attentionMap.map((item, i) => (
               <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground pl-1">
@@ -112,7 +113,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-yellow-500" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Reading friction points:' : 'Pontos de fricção na leitura:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('pontos_de_frico_na_leitura')}</p>
             </div>
             {frictionPoints.map((item, i) => (
               <div key={i} className="p-2.5 rounded-lg bg-yellow-500/5 border border-yellow-500/10">
@@ -128,7 +129,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Messages your CV conveys:' : 'Mensagens que o teu CV transmite:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('mensagens_que_o_teu_cv')}</p>
             </div>
             {involuntaryMessages.map((item, i) => (
               <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground pl-1">
@@ -142,12 +143,12 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
         <div className="relative">
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm rounded-lg">
             <Lock className="w-5 h-5 text-[#C9A961] mb-1" />
-            <p className="text-xs font-medium text-muted-foreground">{isEN ? 'Full perception analysis in the paid report' : 'Análise completa da percepção no relatório pago'}</p>
+            <p className="text-xs font-medium text-muted-foreground">{t('anlise_completa_da_percepo_no')}</p>
           </div>
           <div className="select-none space-y-1.5 text-sm text-muted-foreground p-3">
-            <p>{isEN ? '→ Attention map of the first 30 seconds' : '→ Mapa de atenção dos primeiros 30 segundos'}</p>
-            <p>{isEN ? '→ Recruiter reading friction points' : '→ Pontos de fricção na leitura do recrutador'}</p>
-            <p>{isEN ? '→ Involuntary messages your CV conveys' : '→ Mensagens involuntárias que o teu CV transmite'}</p>
+            <p>{t('mapa_de_ateno_dos_primeiros_2')}</p>
+            <p>{t('pontos_de_frico_na_leitura_2')}</p>
+            <p>{t('mensagens_involuntrias_que_o_teu')}</p>
           </div>
         </div>
       )}

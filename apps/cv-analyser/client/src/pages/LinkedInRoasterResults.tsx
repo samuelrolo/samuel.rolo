@@ -11,6 +11,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
+import { t, pick, getLang } from './en/translations';
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -177,7 +178,7 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
 export default function LinkedInRoasterResults() {
   const [, setLocation] = useLocation();
   const isEN = window.location.pathname.includes('/en/');
-  useEffect(() => { document.title = isEN ? "Results — LinkedIn Roaster | Share2Inspire" : "Resultados — LinkedIn Roaster | Share2Inspire"; }, [isEN]);
+  useEffect(() => { document.title = t('resultados_linkedin_roaster_share2inspire'); }, [isEN]);
 
   // Load from sessionStorage
   const rawData = useMemo(() => {
@@ -226,22 +227,22 @@ export default function LinkedInRoasterResults() {
         {/* Action buttons */}
         <div className="flex justify-end gap-2 mb-6">
           <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 transition-colors">
-            <Download className="w-4 h-4" /> {isEN ? 'Export PDF' : 'Exportar PDF'}
+            <Download className="w-4 h-4" /> {t('exportar_pdf')}
           </button>
           <button 
             onClick={() => { 
                 clearSensitiveData(); 
-                window.location.href = isEN ? '/en/linkedin-roaster' : '/linkedin-roaster'; 
+                window.location.href = t('linkedinroaster'); 
             }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-sm font-medium text-orange-700 transition-colors"
           >
-            <RefreshCw className="w-4 h-4" /> {isEN ? 'New Analysis' : 'Reanalisar'}
+            <RefreshCw className="w-4 h-4" /> {t('reanalisar')}
           </button>
           <button 
             onClick={() => finishAndClean(setLocation)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sm font-semibold text-white transition-all shadow-sm hover:shadow-md"
           >
-            {isEN ? 'Finish' : 'Concluir'}
+            {t('concluir')}
           </button>
         </div>
 

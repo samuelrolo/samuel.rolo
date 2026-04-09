@@ -352,6 +352,174 @@ const i18n = {
     ctaNote: 'No credit card · Cancel anytime',
     langSwitch: 'PT',
   },
+  es: {
+    heroTag: 'Área de Miembros',
+heroTitle: 'Tu espacio exclusivo para gestionar tu carrera.',
+heroSubtitle: 'Accede a herramientas de IA, análisis personalizados y planificación estratégica — todo diseñado para posicionarte mejor en el mercado.',
+heroCta: 'Entrar en Área de Miembros',
+heroCtaSecondary: 'Ver planes',
+heroStat1: '100+',
+heroStat1Label: 'Miembros activos',
+heroStat2: '+23 pts',
+heroStat2Label: 'Mejora media en ATS',
+heroStat3: '5',
+heroStat3Label: 'Herramientas de IA',
+benefitsTag: 'Beneficios',
+benefitsTitle: '¿Por qué ser miembro?',
+benefits: [
+  { icon: 'Lock', title: 'Acceso exclusivo', desc: 'Herramientas de IA no disponibles en el sitio público.' },
+  { icon: 'Award', title: 'Análisis personalizados', desc: 'Informes detallados sobre tu CV, perfil de LinkedIn y posicionamiento.' },
+  { icon: 'TrendingUp', title: 'Evolución continua', desc: 'Sigue tu progreso y mejora tu puntuación ATS semana a semana.' },
+  { icon: 'Zap', title: 'Inteligencia de mercado', desc: 'Datos de empleo, salarios y tendencias actualizados en múltiples mercados.' },
+],
+featuresTag: 'Lo que incluye tu suscripción',
+featuresTitle: 'Herramientas exclusivas para miembros',
+featuresSubtitle: 'Cinco herramientas de IA integradas, disponibles en tu área de miembros.',
+features: [
+  {
+    icon: 'FileText',
+    name: 'CV Maker',
+    desc: 'Crea CV profesionales con plantillas optimizadas para ATS.',
+    details: [
+      'Importa datos de LinkedIn automáticamente o empieza desde cero',
+      'Plantillas profesionales optimizadas para sistemas ATS',
+      'Asistencia de IA para mejorar las descripciones de experiencia',
+      'Exporta a PDF con formato perfecto',
+      'Sugerencias de palabras clave por sector y rol',
+    ],
+  },
+  {
+    icon: 'BarChart3',
+    name: 'CV Analyser',
+    desc: 'Análisis completo y detallado del CV con IA.',
+    details: [
+      'Puntuación ATS detallada con desglose dimensional',
+      'Feedback dimensional: contenido, formato, impacto, palabras clave',
+      'Comparación con referencias del mercado',
+      'Sugerencias de mejora priorizadas por impacto',
+      'Análisis de compatibilidad con ofertas de trabajo específicas',
+    ],
+  },
+  {
+    icon: 'Target',
+    name: 'Career Path',
+    desc: 'Planificación estratégica de carrera con datos reales del mercado.',
+    details: [
+      'Roles recomendados según tu perfil',
+      'Ejercicios personalizados de visibilidad y networking',
+      'Acciones inmediatas para acelerar tu progreso',
+      'Análisis de brechas de habilidades por rol objetivo',
+      'Impulsado por NinjaPear — datos de mercado en tiempo real',
+    ],
+  },
+  {
+    icon: 'Brain',
+    name: 'Career Intelligence',
+    desc: 'Análisis avanzado del mercado y posicionamiento competitivo.',
+    details: [
+      'Tendencias salariales por rol, sector y región',
+      'Habilidades más demandadas en tu sector',
+      'Datos enriquecidos de empresas (NinjaPear)',
+      'Oportunidades emergentes por mercado',
+      'Benchmarking de perfil frente al mercado',
+    ],
+  },
+  {
+    icon: 'Briefcase',
+    name: 'Job Feed + Job Tracker',
+    desc: 'Ofertas seleccionadas con emparejamiento inteligente y seguimiento completo.',
+    details: [
+      'Feed personalizado con % de coincidencia por oferta',
+      'Estimaciones salariales y datos enriquecidos de empresas',
+      'Extensión de Chrome para guardar empleos desde cualquier sitio',
+      'Job Tracker: seguimiento de candidaturas (aplicado, entrevista, oferta)',
+      'Alertas de nuevas ofertas que coinciden con tu perfil',
+    ],
+  },
+],
+extensionTag: 'Extensión de Chrome',
+extensionTitle: 'Seguimiento de empleos integrado',
+extensionSubtitle: 'La extensión de Chrome de Share2Inspire te permite guardar empleos desde cualquier sitio y seguir todo tu proceso de candidatura.',
+extensionSpecs: [
+  { icon: 'Chrome', title: 'Extensión de Chrome', desc: 'Guarda empleos de LinkedIn, Indeed, Glassdoor y cualquier otro sitio con un clic.' },
+  { icon: 'Bookmark', title: 'Job Tracker', desc: 'Sigue el estado de cada candidatura: guardada, aplicada, entrevista, oferta, rechazada.' },
+  { icon: 'Bell', title: 'Alertas inteligentes', desc: 'Recibe notificaciones cuando aparezcan nuevas ofertas que coincidan con tu perfil y preferencias.' },
+  { icon: 'Search', title: 'Emparejamiento inteligente', desc: 'Cada empleo tiene una puntuación de compatibilidad basada en tu CV y experiencia.' },
+],
+resourcesTag: 'Recursos',
+resourcesTitle: 'Contenido exclusivo para miembros',
+resourcesSubtitle: 'Más allá de las herramientas, accede a una biblioteca de recursos para acelerar tu crecimiento profesional.',
+resources: [
+  { icon: 'BookOpen', title: 'E-books', desc: 'Guías prácticas sobre optimización de CV, entrevistas, negociación salarial y transición profesional. Actualizadas regularmente.', count: '6+' },
+  { icon: 'Video', title: 'Videos', desc: 'Tutoriales y masterclasses sobre herramientas de la plataforma, estrategias de carrera y tendencias del mercado.', count: '12+' },
+  { icon: 'Newspaper', title: 'Artículos', desc: 'Análisis profundos del mercado laboral, consejos de reclutadores e historias de éxito de miembros.', count: '30+' },
+],
+comparisonTag: 'Comparación',
+comparisonTitle: '¿Por qué Share2Inspire?',
+comparisonSubtitle: 'Comparamos nuestras herramientas con las alternativas más populares del mercado.',
+compHeaders: ['Funcionalidad', 'Share2Inspire', 'Teal', 'Jobscan', 'Kickresume', 'Enhancv'],
+compRows: [
+  ['Constructor de CV con IA', true, true, false, true, true],
+  ['Análisis ATS detallado', true, 'Limitado', true, 'Básico', 'Básico'],
+  ['Optimización de LinkedIn', true, false, 'Básico', false, false],
+  ['Planificación de Carrera', true, false, false, false, false],
+  ['Inteligencia de Carrera', true, false, false, false, false],
+  ['Job Tracker + Extensión', true, true, false, false, false],
+  ['Feed de Empleos con Emparejamiento', true, 'Básico', false, false, false],
+  ['Multi-mercado (PT, UK, ES, BR, US, NL, DE)', true, false, false, false, false],
+  ['Bilingüe PT + EN', true, false, false, false, false],
+  ['Enriquecimiento de Empresas', true, false, false, false, false],
+],
+compPrice: ['Precio mensual', '€9.90', '$29', '$49.95', '$19', '$24.99'],
+plansTag: 'Planes',
+plansTitle: 'Invierte en tu carrera',
+plansSubtitle: 'Precio fundador — aprovecha antes de que suba.',
+plans: [
+  {
+    name: 'Essential',
+    tagline: 'Para mejorar tu posicionamiento',
+    price: '9.90',
+    period: '/mes',
+    features: ['CV Maker con acceso continuo', 'CV Analyser — 1 análisis/semana', 'LinkedIn Roaster — 1 análisis/semana', 'Career Bot con respuestas básicas', 'Seguimiento de progreso'],
+    highlight: 'Mejora tu puntuación ATS en 23 puntos de media',
+    cta: 'Comenzar',
+    popular: false,
+  },
+  {
+    name: 'Growth',
+    tagline: 'Para evolucionar con más contexto',
+    price: '19.90',
+    period: '/mes',
+    features: ['Todo en Essential + más', 'CV + LinkedIn — 5 análisis/semana', 'Job Feed con emparejamiento inteligente', 'E-books y plantillas premium', 'Career Bot avanzado'],
+    highlight: 'Aumenta las visualizaciones de perfil en un 40%',
+    cta: 'Suscribirse',
+    popular: true,
+  },
+  {
+    name: 'Pro',
+    tagline: 'Para acelerar tu evolución',
+    price: '39.00',
+    period: '/mes',
+    features: ['Todo en Growth + acceso completo', 'Análisis ilimitados', 'Feed con estimaciones salariales', 'Procesamiento prioritario', 'Acceso anticipado a nuevas funciones'],
+    highlight: 'Empleos con salarios un 15% por encima de la media',
+    cta: 'Suscribirse',
+    popular: false,
+  },
+],
+plansBilling: 'Semestral -17% · Anual -33%',
+testimonialsTag: 'Testimonios',
+testimonialsTitle: 'Lo que dicen nuestros miembros',
+testimonials: [
+  { name: 'Ana M.', role: 'Senior Manager', text: 'Pasé de 45 a 82 puntos ATS en 10 minutos. Absolutamente esencial para quien busca empleo hoy.', stars: 5 },
+  { name: 'Diogo S.', role: 'Software Engineer', text: 'LinkedIn Roaster me dio feedback que nunca había recibido. Mi perfil es mucho más fuerte y recibe más visitas.', stars: 5 },
+  { name: 'Mariana C.', role: 'Product Manager', text: 'Por fin una herramienta que me dice exactamente qué quieren ver los reclutadores. CV Analyser es un cambio total.', stars: 5 },
+],
+ctaTitle: '¿Listo para dar el siguiente paso?',
+ctaSubtitle: 'Únete a más de 100 miembros que ya usan las herramientas de Share2Inspire.',
+ctaButton: 'Crear cuenta gratis',
+ctaNote: 'Sin tarjeta de crédito · Cancela cuando quieras',
+langSwitch: 'PT',
+  },
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -376,15 +544,16 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 }
 
 export default function ClientAreaLanding() {
-  const [lang, setLang] = useState<'pt' | 'en'>(() => {
+  const [lang, setLang] = useState<'pt' | 'en' | 'es'>(() => {
     const stored = localStorage.getItem('s2i-lang');
-    return stored === 'en' ? 'en' : 'pt';
+    return stored === 'en' ? 'en' : stored === 'es' ? 'es' : 'pt';
   });
   const [expandedFeat, setExpandedFeat] = useState<number | null>(null);
   const t = i18n[lang];
 
   const toggleLang = () => {
-    const next = lang === 'pt' ? 'en' : 'pt';
+    const langs: Array<'pt' | 'en' | 'es'> = ['pt', 'en', 'es'];
+    const next = langs[(langs.indexOf(lang) + 1) % 3];
     setLang(next);
     localStorage.setItem('s2i-lang', next);
   };
@@ -680,7 +849,7 @@ export default function ClientAreaLanding() {
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="px-3 py-1 rounded-full bg-[#C9A961] text-white text-[10px] font-bold uppercase tracking-wider">
-                        {lang === 'pt' ? 'Recomendado' : 'Recommended'}
+                        {lang === 'pt' ? 'Recomendado' : lang === 'es' ? 'Recomendado' : 'Recommended'}
                       </span>
                     </div>
                   )}
@@ -780,9 +949,9 @@ export default function ClientAreaLanding() {
             Share2Inspire &copy; {new Date().getFullYear()}
           </div>
           <div className="flex gap-6 text-white/40 text-xs">
-            <a href="https://share2inspire.pt/privacidade" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Privacidade' : 'Privacy'}</a>
-            <a href="https://share2inspire.pt/termos" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Termos' : 'Terms'}</a>
-            <a href="https://share2inspire.pt" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Site principal' : 'Main site'}</a>
+            <a href="https://share2inspire.pt/privacidade" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Privacidade' : lang === 'es' ? 'Privacidad' : 'Privacy'}</a>
+            <a href="https://share2inspire.pt/termos" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Termos' : lang === 'es' ? 'Términos' : 'Terms'}</a>
+            <a href="https://share2inspire.pt" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Site principal' : lang === 'es' ? 'Sitio principal' : 'Main site'}</a>
           </div>
         </div>
       </footer>

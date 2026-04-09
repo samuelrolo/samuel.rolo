@@ -1,4 +1,5 @@
 import { Lock } from "lucide-react";
+import { t, pick, getLang } from '../pages/en/translations';
 
 interface LockedSectionProps {
   title: string;
@@ -13,7 +14,7 @@ const LockedSection = ({ title, previewItems, children, isEN = false }: LockedSe
       {/* Blur overlay */}
       <div className="absolute inset-0 backdrop-blur-sm bg-background/30 z-10 flex flex-col items-center justify-center">
         <Lock className="w-8 h-8 text-[#C9A961] mb-3" />
-        <p className="text-sm font-semibold text-card-foreground mb-2">{isEN ? 'Unlock to see:' : 'Desbloqueia para ver:'}</p>
+        <p className="text-sm font-semibold text-card-foreground mb-2">{t('desbloqueia_para_ver')}</p>
         {previewItems && (
           <ul className="text-sm text-muted-foreground space-y-1">
             {previewItems.map((item, i) => (

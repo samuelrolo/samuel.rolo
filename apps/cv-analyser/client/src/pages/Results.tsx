@@ -24,6 +24,7 @@ import { getMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
+import { t, pick, getLang } from './en/translations';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -214,6 +215,7 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 
 /* ─── Normal Curve SVG Component ─── */
 function NormalCurveChart({ percentile, isEN = false }: { percentile: number; isEN?: boolean }) {
+  const lang = getLang();
   const width = 400;
   const height = 180;
   const padding = 30;
@@ -254,10 +256,10 @@ function NormalCurveChart({ percentile, isEN = false }: { percentile: number; is
       <line x1={userX} y1={userY} x2={userX} y2={padding + curveHeight} stroke="#C9A961" strokeWidth="2" strokeDasharray="4,4" />
       <circle cx={userX} cy={userY} r="6" fill="#C9A961" stroke="white" strokeWidth="2" />
       <text x={userX} y={userY - 14} textAnchor="middle" className="text-xs font-bold fill-[#C9A961]">
-        {isEN ? 'You' : 'Tu'} ({percentile}%)
+        {t('tu')} ({percentile}%)
       </text>
       <text x={padding} y={height - 5} textAnchor="start" className="text-[10px] fill-current text-muted-foreground">0%</text>
-      <text x={padding + curveWidth / 2} y={height - 5} textAnchor="middle" className="text-[10px] fill-current text-muted-foreground">{isEN ? 'Average' : 'Média'}</text>
+      <text x={padding + curveWidth / 2} y={height - 5} textAnchor="middle" className="text-[10px] fill-current text-muted-foreground">{t('mdia')}</text>
       <text x={padding + curveWidth} y={height - 5} textAnchor="end" className="text-[10px] fill-current text-muted-foreground">100%</text>
       <line x1={padding} y1={padding + curveHeight} x2={padding + curveWidth} y2={padding + curveHeight} stroke="currentColor" strokeWidth="1" opacity="0.2" />
     </svg>
@@ -266,6 +268,7 @@ function NormalCurveChart({ percentile, isEN = false }: { percentile: number; is
 
 /* ─── Salary Block ─── */
 function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false, CUR = '€' }: { blurred: boolean; salaryDetailed?: any; perceivedSeniority?: string; isEN?: boolean; CUR?: string }) {
+  const lang = getLang();
   const sd = salaryDetailed || { percentile25: 1400, median: 1800, percentile75: 2400, topMax: 3200, benefits: [], benefitsNote: '', source: '' };
   return (
     <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
@@ -275,13 +278,13 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
         </GoldIcon>
         <div>
           <div className="flex items-center gap-2">
-            <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'SALARY ESTIMATE' : 'ESTIMATIVA SALARIAL'}</p>
+            <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('estimativa_salarial')}</p>
             <Tooltip
-              label={isEN ? 'How is the estimate calculated?' : 'Como é calculada a estimativa?'}
-              text={isEN ? 'Estimate based on detected professional profile, seniority level, identified skills and salary data for your market. Values are indicative and may vary by region, sector and company size.' : 'Estimativa baseada no perfil profissional detectado, nível de senioridade, competências identificadas e dados salariais do mercado português (Hays, Michael Page, Mercer). Os valores são indicativos e podem variar conforme a região, setor e dimensão da empresa.'}
+              label={t('como_calculada_a_estimativa')}
+              text={t('estimativa_baseada_no_perfil_profissional')}
             />
           </div>
-          <p className="text-xs text-muted-foreground">{isEN ? `Based on profile (${perceivedSeniority || 'N/A'}) and market data` : `Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`}</p>
+          <p className="text-xs text-muted-foreground">{pick(`Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`, `Based on profile (${perceivedSeniority || 'N/A'}) and market data`, `Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`)}</p>
         </div>
       </div>
 
@@ -289,38 +292,38 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
         {blurred && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md rounded-lg">
             <Lock className="w-8 h-8 text-[#C9A961] mb-2" />
-            <p className="text-sm font-semibold text-foreground">{isEN ? 'Unlock to see the exact value' : 'Desbloqueia para ver o valor exacto'}</p>
-            <p className="text-xs text-muted-foreground mt-1">{isEN ? 'Available in the full report' : 'Disponível no relatório completo'}</p>
+            <p className="text-sm font-semibold text-foreground">{t('desbloqueia_para_ver_o_valor')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('disponvel_no_relatrio_completo')}</p>
           </div>
         )}
         <div className={blurred ? 'select-none' : ''}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-[10px] text-muted-foreground mb-1">{isEN ? '25th Percentile' : 'Percentil 25'}</p>
+              <p className="text-[10px] text-muted-foreground mb-1">{t('percentil_25')}</p>
               <p className="text-xl font-bold text-foreground">{CUR}{sd.percentile25.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground">{isEN ? '/month (gross)' : '/mês (bruto)'}</p>
+              <p className="text-[10px] text-muted-foreground">{t('ms_bruto')}</p>
             </div>
             <div className="text-center p-3 bg-[#C9A961]/10 rounded-lg border border-[#C9A961]/20">
-              <p className="text-[10px] text-muted-foreground mb-1">{isEN ? 'Median' : 'Mediana'}</p>
+              <p className="text-[10px] text-muted-foreground mb-1">{t('mediana')}</p>
               <p className="text-xl font-bold text-[#C9A961]">{CUR}{sd.median.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground">{isEN ? '/month (gross)' : '/mês (bruto)'}</p>
+              <p className="text-[10px] text-muted-foreground">{t('ms_bruto')}</p>
             </div>
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-[10px] text-muted-foreground mb-1">{isEN ? '75th Percentile' : 'Percentil 75'}</p>
+              <p className="text-[10px] text-muted-foreground mb-1">{t('percentil_75')}</p>
               <p className="text-xl font-bold text-foreground">{CUR}{sd.percentile75.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground">{isEN ? '/month (gross)' : '/mês (bruto)'}</p>
+              <p className="text-[10px] text-muted-foreground">{t('ms_bruto')}</p>
             </div>
             <div className="text-center p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
-              <p className="text-[10px] text-muted-foreground mb-1">{isEN ? 'Top (Top Profiles)' : 'Top (Perfis de Topo)'}</p>
+              <p className="text-[10px] text-muted-foreground mb-1">{t('top_perfis_de_topo')}</p>
               <p className="text-xl font-bold text-[#C9A961]">{CUR}{sd.topMax.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground">{isEN ? '/month (gross)' : '/mês (bruto)'}</p>
+              <p className="text-[10px] text-muted-foreground">{t('ms_bruto')}</p>
             </div>
           </div>
 
           {/* Benefits section - only when paid */}
           {!blurred && sd.benefits && sd.benefits.length > 0 && (
             <div className="mt-5 pt-4 border-t border-border">
-              <p className="text-xs font-semibold text-foreground mb-3">{isEN ? `Typical benefits for ${perceivedSeniority || 'this level'} in the industry:` : `Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`}</p>
+              <p className="text-xs font-semibold text-foreground mb-3">{pick(`Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`, `Typical benefits for ${perceivedSeniority || 'this level'} in the industry:`, `Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`)}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {sd.benefits.map((b: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -333,14 +336,14 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
                 <p className="text-xs text-muted-foreground mt-3 italic">{sd.benefitsNote}</p>
               )}
               {sd.source && (
-                <p className="text-[10px] text-muted-foreground/60 mt-2">{isEN ? 'Source' : 'Fonte'}: {sd.source}</p>
+                <p className="text-[10px] text-muted-foreground/60 mt-2">{t('fonte')}: {sd.source}</p>
               )}
             </div>
           )}
 
           {blurred && (
             <p className="text-xs text-muted-foreground mt-3 text-center">
-              {isEN ? 'Estimated values based on market data for your profile' : 'Valores estimados com base em dados do mercado português para o teu perfil'}
+              {t('valores_estimados_com_base_em')}
             </p>
           )}
         </div>
@@ -351,7 +354,8 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
 
 /* ─── Automation Risk ─── */
 function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurred: boolean; automationRisk?: any; isEN?: boolean }) {
-  const ar = automationRisk || { percentage: 35, level: isEN ? 'Medium' : 'Médio', description: isEN ? 'Detailed automation risk analysis for your profile' : 'Análise detalhada do risco de automação para o teu perfil', recommendations: [] };
+  const lang = getLang();
+  const ar = automationRisk || { percentage: 35, level: t('mdio'), description: t('anlise_detalhada_do_risco_de'), recommendations: [] };
   const barColor = ar.percentage <= 25 ? 'from-green-400 to-green-500' : ar.percentage <= 50 ? 'from-yellow-400 to-orange-400' : 'from-orange-400 to-red-500';
   const levelColor = ar.percentage <= 25 ? 'text-green-600 bg-green-500/10' : ar.percentage <= 50 ? 'text-yellow-600 bg-yellow-500/10' : 'text-red-600 bg-red-500/10';
   return (
@@ -362,13 +366,13 @@ function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurre
         </GoldIcon>
         <div>
           <div className="flex items-center gap-2">
-            <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'AI REPLACEMENT POTENTIAL' : 'POTENCIAL DE SUBSTITUIÇÃO POR IA'}</p>
+            <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('potencial_de_substituio_por_ia')}</p>
             <Tooltip
-              label={isEN ? 'What is the Automation Potential?' : 'O que é o Potencial de Automação?'}
-              text={isEN ? 'Estimate of the probability that tasks associated with your professional profile will be automated by AI or robotics in the next 5-10 years. The HIGHER the value, the HIGHER the risk.' : 'Estimativa da probabilidade de as tarefas associadas ao teu perfil profissional serem automatizadas por IA ou robótica nos próximos 5-10 anos. Quanto MAIOR o valor, MAIOR o risco.'}
+              label={t('o_que_o_potencial_de')}
+              text={t('estimativa_da_probabilidade_de_as')}
             />
           </div>
-          <p className="text-xs text-muted-foreground">{isEN ? 'Automation risk for your role in the next 5-10 years' : 'Risco de automação da tua função nos próximos 5-10 anos'}</p>
+          <p className="text-xs text-muted-foreground">{t('risco_de_automao_da_tua')}</p>
         </div>
       </div>
 
@@ -376,18 +380,18 @@ function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurre
         {blurred && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md rounded-lg">
             <Lock className="w-6 h-6 text-[#C9A961] mb-2" />
-            <p className="text-sm font-semibold text-foreground">{isEN ? 'Available in the full report' : 'Disponível no relatório completo'}</p>
-            <p className="text-xs text-muted-foreground mt-1">{isEN ? 'Discover the automation risk for your role' : 'Descobre o risco de automação da tua função'}</p>
+            <p className="text-sm font-semibold text-foreground">{t('disponvel_no_relatrio_completo')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('descobre_o_risco_de_automao')}</p>
           </div>
         )}
         <div className={blurred ? 'select-none' : ''}>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{isEN ? 'Low risk' : 'Baixo risco'}</span>
+              <span className="text-xs text-muted-foreground">{t('baixo_risco')}</span>
               <div className="flex items-center gap-2">
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded ${levelColor}`}>{ar.level} — {ar.percentage}%</span>
               </div>
-              <span className="text-xs text-muted-foreground">{isEN ? 'High risk' : 'Alto risco'}</span>
+              <span className="text-xs text-muted-foreground">{t('alto_risco')}</span>
             </div>
             <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
               <div className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all duration-500`} style={{ width: `${ar.percentage}%` }} />
@@ -397,7 +401,7 @@ function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurre
                 <p className="text-sm text-muted-foreground">{ar.description}</p>
                 {ar.recommendations && ar.recommendations.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-border">
-                    <p className="text-xs font-semibold text-foreground mb-2">{isEN ? 'Recommendations to mitigate the risk:' : 'Recomendações para mitigar o risco:'}</p>
+                    <p className="text-xs font-semibold text-foreground mb-2">{t('recomendaes_para_mitigar_o_risco')}</p>
                     {ar.recommendations.map((r: string, i: number) => (
                       <p key={i} className="text-sm text-muted-foreground flex items-start gap-2 mb-1">
                         <span className="text-[#C9A961] shrink-0">→</span> {r}
@@ -407,7 +411,7 @@ function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurre
                 )}
               </>
             )}
-            {blurred && <p className="text-sm text-muted-foreground">{isEN ? '→ Detailed automation risk analysis for your profile' : '→ Análise detalhada do risco de automação para o teu perfil'}</p>}
+            {blurred && <p className="text-sm text-muted-foreground">{t('anlise_detalhada_do_risco_de_2')}</p>}
           </div>
         </div>
       </div>
@@ -444,20 +448,15 @@ export default function Results() {
     if (pPT) return 'mbway';
     return sessionStorage.getItem('analysisLang') === 'en' ? 'stripe' : 'mbway';
   });
-  const [isEN] = useState(() => {
-    const pathIsEN = window.location.pathname.startsWith('/en/');
-    const pathIsPT = !pathIsEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));
-    if (pathIsEN) return true;
-    if (pathIsPT) return false;
-    return sessionStorage.getItem('analysisLang') === 'en';
-  });
+  const lang = getLang();
+  const isEN = lang === 'en';
 
   // Currency & pricing: PT = EUR, EN = USD
-  const CUR = isEN ? '$' : '€';
+  const CUR = t('bca53fde');
   const P = isEN
     ? { cv: '9.99', cp: '19.99', career: '19.99' }
     : { cv: '9,99', cp: '19,99', career: '19,99' };
-  const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
+  const CURRENCY_CODE = t('eur');
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
     const pPT = !pEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));
@@ -465,8 +464,8 @@ export default function Results() {
     return en ? 'Waiting for MB WAY approval...' : 'A aguardar aprovação no MB WAY...';
   });
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
-    name: isEN ? 'CV Report' : 'Relatório CV',
-    price: isEN ? '9.99' : '9,99',
+    name: t('relatrio_cv'),
+    price: t('999'),
     analyses: 1,
     voucher_type: 'standard',
     includes_career_path: false,
@@ -486,7 +485,7 @@ export default function Results() {
     if (!appliedCoupon) return price;
     const num = parseFloat(price.replace(',', '.'));
     const discounted = Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
-    return isEN ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
+    return lang === 'en' ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
   };
   const getDiscountedPriceNum = (price: string) => {
     const num = parseFloat(price.replace(',', '.'));
@@ -537,10 +536,10 @@ export default function Results() {
       setSavedToAccount(true);
     } catch (err: any) {
       if (err?.message === 'SESSION_EXPIRED' || err?.message === 'NOT_LOGGED_IN') {
-        setSaveError(isEN ? 'Session expired. Please log in again in your Account area and return here.' : 'Sessão expirada. Faz login novamente na Área de Cliente e volta aqui.');
+        setSaveError(t('sesso_expirada_faz_login_novamente'));
         setIsLoggedIn(false);
       } else {
-        setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+        setSaveError(t('erro_ao_guardar_tenta_novamente'));
       }
     } finally {
       setSavingToAccount(false);
@@ -667,7 +666,7 @@ export default function Results() {
     // Handle cancelled payment — clean URL and redirect to home
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
-      setLocation(isEN ? '/en' : '/');
+      setLocation(t('6666cd76'));
       return;
     }
 
@@ -697,8 +696,8 @@ export default function Results() {
             const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 9.99;
             const productName = restoredPlan?.includes_career_path ? 'bundle' : 'cv_analyser';
             trackPurchase(productName, priceVal, `CV-STRIPE-${sessionId}`);
-            if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceVal, currency: isEN ? 'USD' : 'EUR'});
-            trackAffiliateConversion({ product: productName, amount: priceVal, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
+            if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceVal, currency: t('eur')});
+            trackAffiliateConversion({ product: productName, amount: priceVal, currency: t('eur'), payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
             updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
 
             // If bundle plan, auto-trigger Career Path flow
@@ -748,8 +747,8 @@ export default function Results() {
               mode: 'career_path',
               cv_text: cvTextForCP,
               linkedin_url: linkedinForCP || undefined,
-              language: isEN ? 'en' : 'pt',
-              country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
+              language: t('pt'),
+              country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
               region: sessionStorage.getItem('analysisRegion') || '',
             })
           });
@@ -785,7 +784,7 @@ export default function Results() {
       (async () => {
         try {
           setJobScrapeStatus('scraping');
-          setJobScrapeMessage(isEN ? 'Extracting real job description from LinkedIn...' : 'A extrair descrição real da vaga do LinkedIn...');
+          setJobScrapeMessage(t('a_extrair_descrio_real_da'));
           console.log('[JOB_SCRAPE] Detected LinkedIn URL, scraping:', savedJobDesc);
 
           const scrapeRes = await fetch(`${BACKEND_URL}/api/scrape-linkedin-job`, {
@@ -805,7 +804,7 @@ export default function Results() {
 
             // Re-analyse with the real job description
             setJobScrapeStatus('reanalyzing');
-            setJobScrapeMessage(isEN ? 'Re-analysing CV with real job requirements...' : 'A re-analisar CV com requisitos reais da vaga...');
+            setJobScrapeMessage(t('a_reanalisar_cv_com_requisitos'));
 
             const storedCvText = sessionStorage.getItem('cvText') || '';
             const storedCvFile = sessionStorage.getItem('cvFile') || '';
@@ -847,36 +846,26 @@ export default function Results() {
                 sessionStorage.setItem('cvAnalysis', JSON.stringify(newResult));
 
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(isEN
-                  ? `Analysis updated with real data from "${scrapeData.job_data.title}"`
-                  : `Análise atualizada com dados reais de "${scrapeData.job_data.title}"`);
+                setJobScrapeMessage(pick(`Análise atualizada com dados reais de "${scrapeData.job_data.title}"`, `Analysis updated with real data from "${scrapeData.job_data.title}"`, `Análise atualizada com dados reais de "${scrapeData.job_data.title}"`));
               } else {
                 console.warn('[JOB_SCRAPE] Re-analysis failed:', reanalysisData.error);
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(isEN
-                  ? `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`
-                  : `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`);
+                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`));
               }
             } else {
               console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
               setJobScrapeStatus('done');
-              setJobScrapeMessage(isEN
-                ? `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`
-                : `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`);
+              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`));
             }
           } else {
             console.warn('[JOB_SCRAPE] Scraping failed:', scrapeData.error);
             setJobScrapeStatus('error');
-            setJobScrapeMessage(isEN
-              ? 'Could not extract job details. Paste the job description text in Live Match for best results.'
-              : 'Não foi possível extrair detalhes da vaga. Cole o texto da descrição no Live Match para melhores resultados.');
+            setJobScrapeMessage(t('no_foi_possvel_extrair_detalhes'));
           }
         } catch (err: any) {
           console.error('[JOB_SCRAPE] Error:', err);
           setJobScrapeStatus('error');
-          setJobScrapeMessage(isEN
-            ? 'Error extracting job. Use Live Match with the job description text.'
-            : 'Erro ao extrair vaga. Use o Live Match com o texto da descrição.');
+          setJobScrapeMessage(t('erro_ao_extrair_vaga_use'));
         }
       })();
     }
@@ -922,7 +911,7 @@ export default function Results() {
     setShowPaymentModal(true);
     setPaymentStep('confirm');
     setPaymentError(null);
-    setPollingMessage(isEN ? 'Waiting for MB WAY approval...' : 'A aguardar aprovação no MB WAY...');
+    setPollingMessage(t('a_aguardar_aprovao_no_mb'));
   };
 
   const handleStripePayment = async () => {
@@ -950,14 +939,14 @@ export default function Results() {
           name: email.split('@')[0],
           product_type: 'cv_analysis',
           orderId,
-          language: isEN ? 'en' : 'pt',
+          language: t('pt'),
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
           amount: getDiscountedPriceNum(selectedPlan.price),
           description: `CV Analyser — ${selectedPlan.name} — Share2Inspire`,
-          success_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=cancelled`,
+          success_url: `${window.location.origin}${t('cvanalyser')}/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${t('cvanalyser')}/results?payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -981,19 +970,19 @@ export default function Results() {
 
   const handleMBWayPayment = async () => {
     if (!email || !phone) {
-      setPaymentError(isEN ? 'Please fill in all fields' : 'Por favor, preenche todos os campos');
+      setPaymentError(t('por_favor_preenche_todos_os'));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setPaymentError(isEN ? 'Please enter a valid email' : 'Por favor, introduz um email válido');
+      setPaymentError(t('por_favor_introduz_um_email'));
       return;
     }
 
     const phoneRegex = /^(9[1236]\d{7}|2\d{8})$/;
     if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-      setPaymentError(isEN ? 'Please enter a valid phone number' : 'Por favor, introduz um número de telemóvel válido');
+      setPaymentError(t('por_favor_introduz_um_nmero'));
       return;
     }
 
@@ -1004,7 +993,7 @@ export default function Results() {
       const analysisDataStr = sessionStorage.getItem('cvAnalysis');
       
       if (!analysisDataStr) {
-        throw new Error(isEN ? 'CV data not found' : 'Dados do CV não encontrados');
+        throw new Error(t('dados_do_cv_no_encontrados'));
       }
 
       const parsedAnalysis = JSON.parse(analysisDataStr);
@@ -1032,7 +1021,7 @@ export default function Results() {
       
       if (!response.ok || !data.success) {
         console.error('[PAYMENT] Backend error:', data);
-        throw new Error(data.error || (isEN ? 'Error processing payment. Try again.' : 'Erro ao processar pagamento. Tenta novamente.'));
+        throw new Error(data.error || (t('erro_ao_processar_pagamento_tenta')));
       }
       
       sessionStorage.setItem('orderId', orderId);
@@ -1044,10 +1033,10 @@ export default function Results() {
       
       // Move to polling step
       setPaymentStep('polling');
-      setPollingMessage(isEN ? 'Confirm the payment in the MB WAY app on your phone...' : 'Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMessage(t('confirma_o_pagamento_na_app'));
       startPolling(orderId);
     } catch (err) {
-      setPaymentError(err instanceof Error ? err.message : (isEN ? 'Error processing payment' : 'Erro ao processar pagamento'));
+      setPaymentError(err instanceof Error ? err.message : (t('erro_ao_processar_pagamento')));
     } finally {
       setLoading(false);
     }
@@ -1055,13 +1044,13 @@ export default function Results() {
 
   const handlePayPalPayment = async () => {
     if (!email) {
-      setPaymentError(isEN ? 'Please enter your email' : 'Por favor, introduz o teu email');
+      setPaymentError(t('por_favor_introduz_o_teu'));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setPaymentError(isEN ? 'Please enter a valid email' : 'Por favor, introduz um email válido');
+      setPaymentError(t('por_favor_introduz_um_email'));
       return;
     }
 
@@ -1080,7 +1069,7 @@ export default function Results() {
       if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceNum, currency: CURRENCY_CODE});
       setPaymentStep('success');
     } catch (err) {
-      setPaymentError(isEN ? 'Error opening PayPal. Try again.' : 'Erro ao abrir PayPal. Tenta novamente.');
+      setPaymentError(t('erro_ao_abrir_paypal_tenta'));
     } finally {
       setLoading(false);
     }
@@ -1129,7 +1118,7 @@ export default function Results() {
             console.warn('[POLLING] 8 erros consecutivos, a parar polling');
             clearInterval(pollInterval);
             setPollingExpired(true);
-            setPollingMessage(isEN ? 'Unable to verify payment. Use the "I already paid" button to re-check.' : 'Não foi possível verificar o pagamento. Usa o botão "Já paguei" para re-verificar.');
+            setPollingMessage(t('no_foi_possvel_verificar_o'));
           }
           return;
         }
@@ -1166,30 +1155,30 @@ export default function Results() {
           if (elapsed < MIN_BEFORE_EXPIRED) {
             // Ignore early expired — ifthenpay sometimes returns expired too soon
             console.log(`[POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s < 90s)`);
-            setPollingMessage(isEN ? 'Checking payment... Confirm in the MB WAY app.' : 'A verificar pagamento... Confirma na app MB WAY.');
+            setPollingMessage(t('a_verificar_pagamento_confirma_na'));
           } else {
             console.warn('[POLLING] Pagamento expirado após', Math.round(elapsed/1000), 's');
             clearInterval(pollInterval);
             setPollingExpired(true);
-            setPollingMessage(isEN ? 'Payment expired. Use the button below if you already paid.' : 'O pagamento expirou. Usa o botão abaixo se já pagaste.');
+            setPollingMessage(t('o_pagamento_expirou_usa_o'));
           }
           return;
         }
         
         // Still pending — update message based on time
         if (elapsed < 30000) {
-          setPollingMessage(isEN ? 'Confirm the payment in the MB WAY app on your phone...' : 'Confirma o pagamento na app MB WAY do teu telemóvel...');
+          setPollingMessage(t('confirma_o_pagamento_na_app'));
         } else if (elapsed < 60000) {
-          setPollingMessage(isEN ? 'Still waiting... Check the MB WAY app.' : 'Ainda a aguardar... Verifica a app MB WAY.');
+          setPollingMessage(t('ainda_a_aguardar_verifica_a'));
         } else {
-          setPollingMessage(isEN ? 'Waiting for confirmation... If you already approved, wait a few more seconds.' : 'A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+          setPollingMessage(t('a_aguardar_confirmao_se_j'));
         }
         
         if (attempts >= maxAttempts) {
           console.warn('[POLLING] Timeout atingido');
           clearInterval(pollInterval);
           setPollingExpired(true);
-          setPollingMessage(isEN ? 'Time expired. If you already approved the payment, use the button below.' : 'Tempo esgotado. Se já aprovaste o pagamento, usa o botão abaixo.');
+          setPollingMessage(t('tempo_esgotado_se_j_aprovaste'));
         }
       } catch (err) {
         console.error('Erro no polling:', err);
@@ -1197,7 +1186,7 @@ export default function Results() {
         if (consecutiveErrors >= 8) {
           clearInterval(pollInterval);
           setPollingExpired(true);
-          setPollingMessage(isEN ? 'Connection error. Use the button below if you already paid.' : 'Erro de ligação. Usa o botão abaixo se já pagaste.');
+          setPollingMessage(t('erro_de_ligao_usa_o'));
         }
       }
     }, 5000); // Poll every 5 seconds
@@ -1206,7 +1195,7 @@ export default function Results() {
   // Manual re-check for "Já paguei" button
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMessage(isEN ? 'Checking payment...' : 'A verificar pagamento...');
+    setPollingMessage(t('a_verificar_pagamento'));
     setPollingExpired(false);
     try {
       const response = await fetch(
@@ -1232,13 +1221,13 @@ export default function Results() {
         setPaymentStep('success');
       } else {
         setPollingExpired(true);
-        setPollingMessage(isEN ? 'Payment not yet confirmed. If you already paid, wait a few seconds and try again.' : 'Pagamento ainda não confirmado. Se já pagaste, aguarda uns segundos e tenta novamente.');
+        setPollingMessage(t('pagamento_ainda_no_confirmado_se'));
         // Restart polling for another 2 minutes
         startPolling(currentOrderId);
       }
     } catch {
       setPollingExpired(true);
-      setPollingMessage(isEN ? 'Error checking. Try again in a few seconds.' : 'Erro ao verificar. Tenta novamente em alguns segundos.');
+      setPollingMessage(t('erro_ao_verificar_tenta_novamente'));
     }
   };
 
@@ -1292,7 +1281,7 @@ export default function Results() {
   // Validate discount code (checks discount_coupons first, then vouchers)
   const handleDiscountValidation = async () => {
     if (!discountCode.trim()) {
-      setDiscountError(isEN ? 'Enter a code' : 'Introduz um código');
+      setDiscountError(t('introduz_um_cdigo'));
       return;
     }
 
@@ -1311,26 +1300,26 @@ export default function Results() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(t('este_cdigo_ainda_no_est')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(t('este_cdigo_j_expirou')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(t('este_cdigo_atingiu_o_limite')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('cv_report')) { setDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return; }
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('cv_report')) { setDiscountError(t('este_cdigo_no_aplicvel_aqui')); return; }
         if (coupon.discount_percent === 100) {
-          setDiscountSuccess(isEN ? 'Code valid! Analysis unlocked.' : 'Código válido! Análise desbloqueada.');
+          setDiscountSuccess(t('cdigo_vlido_anlise_desbloqueada'));
           unlockFullReport();
           updateAnalysisPayment('0', 'coupon', code);
           // Increment coupon usage counter
           incrementCouponUsage(code);
           // Track affiliate conversion even for free coupons
-          trackAffiliateConversion({ product: 'cv_analyser', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          trackAffiliateConversion({ product: 'cv_analyser', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
           return;
         }
         // Partial discount — apply it
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code);
-        setDiscountSuccess(isEN ? `${coupon.discount_percent}% discount applied!` : `Desconto de ${coupon.discount_percent}% aplicado!`);
+        setDiscountSuccess(pick(`Desconto de ${coupon.discount_percent}% aplicado!`, `${coupon.discount_percent}% discount applied!`, `Desconto de ${coupon.discount_percent}% aplicado!`));
         setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2000);
         return;
       }
@@ -1341,11 +1330,11 @@ export default function Results() {
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
 
-      if (!response.ok) throw new Error(isEN ? 'Error verifying code' : 'Erro ao verificar código');
+      if (!response.ok) throw new Error(t('erro_ao_verificar_cdigo'));
       const vouchers = await response.json();
       
       if (vouchers.length === 0) {
-        setDiscountError(isEN ? 'Invalid or already used code' : 'Código inválido ou já utilizado');
+        setDiscountError(t('cdigo_invlido_ou_j_utilizado'));
         return;
       }
 
@@ -1353,7 +1342,7 @@ export default function Results() {
       const remaining = voucher.total_analyses - voucher.used_analyses;
 
       if (remaining <= 0) {
-        setDiscountError(isEN ? 'This code has no analyses remaining' : 'Este código já não tem análises disponíveis');
+        setDiscountError(t('este_cdigo_j_no_tem'));
         return;
       }
 
@@ -1367,21 +1356,21 @@ export default function Results() {
       );
 
       if (updateResponse.ok) {
-        setDiscountSuccess(isEN ? `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`);
+        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.`, `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`));
         unlockFullReport();
         updateAnalysisPayment(selectedPlan.price, 'voucher', code);
         
         if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
           sessionStorage.setItem('careerPathIncluded', 'true');
-          setDiscountSuccess(isEN ? `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`);
+          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.`, `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`));
         }
         
         setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
       } else {
-        throw new Error(isEN ? 'Error using code' : 'Erro ao utilizar código');
+        throw new Error(t('erro_ao_utilizar_cdigo'));
       }
     } catch (err) {
-      setDiscountError(err instanceof Error ? err.message : (isEN ? 'Error verifying code' : 'Erro ao verificar código'));
+      setDiscountError(err instanceof Error ? err.message : (t('erro_ao_verificar_cdigo')));
     } finally {
       setDiscountLoading(false);
     }
@@ -1392,22 +1381,22 @@ export default function Results() {
   // Career Path: initiate payment and generate
   const handleCareerPathPayment = async () => {
     if (!careerPathEmail) {
-      setCareerPathError(isEN ? 'Enter your email' : 'Introduz o teu email');
+      setCareerPathError(t('introduz_o_teu_email'));
       return;
     }
     if (careerPathPaymentMethod === 'mbway' && !careerPathPhone) {
-      setCareerPathError(isEN ? 'Enter your phone number' : 'Introduz o teu número de telemóvel');
+      setCareerPathError(t('introduz_o_teu_nmero_de'));
       return;
     }
     setCareerPathError(null);
     setCareerPathPaymentStep('polling');
-    setCareerPathPollingMsg(isEN ? 'Confirm the payment in the MB WAY app...' : 'Confirma o pagamento na app MB WAY...');
+    setCareerPathPollingMsg(t('confirma_o_pagamento_na_app_2'));
 
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const cpAmount = careerPathIsUpgrade ? '14.99' : '19.99';
-      const cpCurrencyCode = isEN ? 'usd' : 'eur';
+      const cpCurrencyCode = t('eur_2');
 
       if (careerPathPaymentMethod === 'stripe') {
         const stripeRes = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-checkout', {
@@ -1418,14 +1407,14 @@ export default function Results() {
             name: careerPathEmail.split('@')[0],
             product_type: 'career_path',
             orderId,
-            language: isEN ? 'en' : 'pt',
+            language: t('pt'),
             country: sessionStorage.getItem('analysisCountry') || '',
             region: sessionStorage.getItem('analysisRegion') || '',
             currency: cpCurrencyCode,
             amount: parseFloat(cpAmount),
             description: 'Career Path — Share2Inspire',
-            success_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=success&session_id={CHECKOUT_SESSION_ID}&product=career_path`,
-            cancel_url: `${window.location.origin}${isEN ? '/en/cv-analyser' : '/cv-analyser'}/results?payment=cancelled`,
+            success_url: `${window.location.origin}${t('cvanalyser')}/results?payment=success&session_id={CHECKOUT_SESSION_ID}&product=career_path`,
+            cancel_url: `${window.location.origin}${t('cvanalyser')}/results?payment=cancelled`,
           })
         });
         const stripeData = await stripeRes.json();
@@ -1462,7 +1451,7 @@ export default function Results() {
       });
 
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || (isEN ? 'Payment error' : 'Erro no pagamento'));
+      if (!data.success) throw new Error(data.error || (t('erro_no_pagamento')));
 
       let attempts = 0;
       const maxAttempts = 60; // 60 * 5s = 5 minutes
@@ -1479,38 +1468,38 @@ export default function Results() {
           if (pollData.paid) {
             clearInterval(pollInterval);
             setCareerPathPaymentStep('generating');
-            setCareerPathPollingMsg(isEN ? 'Payment confirmed! Generating your Career Path...' : 'Pagamento confirmado! A gerar o teu Career Path...');
+            setCareerPathPollingMsg(t('pagamento_confirmado_a_gerar_o'));
             await generateCareerPath();
           } else if (pollData.expired) {
             const elapsed = Date.now() - cpStartTime;
             if (elapsed < 90000) {
               // Ignore early expired
               console.log(`[CP-POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s)`);
-              setCareerPathPollingMsg(isEN ? 'Checking payment... Confirm in the MB WAY app.' : 'A verificar pagamento... Confirma na app MB WAY.');
+              setCareerPathPollingMsg(t('a_verificar_pagamento_confirma_na'));
             } else {
               clearInterval(pollInterval);
-              setCareerPathError(isEN ? 'Payment expired. Try again.' : 'Pagamento expirado. Tenta novamente.');
+              setCareerPathError(t('pagamento_expirado_tenta_novamente'));
               setCareerPathPaymentStep('payment');
             }
           } else if (attempts >= maxAttempts) {
             clearInterval(pollInterval);
-            setCareerPathError(isEN ? 'Time expired. If you already paid, try again.' : 'Tempo esgotado. Se já pagaste, tenta novamente.');
+            setCareerPathError(t('tempo_esgotado_se_j_pagaste'));
             setCareerPathPaymentStep('payment');
           } else {
             // Update message based on time
             const elapsed = Date.now() - cpStartTime;
             if (elapsed < 30000) {
-              setCareerPathPollingMsg(isEN ? 'Confirm the payment in the MB WAY app...' : 'Confirma o pagamento na app MB WAY...');
+              setCareerPathPollingMsg(t('confirma_o_pagamento_na_app_2'));
             } else if (elapsed < 60000) {
-              setCareerPathPollingMsg(isEN ? 'Still waiting... Check the MB WAY app.' : 'Ainda a aguardar... Verifica a app MB WAY.');
+              setCareerPathPollingMsg(t('ainda_a_aguardar_verifica_a'));
             } else {
-              setCareerPathPollingMsg(isEN ? 'Waiting for confirmation... If you already approved, wait a few more seconds.' : 'A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+              setCareerPathPollingMsg(t('a_aguardar_confirmao_se_j'));
             }
           }
         } catch { /* ignore polling errors */ }
       }, 5000);
     } catch (err: any) {
-      setCareerPathError(err.message || (isEN ? 'Error processing payment' : 'Erro ao processar pagamento'));
+      setCareerPathError(err.message || (t('erro_ao_processar_pagamento')));
       setCareerPathPaymentStep('payment');
     }
   };
@@ -1535,22 +1524,22 @@ export default function Results() {
           mode: 'career_path',
           cv_text: cvData || '',
           linkedin_url: linkedinUrl || undefined,
-          language: isEN ? 'en' : 'pt',
-          country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
+          language: t('pt'),
+          country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
           region: sessionStorage.getItem('analysisRegion') || '',
         })
       });
 
       const data = await response.json();
       console.log('[CareerPath] Response:', data.success, !!data.career_path);
-      if (!data.success && !data.career_path) throw new Error(data.error || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
+      if (!data.success && !data.career_path) throw new Error(data.error || (t('erro_ao_gerar_career_path')));
       
       setCareerPathData(data.career_path || data);
       setCareerPathPaymentStep('done');
       setShowCareerPathModal(false);
     } catch (err: any) {
       console.error('[CareerPath] Error:', err);
-      setCareerPathError(err.message || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
+      setCareerPathError(err.message || (t('erro_ao_gerar_career_path')));
     } finally {
       setCareerPathLoading(false);
     }
@@ -1589,10 +1578,10 @@ export default function Results() {
   const safeQuadrants = (analysisData.quadrants && Array.isArray(analysisData.quadrants) && analysisData.quadrants.length > 0)
     ? analysisData.quadrants
     : [
-        { title: isEN ? 'Structure' : 'Estrutura', score: 65, benchmark: 70, impactPhrase: isEN ? 'CV organisation and clarity' : 'Organização e clareza do CV' },
-        { title: isEN ? 'Content' : 'Conteúdo', score: 70, benchmark: 72, impactPhrase: isEN ? 'Content quality and relevance' : 'Qualidade e relevância do conteúdo' },
-        { title: isEN ? 'Education' : 'Formação', score: 68, benchmark: 65, impactPhrase: isEN ? 'Academic and continuous education' : 'Formação académica e contínua' },
-        { title: isEN ? 'Experience' : 'Experiência', score: 72, benchmark: 70, impactPhrase: isEN ? 'Professional experience' : 'Experiência profissional' },
+        { title: t('estrutura'), score: 65, benchmark: 70, impactPhrase: t('organizao_e_clareza_do_cv') },
+        { title: t('contedo'), score: 70, benchmark: 72, impactPhrase: t('qualidade_e_relevncia_do_contedo') },
+        { title: t('formao'), score: 68, benchmark: 65, impactPhrase: t('formao_acadmica_e_contnua') },
+        { title: t('experincia'), score: 72, benchmark: 70, impactPhrase: t('experincia_profissional') },
       ];
   const activeAnalysisData = (!analysisData.quadrants || !Array.isArray(analysisData.quadrants) || analysisData.quadrants.length === 0)
     ? { ...analysisData, quadrants: safeQuadrants }
@@ -1608,7 +1597,7 @@ export default function Results() {
     'Experiência': 'Experience', 'Experience': 'Experience',
   };
   const dimensions = analysisData.quadrants.map((q: any) => ({
-    label: isEN ? (quadrantTitleEN[q.title] || q.title) : q.title,
+    label: lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title,
     score: q.score,
     benchmark: q.benchmark
   }));
@@ -1617,7 +1606,7 @@ export default function Results() {
     const targetEmail = reportEmail || email || sessionStorage.getItem('paymentEmail') || '';
     if (targetEmail) updateAnalysisEmail(targetEmail);
     if (!targetEmail) {
-      setReportError(isEN ? 'Enter a valid email.' : 'Introduz um email válido.');
+      setReportError(t('introduz_um_email_vlido'));
       return;
     }
     setReportSending(true);
@@ -1625,7 +1614,7 @@ export default function Results() {
     try {
       const vCode = sessionStorage.getItem('voucherCode');
       const vRemaining = sessionStorage.getItem('voucherRemaining');
-      const emailRoute = isEN ? 'send-cv-report-email-en' : 'send-cv-report-email';
+      const emailRoute = t('sendcvreportemail');
       const response = await fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/${emailRoute}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1633,7 +1622,7 @@ export default function Results() {
           email: targetEmail,
           name: targetEmail.split('@')[0],
           analysisData,
-          country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
+          country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
           region: sessionStorage.getItem('analysisRegion') || '',
           voucherCode: vCode || undefined,
           remainingAnalyses: vRemaining ? parseInt(vRemaining) : undefined,
@@ -1643,11 +1632,11 @@ export default function Results() {
       if (data.success) {
         setReportSent(true);
       } else {
-        throw new Error(data.error || (isEN ? 'Error sending' : 'Erro ao enviar'));
+        throw new Error(data.error || (t('erro_ao_enviar')));
       }
     } catch (err: any) {
       console.error('Erro ao enviar relatório:', err);
-      setReportError(err.message || (isEN ? 'Error sending the report. Try again.' : 'Erro ao enviar o relatório. Tenta novamente.'));
+      setReportError(err.message || (t('erro_ao_enviar_o_relatrio')));
     } finally {
       setReportSending(false);
     }
@@ -1667,7 +1656,7 @@ export default function Results() {
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">{isEN ? 'Back' : 'Voltar'}</span>
+              <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
@@ -1680,7 +1669,7 @@ export default function Results() {
             {isPaid ? (
               <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-500/10 border border-green-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
-                <span className="text-xs sm:text-sm font-semibold text-green-600">{isEN ? 'Full Report' : 'Relatório Completo'}</span>
+                <span className="text-xs sm:text-sm font-semibold text-green-600">{t('relatrio_completo')}</span>
               </div>
             ) : (
               <>
@@ -1691,16 +1680,16 @@ export default function Results() {
                   className="text-xs sm:text-sm font-medium border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5"
                 >
                   <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
-                  <span className="hidden sm:inline">{isEN ? 'I have a code' : 'Tenho código'}</span>
-                  <span className="sm:hidden">{isEN ? 'Code' : 'Código'}</span>
+                  <span className="hidden sm:inline">{t('tenho_cdigo')}</span>
+                  <span className="sm:hidden">{t('cdigo')}</span>
                 </Button>
                 <Button
                   onClick={() => openPaymentModal()}
                   size="sm"
                   className="bg-[#C9A961] hover:bg-[#A88B4E] text-white text-xs sm:text-sm font-semibold px-3 sm:px-5 py-1.5 sm:py-2"
                 >
-                  <span className="hidden sm:inline">{isEN ? 'Unlock Full Analysis' : 'Desbloquear Análise Completa'}</span>
-                  <span className="sm:hidden">{isEN ? 'Unlock' : 'Desbloquear'}</span>
+                  <span className="hidden sm:inline">{t('desbloquear_anlise_completa')}</span>
+                  <span className="sm:hidden">{t('desbloquear')}</span>
                 </Button>
               </>
             )}
@@ -1720,12 +1709,12 @@ export default function Results() {
           {isPaid ? (
             <>
               <div className="w-2 h-2 rounded-full bg-green-500" />
-              <span>{isEN ? 'Full Report — All sections unlocked' : 'Relatório Completo — Todas as secções desbloqueadas'}</span>
+              <span>{t('relatrio_completo_todas_as_seces')}</span>
             </>
           ) : (
             <>
               <div className="w-2 h-2 rounded-full bg-[#C9A961]" />
-              <span>{isEN ? 'Free Report — Summary analysis of your CV' : 'Relatório Gratuito — Análise resumida do teu CV'}</span>
+              <span>{t('relatrio_gratuito_anlise_resumida_do')}</span>
             </>
           )}
         </div>
@@ -1736,23 +1725,23 @@ export default function Results() {
             <div className="flex items-center gap-3">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
               <div>
-                <p className="text-sm font-semibold text-foreground">{isEN ? 'Your code for future analyses:' : 'O teu código para futuras análises:'}</p>
+                <p className="text-sm font-semibold text-foreground">{t('o_teu_cdigo_para_futuras')}</p>
                 <p className="text-lg font-mono font-bold text-[#C9A961]">{storedVoucherCode}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-muted-foreground">{isEN ? 'Remaining analyses' : 'Análises restantes'}</p>
+              <p className="text-xs text-muted-foreground">{t('anlises_restantes')}</p>
               <p className="text-2xl font-bold text-[#C9A961]">{storedVoucherRemaining}</p>
             </div>
           </div>
         )}
 
         {/* ═══ ATS Rejection ═══ */}
-        <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} isEN={isEN} />
+        <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} isEN={lang === 'en'} />
 
         {/* ═══ ATS Deep Scan ═══ */}
         {analysisData.atsDeepScan && (
-          <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={isEN} onUnlock={() => openPaymentModal()} />
+          <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={lang === 'en'} onUnlock={() => openPaymentModal()} />
         )}
 
         {/* ═══ LinkedIn Job Scraping Status Banner ═══ */}
@@ -1775,10 +1764,10 @@ export default function Results() {
             )}
             <div>
               <p className="text-sm font-medium text-foreground">
-                {jobScrapeStatus === 'scraping' && (isEN ? 'LinkedIn Job Extraction' : 'Extração da Vaga LinkedIn')}
-                {jobScrapeStatus === 'reanalyzing' && (isEN ? 'Re-analysing with Real Data' : 'Re-análise com Dados Reais')}
-                {jobScrapeStatus === 'done' && (isEN ? 'Job Data Updated' : 'Dados da Vaga Atualizados')}
-                {jobScrapeStatus === 'error' && (isEN ? 'Extraction Issue' : 'Problema na Extração')}
+                {jobScrapeStatus === 'scraping' && (t('extrao_da_vaga_linkedin'))}
+                {jobScrapeStatus === 'reanalyzing' && (t('reanlise_com_dados_reais'))}
+                {jobScrapeStatus === 'done' && (t('dados_da_vaga_atualizados'))}
+                {jobScrapeStatus === 'error' && (t('problema_na_extrao'))}
               </p>
               <p className="text-xs text-muted-foreground">{jobScrapeMessage}</p>
             </div>
@@ -1793,7 +1782,7 @@ export default function Results() {
                 <Briefcase className="w-5 h-5 text-[#C9A961]" />
               </div>
               <div>
-                <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'JOB MATCH ANALYSIS' : 'ANÁLISE DE COMPATIBILIDADE COM A VAGA'}</p>
+                <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('anlise_de_compatibilidade_com_a')}</p>
                 {analysisData.jobMatch.jobTitle && <p className="text-sm text-muted-foreground">{analysisData.jobMatch.jobTitle}</p>}
               </div>
             </div>
@@ -1815,7 +1804,7 @@ export default function Results() {
               <>
                 {analysisData.jobMatch.keywordGaps && analysisData.jobMatch.keywordGaps.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs font-semibold text-red-500 mb-2">{isEN ? 'Missing keywords:' : 'Palavras-chave em falta:'}</p>
+                    <p className="text-xs font-semibold text-red-500 mb-2">{t('palavraschave_em_falta')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {analysisData.jobMatch.keywordGaps.map((gap: string, i: number) => (
                         <span key={i} className="px-2 py-1 rounded-full text-xs bg-red-500/10 text-red-500 border border-red-500/20">{gap}</span>
@@ -1825,7 +1814,7 @@ export default function Results() {
                 )}
                 {analysisData.jobMatch.matchedKeywords && analysisData.jobMatch.matchedKeywords.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-green-600 mb-2">{isEN ? 'Matched keywords:' : 'Palavras-chave encontradas:'}</p>
+                    <p className="text-xs font-semibold text-green-600 mb-2">{t('palavraschave_encontradas')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {analysisData.jobMatch.matchedKeywords.map((kw: string, i: number) => (
                         <span key={i} className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-600 border border-green-500/20">{kw}</span>
@@ -1838,27 +1827,27 @@ export default function Results() {
               <>
                 {analysisData.jobMatch.keywordGaps && analysisData.jobMatch.keywordGaps.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs font-semibold text-red-500 mb-2">{isEN ? 'Missing keywords:' : 'Palavras-chave em falta:'}</p>
+                    <p className="text-xs font-semibold text-red-500 mb-2">{t('palavraschave_em_falta')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       <span className="px-2 py-1 rounded-full text-xs bg-red-500/10 text-red-500 border border-red-500/20">
-                        {isEN ? `${analysisData.jobMatch.keywordGaps.length} keywords identified` : `${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`}
+                        {pick(`${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`, `${analysisData.jobMatch.keywordGaps.length} keywords identified`, `${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`)}
                       </span>
                     </div>
                   </div>
                 )}
                 {analysisData.jobMatch.matchedKeywords && analysisData.jobMatch.matchedKeywords.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs font-semibold text-green-600 mb-2">{isEN ? 'Matched keywords:' : 'Palavras-chave encontradas:'}</p>
+                    <p className="text-xs font-semibold text-green-600 mb-2">{t('palavraschave_encontradas')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       <span className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-600 border border-green-500/20">
-                        {isEN ? `${analysisData.jobMatch.matchedKeywords.length} keywords matched` : `${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`}
+                        {pick(`${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`, `${analysisData.jobMatch.matchedKeywords.length} keywords matched`, `${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`)}
                       </span>
                     </div>
                   </div>
                 )}
                 <div className="p-3 rounded-lg bg-[#C9A961]/5 border border-[#C9A961]/20 flex items-center gap-2 cursor-pointer hover:bg-[#C9A961]/10 transition-colors" onClick={() => openPaymentModal()}>
                   <Lock className="w-3.5 h-3.5 text-[#C9A961]" />
-                  <span className="text-xs text-[#C9A961] font-medium">{isEN ? 'See the detail in the full report' : 'V\u00ea o detalhe no relat\u00f3rio completo'}</span>
+                  <span className="text-xs text-[#C9A961] font-medium">{t('vu00ea_o_detalhe_no_relatu00f3rio')}</span>
                 </div>
               </>
             )}
@@ -1881,13 +1870,13 @@ export default function Results() {
                     <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
                       Live Match
                       <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
-                        {isEN ? 'New' : 'Novo'}
+                        {t('novo')}
                       </span>
                     </p>
                     <p className="text-[11px] text-[#888] font-light">
                       {analysisData.jobMatch
-                        ? (isEN ? 'Want to compare with a different job? Paste another description here' : 'Quer comparar com outra vaga? Cole outra descrição aqui')
-                        : (isEN ? 'Paste a job description and see ATS keyword matches in real-time' : 'Cole a descrição de uma vaga e veja as keywords ATS destacadas no seu CV em tempo real')}
+                        ? (t('quer_comparar_com_outra_vaga'))
+                        : (t('cole_a_descrio_de_uma'))}
                     </p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors ml-auto" />
@@ -1897,7 +1886,7 @@ export default function Results() {
               <div className="bg-card border border-[#e8e8e6] rounded-lg p-5">
                 <LiveMatchPanel
                   cvText={cvText}
-                  lang={isEN ? 'en' : 'pt'}
+                  lang={t('pt')}
                   isPaid={isPaid}
                   onRequestPayment={() => openPaymentModal()}
                   initialJD={sessionStorage.getItem('scrapedJobText') || undefined}
@@ -1918,8 +1907,8 @@ export default function Results() {
                     <AlertTriangle className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold tracking-wider text-red-500">{isEN ? 'CRITICAL ISSUES DETECTED' : 'PROBLEMAS CRÍTICOS DETETADOS'}</p>
-                    <p className="text-xs text-muted-foreground">{isEN ? `${analysisData.cvProblems.length} specific issues that are hurting your CV` : `${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`}</p>
+                    <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
+                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems.length} specific issues that are hurting your CV`, `${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`)}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -1937,18 +1926,18 @@ export default function Results() {
                       {problem.fullExplanation && (
                         <div className="p-4 border-t border-border space-y-3">
                           <div>
-                            <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{isEN ? 'FULL EXPLANATION' : 'EXPLICAÇÃO COMPLETA'}</p>
+                            <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{t('explicao_completa')}</p>
                             <p className="text-sm text-foreground">{problem.fullExplanation}</p>
                           </div>
                           {problem.correctionExample && (
                             <div>
-                              <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{isEN ? 'CORRECTION EXAMPLE' : 'EXEMPLO DE CORREÇÃO'}</p>
+                              <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{t('exemplo_de_correo')}</p>
                               <p className="text-sm text-foreground bg-muted/50 p-3 rounded-md font-mono">{problem.correctionExample}</p>
                             </div>
                           )}
                           {problem.rewriteSuggestion && (
                             <div>
-                              <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{isEN ? 'SUGGESTED REWRITE' : 'SUGESTÃO DE REESCRITA'}</p>
+                              <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-1">{t('sugesto_de_reescrita')}</p>
                               <div className="text-sm text-foreground bg-green-500/5 border border-green-500/20 p-3 rounded-md">
                                 <p>{problem.rewriteSuggestion}</p>
                               </div>
@@ -1968,8 +1957,8 @@ export default function Results() {
                     <AlertTriangle className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold tracking-wider text-red-500">{isEN ? 'CRITICAL ISSUES DETECTED' : 'PROBLEMAS CRÍTICOS DETETADOS'}</p>
-                    <p className="text-xs text-muted-foreground">{isEN ? `3 specific issues that are hurting your CV` : `3 problemas específicos que estão a prejudicar o teu CV`}</p>
+                    <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
+                    <p className="text-xs text-muted-foreground">{pick(`3 problemas específicos que estão a prejudicar o teu CV`, `3 specific issues that are hurting your CV`, `3 problemas específicos que estão a prejudicar o teu CV`)}</p>
                   </div>
                 </div>
                 <div className="space-y-3 mb-4">
@@ -1986,7 +1975,7 @@ export default function Results() {
                         </div>
                         <div className="p-3 border-t border-border bg-[#C9A961]/5 flex items-center gap-2">
                           <Lock className="w-3.5 h-3.5 text-[#C9A961]" />
-                          <span className="text-xs text-[#C9A961] font-medium">{isEN ? 'Unlock to see the problem and how to fix it' : 'Desbloqueia para ver o problema e como o corrigir'}</span>
+                          <span className="text-xs text-[#C9A961] font-medium">{t('desbloqueia_para_ver_o_problema')}</span>
                         </div>
                       </div>
                     );
@@ -1994,7 +1983,7 @@ export default function Results() {
                 </div>
                 <button onClick={() => openPaymentModal()} className="w-full py-3 px-4 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2">
                   <Unlock className="w-4 h-4" />
-                  {isEN ? 'Fix these 3 issues now and boost your interview chances' : 'Corrige estes 3 problemas agora e aumenta as tuas hipóteses de entrevista'}
+                  {t('corrige_estes_3_problemas_agora')}
                 </button>
               </>
             )}
@@ -2013,7 +2002,7 @@ export default function Results() {
                 <div className="flex flex-col items-center gap-3">
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-[#C9A961]" />
-                    <p className="text-[11px] font-semibold tracking-wider text-[#C9A961] uppercase">{isEN ? 'Your ATS Compatibility Score' : 'O teu Score de Compatibilidade ATS'}</p>
+                    <p className="text-[11px] font-semibold tracking-wider text-[#C9A961] uppercase">{t('o_teu_score_de_compatibilidade')}</p>
                   </div>
                   <div className="relative mb-4">
                     <ScoreGauge score={atsScore} size={160} strokeWidth={8} />
@@ -2023,7 +2012,7 @@ export default function Results() {
                         atsScore >= 50 ? 'bg-amber-500/10 text-amber-600' :
                         'bg-red-500/10 text-red-500'
                       }`}>
-                        {atsScore >= 75 ? (isEN ? 'Good' : 'Bom') : atsScore >= 50 ? (isEN ? 'Needs improvement' : 'Precisa de melhoria') : (isEN ? 'Critical' : 'Crítico')}
+                        {atsScore >= 75 ? (t('bom')) : atsScore >= 50 ? (t('precisa_de_melhoria')) : (t('crtico'))}
                       </span>
                     </div>
                   </div>
@@ -2040,7 +2029,7 @@ export default function Results() {
                   <div className="flex items-center gap-1.5 justify-center">
                     <AlertTriangle className={`w-3.5 h-3.5 ${impactLevel === 'critical' ? 'text-red-500' : impactLevel === 'moderate' ? 'text-amber-500' : 'text-[#C9A961]'}`} />
                     <p className={`text-[11px] font-semibold tracking-wider ${impactLevel === 'critical' ? 'text-red-500' : impactLevel === 'moderate' ? 'text-amber-500' : 'text-[#C9A961]'}`}>
-                      {isEN ? 'WHAT THIS MEANS FOR YOU' : 'O QUE ISTO SIGNIFICA PARA TI'}
+                      {t('o_que_isto_significa_para')}
                     </p>
                   </div>
                   <div className={`rounded-lg p-4 text-center space-y-1.5 ${
@@ -2054,25 +2043,23 @@ export default function Results() {
                       'text-[#C9A961]'
                     }`}>
                       {impactLevel === 'critical'
-                        ? (isEN ? 'Your CV may be limiting your career opportunities' : 'O teu CV pode estar a limitar as tuas oportunidades de carreira')
+                        ? (t('o_teu_cv_pode_estar'))
                         : impactLevel === 'moderate'
-                        ? (isEN ? 'Your CV has room for significant improvement' : 'O teu CV tem margem para melhoria significativa')
-                        : (isEN ? 'Your CV is competitive but can still be optimised' : 'O teu CV é competitivo mas ainda pode ser optimizado')
+                        ? (t('o_teu_cv_tem_margem'))
+                        : (t('o_teu_cv_competitivo_mas'))
                       }
                     </p>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">
                       {impactLevel === 'critical'
-                        ? (isEN ? 'Most ATS systems will filter out your CV before a recruiter sees it. The full report shows exactly what to fix.' : 'A maioria dos sistemas ATS vai filtrar o teu CV antes de um recrutador o ver. O relatório completo mostra exactamente o que corrigir.')
+                        ? (t('a_maioria_dos_sistemas_ats'))
                         : impactLevel === 'moderate'
-                        ? (isEN ? 'Some ATS filters may reject your CV. The full report identifies the specific gaps and how to close them.' : 'Alguns filtros ATS podem rejeitar o teu CV. O relatório completo identifica os gaps específicos e como os resolver.')
-                        : (isEN ? 'Your CV passes most ATS filters. The full report reveals fine-tuning opportunities to stand out further.' : 'O teu CV passa na maioria dos filtros ATS. O relatório completo revela oportunidades de afinação para te destacares ainda mais.')
+                        ? (t('alguns_filtros_ats_podem_rejeitar'))
+                        : (t('o_teu_cv_passa_na'))
                       }
                     </p>
                   </div>
                   <p className="text-[10px] text-muted-foreground text-center italic">
-                    {isEN
-                      ? 'Based on analysis of your CV structure, keywords, and formatting against current ATS standards.'
-                      : 'Baseado na análise da estrutura, palavras-chave e formatação do teu CV face aos padrões ATS actuais.'
+                    {t('baseado_na_anlise_da_estrutura')
                     }
                   </p>
                 </div>
@@ -2082,12 +2069,12 @@ export default function Results() {
               <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-5 h-5 text-[#C9A961]" />
-                  <p className="text-sm font-semibold text-foreground">{isEN ? 'What your full report includes:' : 'O que o teu relatório completo inclui:'}</p>
+                  <p className="text-sm font-semibold text-foreground">{t('o_que_o_teu_relatrio')}</p>
                 </div>
 
                 {/* Free items */}
                 <div className="space-y-2">
-                  {(isEN ? [
+                  {(lang === 'en' ? [
                     'ATS compatibility score',
                     '3 critical issues detected',
                     'Missing keywords',
@@ -2099,7 +2086,7 @@ export default function Results() {
                     <div key={i} className="flex items-center gap-3 py-1.5">
                       <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                       <span className="text-sm text-foreground">{item}</span>
-                      <span className="text-[10px] font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full ml-auto">{isEN ? 'FREE' : 'GRÁTIS'}</span>
+                      <span className="text-[10px] font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full ml-auto">{t('grtis')}</span>
                     </div>
                   ))}
                 </div>
@@ -2109,7 +2096,7 @@ export default function Results() {
 
                 {/* Locked items */}
                 <div className="space-y-2">
-                  {(isEN ? [
+                  {(lang === 'en' ? [
                     'Live Match (real-time JD keyword matching)',
                     'ATS Deep Scan (keywords + format checklist)',
                     'Detailed analysis by quadrant',
@@ -2149,10 +2136,10 @@ export default function Results() {
                     onClick={() => openPaymentModal()}
                     className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-base"
                   >
-                    {isEN ? `Unlock Full Report — from ${CUR}${P.cv}` : `Desbloquear Relatório Completo — desde ${CUR}${P.cv}`}
+                    {pick(`Desbloquear Relatório Completo — desde ${CUR}${P.cv}`, `Unlock Full Report — from ${CUR}${P.cv}`, `Desbloquear Relatório Completo — desde ${CUR}${P.cv}`)}
                   </Button>
                   <p className="text-xs text-muted-foreground text-center">
-                    {isEN ? 'Secure payment via Card or PayPal' : 'Pagamento seguro via MB WAY ou PayPal'}
+                    {t('pagamento_seguro_via_mb_way')}
                   </p>
                 </div>
               </div>
@@ -2172,10 +2159,10 @@ export default function Results() {
               <Grid2x2 className="w-4 h-4 text-[#C9A961]" />
             </GoldIcon>
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'QUADRANT ANALYSIS' : 'ANÁLISE POR QUADRANTE'}</p>
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('anlise_por_quadrante')}</p>
               <Tooltip
-                label={isEN ? 'What are the Quadrants?' : 'O que são os Quadrantes?'}
-                text={isEN ? 'Your CV is evaluated in 4 independent dimensions: Structure (visual organisation), Content (text quality), Education (academic presentation) and Experience (professional description). Each is compared with the market benchmark.' : 'O teu CV é avaliado em 4 dimensões independentes: Estrutura (organização visual), Conteúdo (qualidade do texto), Formação (apresentação académica) e Experiência (descrição profissional). Cada uma é comparada com o benchmark do mercado.'}
+                label={t('o_que_so_os_quadrantes')}
+                text={t('o_teu_cv_avaliado_em')}
               />
             </div>
           </div>
@@ -2183,7 +2170,7 @@ export default function Results() {
             {analysisData.quadrants.map((q, i) => (
               <QuadrantCard
                 key={i}
-                title={isEN ? (quadrantTitleEN[q.title] || q.title) : q.title}
+                title={lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title}
                 score={q.score}
                 benchmark={q.benchmark}
                 insight={q.impactPhrase}
@@ -2202,24 +2189,24 @@ export default function Results() {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'EVALUATION FACTORS' : 'FACTORES DE AVALIAÇÃO'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('factores_de_avaliao')}</p>
                 <Tooltip
-                  label={isEN ? 'What are the Evaluation Factors?' : 'O que são os Factores de Avaliação?'}
-                  text={isEN ? 'Visual representation of each CV dimension in a horizontal bar. The vertical line indicates the benchmark (market average) for the same seniority level. Values above the benchmark are positive.' : 'Representação visual de cada dimensão do CV em barra horizontal. A linha vertical indica o benchmark (média do mercado) para o mesmo nível de senioridade. Valores acima do benchmark são positivos.'}
+                  label={t('o_que_so_os_factores')}
+                  text={t('representao_visual_de_cada_dimenso')}
                 />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">{isEN ? 'Each factor is compared with the market average. The vertical line on the bar indicates the benchmark.' : 'Cada factor é comparado com a média do mercado. A linha vertical na barra indica o benchmark.'}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('cada_factor_comparado_com_a')}</p>
             </div>
           </div>
           <div className="space-y-5">
             {analysisData.quadrants.map((q, i) => (
-              <DimensionBar key={i} label={isEN ? (quadrantTitleEN[q.title] || q.title) : q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
+              <DimensionBar key={i} label={lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
             ))}
           </div>
           <div className="pt-4 border-t border-border">
             <div className="relative">
               <p className="text-sm text-muted-foreground mb-2">
-                {isEN ? `→ Your CV is ${avgScore >= 70 ? 'above' : 'below'} the global market average (${Math.round(avgScore)} vs 69)` : `→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`}
+                {pick(`→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`, `→ Your CV is ${avgScore >= 70 ? 'above' : 'below'} the global market average (${Math.round(avgScore)} vs 69)`, `→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`)}
               </p>
               {!isPaid && (
                 <div className="relative">
@@ -2229,21 +2216,21 @@ export default function Results() {
                       size="sm"
                       className="bg-[#C9A961] hover:bg-[#A88B4E] text-white"
                     >
-                      {isEN ? 'View Detailed Analysis by Dimension' : 'Ver Análise Detalhada por Dimensão'}
+                      {t('ver_anlise_detalhada_por_dimenso')}
                     </Button>
                   </div>
                   <div className="select-none space-y-1 text-sm text-muted-foreground">
-                    <p>{isEN ? '→ Cross-analysis between dimensions and impact on global score' : '→ Análise cruzada entre dimensões e impacto no score global'}</p>
-                    <p>{isEN ? '→ Specific recommendations for each dimension' : '→ Recomendações específicas para cada dimensão'}</p>
-                    <p>{isEN ? '→ Comparison with profiles at the same seniority level' : '→ Comparação com perfis do mesmo nível de senioridade'}</p>
+                    <p>{t('anlise_cruzada_entre_dimenses_e')}</p>
+                    <p>{t('recomendaes_especficas_para_cada_dimenso')}</p>
+                    <p>{t('comparao_com_perfis_do_mesmo')}</p>
                   </div>
                 </div>
               )}
               {isPaid && (
                 <div className="space-y-1 text-sm text-muted-foreground">
-                  <p>{isEN ? '→ Cross-analysis between dimensions and impact on global score' : '→ Análise cruzada entre dimensões e impacto no score global'}</p>
-                  <p>{isEN ? '→ Specific recommendations for each dimension' : '→ Recomendações específicas para cada dimensão'}</p>
-                  <p>{isEN ? '→ Comparison with profiles at the same seniority level' : '→ Comparação com perfis do mesmo nível de senioridade'}</p>
+                  <p>{t('anlise_cruzada_entre_dimenses_e')}</p>
+                  <p>{t('recomendaes_especficas_para_cada_dimenso')}</p>
+                  <p>{t('comparao_com_perfis_do_mesmo')}</p>
                 </div>
               )}
             </div>
@@ -2258,19 +2245,19 @@ export default function Results() {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ATS COMPATIBILITY' : 'COMPATIBILIDADE ATS'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('compatibilidade_ats')}</p>
                 <Tooltip
-                  label={isEN ? 'What is ATS Compatibility?' : 'O que é a Compatibilidade ATS?'}
-                  text={isEN ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs. This score indicates the probability of your CV passing those filters. The higher, the better.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente. Este score indica a probabilidade do teu CV passar esses filtros. Quanto maior, melhor.'}
+                  label={t('o_que_a_compatibilidade_ats')}
+                  text={t('applicant_tracking_system_software_usado')}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">{isEN ? 'Probability of your CV passing automatic filters' : 'Probabilidade do teu CV passar filtros automáticos'}</p>
+              <p className="text-xs text-muted-foreground">{t('probabilidade_do_teu_cv_passar')}</p>
             </div>
           </div>
           <div className="flex flex-col items-center gap-3">
             <ScoreGauge score={100 - analysisData.atsRejectionRate} size={160} strokeWidth={8} />
             <p className="text-sm text-muted-foreground text-center max-w-md">
-              {isEN ? <>Your CV has <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> compatibility with ATS systems. {100 - analysisData.atsRejectionRate >= 70 ? 'Good compatibility.' : 'See the full report to learn how to improve.'}</> : <>O teu CV tem <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> de compatibilidade com sistemas ATS. {100 - analysisData.atsRejectionRate >= 70 ? 'Boa compatibilidade.' : 'Vê o relatório completo para saber como melhorar.'}</>}
+              {lang === 'en' ? <>Your CV has <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> compatibility with ATS systems. {100 - analysisData.atsRejectionRate >= 70 ? 'Good compatibility.' : 'See the full report to learn how to improve.'}</> : <>O teu CV tem <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> de compatibilidade com sistemas ATS. {100 - analysisData.atsRejectionRate >= 70 ? 'Boa compatibilidade.' : 'Vê o relatório completo para saber como melhorar.'}</>}
             </p>
           </div>
         </div>
@@ -2282,18 +2269,18 @@ export default function Results() {
               <Eye className="w-4 h-4 text-[#C9A961]" />
             </GoldIcon>
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'RECRUITER PERCEPTION' : 'PERCEPÇÃO DO RECRUTADOR'}</p>
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('percepo_do_recrutador')}</p>
               <Tooltip
-                label={isEN ? 'What is Recruiter Perception?' : 'O que é a Percepção do Recrutador?'}
-                text={isEN ? 'Simulation of what a recruiter retains from your CV in the first 5-10 seconds of reading. Includes perceived professional profile, seniority level and key skills identified.' : 'Simulação do que um recrutador retém do teu CV nos primeiros 5-10 segundos de leitura. Inclui o perfil profissional percebido, nível de senioridade e competências-chave identificadas.'}
+                label={t('o_que_a_percepo_do')}
+                text={t('simulao_do_que_um_recrutador')}
               />
             </div>
           </div>
-          <RecruiterPerception isPaid={isPaid} roles={analysisData.keywords} perceivedRole={analysisData.perceivedRole} perceivedSeniority={analysisData.perceivedSeniority} deepAnalysis={analysisData.recruiterDeepAnalysis} isEN={isEN} />
+          <RecruiterPerception isPaid={isPaid} roles={analysisData.keywords} perceivedRole={analysisData.perceivedRole} perceivedSeniority={analysisData.perceivedSeniority} deepAnalysis={analysisData.recruiterDeepAnalysis} isEN={lang === 'en'} />
         </div>
 
         {/* ═══ Salary ═══ */}
-        <SalaryBlock blurred={!isPaid} salaryDetailed={analysisData.salaryDetailed} perceivedSeniority={analysisData.perceivedSeniority} isEN={isEN} CUR={CUR} />
+        <SalaryBlock blurred={!isPaid} salaryDetailed={analysisData.salaryDetailed} perceivedSeniority={analysisData.perceivedSeniority} isEN={lang === 'en'} CUR={CUR} />
 
         {/* ═══ Normal Curve ═══ */}
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
@@ -2303,42 +2290,42 @@ export default function Results() {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET POSITIONING' : 'POSICIONAMENTO NO MERCADO'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('posicionamento_no_mercado')}</p>
                 <Tooltip
-                  label={isEN ? 'What is the Normal Curve?' : 'O que é a Curva Normal?'}
-                  text={isEN ? 'Statistical distribution showing where your CV ranks compared to all CVs analysed on our platform. The percentile indicates the percentage of CVs yours surpasses.' : 'Distribuição estatística que mostra onde o teu CV se posiciona face a todos os CVs analisados na nossa plataforma. O percentil indica a percentagem de CVs que o teu supera.'}
+                  label={t('o_que_a_curva_normal')}
+                  text={t('distribuio_estatstica_que_mostra_onde')}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">{isEN ? 'Normal curve — where you rank compared to other candidates' : 'Curva normal — onde te posicionas face a outros candidatos'}</p>
+              <p className="text-xs text-muted-foreground">{t('curva_normal_onde_te_posicionas')}</p>
             </div>
           </div>
 
           {/* Values VISIBLE */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground">{isEN ? 'Percentile' : 'Percentil'}</p>
+              <p className="text-xs text-muted-foreground">{t('percentil')}</p>
               <p className="text-xl font-bold text-foreground">{percentile}%</p>
             </div>
             <div className="text-center p-3 bg-[#C9A961]/10 rounded-lg border border-[#C9A961]/20">
-              <p className="text-xs text-muted-foreground">{isEN ? 'Position' : 'Posição'}</p>
+              <p className="text-xs text-muted-foreground">{t('posio')}</p>
               <p className="text-xl font-bold text-[#C9A961]">Top {100 - percentile}%</p>
             </div>
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground">{isEN ? 'Global Score' : 'Score Global'}</p>
+              <p className="text-xs text-muted-foreground">{t('score_global')}</p>
               <p className="text-xl font-bold text-foreground">{Math.round(avgScore)}/100</p>
             </div>
           </div>
 
           <p className="text-sm text-muted-foreground">
-            {isEN ? <>You are in the <span className="font-semibold text-foreground">percentile {percentile}</span>, which means your CV is better than {percentile}% of CVs analysed in the market.</> : <>→ Estás no <span className="font-semibold text-foreground">percentil {percentile}</span>, o que significa que o teu CV é melhor que {percentile}% dos CVs analisados no mercado.</>}
+            {lang === 'en' ? <>You are in the <span className="font-semibold text-foreground">percentile {percentile}</span>, which means your CV is better than {percentile}% of CVs analysed in the market.</> : <>→ Estás no <span className="font-semibold text-foreground">percentil {percentile}</span>, o que significa que o teu CV é melhor que {percentile}% dos CVs analisados no mercado.</>}
           </p>
 
           {/* Interpretação detalhada quando pago */}
           {isPaid && (
             <div className="bg-muted/30 rounded-lg p-4 space-y-2">
-              <p className="text-xs font-semibold text-foreground">{isEN ? 'Interpretation of your positioning:' : 'Interpretação do teu posicionamento:'}</p>
+              <p className="text-xs font-semibold text-foreground">{t('interpretao_do_teu_posicionamento')}</p>
               <p className="text-sm text-muted-foreground">
-                {isEN ? (
+                {lang === 'en' ? (
                   percentile >= 90 ? (
                     <>Your CV is in the <strong className="text-foreground">top {100 - percentile}%</strong> of analysed candidates. This places you in a position of excellence — in a process with 100 candidates, your CV would be better than {percentile} of them. Your profile stands out for the quality of structure, content and presentation. Maintain this level and focus on customising your CV for each specific application.</>
                   ) : percentile >= 75 ? (
@@ -2361,7 +2348,7 @@ export default function Results() {
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
-                {isEN ? <>→ To move to the next level, you need to increase your global score by approximately <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} points</strong>.</> : <>→ Para subir para o próximo nível, precisas de aumentar o score global em aproximadamente <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} pontos</strong>.</>}
+                {lang === 'en' ? <>→ To move to the next level, you need to increase your global score by approximately <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} points</strong>.</> : <>→ Para subir para o próximo nível, precisas de aumentar o score global em aproximadamente <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} pontos</strong>.</>}
               </p>
             </div>
           )}
@@ -2371,57 +2358,57 @@ export default function Results() {
             {!isPaid && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md rounded-lg">
                 <Lock className="w-6 h-6 text-[#C9A961] mb-2" />
-                <p className="text-sm font-semibold text-foreground">{isEN ? 'Full chart in Paid Report' : 'Gráfico completo no Relatório Pago'}</p>
-                <p className="text-xs text-muted-foreground mt-1 mb-3">{isEN ? 'See the distribution curve and your exact position' : 'Vê a curva de distribuição e a tua posição exacta'}</p>
+                <p className="text-sm font-semibold text-foreground">{t('grfico_completo_no_relatrio_pago')}</p>
+                <p className="text-xs text-muted-foreground mt-1 mb-3">{t('v_a_curva_de_distribuio')}</p>
                 <Button
                   onClick={() => openPaymentModal()}
                   size="sm"
                   className="bg-[#C9A961] hover:bg-[#A88B4E] text-white"
                 >
-{isEN ? `Unlock from ${CUR}${P.cv}` : `Desbloquear desde ${CUR}${P.cv}`}
+{pick(`Desbloquear desde ${CUR}${P.cv}`, `Unlock from ${CUR}${P.cv}`, `Desbloquear desde ${CUR}${P.cv}`)}
                  </Button>
                </div>
             )}
             <div className={!isPaid ? 'select-none' : ''}>
-              <NormalCurveChart percentile={percentile} isEN={isEN} />
+              <NormalCurveChart percentile={percentile} isEN={lang === 'en'} />
             </div>
           </div>
         </div>
 
         {/* ═══ Potencial de Automação ═══ */}
-        <AutomationRiskBlock blurred={!isPaid} automationRisk={analysisData.automationRisk} isEN={isEN} />
+        <AutomationRiskBlock blurred={!isPaid} automationRisk={analysisData.automationRisk} isEN={lang === 'en'} />
 
         {/* ═══ Matriz de Oportunidades ═══ */}
         {!isPaid ? (
           <div className="space-y-4">
             <div>
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'OPPORTUNITIES MATRIX — FULL REPORT' : 'MATRIZ DE OPORTUNIDADES — RELATÓRIO COMPLETO'}</p>
-              <p className="text-xs text-muted-foreground mt-1">{isEN ? 'The full report includes these 4 detailed sections. Here you can see what each one covers.' : 'O relatório completo inclui estas 4 secções detalhadas. Aqui podes ver o que cada uma cobre.'}</p>
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('matriz_de_oportunidades_relatrio_completo')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('o_relatrio_completo_inclui_estas')}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <LockedSection
-                 isEN={isEN}
-                 title={isEN ? 'Detailed analysis by quadrant' : 'Análise detalhada por quadrante'}
-                visibleHint={isEN ? 'Complete breakdown of each dimension with strengths and weaknesses identified.' : 'Breakdown completo de cada dimensão com pontos fortes e fracos identificados.'}
-                previewItems={isEN ? ['Visual structure and information hierarchy', 'Alignment between skills and target role', 'Keywords and ATS filter compatibility', 'Market positioning'] : ['Estrutura visual e hierarquia de informação', 'Alinhamento entre competências e função-alvo', 'Keywords e compatibilidade com filtros ATS', 'Posicionamento face ao mercado']}
+                 isEN={lang === 'en'}
+                 title={t('anlise_detalhada_por_quadrante')}
+                visibleHint={t('breakdown_completo_de_cada_dimenso')}
+                previewItems={lang === 'en' ? ['Visual structure and information hierarchy', 'Alignment between skills and target role', 'Keywords and ATS filter compatibility', 'Market positioning'] : ['Estrutura visual e hierarquia de informação', 'Alinhamento entre competências e função-alvo', 'Keywords e compatibilidade com filtros ATS', 'Posicionamento face ao mercado']}
               />
 <LockedSection
-                 isEN={isEN}
-                 title={isEN ? 'Comparison with top 25% profiles' : 'Comparação com perfis top 25%'}
-                visibleHint={isEN ? 'See how your CV compares with the best in your sector.' : 'Vê como o teu CV se compara com os melhores do teu setor.'}
-                previewItems={isEN ? ['Benchmark against best CVs in sector', 'Missing differentiating skills', 'Positioning vs competitors', 'Gap analysis with recommendations'] : ['Benchmark contra os melhores CVs do setor', 'Competências diferenciadoras em falta', 'Posicionamento face a concorrentes', 'Gap analysis com recomendações']}
+                 isEN={lang === 'en'}
+                 title={t('comparao_com_perfis_top_25')}
+                visibleHint={t('v_como_o_teu_cv')}
+                previewItems={lang === 'en' ? ['Benchmark against best CVs in sector', 'Missing differentiating skills', 'Positioning vs competitors', 'Gap analysis with recommendations'] : ['Benchmark contra os melhores CVs do setor', 'Competências diferenciadoras em falta', 'Posicionamento face a concorrentes', 'Gap analysis com recomendações']}
               />
 <LockedSection
-                 isEN={isEN}
-                 title={isEN ? 'Specific recommendations (15+)' : 'Recomendações específicas (15+)'}
-                visibleHint={isEN ? 'Over 15 micro-insights with concrete actions to improve your CV.' : 'Mais de 15 micro-insights com acções concretas para melhorar o teu CV.'}
-                previewItems={isEN ? ['Optimised professional summary rewrite', 'Reformulation with impact metrics', 'ATS keyword optimisation', 'Visual formatting suggestions'] : ['Reescrita otimizada do resumo profissional', 'Reformulação com métricas de impacto', 'Otimização de keywords para ATS', 'Sugestões de formatação visual']}
+                 isEN={lang === 'en'}
+                 title={t('recomendaes_especficas_15')}
+                visibleHint={t('mais_de_15_microinsights_com')}
+                previewItems={lang === 'en' ? ['Optimised professional summary rewrite', 'Reformulation with impact metrics', 'ATS keyword optimisation', 'Visual formatting suggestions'] : ['Reescrita otimizada do resumo profissional', 'Reformulação com métricas de impacto', 'Otimização de keywords para ATS', 'Sugestões de formatação visual']}
               />
 <LockedSection
-                 isEN={isEN}
-                 title={isEN ? 'Action plan (30 days)' : 'Plano de acção (30 dias)'}
-                visibleHint={isEN ? 'Structured plan with 3-5 priority actions and implementation timeline.' : 'Plano estruturado com 3-5 acções prioritárias e timeline de implementação.'}
-                previewItems={isEN ? ['3-5 ordered priority actions', 'Implementation timeline', 'Quick improvements checklist', 'Application strategy'] : ['3-5 acções prioritárias ordenadas', 'Timeline de implementação', 'Checklist de melhorias rápidas', 'Estratégia de candidatura']}
+                 isEN={lang === 'en'}
+                 title={t('plano_de_aco_30_dias')}
+                visibleHint={t('plano_estruturado_com_35_aces')}
+                previewItems={lang === 'en' ? ['3-5 ordered priority actions', 'Implementation timeline', 'Quick improvements checklist', 'Application strategy'] : ['3-5 acções prioritárias ordenadas', 'Timeline de implementação', 'Checklist de melhorias rápidas', 'Estratégia de candidatura']}
               />
             </div>
           </div>
@@ -2433,7 +2420,7 @@ export default function Results() {
                 <GoldIcon size="w-8 h-8">
                   <BarChart3 className="w-4 h-4 text-[#C9A961]" />
                 </GoldIcon>
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'DETAILED ANALYSIS BY DIMENSION' : 'ANÁLISE DETALHADA POR DIMENSÃO'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('anlise_detalhada_por_dimenso')}</p>
               </div>
               <div className="space-y-4">
                 {analysisData.quadrants.map((q: any, idx: number) => {
@@ -2443,7 +2430,7 @@ export default function Results() {
                   return (
                     <div key={q.title} className="p-3 bg-muted/20 rounded-lg space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-foreground">{isEN ? (quadrantTitleEN[q.title] || q.title) : q.title}</span>
+                        <span className="text-sm font-semibold text-foreground">{lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-foreground">{q.score}/100</span>
                           <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
@@ -2456,11 +2443,11 @@ export default function Results() {
                       ) : (
                         <p className="text-sm text-muted-foreground">
                           {isStrong ? (
-                            isEN ? <>✅ <strong>Strong point.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>✅ <strong>Ponto forte.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                            lang === 'en' ? <>✅ <strong>Strong point.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>✅ <strong>Ponto forte.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
                           ) : isWeak ? (
-                            isEN ? <>⚠️ <strong>Area for improvement.</strong> You are {Math.abs(gap)} points below the benchmark ({q.benchmark}).</> : <>⚠️ <strong>Área de melhoria.</strong> Estás {Math.abs(gap)} pontos abaixo do benchmark ({q.benchmark}).</>
+                            lang === 'en' ? <>⚠️ <strong>Area for improvement.</strong> You are {Math.abs(gap)} points below the benchmark ({q.benchmark}).</> : <>⚠️ <strong>Área de melhoria.</strong> Estás {Math.abs(gap)} pontos abaixo do benchmark ({q.benchmark}).</>
                           ) : (
-                            isEN ? <>→ <strong>Above average.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>→ <strong>Acima da média.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                            lang === 'en' ? <>→ <strong>Above average.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>→ <strong>Acima da média.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
                           )}
                         </p>
                       )}
@@ -2490,13 +2477,13 @@ export default function Results() {
                 <GoldIcon size="w-8 h-8">
                   <Target className="w-4 h-4 text-[#C9A961]" />
                 </GoldIcon>
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'PRIORITY MATRIX' : 'MATRIZ DE PRIORIDADES'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('matriz_de_prioridades')}</p>
               </div>
-              <p className="text-sm text-muted-foreground">{isEN ? 'Dimensions ordered by improvement urgency (larger gap = higher priority):' : 'Dimensões ordenadas por urgência de melhoria (maior gap = maior prioridade):'}</p>
+              <p className="text-sm text-muted-foreground">{t('dimenses_ordenadas_por_urgncia_de')}</p>
               <div className="space-y-2">
                 {[...dimensions].sort((a: any, b: any) => (a.score - a.benchmark) - (b.score - b.benchmark)).map((dim: any, i: number) => {
                   const gap = dim.score - dim.benchmark;
-                  const priority = gap <= 0 ? (isEN ? 'High' : 'Alta') : gap <= 10 ? (isEN ? 'Medium' : 'Média') : (isEN ? 'Low' : 'Baixa');
+                  const priority = gap <= 0 ? (t('alta')) : gap <= 10 ? (lang === 'en' ? 'Medium' : lang === 'es' ? 'Media' : 'Média') : (t('baixa'));
                   const prColor = (priority === 'Alta' || priority === 'High') ? 'bg-red-500/10 text-red-600 border-red-500/20' : (priority === 'Média' || priority === 'Medium') ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
                   return (
                     <div key={dim.label} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
@@ -2521,9 +2508,9 @@ export default function Results() {
                   <GoldIcon size="w-8 h-8">
                     <Sparkles className="w-4 h-4 text-[#C9A961]" />
                   </GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'IMPROVEMENT ACTIONS — BEFORE vs AFTER' : 'ACÇÕES DE MELHORIA — ANTES vs DEPOIS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('aces_de_melhoria_antes_vs')}</p>
                 </div>
-                <p className="text-sm text-muted-foreground">{isEN ? 'Concrete actions to improve your CV, with the estimated impact of each one:' : 'Acções concretas para melhorar o teu CV, com o impacto estimado de cada uma:'}</p>
+                <p className="text-sm text-muted-foreground">{t('aces_concretas_para_melhorar_o')}</p>
                 <div className="space-y-4">
                   {analysisData.improvementActions.map((action: any, i: number) => (
                     <div key={i} className="border border-border rounded-lg overflow-hidden">
@@ -2532,15 +2519,15 @@ export default function Results() {
                           <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">#{i + 1}</span>
                           <span className="text-sm font-semibold text-foreground">{action.action}</span>
                         </div>
-                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{isEN ? (action.impact === 'Alto' ? 'High' : action.impact === 'Médio' ? 'Medium' : action.impact === 'Baixo' ? 'Low' : action.impact) : action.impact} {isEN ? 'points' : 'pontos'}</span>
+                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{lang === 'en' ? (action.impact === 'Alto' ? 'High' : action.impact === 'Médio' ? 'Medium' : action.impact === 'Baixo' ? 'Low' : action.impact) : action.impact} {t('pontos')}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                         <div className="p-3">
-                          <p className="text-[10px] font-semibold text-red-500 mb-1">{isEN ? '❌ BEFORE' : '❌ ANTES'}</p>
+                          <p className="text-[10px] font-semibold text-red-500 mb-1">{t('antes')}</p>
                           <p className="text-sm text-muted-foreground">{typeof action.before === 'object' ? JSON.stringify(action.before) : String(action.before || '')}</p>
                         </div>
                         <div className="p-3">
-                          <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? '✅ AFTER' : '✅ DEPOIS'}</p>
+                          <p className="text-[10px] font-semibold text-green-600 mb-1">{t('depois')}</p>
                           <p className="text-sm text-muted-foreground">{typeof action.after === 'object' ? JSON.stringify(action.after) : String(action.after || '')}</p>
                         </div>
                       </div>
@@ -2549,7 +2536,7 @@ export default function Results() {
                 </div>
                 <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
                   <p className="text-sm text-foreground font-medium">
-                    {isEN ? '🎯 Estimated score after improvements: ' : '🎯 Score estimado após melhorias: '}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + (analysisData.improvementActions?.reduce((sum: number, a: any) => sum + (a.impact === 'Alto' || a.impact === 'High' ? 8 : a.impact === 'M\u00e9dio' || a.impact === 'Medium' ? 5 : typeof a.impact === 'number' ? a.impact : 3), 0) || 0))}/100</strong>
+                    {t('score_estimado_aps_melhorias')}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + (analysisData.improvementActions?.reduce((sum: number, a: any) => sum + (a.impact === 'Alto' || a.impact === 'High' ? 8 : a.impact === 'M\u00e9dio' || a.impact === 'Medium' ? 5 : typeof a.impact === 'number' ? a.impact : 3), 0) || 0))}/100</strong>
                   </p>
                 </div>
               </div>
@@ -2561,10 +2548,10 @@ export default function Results() {
                 <GoldIcon size="w-8 h-8">
                   <Calendar className="w-4 h-4 text-[#C9A961]" />
                 </GoldIcon>
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN — 30 DAYS' : 'PLANO DE ACÇÃO — 30 DIAS'}</p>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('plano_de_aco_30_dias_2')}</p>
               </div>
               <div className="space-y-3">
-                {(analysisData.actionPlan || (isEN ? [
+                {(analysisData.actionPlan || (lang === 'en' ? [
                   { week: 'Week 1-2', title: 'Content Optimisation', tasks: ['Rewrite professional summary with impact metrics', 'Add quantifiable results to each experience', 'Align keywords with target roles'] },
                   { week: 'Week 3', title: 'Structure and Formatting', tasks: ['Optimise visual hierarchy and spacing', 'Ensure ATS compatibility (format, fonts, sections)', 'Add missing sections (certifications, languages, etc.)'] },
                   { week: 'Week 4', title: 'Validation and Adjustments', tasks: ['Get feedback from 2-3 industry professionals', 'Test on different ATS systems', 'Customise versions for specific applications'] },
@@ -2597,8 +2584,8 @@ export default function Results() {
           <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-4 sm:p-8 text-center space-y-4">
             <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
             <div>
-              <p className="text-lg font-semibold text-foreground">{isEN ? 'Generating your Career Path...' : 'A gerar o teu Career Path...'}</p>
-              <p className="text-sm text-muted-foreground mt-1">{isEN ? 'Analysing your profile and creating a personalised roadmap. This may take up to 30 seconds.' : 'A analisar o teu perfil e a criar um roadmap personalizado. Isto pode demorar até 30 segundos.'}</p>
+              <p className="text-lg font-semibold text-foreground">{t('a_gerar_o_teu_career')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('a_analisar_o_teu_perfil')}</p>
             </div>
             {careerPathError && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
@@ -2623,42 +2610,42 @@ export default function Results() {
                     <Compass className="w-6 h-6 text-[#C9A961]" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-white">{isEN ? 'Your CV is analysed. Now what?' : 'O teu CV está analisado. E agora?'}</p>
-                    <p className="text-sm text-white/50">{isEN ? "Don't stop at diagnosis — build the roadmap" : 'Não fiques pelo diagnóstico — constrói o roadmap'}</p>
+                    <p className="text-lg font-bold text-white">{t('o_teu_cv_est_analisado')}</p>
+                    <p className="text-sm text-white/50">{t('no_fiques_pelo_diagnstico_constri')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 animate-pulse">
                   <Flame className="w-3.5 h-3.5 text-red-400" />
-                  <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">{isEN ? 'Upgrade discount' : 'Desconto de upgrade'}</span>
+                  <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">{t('desconto_de_upgrade')}</span>
                 </div>
               </div>
 
               {/* Cost of inaction comparison */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                  <p className="text-[10px] font-bold text-white/40 tracking-wider uppercase">{isEN ? 'Traditional career coaching' : 'Coaching de carreira tradicional'}</p>
-                  <p className="text-2xl font-bold text-white/30 line-through">{isEN ? '$300-800' : '€300-800'}</p>
-                  <p className="text-xs text-white/30">{isEN ? '3-6 sessions • weeks of waiting' : '3-6 sessões • semanas de espera'}</p>
+                  <p className="text-[10px] font-bold text-white/40 tracking-wider uppercase">{t('coaching_de_carreira_tradicional')}</p>
+                  <p className="text-2xl font-bold text-white/30 line-through">{t('300800')}</p>
+                  <p className="text-xs text-white/30">{t('36_sesses_semanas_de_espera')}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-[#C9A961]/10 border border-[#C9A961]/30 space-y-2">
-                  <p className="text-[10px] font-bold text-[#C9A961] tracking-wider uppercase">{isEN ? 'Career Path AI — upgrade price' : 'Career Path IA — preço de upgrade'}</p>
+                  <p className="text-[10px] font-bold text-[#C9A961] tracking-wider uppercase">{t('career_path_ia_preo_de')}</p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-sm text-white/40 line-through">{CUR}{P.career}</span>
-                    <span className="text-2xl font-bold text-[#C9A961]">{isEN ? '$14.99' : '€14,99'}</span>
+                    <span className="text-2xl font-bold text-[#C9A961]">{t('1499')}</span>
                   </div>
-                  <p className="text-xs text-[#C9A961]/70">{isEN ? 'Instant • AI-powered • personalised' : 'Instantâneo • IA avançada • personalizado'}</p>
+                  <p className="text-xs text-[#C9A961]/70">{t('instantneo_ia_avanada_personalizado')}</p>
                 </div>
               </div>
 
               {/* What you get — compact grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {[
-                  { icon: <Briefcase className="w-3.5 h-3.5" />, text: isEN ? 'Next 3 career roles' : '3 próximos cargos' },
-                  { icon: <TrendingUp className="w-3.5 h-3.5" />, text: isEN ? 'Salary progression' : 'Progressão salarial' },
-                  { icon: <GraduationCap className="w-3.5 h-3.5" />, text: isEN ? 'Training plan' : 'Plano de formação' },
-                  { icon: <Linkedin className="w-3.5 h-3.5" />, text: isEN ? 'CV vs LinkedIn sync' : 'CV vs LinkedIn' },
-                  { icon: <Users className="w-3.5 h-3.5" />, text: isEN ? 'Networking strategy' : 'Estratégia networking' },
-                  { icon: <Target className="w-3.5 h-3.5" />, text: isEN ? '30-60-90 day plan' : 'Plano 30-60-90 dias' },
+                  { icon: <Briefcase className="w-3.5 h-3.5" />, text: t('3_prximos_cargos') },
+                  { icon: <TrendingUp className="w-3.5 h-3.5" />, text: t('progresso_salarial') },
+                  { icon: <GraduationCap className="w-3.5 h-3.5" />, text: t('plano_de_formao') },
+                  { icon: <Linkedin className="w-3.5 h-3.5" />, text: t('cv_vs_linkedin') },
+                  { icon: <Users className="w-3.5 h-3.5" />, text: t('estratgia_networking') },
+                  { icon: <Target className="w-3.5 h-3.5" />, text: t('plano_306090_dias') },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/5">
                     <span className="text-[#C9A961]">{item.icon}</span>
@@ -2674,9 +2661,9 @@ export default function Results() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-[#C9A961] hover:bg-[#d4af5a] text-[#0a0a0a] font-bold text-base transition-all shadow-lg shadow-[#C9A961]/20 hover:shadow-[#C9A961]/40"
                 >
                   <Compass className="w-5 h-5" />
-                  {isEN ? 'Upgrade for $14.99' : 'Fazer Upgrade por €14,99'}
+                  {t('fazer_upgrade_por_1499')}
                 </button>
-                <p className="text-[10px] text-white/30 text-center">{isEN ? 'One-time payment • Personalised AI report in <1 min • Based on your CV data already analysed' : 'Pagamento único • Relatório IA personalizado em <1 min • Baseado nos dados do CV já analisado'}</p>
+                <p className="text-[10px] text-white/30 text-center">{t('pagamento_nico_relatrio_ia_personalizado')}</p>
               </div>
             </div>
           </div>
@@ -2690,29 +2677,29 @@ export default function Results() {
                 <GoldIcon><Rocket className="w-5 h-5 text-[#C9A961]" /></GoldIcon>
                 <div>
                   <p className="text-xs font-semibold tracking-wider text-[#C9A961]">CAREER PATH</p>
-                  <p className="text-lg font-bold text-foreground">{isEN ? 'Your Professional Evolution Plan' : 'O Teu Plano de Evolução Profissional'}</p>
+                  <p className="text-lg font-bold text-foreground">{t('o_teu_plano_de_evoluo')}</p>
                 </div>
               </div>
               {careerPathData.current_positioning && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'CURRENT POSITIONING' : 'POSICIONAMENTO ACTUAL'}</span>
+                    <span className="text-xs font-semibold tracking-wider text-muted-foreground">{t('posicionamento_actual')}</span>
                     <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{careerPathData.current_positioning.seniority_level}</span>
                   </div>
                   <p className="text-sm text-muted-foreground">{careerPathData.current_positioning.seniority_justification}</p>
                   <div className="space-y-3 mt-3">
                     <div className="p-3 bg-card rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'PRIMARY DOMAIN' : 'DOMÍNIO PRINCIPAL'}</p>
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('domnio_principal')}</p>
                       <p className="text-sm font-medium text-foreground">{careerPathData.current_positioning.primary_domain}</p>
                     </div>
                     <div className="p-3 bg-card rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'MARKET VALUE' : 'VALOR DE MERCADO'}</p>
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('valor_de_mercado')}</p>
                       <p className="text-sm text-foreground">{careerPathData.current_positioning.market_value_assessment}</p>
                     </div>
                   </div>
                   {careerPathData.current_positioning.competitive_advantages && (
                     <div className="mt-3">
-                      <p className="text-[10px] font-semibold text-green-600 mb-2">{isEN ? 'COMPETITIVE ADVANTAGES' : 'VANTAGENS COMPETITIVAS'}</p>
+                      <p className="text-[10px] font-semibold text-green-600 mb-2">{t('vantagens_competitivas')}</p>
                       <div className="flex flex-wrap gap-2">
                         {careerPathData.current_positioning.competitive_advantages.map((adv: string, i: number) => (
                           <span key={i} className="text-xs bg-green-500/10 text-green-600 px-2 py-1 rounded border border-green-500/20">{adv}</span>
@@ -2722,7 +2709,7 @@ export default function Results() {
                   )}
                   {careerPathData.current_positioning.blind_spots && (
                     <div className="mt-2">
-                      <p className="text-[10px] font-semibold text-amber-600 mb-2">{isEN ? 'BLIND SPOTS' : 'PONTOS CEGOS'}</p>
+                      <p className="text-[10px] font-semibold text-amber-600 mb-2">{t('pontos_cegos')}</p>
                       <div className="flex flex-wrap gap-2">
                         {careerPathData.current_positioning.blind_spots.map((bs: string, i: number) => (
                           <span key={i} className="text-xs bg-amber-500/10 text-amber-600 px-2 py-1 rounded border border-amber-500/20">{bs}</span>
@@ -2739,7 +2726,7 @@ export default function Results() {
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">CV vs LINKEDIN</p>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' ? 'bg-green-500/10 text-green-600' : careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' ? 'bg-amber-500/10 text-amber-600' : 'bg-red-500/10 text-red-600'}`}>{isEN ? 'Consistency' : 'Consistência'}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' ? 'bg-green-500/10 text-green-600' : careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' ? 'bg-amber-500/10 text-amber-600' : 'bg-red-500/10 text-red-600'}`}>{t('consistncia')}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}</span>
                 </div>
                 {careerPathData.cv_linkedin_cross_analysis.optimization_suggestions?.map((s: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><span className="text-[#C9A961] mt-0.5">→</span><p>{s}</p></div>
@@ -2751,7 +2738,7 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Briefcase className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'NEXT RECOMMENDED ROLES' : 'PRÓXIMOS CARGOS RECOMENDADOS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('prximos_cargos_recomendados')}</p>
                 </div>
                 <div className="space-y-4">
                   {careerPathData.next_roles.map((role: any, i: number) => (
@@ -2774,20 +2761,20 @@ export default function Results() {
                         <p className="text-sm text-muted-foreground">{role.why_this_role}</p>
                         {role.salary_range && <p className="text-xs text-[#C9A961] font-semibold"><Euro className="w-3 h-3 inline mr-1" />{role.salary_range}</p>}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                          <div><p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? 'YOU ALREADY HAVE' : 'JÁ TENS'}</p>{role.what_you_already_have?.map((item: string, j: number) => <p key={j} className="text-xs text-muted-foreground"><Check className="w-3 h-3 text-green-500 shrink-0 inline" /> {item}</p>)}</div>
-                          <div><p className="text-[10px] font-semibold text-amber-600 mb-1">{isEN ? 'YOU NEED' : 'PRECISAS'}</p>{role.what_you_need?.map((item: string, j: number) => <p key={j} className="text-xs text-muted-foreground">○ {item}</p>)}</div>
+                          <div><p className="text-[10px] font-semibold text-green-600 mb-1">{t('j_tens')}</p>{role.what_you_already_have?.map((item: string, j: number) => <p key={j} className="text-xs text-muted-foreground"><Check className="w-3 h-3 text-green-500 shrink-0 inline" /> {item}</p>)}</div>
+                          <div><p className="text-[10px] font-semibold text-amber-600 mb-1">{t('precisas')}</p>{role.what_you_need?.map((item: string, j: number) => <p key={j} className="text-xs text-muted-foreground">○ {item}</p>)}</div>
                         </div>
                         {role.typical_companies && <div className="flex flex-wrap gap-1 mt-1">{role.typical_companies.map((c: string, j: number) => <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{c}</span>)}</div>}
                         {/* LinkedIn Search Button */}
                         <div className="mt-3 pt-3 border-t border-border">
                           <a
-                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}&location=${isEN ? '' : 'Portugal'}`}
+                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}&location=${t('portugal')}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5]/10 text-[#0077B5] text-xs font-semibold hover:bg-[#0077B5]/20 transition-colors border border-[#0077B5]/20"
                           >
                             <Linkedin className="w-3.5 h-3.5" />
-                            {isEN ? `Search "${role.role_title}" on LinkedIn` : `Procurar "${role.role_title}" no LinkedIn`}
+                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Procurar "${role.role_title}" no LinkedIn`)}
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </div>
@@ -2802,7 +2789,7 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><GraduationCap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'RECOMMENDED TRAINING' : 'FORMAÇÕES RECOMENDADAS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('formaes_recomendadas')}</p>
                 </div>
                 <div className="space-y-3">
                   {careerPathData.development_plan.formations.map((f: any, i: number) => (
@@ -2815,12 +2802,12 @@ export default function Results() {
                       <p className="text-xs text-muted-foreground mt-1">{f.relevance}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         <a
-                          href={`https://www.google.com/search?q=${encodeURIComponent(f.name + ' ' + (f.provider || '') + (isEN ? ' course' : ' curso'))}`}
+                          href={`https://www.google.com/search?q=${encodeURIComponent(f.name + ' ' + (f.provider || '') + (t('curso')))}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-[#C9A961] hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-[#C9A961]/5 border border-[#C9A961]/20"
                         >
-                          <ExternalLink className="w-3 h-3" />{isEN ? 'Search training' : 'Pesquisar formação'}
+                          <ExternalLink className="w-3 h-3" />{t('pesquisar_formao')}
                         </a>
                         <a
                           href={`https://www.coursera.org/search?query=${encodeURIComponent(f.name)}`}
@@ -2851,8 +2838,8 @@ export default function Results() {
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-green-600" /></GoldIcon>
                   <div>
-                    <p className="text-xs font-semibold tracking-wider text-green-700">{isEN ? 'FREE MICRO-COURSES TO START NOW' : 'MICRO-CURSOS GRATUITOS PARA COMEÇAR JÁ'}</p>
-                    <p className="text-[10px] text-green-600/70">{isEN ? 'Start learning today at zero cost' : 'Começa a aprender hoje sem qualquer custo'}</p>
+                    <p className="text-xs font-semibold tracking-wider text-green-700">{t('microcursos_gratuitos_para_comear_j')}</p>
+                    <p className="text-[10px] text-green-600/70">{t('comea_a_aprender_hoje_sem')}</p>
                   </div>
                 </div>
                 <div className="space-y-3">
@@ -2870,13 +2857,13 @@ export default function Results() {
                     const platformBase = fc.platform && platformSearchUrls[fc.platform];
                     const searchUrl = platformBase
                       ? `${platformBase}${encodeURIComponent(query)}`
-                      : `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (fc.platform || '') + (isEN ? ' free course' : ' curso gratuito'))}`;
+                      : `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (fc.platform || '') + (t('curso_gratuito')))}`;
                     return (
                       <div key={i} className="p-3 border border-green-500/20 rounded-lg bg-white/50">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-sm font-semibold text-foreground">{fc.name}</p>
                           <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {isEN ? 'FREE' : 'GRATUITO'}
+                            {t('gratuito')}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -2893,7 +2880,7 @@ export default function Results() {
                             rel="noopener noreferrer"
                             className="text-xs text-green-700 hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-green-500/10 border border-green-500/20"
                           >
-                            <ExternalLink className="w-3 h-3" />{isEN ? 'Find course' : 'Encontrar curso'}
+                            <ExternalLink className="w-3 h-3" />{t('encontrar_curso')}
                           </a>
                         </div>
                       </div>
@@ -2907,7 +2894,7 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><FileCheck className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'RECOMMENDED CERTIFICATIONS' : 'CERTIFICAÇÕES RECOMENDADAS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('certificaes_recomendadas')}</p>
                 </div>
                 <div className="space-y-3">
                   {careerPathData.development_plan.certifications.map((c: any, i: number) => (
@@ -2928,7 +2915,7 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'VISIBILITY EXERCISES' : 'EXERCÍCIOS DE VISIBILIDADE'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('exerccios_de_visibilidade')}</p>
                 </div>
                 <div className="space-y-3">
                   {careerPathData.development_plan.visibility_exercises.map((v: any, i: number) => (
@@ -2936,7 +2923,7 @@ export default function Results() {
                       <p className="text-sm font-semibold text-foreground">{v.activity}</p>
                       <p className="text-xs text-muted-foreground mt-1"><MapPin className="w-3 h-3 inline mr-1" />{v.platform} · {v.frequency}</p>
                       <p className="text-xs text-muted-foreground mt-1">{v.expected_impact}</p>
-                      <p className="text-xs text-[#C9A961] mt-1 font-medium">→ {isEN ? 'First step' : 'Primeiro passo'}: {v.concrete_first_step}</p>
+                      <p className="text-xs text-[#C9A961] mt-1 font-medium">→ {t('primeiro_passo')}: {v.concrete_first_step}</p>
                     </div>
                   ))}
                 </div>
@@ -2947,13 +2934,13 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Users className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'NETWORKING STRATEGY' : 'ESTRATÉGIA DE NETWORKING'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('estratgia_de_networking')}</p>
                 </div>
                 <div className="space-y-3">
                   {careerPathData.development_plan.networking_strategy.map((n: any, i: number) => (
                     <div key={i} className="p-3 border border-border rounded-lg">
                       <p className="text-sm font-semibold text-foreground">{n.action}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{isEN ? 'Target' : 'Alvo'}: {n.target}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{t('alvo')}: {n.target}</p>
                       {n.communities && <div className="flex flex-wrap gap-1 mt-1">{n.communities.map((c: string, j: number) => <span key={j} className="text-[10px] bg-[#C9A961]/10 text-[#C9A961] px-2 py-0.5 rounded">{c}</span>)}</div>}
                       {n.events && <div className="flex flex-wrap gap-1 mt-1">{n.events.map((e: string, j: number) => <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{e}</span>)}</div>}
                     </div>
@@ -2966,7 +2953,7 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'IMMEDIATE ACTIONS' : 'ACÇÕES IMEDIATAS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('aces_imediatas')}</p>
                 </div>
                 <div className="space-y-2">
                   {careerPathData.immediate_actions.map((a: any, i: number) => (
@@ -2983,7 +2970,7 @@ export default function Results() {
               <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? '5-YEAR VISION' : 'VISÃO A 5 ANOS'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('viso_a_5_anos')}</p>
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">{careerPathData.long_term_vision.five_year_narrative}</p>
                 {careerPathData.long_term_vision.key_milestones && (
@@ -3004,13 +2991,13 @@ export default function Results() {
         {/* ═══ LinkedIn CV Certification Post ═══ */}
         {isPaid && (() => {
           const atsCompat = 100 - analysisData.atsRejectionRate;
-          const role = analysisData.perceivedRole || (isEN ? 'Professional' : 'Profissional');
+          const role = analysisData.perceivedRole || (t('profissional'));
           const seniority = analysisData.perceivedSeniority || '';
           const topStrengths = analysisData.quadrants
             .sort((a, b) => b.score - a.score)
             .slice(0, 2)
             .map(q => q.title);
-          const today = new Date().toLocaleDateString(isEN ? 'en-GB' : 'pt-PT', { year: 'numeric', month: 'long' });
+          const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
 
           const generatePostText = () => {
             if (isEN) {
@@ -3060,8 +3047,8 @@ export default function Results() {
 
             // Scores section
             const scores = [
-              { label: isEN ? 'Overall Score' : 'Score Global', value: `${Math.round(avgScore)}/100`, sub: `${isEN ? 'Percentile' : 'Percentil'} ${percentile}` },
-              { label: isEN ? 'ATS Compatibility' : 'Compatibilidade ATS', value: `${atsCompat}%`, sub: atsCompat >= 70 ? (isEN ? 'Good' : 'Boa') : (isEN ? 'Needs improvement' : 'A melhorar') },
+              { label: lang === 'en' ? 'Overall Score' : lang === 'es' ? 'Puntuación Global' : 'Score Global', value: `${Math.round(avgScore)}/100`, sub: `${t('percentil')} ${percentile}` },
+              { label: t('compatibilidade_ats_2'), value: `${atsCompat}%`, sub: atsCompat >= 70 ? (t('boa')) : (t('a_melhorar')) },
             ];
 
             scores.forEach((s, i) => {
@@ -3083,7 +3070,7 @@ export default function Results() {
             ctx.fillStyle = '#C9A961';
             ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.letterSpacing = '2px';
-            ctx.fillText(isEN ? 'ANALYSIS DIMENSIONS' : 'DIMENS\u00d5ES DA AN\u00c1LISE', 80, 335);
+            ctx.fillText(t('dimensu00d5es_da_anu00c1lise'), 80, 335);
             ctx.letterSpacing = '0px';
 
             analysisData.quadrants.forEach((q, i) => {
@@ -3116,7 +3103,7 @@ export default function Results() {
             ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
             ctx.letterSpacing = '2px';
-            ctx.fillText(isEN ? 'ATS COMPATIBILITY SCORE' : 'SCORE DE COMPATIBILIDADE ATS', 880, 130);
+            ctx.fillText(t('score_de_compatibilidade_ats'), 880, 130);
             ctx.letterSpacing = '0px';
             ctx.textAlign = 'left';
             const cx = 880, cy = 280, radius = 110;
@@ -3144,7 +3131,7 @@ export default function Results() {
             ctx.textAlign = 'left';
 
             // Label under gauge
-            const scoreLabel = avgScore >= 80 ? (isEN ? 'EXCELLENT' : 'EXCELENTE') : avgScore >= 65 ? (isEN ? 'STRONG' : 'FORTE') : avgScore >= 50 ? (isEN ? 'PROMISING' : 'PROMISSOR') : (isEN ? 'DEVELOPING' : 'EM DESENVOLVIMENTO');
+            const scoreLabel = avgScore >= 80 ? (t('excelente')) : avgScore >= 65 ? (t('forte')) : avgScore >= 50 ? (t('promissor')) : (t('em_desenvolvimento'));
             ctx.fillStyle = '#C9A961';
             ctx.font = '700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
@@ -3186,8 +3173,8 @@ export default function Results() {
                   <Award className="w-5 h-5 text-[#C9A961]" />
                 </GoldIcon>
                 <div>
-                  <p className="text-base font-semibold text-foreground">{isEN ? 'Share Your Professional Result' : 'Partilhar Resultado Profissional'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Generate an elegant LinkedIn post based on your CV analysis' : 'Gera um post elegante para LinkedIn baseado na an\u00e1lise do teu CV'}</p>
+                  <p className="text-base font-semibold text-foreground">{t('partilhar_resultado_profissional')}</p>
+                  <p className="text-xs text-muted-foreground">{t('gera_um_post_elegante_para')}</p>
                 </div>
               </div>
 
@@ -3195,7 +3182,7 @@ export default function Results() {
               <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Linkedin className="w-4 h-4 text-[#0077B5]" />
-                  <span className="text-xs font-semibold text-muted-foreground">{isEN ? 'POST PREVIEW' : 'PR\u00c9-VISUALIZA\u00c7\u00c3O DO POST'}</span>
+                  <span className="text-xs font-semibold text-muted-foreground">{t('pru00c9visualizau00c7u00c3o_do_post')}</span>
                 </div>
                 <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{generatePostText()}</p>
               </div>
@@ -3207,19 +3194,19 @@ export default function Results() {
                   className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0077B5] hover:bg-[#005F8D] text-white font-semibold text-sm transition-colors"
                 >
                   {postCopied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  {postCopied ? (isEN ? 'Copied!' : 'Copiado!') : (isEN ? 'Copy LinkedIn Post' : 'Copiar Post LinkedIn')}
+                  {postCopied ? (t('copiado')) : (t('copiar_post_linkedin'))}
                 </button>
                 <button
                   onClick={generateCertImage}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm transition-colors"
                 >
                   <Download className="w-4 h-4" />
-                  {isEN ? 'Download Certification Image' : 'Descarregar Imagem de Certifica\u00e7\u00e3o'}
+                  {t('descarregar_imagem_de_certificau00e7u00e3o')}
                 </button>
               </div>
 
               <p className="text-[10px] text-muted-foreground text-center">
-                {isEN ? 'The certification image is optimised for LinkedIn posts (1200\u00d7630px)' : 'A imagem de certifica\u00e7\u00e3o est\u00e1 optimizada para posts no LinkedIn (1200\u00d7630px)'}
+                {t('a_imagem_de_certificau00e7u00e3o_estu00e1')}
               </p>
             </div>
           );
@@ -3233,15 +3220,15 @@ export default function Results() {
                 <Mail className="w-5 h-5 text-[#C9A961]" />
               </GoldIcon>
               <div>
-                <p className="text-base font-semibold text-foreground">{isEN ? 'Receive Report by Email' : 'Receber Relatório por Email'}</p>
-                <p className="text-xs text-muted-foreground">{isEN ? 'Send the full report to your email' : 'Envia o relatório completo para o teu email'}</p>
+                <p className="text-base font-semibold text-foreground">{t('receber_relatrio_por_email')}</p>
+                <p className="text-xs text-muted-foreground">{t('envia_o_relatrio_completo_para')}</p>
               </div>
             </div>
             
             {reportSent ? (
               <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                 <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <p className="text-sm text-green-600">{isEN ? 'Report sent successfully! Check your inbox (and spam folder).' : 'Relatório enviado com sucesso! Verifica a tua caixa de email (e spam).'}</p>
+                <p className="text-sm text-green-600">{t('relatrio_enviado_com_sucesso_verifica')}</p>
               </div>
             ) : (
               <>
@@ -3250,7 +3237,7 @@ export default function Results() {
                     type="email"
                     value={reportEmail || email || sessionStorage.getItem('paymentEmail') || ''}
                     onChange={(e) => setReportEmail(e.target.value)}
-                    placeholder={isEN ? 'your@email.com' : 'seu@email.com'}
+                    placeholder={t('seuemailcom')}
                     className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                   <Button
@@ -3263,7 +3250,7 @@ export default function Results() {
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        {isEN ? 'Send' : 'Enviar'}
+                        {t('enviar')}
                       </>
                     )}
                   </Button>
@@ -3272,7 +3259,7 @@ export default function Results() {
                   <p className="text-sm text-red-500">{reportError}</p>
                 )}
                 {reportSending && (
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Sending the report to your email...' : 'A enviar o relatório para o teu email...'}</p>
+                  <p className="text-xs text-muted-foreground">{t('a_enviar_o_relatrio_para')}</p>
                 )}
               </>
             )}
@@ -3287,19 +3274,19 @@ export default function Results() {
                 <Save className="w-5 h-5 text-[#C9A961]" />
               </div>
               <div>
-                <p className="text-base font-semibold text-foreground">{isEN ? 'Save to My Account' : 'Guardar na Área de Cliente'}</p>
-                <p className="text-xs text-muted-foreground">{isEN ? 'Access your results anytime from your dashboard' : 'Acede aos teus resultados a qualquer momento no teu dashboard'}</p>
+                <p className="text-base font-semibold text-foreground">{t('guardar_na_rea_de_cliente')}</p>
+                <p className="text-xs text-muted-foreground">{t('acede_aos_teus_resultados_a')}</p>
               </div>
             </div>
             {!isLoggedIn ? (
               <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
                 <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                <p className="text-sm text-amber-700">{isEN ? 'Log in to save your results.' : 'Faz login para guardar os teus resultados.'} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{isEN ? 'Log in' : 'Iniciar sessão'}</a></p>
+                <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
               </div>
             ) : savedToAccount ? (
               <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                 <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <p className="text-sm text-green-600">{isEN ? 'Saved successfully! View in your dashboard.' : 'Guardado com sucesso! Consulta no teu dashboard.'}</p>
+                <p className="text-sm text-green-600">{t('guardado_com_sucesso_consulta_no')}</p>
               </div>
             ) : (
               <>
@@ -3313,7 +3300,7 @@ export default function Results() {
                   ) : (
                     <Save className="w-4 h-4 mr-2" />
                   )}
-                  {isEN ? 'Save to My Account' : 'Guardar na Minha Conta'}
+                  {t('guardar_na_minha_conta')}
                 </Button>
                 {saveError && <p className="text-sm text-red-500">{saveError}</p>}
               </>
@@ -3328,66 +3315,66 @@ export default function Results() {
             <div className="absolute inset-0 z-10 flex items-start justify-center" style={{ paddingTop: '80px' }}>
               <div className="bg-card/95 backdrop-blur-sm border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 text-center space-y-5 shadow-2xl max-w-lg mx-4 sticky top-28">
                 <Lock className="w-8 h-8 text-[#C9A961] mx-auto" />
-                <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'UNLOCK YOUR FULL REPORT' : 'DESBLOQUEIA O TEU RELATÓRIO COMPLETO'}</p>
+                <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('desbloqueia_o_teu_relatrio_completo')}</p>
 
                 {/* 2 Clean Options: CV Report vs Full Career Diagnosis */}
                 <div className="grid grid-cols-2 gap-3 text-left">
                   {/* Option 1: CV Report */}
                   <button
-                    onClick={() => openPaymentModal({ name: isEN ? 'CV Report' : 'Relatório CV', price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+                    onClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
                     className="p-4 rounded-xl border-2 border-border hover:border-[#C9A961]/40 transition-all bg-background/50 space-y-2"
                   >
                     <div className="flex items-center gap-2">
                       <FileCheck className="w-4 h-4 text-muted-foreground" />
-                      <p className="text-xs font-semibold text-foreground">{isEN ? 'CV Report' : 'Relatório CV'}</p>
+                      <p className="text-xs font-semibold text-foreground">{t('relatrio_cv')}</p>
                     </div>
                     <p className="text-2xl font-bold text-foreground">{CUR}{P.cv}</p>
-                    <p className="text-[10px] text-muted-foreground italic mt-0.5">{isEN ? 'Discover how to fix the critical issues we found' : 'Descobre como corrigir os problemas críticos que encontrámos'}</p>
+                    <p className="text-[10px] text-muted-foreground italic mt-0.5">{t('descobre_como_corrigir_os_problemas')}</p>
                     <div className="space-y-1">
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Full ATS analysis' : 'Análise ATS completa'}</p>
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Improvement suggestions' : 'Sugestões de melhoria'}</p>
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Missing keywords' : 'Palavras-chave em falta'}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('anlise_ats_completa')}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('sugestes_de_melhoria')}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('palavraschave_em_falta_2')}</p>
                     </div>
                   </button>
 
                   {/* Option 2: Full Career Diagnosis - Highlighted */}
                   <button
-                    onClick={() => openPaymentModal({ name: isEN ? 'Full Career Diagnosis' : 'Diagnóstico de Carreira Completo', price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
+                    onClick={() => openPaymentModal({ name: t('diagnstico_de_carreira_completo'), price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
                     className="p-4 rounded-xl border-2 border-[#C9A961] bg-[#C9A961]/5 transition-all relative space-y-2"
                   >
                     <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                      <span className="text-[9px] font-bold bg-[#C9A961] text-white px-2.5 py-0.5 rounded-full whitespace-nowrap">{isEN ? 'BEST VALUE' : 'MELHOR VALOR'}</span>
+                      <span className="text-[9px] font-bold bg-[#C9A961] text-white px-2.5 py-0.5 rounded-full whitespace-nowrap">{t('melhor_valor')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Compass className="w-4 h-4 text-[#C9A961]" />
-                      <p className="text-xs font-semibold text-[#C9A961]">{isEN ? 'Full Career Diagnosis' : 'Diagnóstico Completo'}</p>
+                      <p className="text-xs font-semibold text-[#C9A961]">{t('diagnstico_completo')}</p>
                     </div>
                     <p className="text-2xl font-bold text-foreground">{CUR}{P.cp}</p>
-                    <p className="text-[10px] text-[#C9A961]/80 italic mt-0.5">{isEN ? 'Full plan to improve your CV and career positioning' : 'Plano completo para melhorar o teu CV e posicionamento de carreira'}</p>
+                    <p className="text-[10px] text-[#C9A961]/80 italic mt-0.5">{t('plano_completo_para_melhorar_o')}</p>
                     <div className="space-y-1">
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Full CV analysis' : 'Análise CV completa'}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('anlise_cv_completa')}</p>
                       <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> Career Path</p>
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Skills gap' : 'Skills gap'}</p>
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {isEN ? 'Salary estimate' : 'Estimativa salarial'}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('skills_gap')}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('estimativa_salarial_2')}</p>
                     </div>
-                    <p className="text-[10px] text-[#C9A961]/80 italic">{isEN ? 'Includes Career Path from your LinkedIn' : 'Inclui Career Path baseado no teu LinkedIn'}</p>
+                    <p className="text-[10px] text-[#C9A961]/80 italic">{t('inclui_career_path_baseado_no')}</p>
                   </button>
                 </div>
 
                 <div className="flex flex-col gap-2 pt-1">
                   <Button
-                    onClick={() => openPaymentModal({ name: isEN ? 'Full Career Diagnosis' : 'Diagnóstico de Carreira Completo', price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
+                    onClick={() => openPaymentModal({ name: t('diagnstico_de_carreira_completo'), price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
                     className="bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-sm w-full"
                   >
-                    {isEN ? `Unlock Full Diagnosis — ${CUR}${P.cp}` : `Desbloquear Diagnóstico Completo — ${CUR}${P.cp}`}
+                    {pick(`Desbloquear Diagnóstico Completo — ${CUR}${P.cp}`, `Unlock Full Diagnosis — ${CUR}${P.cp}`, `Desbloquear Diagnóstico Completo — ${CUR}${P.cp}`)}
                   </Button>
                   <Button
-                    onClick={() => openPaymentModal({ name: isEN ? 'CV Report' : 'Relatório CV', price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+                    onClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
                     variant="ghost"
                     size="sm"
                     className="text-muted-foreground hover:text-foreground text-xs"
                   >
-                    {isEN ? `Or just the CV Report — ${CUR}${P.cv}` : `Ou apenas o Relatório CV — ${CUR}${P.cv}`}
+                    {pick(`Ou apenas o Relatório CV — ${CUR}${P.cv}`, `Or just the CV Report — ${CUR}${P.cv}`, `Ou apenas o Relatório CV — ${CUR}${P.cv}`)}
                   </Button>
                   <Button
                     onClick={() => setShowDiscountModal(true)}
@@ -3396,14 +3383,14 @@ export default function Results() {
                     className="border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5 w-full"
                   >
                     <Ticket className="w-3.5 h-3.5 mr-1.5" />
-                    {isEN ? 'I have a code' : 'Tenho um código'}
+                    {t('tenho_um_cdigo')}
                   </Button>
                 </div>
-                <p className="text-[10px] text-muted-foreground">{isEN ? 'Secure payment via Card or PayPal' : 'Pagamento seguro via MB WAY ou PayPal'}</p>
+                <p className="text-[10px] text-muted-foreground">{t('pagamento_seguro_via_mb_way')}</p>
                 <div className="flex items-center justify-center gap-3 pt-1">
-                  <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1"><Users className="w-3 h-3" /> {isEN ? '300+ CVs analysed' : '300+ CVs analisados'}</p>
+                  <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1"><Users className="w-3 h-3" /> {t('300_cvs_analisados')}</p>
                   <span className="text-muted-foreground/30">|</span>
-                  <p className="text-[10px] text-muted-foreground/70">{isEN ? 'Used by HR professionals to simulate ATS filters' : 'Usada por profissionais de RH para simular filtros ATS'}</p>
+                  <p className="text-[10px] text-muted-foreground/70">{t('usada_por_profissionais_de_rh')}</p>
                 </div>
               </div>
             </div>
@@ -3416,10 +3403,10 @@ export default function Results() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {paymentStep === 'confirm' && (isEN ? 'Confirm Package' : 'Confirmar Pacote')}
-              {paymentStep === 'payment' && (isEN ? 'Payment Details' : 'Dados de Pagamento')}
-              {paymentStep === 'polling' && (isEN ? 'Waiting for payment' : 'A aguardar pagamento')}
-              {paymentStep === 'success' && (isPaid ? (isEN ? 'Analysis Unlocked!' : 'Análise Desbloqueada!') : (isEN ? 'Payment Started' : 'Pagamento Iniciado'))}
+              {paymentStep === 'confirm' && (t('confirmar_pacote'))}
+              {paymentStep === 'payment' && (t('dados_de_pagamento'))}
+              {paymentStep === 'polling' && (t('a_aguardar_pagamento'))}
+              {paymentStep === 'success' && (isPaid ? (t('anlise_desbloqueada')) : (t('pagamento_iniciado')))}
             </DialogTitle>
           </DialogHeader>
 
@@ -3427,11 +3414,11 @@ export default function Results() {
           {paymentStep === 'confirm' && (
             <div className="space-y-5 py-4">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">{isEN ? 'Choose your package:' : 'Escolhe o teu pacote:'}</p>
+                <p className="text-sm font-medium text-foreground">{t('escolhe_o_teu_pacote')}</p>
                 <div className="space-y-2">
                   {[
                     {
-                      name: isEN ? 'CV Report' : 'Relatório CV',
+                      name: t('relatrio_cv'),
                       price: P.cv,
                       analyses: 1,
                       voucher_type: 'standard',
@@ -3441,7 +3428,7 @@ export default function Results() {
                         : ['Análise ATS completa', 'Sugestões de melhoria', 'Palavras-chave em falta', 'Estimativa salarial'],
                     },
                     {
-                      name: isEN ? 'Full Career Diagnosis' : 'Diagnóstico de Carreira Completo',
+                      name: t('diagnstico_de_carreira_completo'),
                       price: P.cp,
                       analyses: 1,
                       voucher_type: 'standard',
@@ -3473,7 +3460,7 @@ export default function Results() {
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-semibold text-foreground">{plan.name}</span>
                             {(plan as any).popular && (
-                              <span className="text-[9px] font-bold bg-[#C9A961] text-white px-1.5 py-0.5 rounded">{isEN ? 'BEST VALUE' : 'MELHOR VALOR'}</span>
+                              <span className="text-[9px] font-bold bg-[#C9A961] text-white px-1.5 py-0.5 rounded">{t('melhor_valor')}</span>
                             )}
                           </div>
                         </div>
@@ -3499,8 +3486,8 @@ export default function Results() {
 
               {selectedPlan.includes_career_path && (
                 <div className="p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                  <p className="text-xs font-semibold text-green-600 mb-1">{isEN ? 'Career Path included!' : 'Career Path incluído!'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'After payment, the Career Path will be generated automatically from your CV data.' : 'Após o pagamento, o Career Path será gerado automaticamente a partir dos dados do teu CV.'}</p>
+                  <p className="text-xs font-semibold text-green-600 mb-1">{t('career_path_includo')}</p>
+                  <p className="text-xs text-muted-foreground">{t('aps_o_pagamento_o_career')}</p>
                 </div>
               )}
 
@@ -3509,9 +3496,9 @@ export default function Results() {
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
                 {appliedCoupon ? (
-                  isEN ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
+                  lang === 'en' ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
                 ) : (
-                  isEN ? `Continue to Payment — ${CUR}${selectedPlan.price}` : `Continuar para Pagamento — ${CUR}${selectedPlan.price}`
+                  pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar para Pagamento — ${CUR}${selectedPlan.price}`)
                 )}
               </Button>
             </div>
@@ -3521,9 +3508,9 @@ export default function Results() {
           {paymentStep === 'payment' && (
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">{isEN ? 'Payment Method' : 'Método de Pagamento'}</label>
-                <div className={`grid gap-3 ${isEN ? 'grid-cols-2' : 'grid-cols-2'}`}>
-                  {isEN ? (
+                <label className="text-sm font-medium text-foreground">{t('mtodo_de_pagamento')}</label>
+                <div className={`grid gap-3 ${t('gridcols2')}`}>
+                  {lang === 'en' ? (
                     <>
                       <button
                         onClick={() => setPaymentMethod('stripe')}
@@ -3586,7 +3573,7 @@ export default function Results() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={isEN ? 'your@email.com' : 'seu@email.com'}
+                  placeholder={t('seuemailcom')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>
@@ -3594,7 +3581,7 @@ export default function Results() {
               {paymentMethod === 'mbway' && (
                 <div className="space-y-2">
                   <label htmlFor="phone" className="text-sm font-medium text-foreground">
-                    {isEN ? 'Phone (MB WAY)' : 'Telemóvel (MB WAY)'}
+                    {t('telemvel_mb_way')}
                   </label>
                   <input
                     id="phone"
@@ -3625,7 +3612,7 @@ export default function Results() {
                   </span>
                 </div>
                 {appliedCoupon && (
-                  <p className="text-xs text-green-600 text-right -mt-2">{appliedCoupon.percent}% {isEN ? 'discount' : 'desconto'} ({appliedCoupon.code})</p>
+                  <p className="text-xs text-green-600 text-right -mt-2">{appliedCoupon.percent}% {t('desconto')} ({appliedCoupon.code})</p>
                 )}
                 <Button
                   onClick={handlePayment}
@@ -3641,16 +3628,16 @@ export default function Results() {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {isEN ? 'Processing...' : 'A processar...'}
+                      {t('a_processar')}
                     </>
                   ) : paymentMethod === 'stripe' ? (
                     'Pay with Card'
                   ) : paymentMethod === 'mbway' ? (
-                    isEN ? 'Pay with MB WAY' : 'Pagar com MB WAY'
+                    t('pagar_com_mb_way')
                   ) : (
                     <>
                       <PayPalIcon className="w-4 h-4 mr-2" />
-                      {isEN ? 'Pay with PayPal' : 'Pagar com PayPal'}
+                      {t('pagar_com_paypal')}
                     </>
                   )}
                 </Button>
@@ -3658,7 +3645,7 @@ export default function Results() {
                   onClick={() => setPaymentStep('confirm')}
                   className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isEN ? '← Back' : '← Voltar'}
+                  {t('voltar_2')}
                 </button>
               </div>
             </div>
@@ -3671,9 +3658,9 @@ export default function Results() {
                 <CreditCard className="w-8 h-8 text-[#C9A961]" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-foreground">{isEN ? 'Request sent to MB WAY' : 'Pedido enviado para MB WAY'}</h3>
+                <h3 className="text-lg font-bold text-foreground">{t('pedido_enviado_para_mb_way')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {isEN ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>}
+                  {lang === 'en' ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>}
                 </p>
               </div>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">
@@ -3692,7 +3679,7 @@ export default function Results() {
                   className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {isEN ? 'I already paid — check again' : 'Já paguei — verificar novamente'}
+                  {t('j_paguei_verificar_novamente')}
                 </Button>
               )}
               <Button
@@ -3700,7 +3687,7 @@ export default function Results() {
                 variant="outline"
                 className="w-full"
               >
-                {isEN ? 'Close (payment continues to be verified)' : 'Fechar (o pagamento continua a ser verificado)'}
+                {t('fechar_o_pagamento_continua_a')}
               </Button>
             </div>
           )}
@@ -3718,35 +3705,35 @@ export default function Results() {
               <div className="space-y-2">
                 {isPaid && selectedPlan.includes_career_path ? (
                   <>
-                    <h3 className="text-lg font-bold text-green-600">{isEN ? 'Payment confirmed!' : 'Pagamento confirmado!'}</h3>
+                    <h3 className="text-lg font-bold text-green-600">{t('pagamento_confirmado')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {isEN ? 'Provide your LinkedIn profile so we can launch both analyses: CV Report + Career Path.' : 'Fornece o teu perfil LinkedIn para lançarmos as duas análises: Relatório CV + Career Path.'}
+                      {t('fornece_o_teu_perfil_linkedin')}
                     </p>
                     {/* LinkedIn input for bundle — launches both engines */}
                     <div className="mt-4 space-y-3 text-left">
                       <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
-                        <p className="text-xs font-semibold text-blue-600 mb-2 flex items-center gap-1.5"><Linkedin className="w-3.5 h-3.5" /> {isEN ? 'What we analyse from LinkedIn:' : 'O que analisamos do LinkedIn:'}</p>
+                        <p className="text-xs font-semibold text-blue-600 mb-2 flex items-center gap-1.5"><Linkedin className="w-3.5 h-3.5" /> {t('o_que_analisamos_do_linkedin')}</p>
                         <div className="space-y-1">
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {isEN ? 'Professional experience' : 'Experiência profissional'}</p>
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {isEN ? 'Area of expertise' : 'Área de actuação'}</p>
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {isEN ? 'Identified skills' : 'Competências identificadas'}</p>
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {isEN ? 'Role progression' : 'Evolução de funções'}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('experincia_profissional')}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('rea_de_actuao')}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('competncias_identificadas')}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('evoluo_de_funes')}</p>
                         </div>
-                        <p className="text-[10px] text-muted-foreground mt-2 italic">{isEN ? 'No data will be published or shared.' : 'Nenhum dado será publicado ou partilhado.'}</p>
+                        <p className="text-[10px] text-muted-foreground mt-2 italic">{t('nenhum_dado_ser_publicado_ou')}</p>
                       </div>
                       <input
                         type="url"
                         value={careerPathLinkedin}
                         onChange={(e) => setCareerPathLinkedin(e.target.value)}
-                        placeholder={isEN ? 'https://linkedin.com/in/your-profile' : 'https://linkedin.com/in/teu-perfil'}
+                        placeholder={t('httpslinkedincominteuperfil')}
                         className="w-full px-3 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961] text-sm"
                       />
                     </div>
                     <div className="p-3 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg mt-2">
-                      <p className="text-xs font-semibold text-[#C9A961] mb-1">{isEN ? 'Your bundle includes:' : 'O teu pacote inclui:'}</p>
+                      <p className="text-xs font-semibold text-[#C9A961] mb-1">{t('o_teu_pacote_inclui')}</p>
                       <div className="space-y-1">
-                        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {isEN ? 'Full CV Report with ATS analysis' : 'Relatório CV completo com análise ATS'}</p>
-                        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {isEN ? 'Career Path with personalised roadmap' : 'Career Path com roadmap personalizado'}</p>
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {t('relatrio_cv_completo_com_anlise')}</p>
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {t('career_path_com_roadmap_personalizado')}</p>
                       </div>
                     </div>
                     <Button
@@ -3762,38 +3749,38 @@ export default function Results() {
                       className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold mt-2"
                     >
                       <Rocket className="w-4 h-4 mr-2" />
-                      {isEN ? 'Launch both analyses' : 'Lançar as duas análises'}
+                      {t('lanar_as_duas_anlises')}
                     </Button>
                   </>
                 ) : isPaid ? (
                   <>
-                    <h3 className="text-lg font-bold text-green-600">{isEN ? 'Full Analysis Unlocked!' : 'Análise Completa Desbloqueada!'}</h3>
+                    <h3 className="text-lg font-bold text-green-600">{t('anlise_completa_desbloqueada')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {isEN ? 'All sections have been unlocked. Scroll down to see the full analysis.' : 'Todas as secções foram desbloqueadas. Faz scroll para ver a análise completa.'}
+                      {t('todas_as_seces_foram_desbloqueadas')}
                     </p>
                     {storedVoucherCode && storedVoucherRemaining && parseInt(storedVoucherRemaining) > 0 && (
                       <div className="mt-4 p-4 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg">
-                        <p className="text-xs text-muted-foreground mb-1">{isEN ? 'Your code for future analyses:' : 'O teu código para futuras análises:'}</p>
+                        <p className="text-xs text-muted-foreground mb-1">{t('o_teu_cdigo_para_futuras')}</p>
                         <p className="text-xl font-mono font-bold text-[#C9A961]">{storedVoucherCode}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{isEN ? `${storedVoucherRemaining} analysis(es) remaining` : `Restam ${storedVoucherRemaining} análise(s)`}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise(s)`, `${storedVoucherRemaining} analysis(es) remaining`, `Restam ${storedVoucherRemaining} análise(s)`)}</p>
                       </div>
                     )}
                   </>
                 ) : paymentMethod === 'paypal' ? (
                   <>
-                    <h3 className="text-lg font-bold text-foreground">{isEN ? 'PayPal Payment' : 'Pagamento PayPal'}</h3>
+                    <h3 className="text-lg font-bold text-foreground">{t('pagamento_paypal')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {isEN ? 'Complete the payment in the PayPal window. After confirmation, the analysis will be unlocked manually within 24h.' : 'Completa o pagamento na janela do PayPal. Após confirmação, a análise será desbloqueada manualmente em até 24h.'}
+                      {t('completa_o_pagamento_na_janela')}
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">
-                      {isEN ? 'For immediate confirmation, use Card payment.' : 'Para confirmação imediata, usa MB WAY.'}
+                      {t('para_confirmao_imediata_usa_mb')}
                     </p>
                   </>
                 ) : (
                   <>
-                    <h3 className="text-lg font-bold text-foreground">{isEN ? 'Payment processing' : 'Pagamento em processamento'}</h3>
+                    <h3 className="text-lg font-bold text-foreground">{t('pagamento_em_processamento')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {isEN ? 'Payment is being verified. The analysis will be unlocked automatically.' : 'O pagamento está a ser verificado. A análise será desbloqueada automaticamente.'}
+                      {t('o_pagamento_est_a_ser')}
                     </p>
                   </>
                 )}
@@ -3805,7 +3792,7 @@ export default function Results() {
                   className={isPaid ? "w-full bg-green-600 hover:bg-green-700 text-white font-semibold" : "w-full"}
                   variant={isPaid ? "default" : "outline"}
                 >
-                  {isPaid ? (isEN ? 'View Full Analysis' : 'Ver Análise Completa') : (isEN ? 'Close' : 'Fechar')}
+                  {isPaid ? (t('ver_anlise_completa')) : (t('fechar'))}
                 </Button>
               )}
             </div>
@@ -3819,19 +3806,19 @@ export default function Results() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Discount Code' : 'Código de Desconto'}
+              {t('cdigo_de_desconto')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
-              {isEN ? 'Enter your discount or voucher code to unlock this analysis.' : 'Introduz o teu código de desconto ou voucher para desbloquear esta análise.'}
+              {t('introduz_o_teu_cdigo_de')}
             </p>
             <div className="space-y-2">
               <input
                 type="text"
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-                placeholder={isEN ? 'Enter code' : 'Inserir código'}
+                placeholder={t('inserir_cdigo')}
                 className="w-full px-3 py-3 border border-border rounded-lg bg-background text-foreground text-center text-lg font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#C9A961] uppercase"
                 onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidation()}
               />
@@ -3857,10 +3844,10 @@ export default function Results() {
               {discountLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {isEN ? 'Validating...' : 'A validar...'}
+                  {t('a_validar')}
                 </>
               ) : (
-                isEN ? 'Validate Code' : 'Validar Código'
+                t('validar_cdigo')
               )}
             </Button>
           </div>
@@ -3873,18 +3860,18 @@ export default function Results() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="w-5 h-5 text-[#C9A961]" />
-              Career Path {sessionStorage.getItem('careerPathIncluded') === 'true' ? (isEN ? '— Included' : '— Incluído') : careerPathIsUpgrade ? (isEN ? '— Upgrade $14.99' : '— Upgrade €14,99') : `— ${CUR}${P.career}`}
+              Career Path {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('includo')) : careerPathIsUpgrade ? (t('upgrade_1499')) : `— ${CUR}${P.career}`}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             {careerPathPaymentStep === 'info' && (
               <>
-                <p className="text-sm text-muted-foreground">{isEN ? 'For a more complete analysis, you can provide your LinkedIn profile (optional):' : 'Para uma análise mais completa, podes fornecer o teu perfil LinkedIn (opcional):'}</p>
+                <p className="text-sm text-muted-foreground">{t('para_uma_anlise_mais_completa')}</p>
                 <input
                   type="url"
                   value={careerPathLinkedin}
                   onChange={(e) => setCareerPathLinkedin(e.target.value)}
-                  placeholder={isEN ? 'https://linkedin.com/in/your-profile' : 'https://linkedin.com/in/teu-perfil'}
+                  placeholder={t('httpslinkedincominteuperfil')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
                 <Button
@@ -3899,7 +3886,7 @@ export default function Results() {
                   }}
                   className={`w-full font-semibold ${sessionStorage.getItem('careerPathIncluded') === 'true' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#C9A961] hover:bg-[#A88B4E] text-white'}`}
                 >
-                  {sessionStorage.getItem('careerPathIncluded') === 'true' ? (isEN ? 'Generate Career Path (included in package)' : 'Gerar Career Path (incluído no pacote)') : (isEN ? 'Continue to payment' : 'Continuar para pagamento')}
+                  {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('gerar_career_path_includo_no')) : (t('continuar_para_pagamento'))}
                 </Button>
               </>
             )}
@@ -3911,7 +3898,7 @@ export default function Results() {
                     type="email"
                     value={careerPathEmail}
                     onChange={(e) => setCareerPathEmail(e.target.value)}
-                    placeholder={isEN ? 'Your email' : 'O teu email'}
+                    placeholder={t('o_teu_email')}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                   <div className="flex gap-2">
@@ -3927,7 +3914,7 @@ export default function Results() {
                       onClick={() => setCareerPathPaymentMethod('stripe')}
                       className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'stripe' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
                     >
-                      <p className="text-sm font-semibold text-foreground">{isEN ? 'Card' : 'Cartão'}</p>
+                      <p className="text-sm font-semibold text-foreground">{t('carto')}</p>
                     </button>
                     <button
                       onClick={() => setCareerPathPaymentMethod('paypal')}
@@ -3941,7 +3928,7 @@ export default function Results() {
                       type="tel"
                       value={careerPathPhone}
                       onChange={(e) => setCareerPathPhone(e.target.value)}
-                      placeholder={isEN ? 'Phone number' : 'Número de telemóvel'}
+                      placeholder={t('nmero_de_telemvel')}
                       className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                     />
                   )}
@@ -3952,8 +3939,8 @@ export default function Results() {
                   className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
                 >
                   {careerPathIsUpgrade
-                    ? (isEN ? 'Pay $14.99 and Generate Career Path' : 'Pagar €14,99 e Gerar Career Path')
-                    : (isEN ? `Pay ${CUR}${P.career} and Generate Career Path` : `Pagar ${CUR}${P.career} e Gerar Career Path`)
+                    ? (t('pagar_1499_e_gerar_career'))
+                    : (pick(`Pagar ${CUR}${P.career} e Gerar Career Path`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} e Gerar Career Path`))
                   }
                 </Button>
               </>
@@ -3970,7 +3957,7 @@ export default function Results() {
               <div className="text-center space-y-3 py-4">
                 <Loader2 className="w-8 h-8 animate-spin text-[#C9A961] mx-auto" />
                 <p className="text-sm font-semibold text-foreground transition-opacity duration-500" key={loadingMsgIndex}>{loadingMessages[loadingMsgIndex]}</p>
-                <p className="text-xs text-muted-foreground">{isEN ? 'This may take up to 30 seconds.' : 'Isto pode demorar até 30 segundos.'}</p>
+                <p className="text-xs text-muted-foreground">{t('isto_pode_demorar_at_30')}</p>
                 {careerPathError && <p className="text-sm text-red-500 mt-2">{careerPathError}</p>}
               </div>
             )}
@@ -3978,12 +3965,12 @@ export default function Results() {
             {careerPathPaymentStep === 'done' && (
               <div className="text-center space-y-3 py-4">
                 <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
-                <p className="text-sm font-semibold text-green-600">{isEN ? 'Career Path generated successfully!' : 'Career Path gerado com sucesso!'}</p>
+                <p className="text-sm font-semibold text-green-600">{t('career_path_gerado_com_sucesso')}</p>
                 <Button
                   onClick={() => setShowCareerPathModal(false)}
                   className="bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
                 >
-                  {isEN ? 'View Career Path' : 'Ver Career Path'}
+                  {t('ver_career_path')}
                 </Button>
               </div>
             )}

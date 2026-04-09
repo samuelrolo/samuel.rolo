@@ -17,6 +17,7 @@ import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
+import { t, pick, getLang } from './en/translations';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -126,10 +127,10 @@ export default function CareerIntelligenceResults() {
       setSavedToAccount(true);
     } catch (err: any) {
       if (err?.message === 'SESSION_EXPIRED' || err?.message === 'NOT_LOGGED_IN') {
-        setSaveError(isEN ? 'Session expired. Please log in again in your Account area and return here.' : 'Sessão expirada. Faz login novamente na Área de Cliente e volta aqui.');
+        setSaveError(t('sesso_expirada_faz_login_novamente'));
         setIsLoggedIn(false);
       } else {
-        setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+        setSaveError(t('erro_ao_guardar_tenta_novamente'));
       }
     } finally {
       setSavingToAccount(false);
@@ -165,14 +166,11 @@ export default function CareerIntelligenceResults() {
     return () => clearInterval(interval);
   }, [isGenerating]);
 
-  const [isEN] = useState(() => {
-    const pathIsEN = window.location.pathname.startsWith('/en/');
-    if (pathIsEN) return true;
-    return (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) === 'en';
-  });
+  const lang = getLang();
+  const isEN = lang === 'en';
 
-  const CUR = isEN ? '$' : '€';
-  const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
+  const CUR = t('bca53fde');
+  const CURRENCY_CODE = t('eur');
 
   /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
   const cleanCurrency = (s: string) => {
@@ -201,7 +199,7 @@ export default function CareerIntelligenceResults() {
   // Payment modal
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(isEN ? 'stripe' : 'mbway');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(t('mbway'));
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [pollingMsg, setPollingMsg] = useState('');
@@ -276,7 +274,7 @@ export default function CareerIntelligenceResults() {
             localStorage.setItem('careerIntelligenceProPaid', 'true');
             localStorage.setItem('careerIntelligenceFull', 'true');
             trackPurchase('career_intelligence_full', stripeAmount, `CI-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
+            trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: t('eur'), payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
           }
           setIsPaid(true);
           generateAnalysis();
@@ -310,7 +308,7 @@ export default function CareerIntelligenceResults() {
 
       const data = await response.json();
       if (!data.success && !data.career_path) {
-        throw new Error(data.error || (isEN ? 'Error generating Career Intelligence' : 'Erro ao gerar Career Intelligence'));
+        throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
       }
 
       const ciData = data.career_path || data;
@@ -337,7 +335,7 @@ export default function CareerIntelligenceResults() {
         }
       }, 1500);
     } catch (err: any) {
-      setGenerateError(err.message || (isEN ? 'Error generating Career Intelligence. Try again.' : 'Erro ao gerar Career Intelligence. Tenta novamente.'));
+      setGenerateError(err.message || (t('erro_ao_gerar_career_intelligence_2')));
     } finally {
       setIsGenerating(false);
     }
@@ -345,7 +343,7 @@ export default function CareerIntelligenceResults() {
 
   // ─── Discount code validation ───
   const handleDiscountSubmit = async () => {
-    if (!discountCode.trim()) { setDiscountError(isEN ? 'Enter a code' : 'Introduz um código'); return; }
+    if (!discountCode.trim()) { setDiscountError(t('introduz_um_cdigo')); return; }
     setDiscountLoading(true);
     setDiscountError(null);
     const code = discountCode.trim().toUpperCase();
@@ -359,16 +357,16 @@ export default function CareerIntelligenceResults() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(t('este_cdigo_ainda_no_est')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(t('este_cdigo_j_expirou')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(t('este_cdigo_atingiu_o_limite')); return; }
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('career_intelligence') && !products.includes('career_intelligence_full')) {
-          setDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return;
+          setDiscountError(t('este_cdigo_no_aplicvel_aqui')); return;
         }
         if (coupon.discount_percent === 100) {
           trackPurchase('career_intelligence_full', 0, `COUPON-${code}`);
-          trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           incrementCouponUsage(code);
           localStorage.setItem('careerPathPaid', 'true');
           localStorage.setItem('careerIntelligenceProPaid', 'true');
@@ -379,7 +377,7 @@ export default function CareerIntelligenceResults() {
           return;
         }
         // Partial discount — not yet handled for CI full, just show error
-        setDiscountError(isEN ? 'Partial discounts are not available for this product.' : 'Descontos parciais não estão disponíveis para este produto.');
+        setDiscountError(t('descontos_parciais_no_esto_disponveis'));
         return;
       }
 
@@ -391,10 +389,10 @@ export default function CareerIntelligenceResults() {
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length > 0) {
         const v = rows[0];
-        if (!v.is_active) { setDiscountError(isEN ? 'This code has already been used' : 'Este código já foi utilizado'); return; }
-        if (v.used_analyses >= v.total_analyses) { setDiscountError(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis'); return; }
+        if (!v.is_active) { setDiscountError(t('este_cdigo_j_foi_utilizado')); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError(t('este_cdigo_j_no_tem_2')); return; }
         if (v.voucher_type !== 'career_intelligence' && v.voucher_type !== 'career_intelligence_full' && v.voucher_type !== 'complete') {
-          setDiscountError(isEN ? 'This code is not valid for Career Intelligence' : 'Este código não é válido para o Career Intelligence'); return;
+          setDiscountError(t('este_cdigo_no_vlido_para_2')); return;
         }
         await fetch(
           `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
@@ -405,7 +403,7 @@ export default function CareerIntelligenceResults() {
           }
         );
         trackPurchase('career_intelligence_full', 0, `CI-VOUCHER-${code}`);
-        trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
+        trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: t('eur'), payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
         localStorage.setItem('careerPathPaid', 'true');
         localStorage.setItem('careerIntelligenceProPaid', 'true');
         localStorage.setItem('careerIntelligenceFull', 'true');
@@ -415,28 +413,28 @@ export default function CareerIntelligenceResults() {
         return;
       }
 
-      setDiscountError(isEN ? 'Invalid or expired code' : 'Código inválido ou expirado');
+      setDiscountError(t('cdigo_invlido_ou_expirado'));
     } catch (err: any) {
-      setDiscountError(err.message || (isEN ? 'Error validating code' : 'Erro ao validar código'));
+      setDiscountError(err.message || (t('erro_ao_validar_cdigo')));
     } finally {
       setDiscountLoading(false);
     }
   };
 
   // ─── Payment handlers ───
-  const CI_PRICE = isEN ? 49 : 49;
-  const CI_PRICE_DISPLAY = isEN ? `$${CI_PRICE}` : `${CI_PRICE}€`;
+  const CI_PRICE = lang === 'en' ? 49 : 49;
+  const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `$${CI_PRICE}`, `${CI_PRICE}€`);
 
   const openPaymentModal = () => {
     setPaymentStep('payment');
     setPaymentError(null);
-    setPaymentMethod(isEN ? 'stripe' : 'mbway');
+    setPaymentMethod(t('mbway'));
     setShowPaymentModal(true);
   };
 
   const handleMBWayPayment = async () => {
-    if (!email) { setPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
-    if (!phone) { setPaymentError(isEN ? 'Enter your phone number' : 'Introduz o teu número de telemóvel'); return; }
+    if (!email) { setPaymentError(t('introduz_o_teu_email')); return; }
+    if (!phone) { setPaymentError(t('introduz_o_teu_nmero_de')); return; }
     setPaymentLoading(true);
     setPaymentError(null);
     try {
@@ -457,9 +455,9 @@ export default function CareerIntelligenceResults() {
         }),
       });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || (isEN ? 'Error initiating payment' : 'Erro ao iniciar pagamento'));
+      if (!data.success) throw new Error(data.error || (t('erro_ao_iniciar_pagamento')));
       setPaymentStep('polling');
-      setPollingMsg(isEN ? 'Confirm the payment in the MB WAY app on your phone...' : 'Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(t('confirma_o_pagamento_na_app'));
       startPolling(orderId);
     } catch (err: any) {
       setPaymentError(err.message);
@@ -482,7 +480,7 @@ export default function CareerIntelligenceResults() {
           name: email.split('@')[0],
           product_type: 'career_intelligence_full',
           orderId,
-          language: isEN ? 'en' : 'pt',
+          language: t('pt'),
           currency: CURRENCY_CODE.toLowerCase(),
           amount: CI_PRICE,
         }),
@@ -501,7 +499,7 @@ export default function CareerIntelligenceResults() {
   };
 
   const handlePayPalPayment = async () => {
-    if (!email) { setPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
+    if (!email) { setPaymentError(t('introduz_o_teu_email')); return; }
     localStorage.setItem('cpPaymentEmail', email);
     window.open(`https://paypal.me/SamuelRolo/${CI_PRICE}${CURRENCY_CODE}`, '_blank');
     setPaymentStep('success');
@@ -533,12 +531,12 @@ export default function CareerIntelligenceResults() {
         if (data.expired && elapsed > 90000) {
           clearInterval(interval);
           setPollingExpired(true);
-          setPollingMsg(isEN ? 'Payment expired. Use the button below if you already paid.' : 'O pagamento expirou. Usa o botão abaixo se já pagaste.');
+          setPollingMsg(t('o_pagamento_expirou_usa_o'));
           return;
         }
-        if (elapsed < 30000) setPollingMsg(isEN ? 'Confirm the payment in the MB WAY app...' : 'Confirma o pagamento na app MB WAY...');
-        else if (elapsed < 60000) setPollingMsg(isEN ? 'Still waiting... Check the MB WAY app.' : 'Ainda a aguardar... Verifica a app MB WAY.');
-        else setPollingMsg(isEN ? 'Waiting for confirmation...' : 'A aguardar confirmação...');
+        if (elapsed < 30000) setPollingMsg(t('confirma_o_pagamento_na_app_2'));
+        else if (elapsed < 60000) setPollingMsg(t('ainda_a_aguardar_verifica_a'));
+        else setPollingMsg(t('a_aguardar_confirmao'));
         if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); }
       } catch { consecutiveErrors++; }
     }, 5000);
@@ -546,7 +544,7 @@ export default function CareerIntelligenceResults() {
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg(isEN ? 'Checking payment...' : 'A verificar pagamento...');
+    setPollingMsg(t('a_verificar_pagamento'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
@@ -558,11 +556,11 @@ export default function CareerIntelligenceResults() {
       if (data.paid) { unlockAndGenerate(currentOrderId); }
       else {
         setPollingExpired(true);
-        setPollingMsg(isEN ? 'Payment not yet confirmed. Try again.' : 'Pagamento ainda não confirmado. Tenta novamente.');
+        setPollingMsg(t('pagamento_ainda_no_confirmado_tenta'));
       }
     } catch {
       setPollingExpired(true);
-      setPollingMsg(isEN ? 'Error checking. Try again.' : 'Erro ao verificar. Tenta novamente.');
+      setPollingMsg(t('erro_ao_verificar_tenta_novamente_2'));
     }
   };
 
@@ -572,7 +570,7 @@ export default function CareerIntelligenceResults() {
     localStorage.setItem('careerIntelligenceProPaid', 'true');
     localStorage.setItem('careerIntelligenceFull', 'true');
     trackPurchase('career_intelligence_full', CI_PRICE, orderId);
-    trackAffiliateConversion({ product: 'career_intelligence_full', amount: CI_PRICE, currency: isEN ? 'USD' : 'EUR', payment_method: paymentMethod, transaction_id: orderId });
+    trackAffiliateConversion({ product: 'career_intelligence_full', amount: CI_PRICE, currency: t('eur'), payment_method: paymentMethod, transaction_id: orderId });
     setIsPaid(true);
     setTimeout(() => { generateAnalysis(); }, 400);
   };
@@ -586,11 +584,11 @@ export default function CareerIntelligenceResults() {
   // ─── Send report by email ───
   const handleSendReport = async () => {
     const targetEmail = reportEmail || email || (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || '';
-    if (!targetEmail) { setReportError(isEN ? 'Enter a valid email.' : 'Introduz um email válido.'); return; }
+    if (!targetEmail) { setReportError(t('introduz_um_email_vlido')); return; }
     setReportSending(true);
     setReportError(null);
     try {
-      const ciEmailRoute = isEN ? 'send-career-intelligence-email-en' : 'send-career-intelligence-email';
+      const ciEmailRoute = t('sendcareerintelligenceemail');
       await fetch(`${BACKEND_URL}/api/payment/${ciEmailRoute}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -602,7 +600,7 @@ export default function CareerIntelligenceResults() {
       });
       setReportSent(true);
     } catch {
-      setReportError(isEN ? 'Error sending email. Try again.' : 'Erro ao enviar email. Tenta novamente.');
+      setReportError(t('erro_ao_enviar_email_tenta'));
     } finally {
       setReportSending(false);
     }
@@ -616,8 +614,8 @@ export default function CareerIntelligenceResults() {
     );
   }
 
-  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (isEN ? 'your profile' : 'o teu perfil');
-  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (isEN ? 'Professional' : 'Profissional');
+  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
+  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
   const seniority = cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 
   return (
@@ -631,7 +629,7 @@ export default function CareerIntelligenceResults() {
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">{isEN ? 'Back' : 'Voltar'}</span>
+              <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
@@ -644,7 +642,7 @@ export default function CareerIntelligenceResults() {
             {isPaid ? (
               <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-500/10 border border-green-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
-                <span className="text-xs sm:text-sm font-semibold text-green-600">{isEN ? 'Full Report' : 'Relatório Completo'}</span>
+                <span className="text-xs sm:text-sm font-semibold text-green-600">{t('relatrio_completo')}</span>
               </div>
             ) : (
               <>
@@ -655,16 +653,16 @@ export default function CareerIntelligenceResults() {
                   className="text-xs sm:text-sm font-medium border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5"
                 >
                   <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
-                  <span className="hidden sm:inline">{isEN ? 'I have a code' : 'Tenho código'}</span>
-                  <span className="sm:hidden">{isEN ? 'Code' : 'Código'}</span>
+                  <span className="hidden sm:inline">{t('tenho_cdigo')}</span>
+                  <span className="sm:hidden">{t('cdigo')}</span>
                 </Button>
                 <Button
                   onClick={() => openPaymentModal()}
                   size="sm"
                   className="bg-[#C9A961] hover:bg-[#A88B4E] text-white text-xs sm:text-sm font-semibold px-3 sm:px-5 py-1.5 sm:py-2"
                 >
-                  <span className="hidden sm:inline">{isEN ? 'Unlock Analysis' : 'Desbloquear Análise'}</span>
-                  <span className="sm:hidden">{isEN ? 'Unlock' : 'Desbloquear'}</span>
+                  <span className="hidden sm:inline">{t('desbloquear_anlise')}</span>
+                  <span className="sm:hidden">{t('desbloquear')}</span>
                 </Button>
               </>
             )}
@@ -689,12 +687,12 @@ export default function CareerIntelligenceResults() {
               {isPaid ? (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-xs font-semibold text-green-600">{isEN ? 'Career Intelligence Report' : 'Relatório Career Intelligence'}</span>
+                  <span className="text-xs font-semibold text-green-600">{t('relatrio_career_intelligence')}</span>
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#C9A961]" />
-                  <span className="text-xs font-semibold text-[#C9A961]">{isEN ? 'Preview' : 'Pré-visualização'}</span>
+                  <span className="text-xs font-semibold text-[#C9A961]">{t('prvisualizao')}</span>
                 </div>
               )}
             </div>
@@ -739,10 +737,10 @@ export default function CareerIntelligenceResults() {
             </div>
             <div className="space-y-2">
               <p className="text-lg font-bold text-foreground transition-all duration-500">
-                {isEN ? genMessagesEN[genStep] : genMessagesPT[genStep]}
+                {lang === 'en' ? genMessagesEN[genStep] : genMessagesPT[genStep]}
               </p>
               <p className="text-xs text-muted-foreground">
-                {isEN ? `Step ${genStep + 1} of ${genMessagesEN.length}` : `Passo ${genStep + 1} de ${genMessagesPT.length}`}
+                {pick(`Passo ${genStep + 1} de ${genMessagesPT.length}`, `Step ${genStep + 1} of ${genMessagesEN.length}`, `Passo ${genStep + 1} de ${genMessagesPT.length}`)}
               </p>
             </div>
             <div className="max-w-sm mx-auto">
@@ -754,7 +752,7 @@ export default function CareerIntelligenceResults() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground/60">
-              {isEN ? 'This may take up to 60 seconds' : 'Isto pode demorar até 60 segundos'}
+              {t('isto_pode_demorar_at_60')}
             </p>
           </div>
         )}
@@ -764,9 +762,9 @@ export default function CareerIntelligenceResults() {
           <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold">{isEN ? 'Error generating Career Intelligence' : 'Erro ao gerar Career Intelligence'}</p>
+              <p className="font-semibold">{t('erro_ao_gerar_career_intelligence')}</p>
               <p>{generateError}</p>
-              <button onClick={generateAnalysis} className="mt-2 text-red-600 underline text-xs">{isEN ? 'Try again' : 'Tentar novamente'}</button>
+              <button onClick={generateAnalysis} className="mt-2 text-red-600 underline text-xs">{t('tentar_novamente')}</button>
             </div>
           </div>
         )}
@@ -780,11 +778,11 @@ export default function CareerIntelligenceResults() {
              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET CONTEXT' : 'CONTEXTO DE MERCADO'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('contexto_de_mercado')}</p>
                 </div>
                 <div className="space-y-3">
                   <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-2">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
+                    <p className="text-[10px] font-semibold text-[#C9A961] mb-2">{t('empresas_alinhadas')}</p>
                     {typeof careerData.market_context.aligned_companies === 'object' && !Array.isArray(careerData.market_context.aligned_companies) ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {Object.entries(careerData.market_context.aligned_companies).filter(([key]) => key !== 'aligned_companies_note').map(([sector, companies]: [string, any]) => (
@@ -807,16 +805,16 @@ export default function CareerIntelligenceResults() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'DEMAND LEVEL' : 'NÍVEL DE PROCURA'}</p>
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('nvel_de_procura')}</p>
                       <p className="text-xs text-muted-foreground">{careerData.market_context.demand_level}</p>
                     </div>
                     <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'COMPETITIVENESS' : 'COMPETITIVIDADE'}</p>
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('competitividade')}</p>
                       <p className="text-xs text-muted-foreground">{careerData.market_context.competitiveness}</p>
                     </div>
                   </div>
                   <div className="p-3 bg-gradient-to-r from-[#C9A961]/5 to-transparent rounded-lg border border-[#C9A961]/20">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'WHAT SETS YOU APART' : 'O QUE TE DIFERENCIA'}</p>
+                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('o_que_te_diferencia')}</p>
                     <p className="text-xs text-muted-foreground">{careerData.market_context.differentiator}</p>
                   </div>
                 </div>
@@ -829,8 +827,8 @@ export default function CareerIntelligenceResults() {
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Compass className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <div>
-                    <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'STRATEGIC CAREER PATHS' : 'CAMINHOS ESTRATÉGICOS DE CARREIRA'}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'Three distinct paths based on your profile' : 'Três caminhos distintos baseados no teu perfil'}</p>
+                    <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('caminhos_estratgicos_de_carreira')}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{t('trs_caminhos_distintos_baseados_no')}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -838,19 +836,19 @@ export default function CareerIntelligenceResults() {
                     <div key={i} className="border border-border rounded-xl overflow-hidden">
                       <div className="p-3 bg-muted/30 flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
+                          <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{t('caminho')} {i + 1}</span>
                           <span className="text-sm font-semibold text-foreground">{path.name}</span>
                         </div>
                         {path.success_probability && (
                           <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {path.success_probability}% {isEN ? 'success' : 'sucesso'}
+                            {path.success_probability}% {t('sucesso')}
                           </span>
                         )}
                       </div>
                       <div className="p-3 space-y-2">
                         <p className="text-sm text-muted-foreground">{path.logic}</p>
                         <div className="p-2 bg-muted/20 rounded-lg">
-                          <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'IDEAL FOR' : 'IDEAL PARA'}</p>
+                          <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('ideal_para')}</p>
                           <p className="text-xs text-muted-foreground">{path.ideal_for}</p>
                         </div>
                         {path.associated_roles && path.associated_roles.length > 0 && (
@@ -872,17 +870,17 @@ export default function CareerIntelligenceResults() {
               <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN BY PATH' : 'PLANO DE ACÇÃO POR CAMINHO'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('plano_de_aco_por_caminho')}</p>
                 </div>
                 <div className="space-y-4">
                   {careerData.action_plan_by_path.map((plan: any, i: number) => (
                     <div key={i} className="border border-border rounded-xl overflow-hidden">
                       <div className="p-3 bg-muted/30 flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
+                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{t('caminho')} {i + 1}</span>
                         <span className="text-sm font-semibold text-foreground">{plan.path_name}</span>
                         {plan.is_recommended && (
                           <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {isEN ? 'Recommended' : 'Recomendado'}
+                            {t('recomendado')}
                           </span>
                         )}
                       </div>
@@ -895,7 +893,7 @@ export default function CareerIntelligenceResults() {
                             <div>
                               <p className="text-xs font-semibold text-foreground">{action.action}</p>
                               {action.is_critical === true && (
-                                <span className="text-[10px] text-amber-600 font-semibold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{isEN ? 'Key step' : 'Passo-chave'}</span>
+                                <span className="text-[10px] text-amber-600 font-semibold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{t('passochave')}</span>
                               )}
                             </div>
                           </div>
@@ -912,13 +910,13 @@ export default function CareerIntelligenceResults() {
               <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><BarChart3 className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'STRATEGIC COMPARISON' : 'COMPARAÇÃO ESTRATÉGICA'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('comparao_estratgica')}</p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left py-2 pr-3 font-semibold text-muted-foreground">{isEN ? 'Criteria' : 'Critério'}</th>
+                        <th className="text-left py-2 pr-3 font-semibold text-muted-foreground">{t('critrio')}</th>
                         {careerData.strategic_comparison.map((item: any, i: number) => (
                           <th key={i} className="text-center py-2 px-2 font-semibold text-foreground">{item.path_name}</th>
                         ))}
@@ -926,12 +924,12 @@ export default function CareerIntelligenceResults() {
                     </thead>
                     <tbody>
                       {[
-                        { key: 'success_probability', label: isEN ? 'Success probability' : 'Probabilidade de sucesso', suffix: '%' },
-                        { key: 'estimated_time', label: isEN ? 'Estimated time' : 'Tempo estimado', suffix: '' },
-                        { key: 'effort_level', label: isEN ? 'Effort' : 'Esforço', suffix: '' },
-                        { key: 'risk_level', label: isEN ? 'Risk' : 'Risco', suffix: '' },
-                        { key: 'salary_impact', label: isEN ? 'Salary impact' : 'Impacto salarial', suffix: '' },
-                        { key: 'profile_fit', label: isEN ? 'Profile fit' : 'Alinhamento', suffix: '' },
+                        { key: 'success_probability', label: t('probabilidade_de_sucesso'), suffix: '%' },
+                        { key: 'estimated_time', label: t('tempo_estimado'), suffix: '' },
+                        { key: 'effort_level', label: t('esforo'), suffix: '' },
+                        { key: 'risk_level', label: t('risco'), suffix: '' },
+                        { key: 'salary_impact', label: t('impacto_salarial'), suffix: '' },
+                        { key: 'profile_fit', label: t('alinhamento'), suffix: '' },
                       ].map((row) => (
                         <tr key={row.key} className="border-b border-border/50">
                           <td className="py-2 pr-3 text-muted-foreground font-medium">{row.label}</td>
@@ -953,7 +951,7 @@ export default function CareerIntelligenceResults() {
               <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Scale className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'TRADE-OFFS BY PATH' : 'TRADE-OFFS POR CAMINHO'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('tradeoffs_por_caminho')}</p>
                 </div>
                 <div className="space-y-4">
                   {careerData.tradeoffs.map((t: any, i: number) => (
@@ -964,20 +962,20 @@ export default function CareerIntelligenceResults() {
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="p-2 bg-green-500/5 rounded-lg border border-green-500/10">
-                          <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? 'YOU GAIN' : 'GANHAS'}</p>
+                          <p className="text-[10px] font-semibold text-green-600 mb-1">{t('ganhas')}</p>
                           <p className="text-xs text-muted-foreground">{t.you_gain}</p>
                         </div>
                         <div className="p-2 bg-red-500/5 rounded-lg border border-red-500/10">
-                          <p className="text-[10px] font-semibold text-red-500 mb-1">{isEN ? 'YOU GIVE UP' : 'ABDICAS'}</p>
+                          <p className="text-[10px] font-semibold text-red-500 mb-1">{t('abdicas')}</p>
                           <p className="text-xs text-muted-foreground">{t.you_give_up}</p>
                         </div>
                       </div>
                       <div className="p-2 bg-amber-500/5 rounded-lg border border-amber-500/10">
-                        <p className="text-[10px] font-semibold text-amber-600 mb-1">{isEN ? 'HIDDEN RISK' : 'RISCO OCULTO'}</p>
+                        <p className="text-[10px] font-semibold text-amber-600 mb-1">{t('risco_oculto')}</p>
                         <p className="text-xs text-muted-foreground">{t.hidden_risk}</p>
                       </div>
                       <div className="p-2 bg-muted/20 rounded-lg">
-                        <p className="text-[10px] font-semibold text-muted-foreground mb-1">{isEN ? 'REAL SCENARIO' : 'CENÁRIO REAL'}</p>
+                        <p className="text-[10px] font-semibold text-muted-foreground mb-1">{t('cenrio_real')}</p>
                         <p className="text-xs text-muted-foreground">{t.real_scenario}</p>
                       </div>
                     </div>
@@ -991,7 +989,7 @@ export default function CareerIntelligenceResults() {
               <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Zap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'RECOMMENDED DECISION' : 'DECISÃO RECOMENDADA'}</p>
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('deciso_recomendada')}</p>
                 </div>
                 <div className="p-4 bg-card rounded-xl border border-border">
                   <p className="text-sm font-bold text-foreground mb-2">{careerData.decision_recommendation.recommended_path}</p>
@@ -999,13 +997,13 @@ export default function CareerIntelligenceResults() {
                 </div>
                 {careerData.decision_recommendation.when_to_switch && (
                   <div className="p-3 bg-card rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-amber-600 mb-1">{isEN ? 'WHEN TO CONSIDER ANOTHER PATH' : 'QUANDO CONSIDERAR OUTRO CAMINHO'}</p>
+                    <p className="text-[10px] font-semibold text-amber-600 mb-1">{t('quando_considerar_outro_caminho')}</p>
                     <p className="text-xs text-muted-foreground">{careerData.decision_recommendation.when_to_switch}</p>
                   </div>
                 )}
                 {careerData.decision_recommendation.why_better_than_others && (
                   <div className="p-3 bg-card rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? 'WHY THIS PATH IS BEST FOR YOU' : 'PORQUE ESTE CAMINHO É O MELHOR PARA TI'}</p>
+                    <p className="text-[10px] font-semibold text-green-600 mb-1">{t('porque_este_caminho_o_melhor')}</p>
                     <p className="text-xs text-muted-foreground">{careerData.decision_recommendation.why_better_than_others}</p>
                   </div>
                 )}
@@ -1019,16 +1017,16 @@ export default function CareerIntelligenceResults() {
                   <Compass className="w-5 h-5 text-[#C9A961]" />
                 </GoldIcon>
                 <div>
-                  <p className="text-base font-semibold text-foreground">{isEN ? 'Want a detailed career roadmap?' : 'Queres um roadmap detalhado de carreira?'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Career Path gives you next roles, training, certifications, networking strategy and 5-year vision' : 'O Career Path dá-te próximos cargos, formações, certificações, estratégia de networking e visão a 5 anos'}</p>
+                  <p className="text-base font-semibold text-foreground">{t('queres_um_roadmap_detalhado_de')}</p>
+                  <p className="text-xs text-muted-foreground">{t('o_career_path_dte_prximos')}</p>
                 </div>
               </div>
               <a
-                href={isEN ? '/en/career-path' : '/career-path'}
+                href={t('careerpath')}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
               >
                 <Compass className="w-4 h-4" />
-                {isEN ? 'Try Career Path' : 'Experimentar Career Path'}
+                {t('experimentar_career_path')}
               </a>
             </div>
 
@@ -1039,14 +1037,14 @@ export default function CareerIntelligenceResults() {
                   <Mail className="w-5 h-5 text-[#C9A961]" />
                 </GoldIcon>
                 <div>
-                  <p className="text-base font-semibold text-foreground">{isEN ? 'Receive Career Intelligence by Email' : 'Receber Career Intelligence por Email'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Send the full report to your email' : 'Envia o relatório completo para o teu email'}</p>
+                  <p className="text-base font-semibold text-foreground">{t('receber_career_intelligence_por_email')}</p>
+                  <p className="text-xs text-muted-foreground">{t('envia_o_relatrio_completo_para')}</p>
                 </div>
               </div>
               {reportSent ? (
                 <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                   <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                  <p className="text-sm text-green-600">{isEN ? 'Report sent successfully! Check your inbox (and spam folder).' : 'Relatório enviado com sucesso! Verifica a tua caixa de email (e spam).'}</p>
+                  <p className="text-sm text-green-600">{t('relatrio_enviado_com_sucesso_verifica')}</p>
                 </div>
               ) : (
                 <>
@@ -1055,7 +1053,7 @@ export default function CareerIntelligenceResults() {
                       type="email"
                       value={reportEmail || email || (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || ''}
                       onChange={(e) => setReportEmail(e.target.value)}
-                      placeholder={isEN ? 'your@email.com' : 'seu@email.com'}
+                      placeholder={t('seuemailcom')}
                       className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                     />
                     <Button
@@ -1063,7 +1061,7 @@ export default function CareerIntelligenceResults() {
                       disabled={reportSending}
                       className="bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold px-6"
                     >
-                      {reportSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4 mr-2" />{isEN ? 'Send' : 'Enviar'}</>}
+                      {reportSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4 mr-2" />{t('enviar')}</>}
                     </Button>
                   </div>
                   {reportError && <p className="text-sm text-red-500">{reportError}</p>}
@@ -1078,19 +1076,19 @@ export default function CareerIntelligenceResults() {
                   <Save className="w-5 h-5 text-[#C9A961]" />
                 </GoldIcon>
                 <div>
-                  <p className="text-base font-semibold text-foreground">{isEN ? 'Save to My Account' : 'Guardar na Área de Cliente'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Access your results anytime from your dashboard' : 'Acede aos teus resultados a qualquer momento no teu dashboard'}</p>
+                  <p className="text-base font-semibold text-foreground">{t('guardar_na_rea_de_cliente')}</p>
+                  <p className="text-xs text-muted-foreground">{t('acede_aos_teus_resultados_a')}</p>
                 </div>
               </div>
               {!isLoggedIn ? (
                 <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
                   <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                  <p className="text-sm text-amber-700">{isEN ? 'Log in to save your results.' : 'Faz login para guardar os teus resultados.'} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{isEN ? 'Log in' : 'Iniciar sessão'}</a></p>
+                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
                 </div>
               ) : savedToAccount ? (
                 <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                   <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                  <p className="text-sm text-green-600">{isEN ? 'Saved successfully! View in your dashboard.' : 'Guardado com sucesso! Consulta no teu dashboard.'}</p>
+                  <p className="text-sm text-green-600">{t('guardado_com_sucesso_consulta_no')}</p>
                 </div>
               ) : (
                 <>
@@ -1104,7 +1102,7 @@ export default function CareerIntelligenceResults() {
                     ) : (
                       <Save className="w-4 h-4 mr-2" />
                     )}
-                    {isEN ? 'Save to My Account' : 'Guardar na Minha Conta'}
+                    {t('guardar_na_minha_conta')}
                   </Button>
                   {saveError && <p className="text-sm text-red-500">{saveError}</p>}
                 </>
@@ -1116,8 +1114,8 @@ export default function CareerIntelligenceResults() {
               const score = careerData?.career_potential_score?.overall_score || 70;
               const label = score >= 80 ? 'Excellent' : score >= 65 ? 'Strong' : score >= 50 ? 'Promising' : 'Developing';
               const topPct = Math.max(5, 100 - score);
-              const today = new Date().toLocaleDateString(isEN ? 'en-GB' : 'pt-PT', { year: 'numeric', month: 'long' });
-              const recommendedPath = careerData?.decision_recommendation?.recommended_path || (isEN ? 'Career Intelligence' : 'Career Intelligence');
+              const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
+              const recommendedPath = careerData?.decision_recommendation?.recommended_path || (t('career_intelligence'));
 
               const generatePostText = () => {
                 if (isEN) {
@@ -1186,7 +1184,7 @@ export default function CareerIntelligenceResults() {
                 ctx.fillText(`Top ${topPct}%`, 400, 280);
                 ctx.fillStyle = '#666666';
                 ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(isEN ? 'of analysed professionals' : 'dos profissionais analisados', 400, 308);
+                ctx.fillText(t('dos_profissionais_analisados'), 400, 308);
 
                 // Strategic paths
                 const paths = careerData?.strategic_paths?.slice(0, 3) || [];
@@ -1194,14 +1192,14 @@ export default function CareerIntelligenceResults() {
                   ctx.fillStyle = '#C9A961';
                   ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
                   ctx.letterSpacing = '2px';
-                  ctx.fillText(isEN ? 'STRATEGIC PATHS' : 'CAMINHOS ESTRATÉGICOS', 90, 365);
+                  ctx.fillText(t('caminhos_estratgicos'), 90, 365);
                   ctx.letterSpacing = '0px';
 
                   paths.forEach((path: any, i: number) => {
                     const y = 390 + i * 40;
                     ctx.fillStyle = '#C9A961';
                     ctx.font = '700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                    ctx.fillText(`${isEN ? 'Path' : 'Caminho'} ${i + 1}`, 90, y + 12);
+                    ctx.fillText(`${t('caminho_2')} ${i + 1}`, 90, y + 12);
                     ctx.fillStyle = '#555555';
                     ctx.font = '500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
                     ctx.fillText(path.name || '', 200, y + 12);
@@ -1266,15 +1264,15 @@ export default function CareerIntelligenceResults() {
                       <Award className="w-5 h-5 text-[#C9A961]" />
                     </GoldIcon>
                     <div>
-                      <p className="text-base font-semibold text-foreground">{isEN ? 'Share Your Career Intelligence Result' : 'Partilhar Resultado do Career Intelligence'}</p>
-                      <p className="text-xs text-muted-foreground">{isEN ? 'Generate an elegant LinkedIn post based on your strategic analysis' : 'Gera um post elegante para LinkedIn baseado na tua análise estratégica'}</p>
+                      <p className="text-base font-semibold text-foreground">{t('partilhar_resultado_do_career_intelligence')}</p>
+                      <p className="text-xs text-muted-foreground">{t('gera_um_post_elegante_para_3')}</p>
                     </div>
                   </div>
 
                   <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
                     <div className="flex items-center gap-2 mb-2">
                       <Linkedin className="w-4 h-4 text-[#0077B5]" />
-                      <span className="text-xs font-semibold text-muted-foreground">{isEN ? 'POST PREVIEW' : 'PRÉ-VISUALIZAÇÃO DO POST'}</span>
+                      <span className="text-xs font-semibold text-muted-foreground">{t('prvisualizao_do_post')}</span>
                     </div>
                     <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{generatePostText()}</p>
                   </div>
@@ -1285,19 +1283,19 @@ export default function CareerIntelligenceResults() {
                       className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0077B5] hover:bg-[#005F8D] text-white font-semibold text-sm transition-colors"
                     >
                       {postCopied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      {postCopied ? (isEN ? 'Copied!' : 'Copiado!') : (isEN ? 'Copy LinkedIn Post' : 'Copiar Post LinkedIn')}
+                      {postCopied ? (t('copiado')) : (t('copiar_post_linkedin'))}
                     </button>
                     <button
                       onClick={generateCertImage}
                       className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm transition-colors"
                     >
                       <Download className="w-4 h-4" />
-                      {isEN ? 'Download Career Intelligence Image' : 'Descarregar Imagem Career Intelligence'}
+                      {t('descarregar_imagem_career_intelligence')}
                     </button>
                   </div>
 
                   <p className="text-[10px] text-muted-foreground text-center">
-                    {isEN ? 'The image is optimised for LinkedIn posts (1200×630px)' : 'A imagem está optimizada para posts no LinkedIn (1200×630px)'}
+                    {t('a_imagem_est_optimizada_para')}
                   </p>
                 </div>
               );
@@ -1309,19 +1307,19 @@ export default function CareerIntelligenceResults() {
         {!isPaid && !isGenerating && (
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'UNLOCK CAREER INTELLIGENCE' : 'DESBLOQUEAR CAREER INTELLIGENCE'}</p>
+              <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('desbloquear_career_intelligence')}</p>
               <p className="text-4xl font-bold text-foreground">{CI_PRICE_DISPLAY}</p>
-              <p className="text-sm text-muted-foreground">{isEN ? 'Strategic career analysis with 3 paths, comparison and recommendation' : 'Análise estratégica de carreira com 3 caminhos, comparação e recomendação'}</p>
+              <p className="text-sm text-muted-foreground">{t('anlise_estratgica_de_carreira_com')}</p>
             </div>
 
             {/* What's included */}
             <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
               <div className="flex items-center gap-2">
                 <Scale className="w-5 h-5 text-[#C9A961]" />
-                <p className="text-sm font-semibold text-foreground">{isEN ? 'What Career Intelligence includes:' : 'O que o Career Intelligence inclui:'}</p>
+                <p className="text-sm font-semibold text-foreground">{t('o_que_o_career_intelligence')}</p>
               </div>
               <div className="space-y-2">
-                {(isEN ? [
+                {(lang === 'en' ? [
                   'Market context and competitive positioning',
                   '3 strategic career paths tailored to your profile',
                   'Action plan for each path',
@@ -1348,10 +1346,10 @@ export default function CareerIntelligenceResults() {
                   onClick={() => openPaymentModal()}
                   className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-base"
                 >
-                  {isEN ? `Unlock Career Intelligence — ${CI_PRICE_DISPLAY}` : `Desbloquear Career Intelligence — ${CI_PRICE_DISPLAY}`}
+                  {pick(`Desbloquear Career Intelligence — ${CI_PRICE_DISPLAY}`, `Unlock Career Intelligence — ${CI_PRICE_DISPLAY}`, `Desbloquear Career Intelligence — ${CI_PRICE_DISPLAY}`)}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  {isEN ? 'Secure payment via Card or PayPal' : 'Pagamento seguro via MB WAY ou PayPal'}
+                  {t('pagamento_seguro_via_mb_way')}
                 </p>
               </div>
             </div>
@@ -1362,7 +1360,7 @@ export default function CareerIntelligenceResults() {
                 className="text-sm text-[#C9A961] hover:underline flex items-center gap-1 mx-auto"
               >
                 <Ticket className="w-4 h-4" />
-                {isEN ? 'I already have a discount code' : 'Já tenho um código de desconto'}
+                {t('j_tenho_um_cdigo_de')}
               </button>
             </div>
           </div>
@@ -1375,7 +1373,7 @@ export default function CareerIntelligenceResults() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Scale className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Unlock Career Intelligence' : 'Desbloquear Career Intelligence'}
+              {t('desbloquear_career_intelligence_2')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1384,8 +1382,8 @@ export default function CareerIntelligenceResults() {
               <div className="p-4 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 rounded-xl border border-[#C9A961]/20">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Strategic career analysis' : 'Análise estratégica de carreira'}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? '3 Paths + Comparison + Recommendation' : '3 Caminhos + Comparação + Recomendação'}</p>
+                    <p className="text-sm font-semibold text-foreground">{t('anlise_estratgica_de_carreira')}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{t('3_caminhos_comparao_recomendao')}</p>
                   </div>
                   <p className="text-lg font-bold text-[#C9A961]">{CI_PRICE_DISPLAY}</p>
                 </div>
@@ -1397,15 +1395,15 @@ export default function CareerIntelligenceResults() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={isEN ? 'your@email.com' : 'seu@email.com'}
+                  placeholder={t('seuemailcom')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">{isEN ? 'Payment method' : 'Método de pagamento'}</label>
+                <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {isEN ? (
+                  {lang === 'en' ? (
                     <>
                       <button
                         onClick={() => setPaymentMethod('stripe')}
@@ -1440,7 +1438,7 @@ export default function CareerIntelligenceResults() {
 
               {paymentMethod === 'mbway' && (
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{isEN ? 'Phone (MB WAY)' : 'Telemóvel (MB WAY)'}</label>
+                  <label className="text-xs font-semibold text-foreground">{t('telemvel_mb_way')}</label>
                   <input
                     type="tel"
                     value={phone}
@@ -1459,14 +1457,14 @@ export default function CareerIntelligenceResults() {
 
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">
-                  {isEN ? 'Back' : 'Voltar'}
+                  {t('voltar')}
                 </Button>
                 <Button
                   onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
                   disabled={paymentLoading}
                   className="flex-1 font-semibold text-white bg-[#C9A961] hover:bg-[#A88B4E]"
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (isEN ? `Pay ${CI_PRICE_DISPLAY}` : `Pagar ${CI_PRICE_DISPLAY}`)}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (pick(`Pagar ${CI_PRICE_DISPLAY}`, `Pay ${CI_PRICE_DISPLAY}`, `Pagar ${CI_PRICE_DISPLAY}`))}
                 </Button>
               </div>
             </div>
@@ -1483,7 +1481,7 @@ export default function CareerIntelligenceResults() {
               {pollingExpired && (
                 <Button onClick={handleManualCheck} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">
                   <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {isEN ? 'I already paid — check again' : 'Já paguei — verificar novamente'}
+                  {t('j_paguei_verificar_novamente')}
                 </Button>
               )}
             </div>
@@ -1492,11 +1490,11 @@ export default function CareerIntelligenceResults() {
           {paymentStep === 'success' && (
             <div className="text-center space-y-4 py-4">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-base font-bold text-foreground">{isEN ? 'Payment confirmed!' : 'Pagamento confirmado!'}</p>
-              <p className="text-sm text-muted-foreground">{isEN ? 'Generating your Career Intelligence report...' : 'A gerar o teu relatório Career Intelligence...'}</p>
+              <p className="text-base font-bold text-foreground">{t('pagamento_confirmado')}</p>
+              <p className="text-sm text-muted-foreground">{t('a_gerar_o_teu_relatrio')}</p>
               <Button onClick={handlePaymentSuccess} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">
                 <Scale className="w-4 h-4 mr-2" />
-                {isEN ? 'Generate Report' : 'Gerar Relatório'}
+                {t('gerar_relatrio')}
               </Button>
             </div>
           )}
@@ -1509,18 +1507,18 @@ export default function CareerIntelligenceResults() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Discount Code' : 'Código de Desconto'}
+              {t('cdigo_de_desconto')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              {isEN ? 'Enter your code to unlock Career Intelligence.' : 'Introduz o teu código para desbloquear o Career Intelligence.'}
+              {t('introduz_o_teu_cdigo_para_2')}
             </p>
             <input
               type="text"
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-              placeholder={isEN ? 'Enter code' : 'Inserir código'}
+              placeholder={t('inserir_cdigo')}
               className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
               onKeyDown={(e) => e.key === 'Enter' && handleDiscountSubmit()}
             />
@@ -1534,7 +1532,7 @@ export default function CareerIntelligenceResults() {
               disabled={discountLoading || !discountCode.trim()}
               className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
             >
-              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{isEN ? 'Validate Code' : 'Validar Código'}</>}
+              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{t('validar_cdigo')}</>}
             </Button>
           </div>
         </DialogContent>
