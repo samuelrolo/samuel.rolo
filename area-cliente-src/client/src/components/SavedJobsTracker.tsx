@@ -243,7 +243,7 @@ export default function SavedJobsTracker({ lang }: Props) {
   );
 
   // ─── Render ─────────────────────────────────────────────────────────────
-  const tt = (pt: string, en: string) => lang === 'pt' ? pt : en;
+  const tt = (pt: string, en: string, es?: string) => lang === 'pt' ? pt : lang === 'es' ? (es ?? en) : en;
 
   if (!user) return null;
 
@@ -260,8 +260,8 @@ export default function SavedJobsTracker({ lang }: Props) {
                   <span className="text-[#1a1a1a] font-bold text-sm">S</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">{tt('Extensão Chrome — Job Saver', 'Chrome Extension — Job Saver')}</h3>
-                  <p className="text-[10px] text-[#BF9A33]">{tt('Guarda vagas com 1 clique', 'Save jobs with 1 click')}</p>
+                  <h3 className="text-sm font-bold text-white">{tt('Extensão Chrome — Job Saver', 'Chrome Extension — Job Saver', 'Extensión Chrome — Job Saver')}</h3>
+                  <p className="text-[10px] text-[#BF9A33]">{tt('Guarda vagas com 1 clique', 'Save jobs with 1 click', 'Guarda empleos con 1 clic')}</p>
                 </div>
               </div>
               <p className="text-[11px] text-gray-400 mb-3 max-w-md">
@@ -273,11 +273,11 @@ export default function SavedJobsTracker({ lang }: Props) {
               <div className="flex flex-wrap items-center gap-2">
                 <a href="/assets/downloads/extension/share2inspire-job-saver.zip" download
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#BF9A33] text-[#1a1a1a] rounded-lg hover:bg-[#d4ad3a] transition-all no-underline">
-                  <Download className="w-3.5 h-3.5" /> {tt('Descarregar Extensão (.zip)', 'Download Extension (.zip)')}
+                  <Download className="w-3.5 h-3.5" /> {tt('Descarregar Extensão (.zip)', 'Download Extension (.zip)', 'Descargar Extensión (.zip)')}
                 </a>
                 <a href={tt('/assets/downloads/extension/tutorial-extensao-pt.mp4', '/assets/downloads/extension/tutorial-extensao-en.mp4')} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium text-[#BF9A33] border border-[#BF9A33]/50 rounded-lg hover:bg-[#BF9A33]/10 transition-all no-underline">
-                  <Chrome className="w-3.5 h-3.5" /> {tt('Ver Tutorial de Instalação', 'Watch Installation Tutorial')}
+                  <Chrome className="w-3.5 h-3.5" /> {tt('Ver Tutorial de Instalação', 'Watch Installation Tutorial', 'Ver Tutorial de Instalación')}
                 </a>
               </div>
             </div>
@@ -295,19 +295,19 @@ export default function SavedJobsTracker({ lang }: Props) {
         <div>
           <h2 className="text-sm font-semibold text-[#1a1a1a] flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-[#BF9A33]" />
-            {tt('Vagas Guardadas', 'Saved Jobs')}
+            {tt('Vagas Guardadas', 'Saved Jobs', 'Empleos Guardados')}
             <span className="text-[10px] font-normal text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{statusCounts.all}</span>
           </h2>
           <p className="text-[11px] text-[#999] mt-0.5">
-            {tt('Gere as tuas candidaturas num só lugar. Usa a ', 'Manage your applications in one place. Use the ')}
+            {tt('Gere as tuas candidaturas num só lugar. Usa a ', 'Manage your applications in one place. Use the ', 'Gestiona tus candidaturas en un solo lugar. Usa la ')}
             <Chrome className="w-3 h-3 inline text-[#BF9A33]" />
-            {tt(' extensão Chrome para guardar vagas automaticamente.', ' Chrome extension to save jobs automatically.')}
+            {tt(' extensão Chrome para guardar vagas automaticamente.', ' Chrome extension to save jobs automatically.', ' extensión Chrome para guardar empleos automáticamente.')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setShowAddForm(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all">
-            <Plus className="w-3 h-3" /> {tt('Adicionar', 'Add Job')}
+            <Plus className="w-3 h-3" /> {tt('Adicionar', 'Add Job', 'Añadir')}
           </button>
           {filteredJobs.length > 0 && (
             <button onClick={exportCSV}
@@ -324,7 +324,7 @@ export default function SavedJobsTracker({ lang }: Props) {
           className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold rounded-full border transition-all whitespace-nowrap ${
             filterStatus === 'all' ? 'bg-[#1a1a1a] text-[#BF9A33] border-[#BF9A33]' : 'bg-white text-[#666] border-[#e5e5e5] hover:border-[#BF9A33]'
           }`}>
-          {tt('Todas', 'All')} <span className="opacity-70">{statusCounts.all}</span>
+          {tt('Todas', 'All', 'Todas')} <span className="opacity-70">{statusCounts.all}</span>
         </button>
         {ACTIVE_STATUSES.map(s => {
           const cfg = STATUS_CONFIG[s];
@@ -344,7 +344,7 @@ export default function SavedJobsTracker({ lang }: Props) {
             filterStatus === 'archived' ? 'bg-gray-100 text-gray-600 border-gray-300' : 'bg-white text-[#999] border-[#e5e5e5] hover:border-gray-400'
           }`}>
           <Archive className="w-3 h-3" />
-          {tt('Arquivo', 'Archived')} <span className="opacity-70">{statusCounts.archived || 0}</span>
+          {tt('Arquivo', 'Archived', 'Archivados')} <span className="opacity-70">{statusCounts.archived || 0}</span>
         </button>
       </div>
 
@@ -352,7 +352,7 @@ export default function SavedJobsTracker({ lang }: Props) {
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#999]" />
         <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-          placeholder={tt('Pesquisar por título, empresa, localização...', 'Search by title, company, location...')}
+          placeholder={tt('Pesquisar por título, empresa, localização...', 'Search by title, company, location...', 'Buscar por título, empresa, ubicación...')}
           className="w-full pl-9 pr-4 py-2 text-xs border border-[#e5e5e5] rounded-lg bg-white focus:outline-none focus:border-[#BF9A33] focus:ring-2 focus:ring-[#BF9A33]/10 transition-all"
         />
       </div>
@@ -361,46 +361,46 @@ export default function SavedJobsTracker({ lang }: Props) {
       {showAddForm && (
         <div className="mb-4 p-4 border border-[#BF9A33]/30 rounded-xl bg-white shadow-sm animate-in fade-in duration-200">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-semibold text-[#1a1a1a]">{tt('Adicionar vaga manualmente', 'Add job manually')}</h3>
+            <h3 className="text-xs font-semibold text-[#1a1a1a]">{tt('Adicionar vaga manualmente', 'Add job manually', 'Añadir empleo manualmente')}</h3>
             <button onClick={() => setShowAddForm(false)} className="text-[#999] hover:text-[#1a1a1a]"><X className="w-4 h-4" /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <input value={newJob.title} onChange={e => setNewJob(p => ({ ...p, title: e.target.value }))}
-              placeholder={tt('Título da vaga *', 'Job title *')}
+              placeholder={tt('Título da vaga *', 'Job title *', 'Título del puesto *')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newJob.company} onChange={e => setNewJob(p => ({ ...p, company: e.target.value }))}
-              placeholder={tt('Empresa', 'Company')}
+              placeholder={tt('Empresa', 'Company', 'Empresa')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newJob.location} onChange={e => setNewJob(p => ({ ...p, location: e.target.value }))}
-              placeholder={tt('Localização', 'Location')}
+              placeholder={tt('Localização', 'Location', 'Ubicación')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newJob.salary} onChange={e => setNewJob(p => ({ ...p, salary: e.target.value }))}
-              placeholder={tt('Salário', 'Salary')}
+              placeholder={tt('Salário', 'Salary', 'Salario')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newJob.url} onChange={e => setNewJob(p => ({ ...p, url: e.target.value }))}
               placeholder="URL"
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <select value={newJob.employment_type} onChange={e => setNewJob(p => ({ ...p, employment_type: e.target.value }))}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33] text-[#666]">
-              <option value="">{tt('Tipo...', 'Type...')}</option>
+              <option value="">{tt('Tipo...', 'Type...', 'Tipo...')}</option>
               <option value="full-time">Full-time</option>
               <option value="part-time">Part-time</option>
-              <option value="contract">{tt('Contrato', 'Contract')}</option>
+              <option value="contract">{tt('Contrato', 'Contract', 'Contrato')}</option>
               <option value="freelance">Freelance</option>
-              <option value="internship">{tt('Estágio', 'Internship')}</option>
+              <option value="internship">{tt('Estágio', 'Internship', 'Prácticas')}</option>
             </select>
           </div>
           <textarea value={newJob.notes} onChange={e => setNewJob(p => ({ ...p, notes: e.target.value }))}
-            placeholder={tt('Notas...', 'Notes...')} rows={2}
+            placeholder={tt('Notas...', 'Notes...', 'Notas...')} rows={2}
             className="w-full px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33] mb-3 resize-none" />
           <div className="flex gap-2">
             <button onClick={addJob} disabled={!newJob.title.trim() || saving}
               className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all disabled:opacity-50">
-              <Save className="w-3 h-3" /> {saving ? '...' : tt('Guardar', 'Save')}
+              <Save className="w-3 h-3" /> {saving ? '...' : tt('Guardar', 'Save', 'Guardar')}
             </button>
             <button onClick={() => setShowAddForm(false)}
               className="px-4 py-2 text-[11px] text-[#666] border border-[#e5e5e5] rounded-lg hover:border-[#999] transition-all">
-              {tt('Cancelar', 'Cancel')}
+              {tt('Cancelar', 'Cancel', 'Cancelar')}
             </button>
           </div>
         </div>
@@ -410,24 +410,24 @@ export default function SavedJobsTracker({ lang }: Props) {
       {loading ? (
         <div className="py-12 text-center">
           <div className="w-6 h-6 border-2 border-[#BF9A33] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs text-[#999]">{tt('A carregar...', 'Loading...')}</p>
+          <p className="text-xs text-[#999]">{tt('A carregar...', 'Loading...', 'Cargando...')}</p>
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="py-12 text-center border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9]">
           <Briefcase className="w-10 h-10 text-[#ddd] mx-auto mb-3" />
           <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">
-            {searchQuery ? tt('Nenhum resultado', 'No results') : tt('Sem vagas guardadas', 'No saved jobs')}
+            {searchQuery ? tt('Nenhum resultado', 'No results', 'Sin resultados') : tt('Sem vagas guardadas', 'No saved jobs', 'Sin empleos guardados')}
           </h3>
           <p className="text-[11px] text-[#999] max-w-xs mx-auto mb-4">
             {searchQuery
-              ? tt('Tenta outra pesquisa.', 'Try a different search.')
-              : tt('Instala a extensão Chrome Share2Inspire para guardar vagas enquanto navegas no LinkedIn, Indeed ou Glassdoor.', 'Install the Share2Inspire Chrome extension to save jobs while browsing LinkedIn, Indeed or Glassdoor.')
+              ? tt('Tenta outra pesquisa.', 'Try a different search.', 'Prueba otra búsqueda.')
+              : tt('Instala a extensão Chrome Share2Inspire para guardar vagas enquanto navegas no LinkedIn, Indeed ou Glassdoor.', 'Install the Share2Inspire Chrome extension to save jobs while browsing LinkedIn, Indeed or Glassdoor.', 'Instala la extensión Chrome Share2Inspire para guardar empleos mientras navegas en LinkedIn, Indeed o Glassdoor.')
             }
           </p>
           {!searchQuery && (
             <button onClick={() => setShowAddForm(true)}
               className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all">
-              <Plus className="w-3 h-3" /> {tt('Adicionar manualmente', 'Add manually')}
+              <Plus className="w-3 h-3" /> {tt('Adicionar manualmente', 'Add manually', 'Añadir manualmente')}
             </button>
           )}
         </div>
@@ -436,21 +436,21 @@ export default function SavedJobsTracker({ lang }: Props) {
           {/* Table Header */}
           <div className="hidden lg:grid lg:grid-cols-[30%_14%_11%_10%_9%_12%_14%] px-3 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
             <button onClick={() => toggleSort('title')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
-              {tt('Vaga', 'Job')} <ArrowUpDown className="w-2.5 h-2.5" />
+              {tt('Vaga', 'Job', 'Empleo')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <button onClick={() => toggleSort('company')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
-              {tt('Empresa', 'Company')} <ArrowUpDown className="w-2.5 h-2.5" />
+              {tt('Empresa', 'Company', 'Empresa')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <button onClick={() => toggleSort('status')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               Status <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <button onClick={() => toggleSort('created_at')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
-              {tt('Data', 'Date')} <ArrowUpDown className="w-2.5 h-2.5" />
+              {tt('Data', 'Date', 'Fecha')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <button onClick={() => toggleSort('priority')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               <Star className="w-2.5 h-2.5" /> <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
-            <span>{tt('Follow-up', 'Follow-up')}</span>
+            <span>{tt('Follow-up', 'Follow-up', 'Seguimiento')}</span>
             <span></span>
           </div>
 
@@ -525,10 +525,10 @@ export default function SavedJobsTracker({ lang }: Props) {
                       </>
                     ) : (
                       <>
-                        <button onClick={() => startEdit(job)} className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors" title={tt('Editar', 'Edit')}><Edit3 className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => setExpandedNotes(isNotesExpanded ? null : job.id)} className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors" title={tt('Notas', 'Notes')}><StickyNote className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => updateJob(job.id, { status: 'archived' })} className="p-1 text-[#999] hover:text-gray-600 hover:bg-gray-50 rounded transition-colors" title={tt('Arquivar', 'Archive')}><Archive className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => { if (confirm(tt('Apagar esta vaga?', 'Delete this job?'))) deleteJob(job.id); }} className="p-1 text-[#999] hover:text-red-500 hover:bg-red-50 rounded transition-colors" title={tt('Apagar', 'Delete')}><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => startEdit(job)} className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors" title={tt('Editar', 'Edit', 'Editar')}><Edit3 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => setExpandedNotes(isNotesExpanded ? null : job.id)} className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors" title={tt('Notas', 'Notes', 'Notas')}><StickyNote className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => updateJob(job.id, { status: 'archived' })} className="p-1 text-[#999] hover:text-gray-600 hover:bg-gray-50 rounded transition-colors" title={tt('Arquivar', 'Archive', 'Archivar')}><Archive className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => { if (confirm(tt('Apagar esta vaga?', 'Delete this job?', '¿Eliminar este empleo?'))) deleteJob(job.id); }} className="p-1 text-[#999] hover:text-red-500 hover:bg-red-50 rounded transition-colors" title={tt('Apagar', 'Delete', 'Eliminar')}><Trash2 className="w-3.5 h-3.5" /></button>
                       </>
                     )}
                   </div>
@@ -563,7 +563,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                     <div className="flex items-center gap-1">
                       <button onClick={() => setExpandedNotes(isNotesExpanded ? null : job.id)} className="p-1 text-[#999] hover:text-[#BF9A33] rounded"><StickyNote className="w-3.5 h-3.5" /></button>
                       <button onClick={() => updateJob(job.id, { status: 'archived' })} className="p-1 text-[#999] hover:text-gray-600 rounded"><Archive className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => { if (confirm(tt('Apagar?', 'Delete?'))) deleteJob(job.id); }} className="p-1 text-[#999] hover:text-red-500 rounded"><Trash2 className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => { if (confirm(tt('Apagar?', 'Delete?', '¿Eliminar?'))) deleteJob(job.id); }} className="p-1 text-[#999] hover:text-red-500 rounded"><Trash2 className="w-3.5 h-3.5" /></button>
                     </div>
                   </div>
                 </div>
@@ -572,7 +572,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                 {isNotesExpanded && (
                   <div className="px-4 pb-3 animate-in fade-in duration-200">
                     <div className="p-3 bg-[#fafaf9] border border-[#e5e5e5] rounded-lg">
-                      <label className="text-[10px] font-semibold text-[#999] uppercase tracking-wider mb-1 block">{tt('Notas', 'Notes')}</label>
+                      <label className="text-[10px] font-semibold text-[#999] uppercase tracking-wider mb-1 block">{tt('Notas', 'Notes', 'Notas')}</label>
                       <textarea value={job.notes || ''} rows={3}
                         onChange={e => {
                           const val = e.target.value;
@@ -583,7 +583,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                         className="w-full text-xs text-[#333] bg-white border border-[#e5e5e5] rounded-lg px-3 py-2 focus:outline-none focus:border-[#BF9A33] resize-none" />
                       <div className="flex gap-2 mt-2">
                         <div className="flex-1">
-                          <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Follow-up', 'Follow-up')}</label>
+                          <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Follow-up', 'Follow-up', 'Seguimiento')}</label>
                           <input type="date" value={job.follow_up_date || ''}
                             onChange={e => updateJob(job.id, { follow_up_date: e.target.value || null })}
                             className="w-full text-[10px] border border-[#e5e5e5] rounded px-2 py-1 focus:outline-none focus:border-[#BF9A33]" />

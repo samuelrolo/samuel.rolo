@@ -15,6 +15,7 @@ interface ATSRejectionBlockProps {
 
 const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedFactors, atsSystems, quickFixes, isEN = false }: ATSRejectionBlockProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const lang = getLang();
   const severity = rejectionRate > 60
     ? (t('elevada'))
     : rejectionRate > 40
@@ -145,7 +146,7 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
               {showTooltip && (
                 <div className="absolute left-0 top-6 z-50 w-72 p-3 rounded-lg bg-foreground text-background text-xs leading-relaxed shadow-xl">
                   <p className="font-semibold mb-1">{t('o_que_o_ats')}</p>
-                  <p>{lang === 'en' ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.' : lang === 'es' ? 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.'}</p>
+                  <p>{lang === 'en' ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.' : lang === 'es' ? 'Applicant Tracking System — software utilizado por el 75% de las empresas para filtrar CVs automáticamente antes de que un reclutador los vea.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.'}</p>
                   <div className="absolute -top-1.5 left-3 w-3 h-3 bg-foreground rotate-45" />
                 </div>
               )}

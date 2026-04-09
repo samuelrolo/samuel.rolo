@@ -80,7 +80,7 @@ export default function JobContacts({ lang }: Props) {
     relationship: '', notes: '', job_id: '', next_follow_up: '', last_contact_date: '',
   });
 
-  const tt = (pt: string, en: string) => lang === 'pt' ? pt : en;
+  const tt = (pt: string, en: string, es?: string) => lang === 'pt' ? pt : lang === 'es' ? (es ?? en) : en;
   const roleOptions = lang === 'pt' ? ROLE_OPTIONS_PT : ROLE_OPTIONS_EN;
   const relationshipOptions = lang === 'pt' ? RELATIONSHIP_OPTIONS_PT : RELATIONSHIP_OPTIONS_EN;
 
@@ -272,7 +272,7 @@ export default function JobContacts({ lang }: Props) {
         <div>
           <h2 className="text-sm font-semibold text-[#1a1a1a] flex items-center gap-2">
             <Users className="w-4 h-4 text-[#BF9A33]" />
-            {tt('Contactos', 'Contacts')}
+            {tt('Contactos', 'Contacts', 'Contactos')}
             <span className="text-[10px] font-normal text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{counts.all}</span>
             {counts.overdue > 0 && (
               <span className="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -289,7 +289,7 @@ export default function JobContacts({ lang }: Props) {
         </div>
         <button onClick={() => setShowAddForm(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all">
-          <UserPlus className="w-3 h-3" /> {tt('Adicionar Contacto', 'Add Contact')}
+          <UserPlus className="w-3 h-3" /> {tt('Adicionar Contacto', 'Add Contact', 'Añadir Contacto')}
         </button>
       </div>
 
@@ -327,7 +327,7 @@ export default function JobContacts({ lang }: Props) {
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#999]" />
         <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-          placeholder={tt('Pesquisar por nome, empresa, cargo...', 'Search by name, company, role...')}
+          placeholder={tt('Pesquisar por nome, empresa, cargo...', 'Search by name, company, role...', 'Buscar por nombre, empresa, cargo...')}
           className="w-full pl-9 pr-4 py-2 text-xs border border-[#e5e5e5] rounded-lg bg-white focus:outline-none focus:border-[#BF9A33] focus:ring-2 focus:ring-[#BF9A33]/10 transition-all"
         />
       </div>
@@ -353,25 +353,25 @@ export default function JobContacts({ lang }: Props) {
               {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
             <input value={newContact.company} onChange={e => setNewContact(p => ({ ...p, company: e.target.value }))}
-              placeholder={tt('Empresa', 'Company')}
+              placeholder={tt('Empresa', 'Company', 'Empresa')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newContact.email} onChange={e => setNewContact(p => ({ ...p, email: e.target.value }))}
               placeholder="Email"
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newContact.phone} onChange={e => setNewContact(p => ({ ...p, phone: e.target.value }))}
-              placeholder={tt('Telefone', 'Phone')}
+              placeholder={tt('Telefone', 'Phone', 'Teléfono')}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <input value={newContact.linkedin_url} onChange={e => setNewContact(p => ({ ...p, linkedin_url: e.target.value }))}
               placeholder="LinkedIn URL"
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             <select value={newContact.relationship} onChange={e => setNewContact(p => ({ ...p, relationship: e.target.value }))}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33] text-[#666]">
-              <option value="">{tt('Tipo de relação...', 'Relationship...')}</option>
+              <option value="">{tt('Tipo de relação...', 'Relationship...', 'Tipo de relación...')}</option>
               {relationshipOptions.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
             <select value={newContact.job_id} onChange={e => setNewContact(p => ({ ...p, job_id: e.target.value }))}
               className="px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33] text-[#666]">
-              <option value="">{tt('Associar a vaga...', 'Link to job...')}</option>
+              <option value="">{tt('Associar a vaga...', 'Link to job...', 'Vincular a empleo...')}</option>
               {jobs.map(j => <option key={j.id} value={j.id}>{j.title}{j.company ? ` — ${j.company}` : ''}</option>)}
             </select>
           </div>
@@ -379,14 +379,14 @@ export default function JobContacts({ lang }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
               <label className="text-[9px] font-semibold text-[#999] uppercase tracking-wider mb-1 block">
-                {tt('Último contacto', 'Last contact')}
+                {tt('Último contacto', 'Last contact', 'Último contacto')}
               </label>
               <input type="date" value={newContact.last_contact_date} onChange={e => setNewContact(p => ({ ...p, last_contact_date: e.target.value }))}
                 className="w-full px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
             </div>
             <div>
               <label className="text-[9px] font-semibold text-[#999] uppercase tracking-wider mb-1 block">
-                {tt('Próximo follow-up', 'Next follow-up')}
+                {tt('Próximo follow-up', 'Next follow-up', 'Próximo seguimiento')}
               </label>
               <input type="date" value={newContact.next_follow_up} onChange={e => setNewContact(p => ({ ...p, next_follow_up: e.target.value }))}
                 className="w-full px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33]" />
@@ -394,17 +394,17 @@ export default function JobContacts({ lang }: Props) {
           </div>
 
           <textarea value={newContact.notes} onChange={e => setNewContact(p => ({ ...p, notes: e.target.value }))}
-            placeholder={tt('Notas (contexto da conversa, próximos passos...)', 'Notes (conversation context, next steps...)')} rows={2}
+            placeholder={tt('Notas (contexto da conversa, próximos passos...)', 'Notes (conversation context, next steps...)', 'Notas (contexto de la conversación, próximos pasos...)')} rows={2}
             className="w-full px-3 py-2 text-xs border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#BF9A33] mb-3 resize-none" />
 
           <div className="flex gap-2">
             <button onClick={addContact} disabled={!newContact.name.trim() || saving}
               className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all disabled:opacity-50">
-              <Save className="w-3 h-3" /> {saving ? '...' : tt('Guardar', 'Save')}
+              <Save className="w-3 h-3" /> {saving ? '...' : tt('Guardar', 'Save', 'Guardar')}
             </button>
             <button onClick={() => setShowAddForm(false)}
               className="px-4 py-2 text-[11px] text-[#666] border border-[#e5e5e5] rounded-lg hover:border-[#999] transition-all">
-              {tt('Cancelar', 'Cancel')}
+              {tt('Cancelar', 'Cancel', 'Cancelar')}
             </button>
           </div>
         </div>
@@ -414,17 +414,17 @@ export default function JobContacts({ lang }: Props) {
       {loading ? (
         <div className="py-12 text-center">
           <div className="w-6 h-6 border-2 border-[#BF9A33] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs text-[#999]">{tt('A carregar...', 'Loading...')}</p>
+          <p className="text-xs text-[#999]">{tt('A carregar...', 'Loading...', 'Cargando...')}</p>
         </div>
       ) : filteredContacts.length === 0 ? (
         <div className="py-12 text-center border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9]">
           <Users className="w-10 h-10 text-[#ddd] mx-auto mb-3" />
           <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">
-            {searchQuery ? tt('Nenhum resultado', 'No results') : tt('Sem contactos', 'No contacts yet')}
+            {searchQuery ? tt('Nenhum resultado', 'No results', 'Sin resultados') : tt('Sem contactos', 'No contacts yet', 'Sin contactos aún')}
           </h3>
           <p className="text-[11px] text-[#999] max-w-xs mx-auto mb-4">
             {searchQuery
-              ? tt('Tenta outra pesquisa.', 'Try a different search.')
+              ? tt('Tenta outra pesquisa.', 'Try a different search.', 'Prueba otra búsqueda.')
               : tt(
                   'Adiciona recrutadores, hiring managers e outros contactos importantes para acompanhar as tuas candidaturas.',
                   'Add recruiters, hiring managers and other key contacts to track your applications.'
@@ -434,7 +434,7 @@ export default function JobContacts({ lang }: Props) {
           {!searchQuery && (
             <button onClick={() => setShowAddForm(true)}
               className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all">
-              <UserPlus className="w-3 h-3" /> {tt('Adicionar contacto', 'Add contact')}
+              <UserPlus className="w-3 h-3" /> {tt('Adicionar contacto', 'Add contact', 'Añadir contacto')}
             </button>
           )}
         </div>
@@ -443,13 +443,13 @@ export default function JobContacts({ lang }: Props) {
           {/* Table Header */}
           <div className="hidden lg:grid lg:grid-cols-[25%_15%_15%_15%_15%_15%] px-3 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
             <button onClick={() => toggleSort('name')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
-              {tt('Nome', 'Name')} <ArrowUpDown className="w-2.5 h-2.5" />
+              {tt('Nome', 'Name', 'Nombre')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <button onClick={() => toggleSort('company')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
-              {tt('Empresa', 'Company')} <ArrowUpDown className="w-2.5 h-2.5" />
+              {tt('Empresa', 'Company', 'Empresa')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
-            <span>{tt('Cargo', 'Role')}</span>
-            <span>{tt('Vaga Associada', 'Linked Job')}</span>
+            <span>{tt('Cargo', 'Role', 'Cargo')}</span>
+            <span>{tt('Vaga Associada', 'Linked Job', 'Empleo Vinculado')}</span>
             <button onClick={() => toggleSort('next_follow_up')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               Follow-up <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
@@ -531,10 +531,10 @@ export default function JobContacts({ lang }: Props) {
                           {overdue ? <AlertCircle className="w-3 h-3" /> : <Calendar className="w-3 h-3" />}
                           {new Date(contact.next_follow_up).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short' })}
                         </div>
-                        {overdue && <span className="text-[9px] text-red-500 font-medium">{tt('Atrasado', 'Overdue')}</span>}
+                        {overdue && <span className="text-[9px] text-red-500 font-medium">{tt('Atrasado', 'Overdue', 'Atrasado')}</span>}
                         {!overdue && days !== null && days >= 0 && (
                           <span className="text-[9px] text-[#999]">
-                            {days === 0 ? tt('Hoje', 'Today') : days === 1 ? tt('Amanhã', 'Tomorrow') : `${days} ${tt('dias', 'days')}`}
+                            {days === 0 ? tt('Hoje', 'Today', 'Hoy') : days === 1 ? tt('Amanhã', 'Tomorrow', 'Mañana') : `${days} ${tt('dias', 'days', 'días')}`}
                           </span>
                         )}
                         <select value={contact.follow_up_status}
@@ -549,7 +549,7 @@ export default function JobContacts({ lang }: Props) {
                       <input type="date"
                         onChange={e => updateContact(contact.id, { next_follow_up: e.target.value || null })}
                         className="text-[10px] text-[#999] border border-transparent hover:border-[#e5e5e5] rounded px-1 py-0.5 focus:outline-none focus:border-[#BF9A33] bg-transparent w-full"
-                        title={tt('Definir follow-up', 'Set follow-up')}
+                        title={tt('Definir follow-up', 'Set follow-up', 'Establecer seguimiento')}
                       />
                     )}
                   </div>
@@ -558,17 +558,17 @@ export default function JobContacts({ lang }: Props) {
                   <div className="flex items-center gap-1">
                     <button onClick={() => setExpandedId(isExpanded ? null : contact.id)}
                       className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors"
-                      title={tt('Detalhes', 'Details')}>
+                      title={tt('Detalhes', 'Details', 'Detalles')}>
                       {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                     </button>
                     <button onClick={() => startEdit(contact)}
                       className="p-1 text-[#999] hover:text-[#BF9A33] hover:bg-[#BF9A33]/5 rounded transition-colors"
-                      title={tt('Editar', 'Edit')}>
+                      title={tt('Editar', 'Edit', 'Editar')}>
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm(tt('Apagar este contacto?', 'Delete this contact?'))) deleteContact(contact.id); }}
+                    <button onClick={() => { if (confirm(tt('Apagar este contacto?', 'Delete this contact?', '¿Eliminar este contacto?'))) deleteContact(contact.id); }}
                       className="p-1 text-[#999] hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-                      title={tt('Apagar', 'Delete')}>
+                      title={tt('Apagar', 'Delete', 'Eliminar')}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -602,7 +602,7 @@ export default function JobContacts({ lang }: Props) {
                         <span className={`text-[10px] font-medium flex items-center gap-1 ${overdue ? 'text-red-600' : 'text-[#666]'}`}>
                           {overdue ? <AlertCircle className="w-3 h-3" /> : <Calendar className="w-3 h-3" />}
                           {new Date(contact.next_follow_up).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short' })}
-                          {overdue && <span className="text-red-500 ml-1">{tt('Atrasado', 'Overdue')}</span>}
+                          {overdue && <span className="text-red-500 ml-1">{tt('Atrasado', 'Overdue', 'Atrasado')}</span>}
                         </span>
                       )}
                       {jobLabel && (
@@ -615,7 +615,7 @@ export default function JobContacts({ lang }: Props) {
                       <button onClick={() => setExpandedId(isExpanded ? null : contact.id)} className="p-1 text-[#999] hover:text-[#BF9A33] rounded">
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                       </button>
-                      <button onClick={() => { if (confirm(tt('Apagar?', 'Delete?'))) deleteContact(contact.id); }} className="p-1 text-[#999] hover:text-red-500 rounded">
+                      <button onClick={() => { if (confirm(tt('Apagar?', 'Delete?', '¿Eliminar?'))) deleteContact(contact.id); }} className="p-1 text-[#999] hover:text-red-500 rounded">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -631,20 +631,20 @@ export default function JobContacts({ lang }: Props) {
                         <div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Nome', 'Name')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Nome', 'Name', 'Nombre')}</label>
                               <input value={editData.name || ''} onChange={e => setEditData(p => ({ ...p, name: e.target.value }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Cargo', 'Role')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Cargo', 'Role', 'Cargo')}</label>
                               <select value={editData.role || ''} onChange={e => setEditData(p => ({ ...p, role: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none">
-                                <option value="">{tt('Selecionar...', 'Select...')}</option>
+                                <option value="">{tt('Selecionar...', 'Select...', 'Seleccionar...')}</option>
                                 {roleOptions.map(r => <option key={r} value={r}>{r}</option>)}
                               </select>
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Empresa', 'Company')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Empresa', 'Company', 'Empresa')}</label>
                               <input value={editData.company || ''} onChange={e => setEditData(p => ({ ...p, company: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
@@ -654,7 +654,7 @@ export default function JobContacts({ lang }: Props) {
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Telefone', 'Phone')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Telefone', 'Phone', 'Teléfono')}</label>
                               <input value={editData.phone || ''} onChange={e => setEditData(p => ({ ...p, phone: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
@@ -664,47 +664,47 @@ export default function JobContacts({ lang }: Props) {
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Relação', 'Relationship')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Relação', 'Relationship', 'Relación')}</label>
                               <select value={editData.relationship || ''} onChange={e => setEditData(p => ({ ...p, relationship: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none">
-                                <option value="">{tt('Selecionar...', 'Select...')}</option>
+                                <option value="">{tt('Selecionar...', 'Select...', 'Seleccionar...')}</option>
                                 {relationshipOptions.map(r => <option key={r} value={r}>{r}</option>)}
                               </select>
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Vaga associada', 'Linked job')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Vaga associada', 'Linked job', 'Empleo vinculado')}</label>
                               <select value={editData.job_id || ''} onChange={e => setEditData(p => ({ ...p, job_id: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none">
-                                <option value="">{tt('Nenhuma', 'None')}</option>
+                                <option value="">{tt('Nenhuma', 'None', 'Ninguno')}</option>
                                 {jobs.map(j => <option key={j.id} value={j.id}>{j.title}{j.company ? ` — ${j.company}` : ''}</option>)}
                               </select>
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Último contacto', 'Last contact')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Último contacto', 'Last contact', 'Último contacto')}</label>
                               <input type="date" value={editData.last_contact_date || ''}
                                 onChange={e => setEditData(p => ({ ...p, last_contact_date: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
                             <div>
-                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Próximo follow-up', 'Next follow-up')}</label>
+                              <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Próximo follow-up', 'Next follow-up', 'Próximo seguimiento')}</label>
                               <input type="date" value={editData.next_follow_up || ''}
                                 onChange={e => setEditData(p => ({ ...p, next_follow_up: e.target.value || null }))}
                                 className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none" />
                             </div>
                           </div>
                           <div>
-                            <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Notas', 'Notes')}</label>
+                            <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Notas', 'Notes', 'Notas')}</label>
                             <textarea value={editData.notes || ''} rows={3}
                               onChange={e => setEditData(p => ({ ...p, notes: e.target.value || null }))}
                               className="w-full px-2 py-1.5 text-xs border border-[#BF9A33] rounded-lg focus:outline-none resize-none mb-3" />
                           </div>
                           <div className="flex gap-2">
                             <button onClick={saveEdit} className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-semibold bg-[#1a1a1a] text-[#BF9A33] border border-[#BF9A33] rounded-lg hover:bg-[#BF9A33] hover:text-[#1a1a1a] transition-all">
-                              <Save className="w-3 h-3" /> {tt('Guardar', 'Save')}
+                              <Save className="w-3 h-3" /> {tt('Guardar', 'Save', 'Guardar')}
                             </button>
                             <button onClick={() => { setEditingId(null); setEditData({}); }}
                               className="px-3 py-1.5 text-[11px] text-[#666] border border-[#e5e5e5] rounded-lg hover:border-[#999] transition-all">
-                              {tt('Cancelar', 'Cancel')}
+                              {tt('Cancelar', 'Cancel', 'Cancelar')}
                             </button>
                           </div>
                         </div>
@@ -720,7 +720,7 @@ export default function JobContacts({ lang }: Props) {
                             )}
                             {contact.phone && (
                               <div>
-                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Telefone', 'Phone')}</span>
+                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Telefone', 'Phone', 'Teléfono')}</span>
                                 <a href={`tel:${contact.phone}`} className="text-[11px] text-[#1a1a1a] hover:text-[#BF9A33] transition-colors">{contact.phone}</a>
                               </div>
                             )}
@@ -728,19 +728,19 @@ export default function JobContacts({ lang }: Props) {
                               <div>
                                 <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">LinkedIn</span>
                                 <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#0077B5] hover:underline flex items-center gap-1">
-                                  <ExternalLink className="w-3 h-3" /> {tt('Ver perfil', 'View profile')}
+                                  <ExternalLink className="w-3 h-3" /> {tt('Ver perfil', 'View profile', 'Ver perfil')}
                                 </a>
                               </div>
                             )}
                             {contact.relationship && (
                               <div>
-                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Relação', 'Relationship')}</span>
+                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Relação', 'Relationship', 'Relación')}</span>
                                 <span className="text-[11px] text-[#666]">{contact.relationship}</span>
                               </div>
                             )}
                             {contact.last_contact_date && (
                               <div>
-                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Último contacto', 'Last contact')}</span>
+                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Último contacto', 'Last contact', 'Último contacto')}</span>
                                 <span className="text-[11px] text-[#666]">
                                   {new Date(contact.last_contact_date).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                 </span>
@@ -748,20 +748,20 @@ export default function JobContacts({ lang }: Props) {
                             )}
                             {jobLabel && (
                               <div>
-                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Vaga associada', 'Linked job')}</span>
+                                <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Vaga associada', 'Linked job', 'Empleo vinculado')}</span>
                                 <span className="text-[11px] text-blue-700 flex items-center gap-1"><Building2 className="w-3 h-3" /> {jobLabel}</span>
                               </div>
                             )}
                           </div>
                           {contact.notes && (
                             <div className="mb-3">
-                              <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Notas', 'Notes')}</span>
+                              <span className="text-[9px] font-semibold text-[#999] uppercase block mb-0.5">{tt('Notas', 'Notes', 'Notas')}</span>
                               <p className="text-[11px] text-[#666] whitespace-pre-wrap leading-relaxed">{contact.notes}</p>
                             </div>
                           )}
                           <button onClick={() => startEdit(contact)}
                             className="flex items-center gap-1 text-[10px] text-[#BF9A33] hover:underline font-medium">
-                            <Edit3 className="w-3 h-3" /> {tt('Editar contacto', 'Edit contact')}
+                            <Edit3 className="w-3 h-3" /> {tt('Editar contacto', 'Edit contact', 'Editar contacto')}
                           </button>
                         </div>
                       )}

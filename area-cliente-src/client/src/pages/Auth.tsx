@@ -8,13 +8,23 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'wouter';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
+const GoogleLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+  </svg>
+);
+
 const AUTH_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/s2i-auth-bg-E6NhABPdgwCDiNDBRKzudJ.webp';
 
 type Mode = 'login' | 'register' | 'reset';
 
 export default function Auth() {
   const { t } = useI18n();
-  const { signIn, signUp, resetPassword, user } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithGoogle, user } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [, navigate] = useLocation();
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
@@ -65,7 +75,7 @@ export default function Auth() {
         <div className="absolute bottom-12 left-12 right-12">
           <p className="text-gold text-sm font-light tracking-[0.2em] uppercase mb-3">Share2Inspire</p>
           <h2 className="text-3xl font-semibold text-[#1a1a1a] leading-snug">
-            As ferramentas certas<br />para a carreira certa.
+            {t('auth.tagline')}
           </h2>
         </div>
       </div>
@@ -197,6 +207,29 @@ export default function Auth() {
               {mode === 'login' ? t('auth.login') : mode === 'register' ? t('auth.register') : t('auth.resetPassword')}
             </button>
           </form>
+
+          {/* Google OAuth */}
+          {mode !== 'reset' && (
+            <div className="mt-4">
+              <div className="relative flex items-center my-4">
+                <div className="flex-1 border-t border-[#ddd]" />
+                <span className="mx-3 text-xs text-[#aaa]">{t('auth.or')}</span>
+                <div className="flex-1 border-t border-[#ddd]" />
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  setGoogleLoading(true);
+                  try { await signInWithGoogle(); } catch { setError(t('auth.errorGeneric')); setGoogleLoading(false); }
+                }}
+                disabled={googleLoading}
+                className="w-full py-2.5 border border-[#ddd] rounded text-sm text-[#1a1a1a] font-light hover:bg-[#f5f5f4] disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                {googleLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GoogleLogo />}
+                {mode === 'login' ? t('auth.continueWithGoogle') : t('auth.signUpWithGoogle')}
+              </button>
+            </div>
+          )}
 
           {/* Toggle mode */}
           <div className="mt-6 text-center">

@@ -16,6 +16,7 @@ interface RecruiterPerceptionProps {
 }
 
 const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid = false, deepAnalysis, isEN = false }: RecruiterPerceptionProps) => {
+  const lang = getLang();
   const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : (t('profissional')));
   const displaySeniority = perceivedSeniority || 'Mid-level';
 
