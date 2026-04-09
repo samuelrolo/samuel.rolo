@@ -690,6 +690,25 @@ export default function CareerPathHomeEN() {
                     )}
                   </div>
                 </label>
+                {!file && savedCvInfo && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(savedCvInfo.url);
+                        const blob = await res.blob();
+                        const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        setFile(f);
+                        setError(null);
+                      } catch {
+                        setError('Could not load the saved CV.');
+                      }
+                    }}
+                    className="mt-3 text-sm font-medium text-[#C9A961] hover:underline"
+                  >
+                    Use saved CV: {savedCvInfo.filename}
+                  </button>
+                )}
               </div>
 
               {/* LinkedIn URL */}

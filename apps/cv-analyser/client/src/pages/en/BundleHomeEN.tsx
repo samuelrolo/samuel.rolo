@@ -16,6 +16,7 @@ import { countries } from "./countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -83,6 +84,7 @@ export default function BundleHomeEN() {
   const [, setLocation] = useLocation();
 
   const [file, setFile] = useState<File | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -113,6 +115,20 @@ export default function BundleHomeEN() {
     const trimmed = url.trim().toLowerCase();
     return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
   };
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      }
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
 
   const loadingMessages = [
     "Extracting data from your CV...",
@@ -578,6 +594,25 @@ export default function BundleHomeEN() {
                   <div className="text-center"><Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" /><p className="text-sm text-slate-500">Click or drag your CV</p></div>
                 )}
               </label>
+              {!file && savedCvInfo && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(savedCvInfo.url);
+                      const blob = await res.blob();
+                      const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                      setFile(f);
+                      setError(null);
+                    } catch {
+                      setError('Could not load the saved CV.');
+                    }
+                  }}
+                  className="mt-3 text-sm font-medium text-[#C9A961] hover:underline"
+                >
+                  Use saved CV: {savedCvInfo.filename}
+                </button>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> LinkedIn Profile</label>

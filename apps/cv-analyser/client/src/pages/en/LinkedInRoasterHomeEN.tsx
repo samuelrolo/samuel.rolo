@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import { sendConversion } from "@/lib/gtag";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooterEN from "@/components/S2IFooterEN";
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const PRICE = '3.99';
@@ -51,6 +52,18 @@ export default function LinkedInRoasterHomeEN() {
 
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);

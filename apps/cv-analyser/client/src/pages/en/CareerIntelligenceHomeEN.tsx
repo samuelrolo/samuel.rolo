@@ -17,6 +17,7 @@ import { countries } from "./countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -125,6 +126,7 @@ export default function CareerIntelligenceHomeEN() {
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -174,6 +176,20 @@ export default function CareerIntelligenceHomeEN() {
   const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('stripe');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      }
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
@@ -707,6 +723,25 @@ export default function CareerIntelligenceHomeEN() {
                     {file ? (<><FileText className="w-8 h-8 mx-auto text-[#C9A961]" /><p className="text-sm font-semibold text-foreground">{file.name}</p><p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(0)} KB</p></>) : (<><Upload className="w-8 h-8 mx-auto text-muted-foreground" /><p className="text-sm font-semibold text-foreground">Drag your CV or click to choose</p><p className="text-xs text-muted-foreground">PDF or DOCX (max 5MB)</p></>)}
                   </div>
                 </label>
+                {!file && savedCvInfo && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(savedCvInfo.url);
+                        const blob = await res.blob();
+                        const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        setFile(f);
+                        setError(null);
+                      } catch {
+                        setError('Could not load the saved CV.');
+                      }
+                    }}
+                    className="mt-3 text-sm font-medium text-[#C9A961] hover:underline"
+                  >
+                    Use saved CV: {savedCvInfo.filename}
+                  </button>
+                )}
               </div>
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-foreground flex items-center gap-2"><Linkedin className="w-4 h-4 text-[#0077B5]" />2. LinkedIn <span className="text-red-500">*</span></label>
