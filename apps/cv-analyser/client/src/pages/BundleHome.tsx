@@ -294,6 +294,7 @@ export default function BundleHome() {
         const detectedPhone = cp.detected_phone && cp.detected_phone !== 'N/A' ? cp.detected_phone : null;
         const score = cvAnalysisResult.overallScore || cvAnalysisResult.ats_score || 0;
         const professionalArea = cp.detected_role || cp.primary_role || null;
+        const userRating = score >= 80 ? 5 : score >= 65 ? 4 : score >= 50 ? 3 : score > 0 ? 2 : null;
         const transactionId = sessionStorage.getItem('transactionId') || `BUNDLE-${Date.now()}`;
         fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
           method: 'POST',
@@ -306,6 +307,7 @@ export default function BundleHome() {
           body: JSON.stringify({
             score,
             professional_area: professionalArea,
+            user_rating: userRating,
             analysis_type: 'bundle',
             analysis_result: JSON.stringify(cvAnalysisSource),
             cv_text: cvText || null,

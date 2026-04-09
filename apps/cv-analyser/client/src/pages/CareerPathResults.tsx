@@ -72,6 +72,11 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
 function logCareerPathToSupabase(cpData: any, paymentId?: string, linkedinUrl?: string) {
   try {
     const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || null;
+    const score = cpData?.career_potential_score?.overall_score || cpData?.overall_score || cpData?.score || null;
+    const professionalArea = cpData?.candidate_profile?.detected_role || cpData?.candidate_profile?.primary_role || cpData?.title || cpData?.career_title || null;
+    const userRating = cpData?.career_potential_score?.overall_score
+      ? (cpData.career_potential_score.overall_score >= 80 ? 5 : cpData.career_potential_score.overall_score >= 65 ? 4 : cpData.career_potential_score.overall_score >= 50 ? 3 : 2)
+      : null;
     fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
       method: 'POST',
       headers: {
@@ -82,6 +87,9 @@ function logCareerPathToSupabase(cpData: any, paymentId?: string, linkedinUrl?: 
       },
       body: JSON.stringify({
         user_email: cpEmail,
+        score,
+        professional_area: professionalArea,
+        user_rating: userRating,
         analysis_type: 'career_path',
         career_path_purchased: true,
         career_path_data: cpData ? JSON.stringify(cpData) : null,

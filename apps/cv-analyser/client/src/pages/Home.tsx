@@ -71,6 +71,7 @@ function logAnalysisToSupabase(analysisResult: any, analysisSource: any, cvText?
     // Use mandatory email from form as primary, Gemini detection as fallback
     const userEmail = sessionStorage.getItem('paymentEmail') || detectedEmail;
     const detectedPhone = cp.detected_phone && cp.detected_phone !== 'N/A' ? cp.detected_phone : null;
+    const userRating = score >= 80 ? 5 : score >= 65 ? 4 : score >= 50 ? 3 : score > 0 ? 2 : null;
     // Check if this is a paid analysis (voucher used or LinkedIn paid)
     const isPaid = sessionStorage.getItem('isPaid') === 'true';
     const voucherCode = sessionStorage.getItem('voucherCode') || null;
@@ -87,6 +88,7 @@ function logAnalysisToSupabase(analysisResult: any, analysisSource: any, cvText?
       body: JSON.stringify({
         score: score,
         professional_area: professionalArea,
+        user_rating: userRating,
         analysis_type: isPaid ? 'paid' : 'free',
         analysis_result: analysisSource ? JSON.stringify(analysisSource) : null,
         cv_text: cvText || null,
