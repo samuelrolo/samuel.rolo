@@ -1921,6 +1921,13 @@ export function getTranslation(lang: Lang, key: string): string {
 
 export function getStoredLang(): Lang {
   if (typeof window === 'undefined') return 'pt';
+  // Allow ?lang=XX URL param to override stored preference (used by external links)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get('lang');
+  if (urlLang === 'pt' || urlLang === 'en' || urlLang === 'es') {
+    localStorage.setItem('s2i-lang', urlLang);
+    return urlLang as Lang;
+  }
   const stored = localStorage.getItem('s2i-lang');
   if (stored === 'pt' || stored === 'en' || stored === 'es') return stored as Lang;
   // Default to PT for Share2Inspire (Portuguese-first product)
