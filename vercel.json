@@ -161,7 +161,7 @@
       ]
     },
     {
-      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|pages/sobre|contactos|pages/contactos|en/pages/about|en/pages/contact|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack)(.*)",
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|pages/sobre|contactos|pages/contactos|en/pages/about|en/pages/contact|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack|es/pages)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -206,6 +206,10 @@
     },
     {
       "source": "/en",
+      "destination": "/cv-analyser"
+    },
+    {
+      "source": "/es",
       "destination": "/cv-analyser"
     },
     {
@@ -487,6 +491,62 @@
     {
       "source": "/en/student-pack/:path*",
       "destination": "/en/student-pack"
+    },
+    {
+      "source": "/es/cv-analyser",
+      "destination": "/es/cv-analyser"
+    },
+    {
+      "source": "/es/cv-analyser/:path*",
+      "destination": "/es/cv-analyser"
+    },
+    {
+      "source": "/es/career-path",
+      "destination": "/es/career-path"
+    },
+    {
+      "source": "/es/career-path/:path*",
+      "destination": "/es/career-path"
+    },
+    {
+      "source": "/es/career-intelligence",
+      "destination": "/es/career-intelligence"
+    },
+    {
+      "source": "/es/career-intelligence/:path*",
+      "destination": "/es/career-intelligence"
+    },
+    {
+      "source": "/es/bundle",
+      "destination": "/es/bundle"
+    },
+    {
+      "source": "/es/bundle/:path*",
+      "destination": "/es/bundle"
+    },
+    {
+      "source": "/es/linkedin-roaster",
+      "destination": "/es/linkedin-roaster"
+    },
+    {
+      "source": "/es/linkedin-roaster/:path*",
+      "destination": "/es/linkedin-roaster"
+    },
+    {
+      "source": "/es/student-pack",
+      "destination": "/es/student-pack"
+    },
+    {
+      "source": "/es/student-pack/:path*",
+      "destination": "/es/student-pack"
+    },
+    {
+      "source": "/es/pages/knowledge",
+      "destination": "/es/pages/knowledge"
+    },
+    {
+      "source": "/es/pages/services",
+      "destination": "/es/pages/services"
     }
   ]
 }
