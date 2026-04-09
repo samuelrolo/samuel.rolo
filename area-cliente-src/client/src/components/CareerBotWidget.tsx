@@ -758,12 +758,12 @@ Generate ONLY the post.`;
             </div>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
+                onClick={() => { const langs: Array<'pt'|'en'|'es'> = ['pt','en','es']; setLang(langs[(langs.indexOf(lang)+1)%3]); }}
                 className="px-2 py-1 rounded-lg hover:bg-white/20 transition-colors text-white/80 hover:text-white text-[10px] font-bold tracking-wider flex items-center gap-1 border border-white/20"
-                title={lang === 'pt' ? 'Switch to English' : 'Mudar para Português'}
+                title={lang === 'pt' ? 'Switch to English' : lang === 'en' ? 'Cambiar a Español' : 'Mudar para Português'}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                {lang === 'pt' ? 'PT' : 'EN'}
+                {lang.toUpperCase()}
               </button>
               <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors text-white/70 hover:text-white" title={t('bot.newChat')}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
