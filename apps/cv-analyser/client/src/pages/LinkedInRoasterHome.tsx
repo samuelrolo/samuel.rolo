@@ -90,6 +90,17 @@ export default function LinkedInRoasterHome() {
   const [, setLocation] = useLocation();
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);

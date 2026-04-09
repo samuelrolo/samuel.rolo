@@ -21,6 +21,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -221,30 +222,21 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [savedCvInfo, setSavedCvInfo] = useState<{filename: string; url: string} | null>(null);
 
-  // Load saved CV from user_profiles if logged in
+  // Load saved CV, email and LinkedIn from user_profiles if logged in
   useEffect(() => {
+    let active = true;
     (async () => {
-      try {
-        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-        if (!storageKey) return;
-        const stored = localStorage.getItem(storageKey);
-        if (!stored) return;
-        const parsed = JSON.parse(stored);
-        const accessToken = parsed?.access_token;
-        const userId = parsed?.user?.id;
-        if (!accessToken || !userId) return;
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}&select=cv_url,cv_filename,email`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
-        });
-        if (!res.ok) return;
-        const rows = await res.json();
-        if (rows?.[0]?.cv_url && rows[0].cv_filename) {
-          setSavedCvInfo({ filename: rows[0].cv_filename, url: rows[0].cv_url });
-        }
-        if (rows?.[0]?.email) setAnalysisEmail(rows[0].email);
-      } catch (e) { /* silent */ }
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      }
+      if (profile.email) setAnalysisEmail((current) => current || profile.email);
+      if (profile.linkedinUrl) setLinkedInUrl((current) => current || profile.linkedinUrl);
     })();
+    return () => { active = false; };
   }, []);
+
 
   // Save CV to Supabase Storage after analysis
   function persistCvToStorage(base64Content: string, filename: string) {

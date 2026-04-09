@@ -18,6 +18,7 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -101,6 +102,7 @@ export default function BundleHome() {
   const [file, setFile] = useState<File | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
+  const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -134,6 +136,18 @@ export default function BundleHome() {
   // Analysis
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const profile = await getAuthenticatedProfilePrefill();
+      if (!active || !profile) return;
+      if (profile.cvUrl && profile.cvFilename) setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.email) setEmail((current) => current || profile.email);
+    })();
+    return () => { active = false; };
+  }, []);
 
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
