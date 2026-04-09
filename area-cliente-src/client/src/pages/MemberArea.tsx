@@ -162,7 +162,7 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
           </h4>
         </div>
         <button onClick={onClose} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">
-          {lang === 'pt' ? 'Fechar' : lang === 'es' ? 'Cerrar' : 'Close'}
+          {t('member.lib.close')}
         </button>
       </div>
 
@@ -870,7 +870,7 @@ export default function MemberArea() {
       const orderType = sessionStorage.getItem('s2iExtraType');
       if (orderId && orderType) {
         // ── Other extra analyses: poll backend ──
-        toast.info(lang === 'pt' ? 'A verificar pagamento...' : lang === 'es' ? 'Verificando pago...' : 'Verifying payment...');
+        toast.info(t('member.lib.verifyingPayment'));
         window.history.replaceState({}, '', window.location.pathname);
         
         // Polling loop since Stripe webhooks can take a few seconds
@@ -882,13 +882,13 @@ export default function MemberArea() {
               if (data.paid) {
                 sessionStorage.removeItem('s2iExtraOrderId');
                 sessionStorage.removeItem('s2iExtraType');
-                toast.success(lang === 'pt' ? 'Pagamento confirmado!' : lang === 'es' ? '¡Pago confirmado!' : 'Payment confirmed!');
+                toast.success(t('member.lib.paymentConfirmed'));
                 setAutoTriggerAnalysis(orderType);
               } else if (attempts < 5) {
                 attempts++;
                 setTimeout(checkStatus, 2000);
               } else {
-                toast.error(lang === 'pt' ? 'Demorou muito tempo. Atualiza a página e tenta novamente.' : lang === 'es' ? 'Tardando demasiado. Actualiza e inténtalo de nuevo.' : 'Taking too long. Refresh and try again.');
+                toast.error(t('member.lib.paymentTimeout'));
               }
             })
             .catch(e => {
@@ -1090,11 +1090,11 @@ export default function MemberArea() {
   // ─── Tool execution functions ──────────────────────────────────────────
   const runCvAnalysis = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    if (weeklyUsage >= weeklyLimit) { setAnalysisError(lang === 'pt' ? 'Atingiste o limite semanal de análises do teu plano.' : lang === 'es' ? 'Has alcanzado el límite semanal de análisis de tu plan.' : 'You have reached your weekly analysis limit.'); return; }
+    if (weeklyUsage >= weeklyLimit) { setAnalysisError(t('member.lib.weeklyLimitReached')); return; }
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.' : lang === 'es' ? 'No se pudo leer el CV. Sube un archivo o actualiza tu CV en el perfil.' : 'Could not read CV.'); setAnalyzing(false); return; }
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(t('member.lib.couldNotReadCvProfile')); setAnalyzing(false); return; }
       const body = buildCvRequestBody(cvData, 'cv_extraction');
       const result = await fetchWithRetry(body);
       const rawAnalysis = result?.analysis || result;
@@ -1102,15 +1102,15 @@ export default function MemberArea() {
       setAnalysisResult({ ...result, _enriched: enriched });
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'cv_analyser', data: { source: 'member_area', plan: subscription.plan, tier: planTier, captured_at: new Date().toISOString(), email: profile?.email, analysis: rawAnalysis, enriched } });
       setWeeklyUsage(prev => prev + 1);
-    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : lang === 'es' ? 'El análisis tardó demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? t('member.lib.analysisTooSlow') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
   }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, getCvData, fetchWithRetry]);
 
   const runLinkedinAnalysis = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    if (weeklyUsage >= weeklyLimit) { setAnalysisError(lang === 'pt' ? 'Atingiste o limite semanal de análises do teu plano.' : lang === 'es' ? 'Has alcanzado el límite semanal de análisis de tu plan.' : 'You have reached your weekly analysis limit.'); return; }
+    if (weeklyUsage >= weeklyLimit) { setAnalysisError(t('member.lib.weeklyLimitReached')); return; }
     const linkedinUrl = profile?.linkedin_url;
-    if (!linkedinUrl || !linkedinUrl.includes('linkedin.com/in/')) { setAnalysisError(lang === 'pt' ? 'Adiciona o teu perfil LinkedIn nas definições do perfil.' : lang === 'es' ? 'Añade tu perfil LinkedIn en la configuración del perfil.' : 'Add your LinkedIn profile URL.'); return; }
+    if (!linkedinUrl || !linkedinUrl.includes('linkedin.com/in/')) { setAnalysisError(t('member.lib.addLinkedinSettingsUrl')); return; }
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
@@ -1128,7 +1128,7 @@ export default function MemberArea() {
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'linkedin_roaster', data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
       setWeeklyUsage(prev => prev + 1);
-    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : lang === 'es' ? 'El análisis tardó demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? t('member.lib.analysisTooSlow') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
   }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, profile, getCvData, fetchWithRetry]);
 
@@ -1139,7 +1139,7 @@ export default function MemberArea() {
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : lang === 'es' ? 'No se pudo leer el CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(t('member.lib.couldNotReadCv')); setAnalyzing(false); return; }
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
@@ -1151,7 +1151,7 @@ export default function MemberArea() {
       const extraPrice = isExtra ? (planTier === 'pro' ? 4.75 : 9.50) : 0;
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, is_extra: isExtra, extra_price: extraPrice, analysis: result } });
       setMonthlyCareerPathUsed(prev => prev + 1);
-    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : lang === 'es' ? 'El análisis tardó demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? t('member.lib.analysisTooSlow') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
   }, [user?.id, subscription, planTier, monthlyCareerPathUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
@@ -1162,7 +1162,7 @@ export default function MemberArea() {
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : lang === 'es' ? 'No se pudo leer el CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(t('member.lib.couldNotReadCv')); setAnalyzing(false); return; }
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
@@ -1175,7 +1175,7 @@ export default function MemberArea() {
       const extraPrice = isExtra ? (planTier === 'pro' ? 9.75 : 19.50) : 0;
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, is_extra: isExtra, extra_price: extraPrice, analysis: result } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
-    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : lang === 'es' ? 'El análisis tardó demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? t('member.lib.analysisTooSlow') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
   }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
@@ -1243,11 +1243,11 @@ export default function MemberArea() {
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
             <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors">
               <Upload className="w-3.5 h-3.5" />
-              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV (PDF, DOCX, TXT)' : lang === 'es' ? 'O cargar otro CV (PDF, DOCX, TXT)' : 'Or upload another CV')}
+              {cvFile ? cvFile.name : t('member.lib.uploadAnotherCvLong')}
             </button>
           </div>
           <button onClick={runCvAnalysis} disabled={analyzing || (!profile?.cv_url && !cvFile) || (weeklyUsage >= weeklyLimit)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar...' : lang === 'es' ? 'Analizando...' : 'Analyzing...'}</>) : (<><BarChart3 className="w-4 h-4" />{lang === 'pt' ? 'Executar análise de CV' : lang === 'es' ? 'Ejecutar análisis de CV' : 'Run CV analysis'}</>)}
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.lib.analyzing')}</>) : (<><BarChart3 className="w-4 h-4" />{t('member.lib.runCvAnalysis')}</>)}
           </button>
         </div>
       );
@@ -1271,12 +1271,12 @@ export default function MemberArea() {
             ) : (
               <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
                 <AlertCircle className="w-3.5 h-3.5" />
-                <span>{lang === 'pt' ? 'Adiciona o teu URL do LinkedIn no perfil.' : lang === 'es' ? 'Añade tu URL de LinkedIn en tu perfil.' : 'Add your LinkedIn URL in your profile.'}</span>
+                <span>{t('member.lib.addLinkedinProfileUrl')}</span>
               </div>
             )}
           </div>
           <button onClick={runLinkedinAnalysis} disabled={analyzing || !profile?.linkedin_url || (weeklyUsage >= weeklyLimit)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar perfil LinkedIn...' : lang === 'es' ? 'Analizando perfil LinkedIn...' : 'Analyzing LinkedIn...'}</>) : (<><Linkedin className="w-4 h-4" />{lang === 'pt' ? 'Analisar perfil LinkedIn' : lang === 'es' ? 'Analizar perfil LinkedIn' : 'Analyze LinkedIn profile'}</>)}
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{t('member.lib.analyzingLinkedin')}</>) : (<><Linkedin className="w-4 h-4" />{t('member.lib.runLinkedinAnalysis')}</>)}
           </button>
         </div>
       );
@@ -1309,7 +1309,7 @@ export default function MemberArea() {
           </div>
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
-            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : lang === 'es' ? 'O cargar otro CV' : 'Or upload another CV')}</button>
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : t('member.lib.uploadAnotherCv')}</button>
           </div>
           <div>
             <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{t('member.li.profileLabel')} <span className="text-red-400">*</span></label>
@@ -1318,12 +1318,12 @@ export default function MemberArea() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : lang === 'es' ? 'País' : 'Country'}</label>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{t('member.lib.country')}</label>
               <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : lang === 'es' ? 'Región' : 'Region'}</label>
-              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : lang === 'es' ? 'Seleccionar región...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{t('member.lib.region')}</label>
+              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{t('member.lib.selectRegion')}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
           <button onClick={() => { if (!cpAvailable) { setPendingExtraRun('career_path'); } else { runCareerPath(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
@@ -1360,7 +1360,7 @@ export default function MemberArea() {
           </div>
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
-            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : lang === 'es' ? 'O cargar otro CV' : 'Or upload another CV')}</button>
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : t('member.lib.uploadAnotherCv')}</button>
           </div>
           <div>
             <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{t('member.li.profileLabel')} <span className="text-red-400">*</span></label>
@@ -1369,12 +1369,12 @@ export default function MemberArea() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : lang === 'es' ? 'País' : 'Country'}</label>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{t('member.lib.country')}</label>
               <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : lang === 'es' ? 'Región' : 'Region'}</label>
-              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : lang === 'es' ? 'Seleccionar región...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{t('member.lib.region')}</label>
+              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{t('member.lib.selectRegion')}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
           <button onClick={() => { if (!ciAvailable) { setPendingExtraRun('career_intelligence'); } else { runCareerIntelligence(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
@@ -1773,14 +1773,14 @@ return null;
                         {analysisResult && (
                           analysisResult._enriched ? (
                             <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
-                              <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{t('member.cv.analysisComplete')}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{lang === 'pt' ? 'Fechar' : lang === 'es' ? 'Cerrar' : 'Close'}</button></div>
+                              <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{t('member.cv.analysisComplete')}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{t('member.lib.close')}</button></div>
                               <div data-analysis-result="true">
                                 <AnalysisResultsFull data={analysisResult._enriched} isPaid={true} />
                               </div>
                               <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gold/10">
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{t('member.lib.savedToLib')}</div>
                                 <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{t('member.lib.print')}</button>
-                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : lang === 'es' ? 'Enviar por correo' : 'Send by email'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{t('member.lib.sendByEmail')}</button>
                               </div>
                             </div>
                           ) : (
@@ -1791,7 +1791,7 @@ return null;
                               <div className="flex items-center gap-3 mt-3">
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{t('member.lib.savedToLib')}</div>
                                 <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{t('member.lib.print')}</button>
-                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : lang === 'es' ? 'Enviar por correo' : 'Send by email'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{t('member.lib.sendByEmail')}</button>
                               </div>
                             </div>
                           )
@@ -2051,7 +2051,7 @@ return null;
                 </div>
               </div>
               <button onClick={() => setViewingAnalysis(null)} className="px-3 py-1.5 text-xs text-[#999] hover:text-[#1a1a1a] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-all">
-                {lang === 'pt' ? 'Fechar' : lang === 'es' ? 'Cerrar' : 'Close'}
+                {t('member.lib.close')}
               </button>
             </div>
             <div className="p-6">
@@ -2095,7 +2095,7 @@ return null;
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : lang === 'es' ? 'Cancelar' : 'Cancel'}</button>
+              <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{t('member.lib.cancel')}</button>
               <button onClick={() => {
                 const type = pendingExtraRun!;
                 const isCp = type === 'career_path';
@@ -2114,7 +2114,7 @@ return null;
                     : (planTier === 'pro' ? 'career_intelligence_member_pro' : 'career_intelligence_full'),
                 });
               }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
-                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Pagar e gerar' : lang === 'es' ? 'Pagar y generar' : 'Pay and generate'}
+                <Sparkles className="w-3.5 h-3.5" />{t('member.lib.payAndGenerate')}
               </button>
             </div>
           </div>
@@ -2152,7 +2152,7 @@ return null;
                 <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
                 <p className="text-sm font-semibold text-[#1a1a1a] mb-1">{t('member.email.success')}</p>
                 <p className="text-xs text-[#999] mb-4">{`${t('member.email.sentTo')} ${emailTo}`}</p>
-                <button onClick={() => setEmailModalOpen(false)} className="px-4 py-2 bg-gold text-white text-xs font-medium rounded-lg hover:bg-gold/90 transition-colors">{lang === 'pt' ? 'Fechar' : lang === 'es' ? 'Cerrar' : 'Close'}</button>
+                <button onClick={() => setEmailModalOpen(false)} className="px-4 py-2 bg-gold text-white text-xs font-medium rounded-lg hover:bg-gold/90 transition-colors">{t('member.lib.close')}</button>
               </div>
             ) : (
               <>
@@ -2162,7 +2162,7 @@ return null;
                 </div>
                 {emailError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{emailError}</span></div>)}
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setEmailModalOpen(false)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : lang === 'es' ? 'Cancelar' : 'Cancel'}</button>
+                  <button onClick={() => setEmailModalOpen(false)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{t('member.lib.cancel')}</button>
                   <button onClick={sendAnalysisEmail} disabled={emailSending} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gold rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50">
                     {emailSending ? (<><Loader2 className="w-3.5 h-3.5 animate-spin" />{t('member.email.sending')}</>) : (<><Send className="w-3.5 h-3.5" />{t('member.email.send')}</>)}
                   </button>
