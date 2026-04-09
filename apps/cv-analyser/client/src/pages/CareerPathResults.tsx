@@ -116,14 +116,14 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 }
 
 /* ─── Networking Entity Expandable Card ─── */
-function NetworkingEntityCard({ entity, isEN }: { entity: any; isEN: boolean }) {
+function NetworkingEntityCard({ entity }: { entity: any }) {
   const lang = getLang();
   const [expanded, setExpanded] = useState(false);
-  const typeLabels: Record<string, { en: string; pt: string; icon: string }> = {
-    community: { en: 'Community', pt: 'Comunidade', icon: '👥' },
-    event: { en: 'Event', pt: 'Evento', icon: '📅' },
-    association: { en: 'Association', pt: 'Associação', icon: '🏛️' },
-    conference: { en: 'Conference', pt: 'Conferência', icon: '🎤' },
+  const typeLabels: Record<string, { en: string; pt: string; es: string; icon: string }> = {
+    community: { en: 'Community', pt: 'Comunidade', es: 'Comunidad', icon: '👥' },
+    event: { en: 'Event', pt: 'Evento', es: 'Evento', icon: '📅' },
+    association: { en: 'Association', pt: 'Associação', es: 'Asociación', icon: '🏛️' },
+    conference: { en: 'Conference', pt: 'Conferência', es: 'Conferencia', icon: '🎤' },
   };
   const typeInfo = typeLabels[entity.type] || typeLabels.community;
   return (
@@ -136,7 +136,7 @@ function NetworkingEntityCard({ entity, isEN }: { entity: any; isEN: boolean }) 
           <span className="text-sm shrink-0">{typeInfo.icon}</span>
           <span className="text-xs font-semibold text-foreground truncate">{entity.name}</span>
           <span className="text-[9px] bg-[#C9A961]/15 text-[#C9A961] px-1.5 py-0.5 rounded shrink-0 font-medium">
-            {lang === 'en' ? typeInfo.en : typeInfo.pt}
+            {typeInfo[lang] || typeInfo.pt}
           </span>
         </div>
         {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />}
@@ -175,7 +175,7 @@ function NetworkingEntityCard({ entity, isEN }: { entity: any; isEN: boolean }) 
 }
 
 /* ─── Locked Section Preview ─── */
-function LockedPreview({ title, items, isEN = false }: { title: string; items: string[]; isEN?: boolean }) {
+function LockedPreview({ title, items }: { title: string; items: string[] }) {
   const lang = getLang();
   return (
     <div className="relative bg-card border border-border rounded-xl p-5 overflow-hidden">
@@ -1583,7 +1583,7 @@ export default function CareerPathResults() {
                       {n.entities && n.entities.length > 0 ? (
                         <div className="space-y-2 mt-2">
                           {n.entities.slice(0, 3).map((entity: any, j: number) => (
-                            <NetworkingEntityCard key={j} entity={entity} isEN={lang === 'en'} />
+                            <NetworkingEntityCard key={j} entity={entity} />
                           ))}
                         </div>
                       ) : (
