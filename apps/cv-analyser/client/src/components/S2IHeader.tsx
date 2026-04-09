@@ -4,10 +4,10 @@
  * 
  * Props:
  *   activePage: current page identifier for highlighting
- *   langToggleHref: link for the EN version toggle
+ *   langToggleHref: link for the EN version of this page
  */
 import { useState, useEffect, useRef } from "react";
-import { Globe, Menu, X } from "lucide-react";
+import { Globe, Menu, X, ChevronDown } from "lucide-react";
 
 interface S2IHeaderProps {
   activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'estudante' | 'servicos' | 'knowledge-hub' | 'sobre' | 'contactos' | 'home' | '';
@@ -31,6 +31,9 @@ const navItems = [
 export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolledDown, setScrolledDown] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
 
   // Lock body scroll when mobile menu is open
@@ -53,6 +56,23 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close desktop lang dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target as Node)) {
+        setLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Language options: PT is active (current page), EN links to langToggleHref
+  const langOptions = [
+    { code: 'PT', label: 'Português', href: null, active: true },
+    { code: 'EN', label: 'English', href: langToggleHref || null, active: false },
+  ];
 
   return (
     <>
@@ -98,28 +118,43 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
             >
               Login
             </a>
-            {langToggleHref && (
-              <a
-                href={langToggleHref}
+            {/* Desktop Language Dropdown */}
+            <div ref={langDropdownRef} className="relative">
+              <button
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[0.7rem] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 <Globe className="w-3.5 h-3.5" />
-                EN
-              </a>
-            )}
+                PT
+                <ChevronDown className={`w-3 h-3 transition-transform ${langDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {langDropdownOpen && (
+                <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
+                  <span className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C9A961] bg-[#C9A961]/5 cursor-default">
+                    <span className="w-2 h-2 rounded-full bg-[#C9A961]" />
+                    PT — Português
+                  </span>
+                  {langToggleHref && (
+                    <a href={langToggleHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+                      <span className="w-2 h-2 rounded-full bg-slate-300" />
+                      EN — English
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Actions — inside header (visible when not scrolled) */}
           <div className="lg:hidden flex items-center gap-1">
-            {langToggleHref && (
-              <a
-                href={langToggleHref}
-                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                EN
-              </a>
-            )}
+            {/* Mobile Language Button (inline, before hamburger) */}
+            <button
+              onClick={() => setMobileLangOpen(!mobileLangOpen)}
+              className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              PT
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 -mr-2 text-slate-500 hover:text-slate-800"
@@ -168,22 +203,35 @@ export default function S2IHeader({ activePage = '', langToggleHref }: S2IHeader
                 {item.label}
               </a>
             ))}
-            <div className="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
+            {/* Mobile Language Selector */}
+            <div className="pt-4 mt-4 border-t border-slate-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="w-4 h-4 text-slate-400" />
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">Idioma</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30 text-sm font-semibold text-[#C9A961] cursor-default">
+                  PT — Português
+                </span>
+                {langToggleHref && (
+                  <a
+                    href={langToggleHref}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                  >
+                    EN — English
+                  </a>
+                )}
+              </div>
+            </div>
+            {/* Login Button */}
+            <div className="pt-3">
               <a
                 href="/area-cliente/"
-                className="s2i-login-btn px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
+                className="s2i-login-btn block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
               >
                 Login
               </a>
-              {langToggleHref && (
-                <a
-                  href={langToggleHref}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#C9A961]/30 text-sm font-medium text-[#C9A961]"
-                >
-                  <Globe className="w-4 h-4" />
-                  EN
-                </a>
-              )}
             </div>
           </div>
         </div>
