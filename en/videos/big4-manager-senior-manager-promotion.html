@@ -202,51 +202,62 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav-bar">
-        <div class="nav-inner">
-            <a href="/en/pages/home" class="nav-logo">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire">
-            </a>
-            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-                <span></span><span></span><span></span>
-            </button>
-            <div class="nav-links">
-                <a href="/en/pages/home">Home</a>
-                <a href="/cv-analyser">CV Analyser</a>
-                <a href="/career-path">Career Path</a>
-                <a href="/career-intelligence">Career Intelligence</a>
-                <a href="/en/pages/knowledge">Knowledge</a>
-                <a href="/en/pages/about.html">About</a>
-                <a href="/en/pages/contacts.html">Contacts</a>
-                <a href="/area-cliente/sobre" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;text-decoration:none;color:inherit;margin-right:8px;">Client Area</a> <a href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.3rem 0.8rem;border-radius:4px;font-weight:600;">Login</a>
-                <a href="/videos/big4-manager-senior-manager-promocao" class="lang-switch">PT</a>
-            </div>
-        </div>
-    </nav>
+    
     <!-- Hero -->
-    <header class="video-hero">
-        <div class="video-hero-inner">
-            <div class="breadcrumb">
-                <a href="/en/pages/home">Home</a>
-                <span>›</span>
-                <a href="/en/pages/knowledge">Knowledge</a>
-                <span>›</span>
-                <a href="/en/videos">Videos</a>
-                <span>›</span>
-                <span>Manager → Senior Manager</span>
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm font-sans" id="s2i-header">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <a href="https://www.share2inspire.pt" class="flex items-center gap-2 shrink-0">
+          <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" class="h-8" style="width:auto" />
+        </a>
+        <nav class="hidden lg:flex items-center gap-1">
+          <a href="https://www.share2inspire.pt/en/" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Home</a>
+          <a href="/cv-analyser" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">CV Analyser</a>
+          <a href="/career-path" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Career Path</a>
+          <a href="/career-intelligence" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Career Intelligence</a>
+          <a href="/linkedin-roaster" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">LinkedIn Roaster</a>
+          <a href="/bundle" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Bundle</a>
+          <a href="/en/estudante" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Student Pack</a>
+          <a href="/servicos" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Services</a>
+          <a href="/conhecimento" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Knowledge Hub</a>
+          <a href="/en/pages/about" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">About</a>
+          <a href="/en/pages/contact" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Contact</a>
+        </nav>
+        <div class="hidden lg:flex items-center gap-2">
+          <a href="/area-cliente/" class="px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors">Login</a>
+          <!-- Language dropdown -->
+          <div class="relative" id="langDropdown">
+            <button onclick="document.getElementById('langMenu').classList.toggle('hidden')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[0.7rem] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span id="langLabel">EN</span>
+            </button>
+            <div id="langMenu" class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg py-1 min-w-[130px] z-50">
+              <a href="/sobre" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" data-lang="pt">PT — Português</a>
+              <a href="#" onclick="setLang('en'); return false;" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#C9A961] font-medium bg-[#C9A961]/5" data-lang="en">EN — English</a>
+              <a href="#" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" data-lang="es">ES — Español</a>
             </div>
-            <div class="tag-pills">
-                <span class="tag-pill tag-video"><i class="fab fa-youtube"></i> Video</span>
-                <span class="tag-pill tag-big4">Big4 · Career</span>
-            </div>
-            <h1>Why the Best <strong>Managers Fail</strong> at Promotion?</h1>
-            <p>The skills that got you to Manager are not the same ones that will make you succeed as Senior Manager. In fact, if you keep doing the same thing, your career may stagnate. Discover what really changes in this critical transition and how to navigate the political and strategic complexity of the next level.</p>
-            <div class="video-meta-row">
-                <span><i class="fas fa-user"></i> <a href="https://www.linkedin.com/company/107046213" target="_blank" rel="noopener">Samuel Rolo</a></span>
-                <span><i class="fas fa-calendar"></i> 28 March 2026</span>
-                <span><i class="fas fa-tag"></i> #Big4 #Manager #SeniorManager #Career</span>
-            </div>
+          </div>
         </div>
+        <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-600 hover:text-slate-900" id="menuToggleBtn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-1">
+        <a href="https://www.share2inspire.pt/en/" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Home</a>
+        <a href="/cv-analyser" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">CV Analyser</a>
+        <a href="/career-path" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Career Path</a>
+        <a href="/career-intelligence" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Career Intelligence</a>
+        <a href="/linkedin-roaster" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">LinkedIn Roaster</a>
+        <a href="/bundle" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Bundle</a>
+        <a href="/en/estudante" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Student Pack</a>
+        <a href="/servicos" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Services</a>
+        <a href="/conhecimento" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Knowledge Hub</a>
+        <a href="/en/pages/about" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">About</a>
+        <a href="/en/pages/contact" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Contact</a>
+        <div class="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
+          <a href="/area-cliente/" class="px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors">Login</a>
+        </div>
+      </div>
     </header>
     <!-- Video Embed -->
     <div class="video-embed-wrap" style="margin-top:2rem;">
