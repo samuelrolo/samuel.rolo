@@ -706,9 +706,9 @@ export default function CareerIntelligenceHome() {
               {/* Trust badges inline */}
               <div className="flex flex-wrap justify-center gap-6 pt-1">
                 {[
-                  { icon: <Shield className="w-4 h-4" />, label: "Dados 100% privados" },
-                  { icon: <Zap className="w-4 h-4" />, label: "Resultado em < 1 min" },
-                  { icon: <Award className="w-4 h-4" />, label: "Criado por especialistas RH" },
+                  { icon: <Shield className="w-4 h-4" />, label: pick('Dados 100% privados', '100% Private Data', 'Datos 100% privados') },
+                  { icon: <Zap className="w-4 h-4" />, label: pick('Resultado em < 1 min', 'Result in < 1 min', 'Resultado en < 1 min') },
+                  { icon: <Award className="w-4 h-4" />, label: pick('Criado por especialistas RH', 'Created by HR experts', 'Creado por expertos en RRHH') },
                 ].map((badge, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="text-[#C9A961]">{badge.icon}</span>
@@ -847,13 +847,13 @@ export default function CareerIntelligenceHome() {
           <div className="max-w-xl mx-auto space-y-8 animate-in fade-in">
             <div className="text-center space-y-3">
               <h2 className="text-2xl font-bold text-foreground">Career Intelligence</h2>
-              <p className="text-sm text-muted-foreground">Carrega o teu CV e partilha o teu LinkedIn para a análise completa com recomendação.</p>
+              <p className="text-sm text-muted-foreground">{pick('Carrega o teu CV e partilha o teu LinkedIn para a análise completa com recomendação.', 'Upload your CV and share your LinkedIn for the complete analysis with recommendation.', 'Sube tu CV y comparte tu LinkedIn para el análisis completo con recomendación.')}</p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
               {/* CV Upload */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground">1. Carrega o teu CV</label>
+                <label className="text-sm font-semibold text-foreground">1. {pick('Carrega o teu CV', 'Upload your CV', 'Sube tu CV')}</label>
                 <label
                   htmlFor="ci-cv-upload"
                   className={`relative block w-full border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${file ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border hover:border-[#C9A961]/50 hover:bg-muted/50'}`}
@@ -869,8 +869,8 @@ export default function CareerIntelligenceHome() {
                     ) : (
                       <>
                         <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                        <p className="text-sm font-semibold text-foreground">Arrasta o teu CV ou clica para escolher</p>
-                        <p className="text-xs text-muted-foreground">PDF ou DOCX (máx. 5MB)</p>
+                        <p className="text-sm font-semibold text-foreground">{pick('Arrasta o teu CV ou clica para escolher', 'Drag your CV or click to choose', 'Arrastra tu CV o haz clic para elegir')}</p>
+                        <p className="text-xs text-muted-foreground">{pick('PDF ou DOCX (máx. 5MB)', 'PDF or DOCX (max. 5MB)', 'PDF o DOCX (máx. 5MB)')}</p>
                       </>
                     )}
                   </div>
@@ -887,7 +887,7 @@ export default function CareerIntelligenceHome() {
                   <Linkedin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <input
                     type="url"
-                    placeholder="https://linkedin.com/in/o-teu-perfil"
+                    placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                     disabled={loading}
@@ -895,27 +895,27 @@ export default function CareerIntelligenceHome() {
                   />
                 </div>
                 <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
-                  <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> O sistema irá analisar automaticamente:</p>
+                  <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> {pick('O sistema irá analisar automaticamente:', 'The system will automatically analyse:', 'El sistema analizará automáticamente:')}</p>
                   <div className="grid grid-cols-2 gap-1">
-                    {['Experiência profissional', 'Área de actuação', 'Competências identificadas', 'Evolução de funções'].map((item, i) => (
+                    {[pick('Experiência profissional', 'Professional experience', 'Experiencia profesional'), pick('Área de actuação', 'Area of expertise', 'Área de actuación'), pick('Competências identificadas', 'Identified skills', 'Competencias identificadas'), pick('Evolução de funções', 'Role progression', 'Evolución de funciones')].map((item, i) => (
                       <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {item}</p>
                     ))}
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1.5 italic">Nenhum dado será publicado ou partilhado.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1.5 italic">{pick('Nenhum dado será publicado ou partilhado.', 'No data will be published or shared.', 'Ningún dato será publicado ni compartido.')}</p>
                 </div>
               </div>
 
               {/* Career Goal */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground">3. Qual é o teu principal objectivo profissional? <span className="text-muted-foreground font-normal">(opcional)</span></label>
+                <label className="text-sm font-semibold text-foreground">3. {pick('Qual é o teu principal objectivo profissional?', 'What is your main professional goal?', '¿Cuál es tu principal objetivo profesional?')} <span className="text-muted-foreground font-normal">({pick('opcional', 'optional', 'opcional')})</span></label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { value: 'grow', label: 'Crescer na área actual' },
-                    { value: 'change', label: 'Mudar de área' },
-                    { value: 'responsibility', label: 'Mais responsabilidade' },
-                    { value: 'salary', label: 'Aumentar salário' },
-                    { value: 'tech', label: 'Tecnologia / Inovação' },
-                    { value: 'leadership', label: 'Liderança' },
+                    { value: 'grow', label: pick('Crescer na área actual', 'Grow in current field', 'Crecer en el área actual') },
+                    { value: 'change', label: pick('Mudar de área', 'Change field', 'Cambiar de área') },
+                    { value: 'responsibility', label: pick('Mais responsabilidade', 'More responsibility', 'Más responsabilidad') },
+                    { value: 'salary', label: pick('Aumentar salário', 'Increase salary', 'Aumentar salario') },
+                    { value: 'tech', label: pick('Tecnologia / Inovação', 'Technology / Innovation', 'Tecnología / Innovación') },
+                    { value: 'leadership', label: pick('Liderança', 'Leadership', 'Liderazgo') },
                   ].map((goal) => (
                     <button
                       key={goal.value}
