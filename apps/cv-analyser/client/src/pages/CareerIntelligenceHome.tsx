@@ -50,6 +50,9 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
 }
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
+const getPageLang = () => window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
+const getPageBasePath = () => getPageLang() === 'es' ? '/es' : '';
+
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -403,11 +406,12 @@ export default function CareerIntelligenceHome() {
         cvText = analysisSource.raw_text;
       }
 
+      const pageLang = getPageLang();
       localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
       localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       localStorage.setItem('careerPathCvFile', base64Content);
       localStorage.setItem('careerPathCvFilename', file.name);
-      localStorage.setItem('analysisLang', 'pt');
+      localStorage.setItem('analysisLang', pageLang);
       localStorage.setItem('analysisCountry', country);
       localStorage.setItem('analysisRegion', region || '');
       if (linkedinUrl) localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
@@ -529,6 +533,8 @@ export default function CareerIntelligenceHome() {
     setPaymentError(null);
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const pageLang = getPageLang();
+      const pageBasePath = getPageBasePath();
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -537,14 +543,14 @@ export default function CareerIntelligenceHome() {
           name: email.split('@')[0],
           product_type: memberProductType,
           orderId,
-          language: 'pt',
+          language: pageLang,
           country,
           region,
           currency: 'eur',
           amount: FINAL_PRICE,
           description: 'Career Intelligence — Share2Inspire',
-          success_url: `${window.location.origin}/career-intelligence/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}/career-intelligence`,
+          success_url: `${window.location.origin}${pageBasePath}/career-intelligence/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${pageBasePath}/career-intelligence`,
         })
       });
       const data = await response.json();

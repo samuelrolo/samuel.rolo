@@ -552,6 +552,24 @@ function getMarketDataLevel(country) {
 
 // Helper: Build localisation instruction block for prompts
 
+function getLanguageOutputInstruction(lang) {
+
+  if (lang === 'es') {
+
+    return 'IDIOMA DE SALIDA: Responde íntegramente en Español. Todo el contenido analítico generado por la IA debe estar en español claro, natural y profesional. No respondas en portugués ni en inglés.';
+
+  }
+
+  if (lang === 'en') {
+
+    return 'OUTPUT LANGUAGE: Respond entirely in English. All AI-generated analytical content must be in clear, natural, professional English.';
+
+  }
+
+  return 'LÍNGUA DE OUTPUT: Responde inteiramente em Português de Portugal (PT-PT). Todo o conteúdo analítico gerado pela IA deve estar em PT-PT rigoroso, sem gerúndios brasileiros.';
+
+}
+
 function getLocalisationInstructions(country, region, currency, lang) {
 
   const dataLevel = getMarketDataLevel(country);
@@ -1500,7 +1518,7 @@ serve(async (req)=>{
 
     // NEW: Extract language, country, region for internationalisation
 
-    const language = body.language || 'pt';
+    const language = body.language || body.lang || 'pt';
 
     // NEW: Extract optional job description for CV vs Job matching
 
@@ -1510,7 +1528,11 @@ serve(async (req)=>{
 
     const region = body.region || '';
 
+    const isPT = language === 'pt' || language === 'PT';
+
     const isEN = language === 'en';
+
+    const isES = language === 'es';
 
     const marketCtx = getMarketContext(country, region);
 
@@ -3830,7 +3852,11 @@ WARNING: Always retain previously collected data in the cv_data object, includin
 
       try {
 
-        const systemPrompt = isEN ? `You are a BRUTALLY HONEST senior CV analyst with 15+ years in recruitment and ATS systems. You score CVs STRICTLY — most CVs score between 35-65. A score above 75 is EXCEPTIONAL and rare. You MUST adapt ALL analysis, recommendations, and automation risk to the ACTUAL professional field detected in the CV (e.g., physiotherapy, nursing, teaching, engineering, retail — NOT just business/corporate). Every sentence must reference CONCRETE elements from the CV. NEVER use generic corporate phrases for non-corporate roles. ALL output must be in English.
+        const cvOutputLanguageInstruction = getLanguageOutputInstruction(language);
+
+        const systemPrompt = (isEN || isES) ? `You are a BRUTALLY HONEST senior CV analyst with 15+ years in recruitment and ATS systems. You score CVs STRICTLY — most CVs score between 35-65. A score above 75 is EXCEPTIONAL and rare. You MUST adapt ALL analysis, recommendations, and automation risk to the ACTUAL professional field detected in the CV (e.g., physiotherapy, nursing, teaching, engineering, retail — NOT just business/corporate). Every sentence must reference CONCRETE elements from the CV. NEVER use generic corporate phrases for non-corporate roles.
+
+${cvOutputLanguageInstruction}
 
 
 
@@ -3924,7 +3950,9 @@ As recomendações de automationRisk DEVEM ser específicas à área profissiona
 
         const companyContext = await enrichWithCompanyData(sanitized, language);
 
-        const userPrompt = isEN ? `Analyse the following CV and return a JSON EXACTLY with this structure. EACH field must contain analysis SPECIFIC to this CV — cite sections, phrases and concrete data from the CV.
+        const userPrompt = (isEN || isES) ? `${cvOutputLanguageInstruction}
+
+Analyse the following CV and return a JSON EXACTLY with this structure. EACH field must contain analysis SPECIFIC to this CV — cite sections, phrases and concrete data from the CV.
 
 
 
@@ -5843,7 +5871,11 @@ USING COMPANY DATA:
 
         const cpCompanyContext = await enrichWithCompanyData(sanitized, language);
 
-        const careerPathPrompt = isEN ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
+        const careerPathOutputLanguageInstruction = getLanguageOutputInstruction(language);
+
+        const careerPathPrompt = (isEN || isES) ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
+
+${careerPathOutputLanguageInstruction}
 
 
 
@@ -6807,7 +6839,7 @@ REGRAS CRÍTICAS:
 
                   {
 
-                    text: isEN ? 'You are an elite Career Advisor. I will send you a CV for Career Path analysis.' : 'És um Career Advisor de elite. Vou enviar-te um CV para análise Career Path.'
+                    text: isEN ? 'You are an elite Career Advisor. I will send you a CV for Career Path analysis.' : isES ? 'Eres un Career Advisor de élite. Voy a enviarte un CV para un análisis de Career Path.' : 'És um Career Advisor de elite. Vou enviar-te um CV para análise Career Path.'
 
                   }
 
@@ -6823,7 +6855,7 @@ REGRAS CRÍTICAS:
 
                   {
 
-                    text: isEN ? 'Understood. I am ready to analyse the CV and produce a complete, detailed and highly personalised Career Path report in JSON. I will address the professional by their first name, provide substantiated recommendations with concrete data, and ensure every section is rich and specific — not generic.' : 'Compreendido. Estou pronto para analisar o CV e produzir um relatório Career Path completo, detalhado e altamente personalizado em JSON. Vou tratar o profissional pelo primeiro nome, fornecer recomendações fundamentadas com dados concretos, e garantir que cada secção é rica e específica — nunca genérica.'
+                    text: isEN ? 'Understood. I am ready to analyse the CV and produce a complete, detailed and highly personalised Career Path report in JSON. I will address the professional by their first name, provide substantiated recommendations with concrete data, and ensure every section is rich and specific — not generic.' : isES ? 'Entendido. Estoy listo para analizar el CV y producir un informe completo, detallado y altamente personalizado de Career Path en JSON. Me dirigiré al profesional por su nombre de pila, aportaré recomendaciones fundamentadas con datos concretos y me aseguraré de que cada sección sea rica y específica, nunca genérica.' : 'Compreendido. Estou pronto para analisar o CV e produzir um relatório Career Path completo, detalhado e altamente personalizado em JSON. Vou tratar o profissional pelo primeiro nome, fornecer recomendações fundamentadas com dados concretos, e garantir que cada secção é rica e específica — nunca genérica.'
 
                   }
 
