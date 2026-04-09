@@ -9,6 +9,7 @@ import { useLocation } from "wouter";
 import { sendConversion } from "@/lib/gtag";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
+import PromoBanner from "@/components/PromoBanner";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -360,6 +361,7 @@ export default function LinkedInRoasterHome() {
   return (
     <div className="min-h-screen bg-background">
       <S2IHeader activePage="linkedin-roaster" langToggleHref="/en/linkedin-roaster" />
+      <PromoBanner />
 
       {/* Price Bar */}
       <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] text-white py-2.5 px-4 text-center text-sm">

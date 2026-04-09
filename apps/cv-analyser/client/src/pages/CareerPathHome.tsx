@@ -16,6 +16,7 @@ import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
+import PromoBanner from "@/components/PromoBanner";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -588,6 +589,7 @@ export default function CareerPathHome() {
       {/* Bundle banner removed — one page, one product, one decision */}
 
       <S2IHeader activePage="career-path" langToggleHref="/en/career-path" />
+      <PromoBanner />
 
       <main className="max-w-4xl mx-auto px-6 py-16">
 

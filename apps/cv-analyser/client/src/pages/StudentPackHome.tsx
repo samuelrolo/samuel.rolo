@@ -15,6 +15,7 @@ import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
+import PromoBanner from "@/components/PromoBanner";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -478,6 +479,7 @@ export default function StudentPackHome() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 to-white">
       <S2IHeader activePage="estudante" langToggleHref="/en/student-pack" />
+      <PromoBanner />
 
       {/* ─── HERO ─── */}
       {step === 'hero' && (

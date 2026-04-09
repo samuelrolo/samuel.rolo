@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Play, ExternalLink, Download, BookOpen, Headphones, Mail } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
+import PromoBanner from "@/components/PromoBanner";
 
 /* ─── DATA ─── */
 
@@ -270,6 +271,7 @@ export default function KnowledgeHubPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <S2IHeader activePage="conhecimento" langToggleHref="/en/pages/knowledge" />
+      <PromoBanner />
 
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-10 text-center bg-[#f9f7f4]">

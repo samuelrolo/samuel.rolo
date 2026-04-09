@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer } from "lucide-react";
 import S2IHeaderEN from "@/components/S2IHeaderEN";
 import S2IFooterEN from "@/components/S2IFooterEN";
+import PromoBanner from "@/components/PromoBanner";
 
 const tools = [
   {
@@ -113,6 +114,7 @@ export default function LandingPageEN() {
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <S2IHeaderEN activePage="home" langToggleHref="/" />
+      <PromoBanner />
 
       {/* ─── HERO ─── */}
       <section

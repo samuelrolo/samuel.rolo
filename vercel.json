@@ -6,6 +6,46 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/pages/servicos",
+      "destination": "/servicos",
+      "permanent": true
+    },
+    {
+      "source": "/pages/loja",
+      "destination": "/loja",
+      "permanent": true
+    },
+    {
+      "source": "/pages/politica-privacidade",
+      "destination": "/politica-privacidade",
+      "permanent": true
+    },
+    {
+      "source": "/pages/politica-cookies",
+      "destination": "/politica-cookies",
+      "permanent": true
+    },
+    {
+      "source": "/pages/informacao-legal",
+      "destination": "/informacao-legal",
+      "permanent": true
+    },
+    {
+      "source": "/pages/termos-condicoes",
+      "destination": "/termos-condicoes",
+      "permanent": true
+    },
+    {
+      "source": "/pages/tratamento-dados",
+      "destination": "/tratamento-dados",
+      "permanent": true
+    },
+    {
+      "source": "/pages/admin-analytics",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/area-cliente/membro",
       "destination": "/area-cliente/membros",
       "permanent": true
@@ -57,7 +97,7 @@
     },
     {
       "source": "/pages/about",
-      "destination": "/pages/sobre",
+      "destination": "/sobre",
       "statusCode": 301
     },
     {
@@ -354,18 +394,6 @@
       "destination": "/cv-analyser"
     },
     {
-      "source": "/pages/servicos",
-      "destination": "/cv-analyser"
-    },
-    {
-      "source": "/loja",
-      "destination": "/pages/loja"
-    },
-    {
-      "source": "/pages/loja",
-      "destination": "/pages/loja"
-    },
-    {
       "source": "/conhecimento",
       "destination": "/conhecimento"
     },
@@ -380,54 +408,6 @@
     {
       "source": "/pages/contactos",
       "destination": "/area-cliente"
-    },
-    {
-      "source": "/politica-privacidade",
-      "destination": "/pages/politica-privacidade"
-    },
-    {
-      "source": "/pages/politica-privacidade",
-      "destination": "/pages/politica-privacidade"
-    },
-    {
-      "source": "/politica-cookies",
-      "destination": "/pages/politica-cookies"
-    },
-    {
-      "source": "/pages/politica-cookies",
-      "destination": "/pages/politica-cookies"
-    },
-    {
-      "source": "/informacao-legal",
-      "destination": "/pages/informacao-legal"
-    },
-    {
-      "source": "/pages/informacao-legal",
-      "destination": "/pages/informacao-legal"
-    },
-    {
-      "source": "/termos-condicoes",
-      "destination": "/pages/termos-condicoes"
-    },
-    {
-      "source": "/pages/termos-condicoes",
-      "destination": "/pages/termos-condicoes"
-    },
-    {
-      "source": "/tratamento-dados",
-      "destination": "/pages/tratamento-dados"
-    },
-    {
-      "source": "/pages/tratamento-dados",
-      "destination": "/pages/tratamento-dados"
-    },
-    {
-      "source": "/admin-analytics",
-      "destination": "/pages/admin-analytics"
-    },
-    {
-      "source": "/pages/admin-analytics",
-      "destination": "/pages/admin-analytics"
     },
     {
       "source": "/area-cliente",
