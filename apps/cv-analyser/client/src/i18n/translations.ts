@@ -589,7 +589,7 @@ export function t(key: string, lang?: Lang, replacements?: Record<string, string
 }
 
 /** Helper for inline ternaries with template literals */
-export function pick(pt: string, en: string, es: string, lang?: Lang): string {
+export function pick<T = string>(pt: T, en: T, es: T, lang?: Lang): T {
   const l = lang || getLang();
   return l === 'pt' ? pt : l === 'es' ? es : en;
 }

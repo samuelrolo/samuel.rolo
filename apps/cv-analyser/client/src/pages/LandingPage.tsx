@@ -1,114 +1,177 @@
-// LandingPage — Share2Inspire Homepage (PT)
+// LandingPage — Share2Inspire Homepage (PT/EN/ES unified)
 // Sections: Hero, Trust Badges, Tools Grid, Target Audience, CTA, Testimonials
 import { useEffect } from "react";
 import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
-
-const tools = [
-  {
-    icon: <FileText className="w-6 h-6" />,
-    title: "CV Analyser",
-    desc: "Diagnóstico ATS em 30 segundos. Percebe porque não estás a ser chamado.",
-    link: "/cv-analyser",
-    cta: "Analisar CV",
-    color: "#C9A961",
-  },
-  {
-    icon: <Linkedin className="w-6 h-6" />,
-    title: "LinkedIn Roaster",
-    desc: "Feedback honesto sobre o teu perfil. O que os recrutadores realmente veem.",
-    link: "/linkedin-roaster",
-    cta: "Analisar perfil",
-    color: "#0077B5",
-  },
-  {
-    icon: <Route className="w-6 h-6" />,
-    title: "Career Path",
-    desc: "Roadmap personalizado com IA. 3 funções ideais, gaps e plano de ação.",
-    link: "/career-path",
-    cta: "Criar roadmap",
-    color: "#C9A961",
-  },
-  {
-    icon: <Zap className="w-6 h-6" />,
-    title: "Career Intelligence",
-    desc: "Comparação estratégica dos 3 caminhos com trade-offs e recomendação final.",
-    link: "/career-intelligence",
-    cta: "Saber mais",
-    color: "#C9A961",
-  },
-  {
-    icon: <GraduationCap className="w-6 h-6" />,
-    title: "Pack Estudante",
-    desc: "CV Analyser + LinkedIn Roaster num só pack. Diagnóstico completo por 7,99\u20AC.",
-    link: "/estudante",
-    cta: "Poupar 43%",
-    color: "#10b981",
-  },
-  {
-    icon: <Rocket className="w-6 h-6" />,
-    title: "KickStart Pro",
-    desc: "Sessão estratégica 1:1 para clarificar opções e definir os próximos passos.",
-    link: "/servicos",
-    cta: "Agendar sessão",
-    color: "#C9A961",
-  },
-];
-
-const testimonials = [
-  {
-    quote: "Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego.",
-    name: "Ana M.",
-    role: "Senior Manager",
-    initials: "AM",
-  },
-  {
-    quote: "O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte.",
-    name: "Diogo S.",
-    role: "Software Engineer",
-    initials: "DS",
-  },
-  {
-    quote: "Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. Um game-changer.",
-    name: "Mariana C.",
-    role: "Product Manager",
-    initials: "MC",
-  },
-];
-
-const ctaCards = [
-  {
-    icon: <FileText className="w-5 h-5" />,
-    label: "CV Analyser",
-    title: "Queres mais chamadas de recrutadores?",
-    desc: "Descobre o teu ATS Score e o que mudas no CV para passares os filtros.",
-    link: "/cv-analyser",
-    cta: "Analisa o teu CV",
-  },
-  {
-    icon: <Linkedin className="w-5 h-5" />,
-    label: "LinkedIn Roaster",
-    title: "O teu perfil está a atrair oportunidades?",
-    desc: "Recebe um diagnóstico honesto sobre o que os recrutadores realmente veem.",
-    link: "/linkedin-roaster",
-    cta: "Analisar perfil",
-  },
-  {
-    icon: <Route className="w-5 h-5" />,
-    label: "Career Path",
-    title: "Queres clareza sobre o teu próximo passo?",
-    desc: "Roadmap personalizado com IA: funções ideais, gaps e plano de ação 30-60-90.",
-    link: "/career-path",
-    cta: "Explorar o meu caminho",
-  },
-];
+import useTranslation from "@/i18n/useTranslation";
 
 export default function LandingPage() {
+  const { pick, localePath: lp } = useTranslation();
+
   useEffect(() => {
     document.title = "Share2Inspire | Career Intelligence Platform";
   }, []);
+
+  const tools = [
+    {
+      icon: <FileText className="w-6 h-6" />,
+      title: "CV Analyser",
+      desc: pick(
+        "Diagnóstico ATS em 30 segundos. Percebe porque não estás a ser chamado.",
+        "ATS diagnosis in 30 seconds. Find out why you're not getting callbacks.",
+        "Diagnóstico ATS en 30 segundos. Descubre por qué no te llaman."
+      ),
+      link: lp("/cv-analyser"),
+      cta: pick("Analisar CV", "Analyse my CV", "Analizar CV"),
+      color: "#C9A961",
+    },
+    {
+      icon: <Linkedin className="w-6 h-6" />,
+      title: "LinkedIn Roaster",
+      desc: pick(
+        "Feedback honesto sobre o teu perfil. O que os recrutadores realmente veem.",
+        "Honest feedback on your profile. What recruiters actually see.",
+        "Feedback honesto sobre tu perfil. Lo que los reclutadores realmente ven."
+      ),
+      link: lp("/linkedin-roaster"),
+      cta: pick("Analisar perfil", "Analyse profile", "Analizar perfil"),
+      color: "#0077B5",
+    },
+    {
+      icon: <Route className="w-6 h-6" />,
+      title: "Career Path",
+      desc: pick(
+        "Roadmap personalizado com IA. 3 funções ideais, gaps e plano de ação.",
+        "AI-powered personalised roadmap. 3 ideal roles, gaps and action plan.",
+        "Roadmap personalizado con IA. 3 funciones ideales, gaps y plan de acción."
+      ),
+      link: lp("/career-path"),
+      cta: pick("Criar roadmap", "Build roadmap", "Crear roadmap"),
+      color: "#C9A961",
+    },
+    {
+      icon: <Zap className="w-6 h-6" />,
+      title: "Career Intelligence",
+      desc: pick(
+        "Comparação estratégica dos 3 caminhos com trade-offs e recomendação final.",
+        "Strategic comparison of 3 career paths with trade-offs and final recommendation.",
+        "Comparación estratégica de 3 caminos con trade-offs y recomendación final."
+      ),
+      link: lp("/career-intelligence"),
+      cta: pick("Saber mais", "Learn more", "Saber más"),
+      color: "#C9A961",
+    },
+    {
+      icon: <GraduationCap className="w-6 h-6" />,
+      title: pick("Pack Estudante", "Student Pack", "Pack Estudiante"),
+      desc: pick(
+        "CV Analyser + LinkedIn Roaster num só pack. Diagnóstico completo por 7,99\u20AC.",
+        "CV Analyser + LinkedIn Roaster in one pack. Full diagnosis for \u20AC7.99.",
+        "CV Analyser + LinkedIn Roaster en un solo pack. Diagnóstico completo por 7,99\u20AC."
+      ),
+      link: lp("/estudante"),
+      cta: pick("Poupar 43%", "Save 43%", "Ahorrar 43%"),
+      color: "#10b981",
+    },
+    {
+      icon: <Rocket className="w-6 h-6" />,
+      title: "KickStart Pro",
+      desc: pick(
+        "Sessão estratégica 1:1 para clarificar opções e definir os próximos passos.",
+        "1:1 strategic session to clarify options and define your next steps.",
+        "Sesión estratégica 1:1 para clarificar opciones y definir los próximos pasos."
+      ),
+      link: lp("/servicos"),
+      cta: pick("Agendar sessão", "Book session", "Agendar sesión"),
+      color: "#C9A961",
+    },
+  ];
+
+  const testimonials = [
+    {
+      quote: pick(
+        "Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego.",
+        "I went from 45 to 82 ATS points in 10 minutes. Absolutely essential for job seekers.",
+        "Pasé de 45 a 82 puntos ATS en 10 minutos. Absolutamente esencial para quien busca empleo."
+      ),
+      name: "Ana M.",
+      role: "Senior Manager",
+      initials: "AM",
+    },
+    {
+      quote: pick(
+        "O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte.",
+        "The LinkedIn Roaster gave me feedback I'd never received. My profile is so much stronger now.",
+        "El LinkedIn Roaster me dio feedback que nunca había recibido. Mi perfil está mucho más fuerte."
+      ),
+      name: "Diogo S.",
+      role: "Software Engineer",
+      initials: "DS",
+    },
+    {
+      quote: pick(
+        "Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. Um game-changer.",
+        "Finally a tool that tells me exactly what recruiters want to see. A game-changer.",
+        "Por fin una herramienta que me dice exactamente lo que los reclutadores quieren ver. Un game-changer."
+      ),
+      name: "Mariana C.",
+      role: "Product Manager",
+      initials: "MC",
+    },
+  ];
+
+  const ctaCards = [
+    {
+      icon: <FileText className="w-5 h-5" />,
+      label: "CV Analyser",
+      title: pick(
+        "Queres mais chamadas de recrutadores?",
+        "Want more recruiter callbacks?",
+        "¿Quieres más llamadas de reclutadores?"
+      ),
+      desc: pick(
+        "Descobre o teu ATS Score e o que mudas no CV para passares os filtros.",
+        "Discover your ATS Score and what to change in your CV to pass the filters.",
+        "Descubre tu ATS Score y qué cambiar en tu CV para pasar los filtros."
+      ),
+      link: lp("/cv-analyser"),
+      cta: pick("Analisa o teu CV", "Analyse your CV", "Analiza tu CV"),
+    },
+    {
+      icon: <Linkedin className="w-5 h-5" />,
+      label: "LinkedIn Roaster",
+      title: pick(
+        "O teu perfil está a atrair oportunidades?",
+        "Is your profile attracting opportunities?",
+        "¿Tu perfil está atrayendo oportunidades?"
+      ),
+      desc: pick(
+        "Recebe um diagnóstico honesto sobre o que os recrutadores realmente veem.",
+        "Get an honest diagnosis of what recruiters actually see.",
+        "Recibe un diagnóstico honesto sobre lo que los reclutadores realmente ven."
+      ),
+      link: lp("/linkedin-roaster"),
+      cta: pick("Analisar perfil", "Analyse profile", "Analizar perfil"),
+    },
+    {
+      icon: <Route className="w-5 h-5" />,
+      label: "Career Path",
+      title: pick(
+        "Queres clareza sobre o teu próximo passo?",
+        "Want clarity on your next step?",
+        "¿Quieres claridad sobre tu próximo paso?"
+      ),
+      desc: pick(
+        "Roadmap personalizado com IA: funções ideais, gaps e plano de ação 30-60-90.",
+        "AI-powered personalised roadmap: ideal roles, gaps and 30-60-90 action plan.",
+        "Roadmap personalizado con IA: funciones ideales, gaps y plan de acción 30-60-90."
+      ),
+      link: lp("/career-path"),
+      cta: pick("Explorar o meu caminho", "Explore my path", "Explorar mi camino"),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
@@ -129,22 +192,49 @@ export default function LandingPage() {
       >
         <div className="relative z-10 px-6 max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-semibold leading-tight mb-4" style={{ letterSpacing: "-0.5px" }}>
-            Constrói a tua carreira com <strong className="text-[#C9A961]">estratégia</strong>,
-            <br className="hidden md:block" /> não por tentativa e erro
+            {pick(
+              <>Constrói a tua carreira com <strong className="text-[#C9A961]">estratégia</strong>,<br className="hidden md:block" /> não por tentativa e erro</>,
+              <>Build your career with <strong className="text-[#C9A961]">strategy</strong>,<br className="hidden md:block" /> not trial and error</>,
+              <>Construye tu carrera con <strong className="text-[#C9A961]">estrategia</strong>,<br className="hidden md:block" /> no por ensayo y error</>
+            )}
           </h1>
           <p className="text-base md:text-lg text-white/70 mb-10 max-w-xl mx-auto leading-relaxed">
-            Um ecossistema completo para perceberes onde estás, o que ajustar e qual o próximo passo certo.
+            {pick(
+              "Um ecossistema completo para perceberes onde estás, o que ajustar e qual o próximo passo certo.",
+              "A complete ecosystem to understand where you are, what to adjust and what the right next step is.",
+              "Un ecosistema completo para entender dónde estás, qué ajustar y cuál es el próximo paso correcto."
+            )}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/cv-analyser" className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
-              <h3 className="text-base font-semibold mb-1">Quero melhorar o meu CV</h3>
-              <p className="text-sm text-white/50 mb-3">Percebe porque não estás a ser chamado e o que mudar.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">Analisar o meu CV &rarr;</span>
+            <a href={lp("/cv-analyser")} className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
+              <h3 className="text-base font-semibold mb-1">
+                {pick("Quero melhorar o meu CV", "I want to improve my CV", "Quiero mejorar mi CV")}
+              </h3>
+              <p className="text-sm text-white/50 mb-3">
+                {pick(
+                  "Percebe porque não estás a ser chamado e o que mudar.",
+                  "Find out why you're not getting callbacks and what to change.",
+                  "Descubre por qué no te llaman y qué cambiar."
+                )}
+              </p>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">
+                {pick("Analisar o meu CV", "Analyse my CV", "Analizar mi CV")} &rarr;
+              </span>
             </a>
-            <a href="/career-path" className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
-              <h3 className="text-base font-semibold mb-1">Quero definir o meu próximo passo</h3>
-              <p className="text-sm text-white/50 mb-3">Descobre que caminho faz sentido para a tua evolução.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">Explorar o meu caminho &rarr;</span>
+            <a href={lp("/career-path")} className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
+              <h3 className="text-base font-semibold mb-1">
+                {pick("Quero definir o meu próximo passo", "I want to define my next step", "Quiero definir mi próximo paso")}
+              </h3>
+              <p className="text-sm text-white/50 mb-3">
+                {pick(
+                  "Descobre que caminho faz sentido para a tua evolução.",
+                  "Discover which path makes sense for your career growth.",
+                  "Descubre qué camino tiene sentido para tu evolución."
+                )}
+              </p>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">
+                {pick("Explorar o meu caminho", "Explore my path", "Explorar mi camino")} &rarr;
+              </span>
             </a>
           </div>
         </div>
@@ -157,15 +247,21 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
           <div className="flex items-center gap-3 text-center md:text-left">
             <Clock className="w-5 h-5 text-[#C9A961] shrink-0" />
-            <p className="text-sm text-slate-600">Diagnóstico em segundos, sem complexidade</p>
+            <p className="text-sm text-slate-600">
+              {pick("Diagnóstico em segundos, sem complexidade", "Diagnosis in seconds, no complexity", "Diagnóstico en segundos, sin complejidad")}
+            </p>
           </div>
           <div className="flex items-center gap-3 text-center md:text-left">
             <CheckSquare className="w-5 h-5 text-[#C9A961] shrink-0" />
-            <p className="text-sm text-slate-600">Baseado em critérios reais de recrutamento</p>
+            <p className="text-sm text-slate-600">
+              {pick("Baseado em critérios reais de recrutamento", "Based on real recruitment criteria", "Basado en criterios reales de reclutamiento")}
+            </p>
           </div>
           <div className="flex items-center gap-3 text-center md:text-left">
             <BarChart3 className="w-5 h-5 text-[#C9A961] shrink-0" />
-            <p className="text-sm text-slate-600">Recomendações claras e acionáveis</p>
+            <p className="text-sm text-slate-600">
+              {pick("Recomendações claras e acionáveis", "Clear and actionable recommendations", "Recomendaciones claras y accionables")}
+            </p>
           </div>
         </div>
       </section>
@@ -174,7 +270,11 @@ export default function LandingPage() {
       <section className="py-16 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-slate-900 mb-2">
-            As nossas <strong className="text-[#C9A961]">ferramentas</strong>
+            {pick(
+              <>As nossas <strong className="text-[#C9A961]">ferramentas</strong></>,
+              <>Our <strong className="text-[#C9A961]">tools</strong></>,
+              <>Nuestras <strong className="text-[#C9A961]">herramientas</strong></>
+            )}
           </h2>
           <div className="w-10 h-0.5 bg-[#C9A961] mx-auto mb-10" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -205,21 +305,39 @@ export default function LandingPage() {
       <section className="py-20 px-6" style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)" }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
-            Para quem é o <strong className="text-[#C9A961]">Share2Inspire</strong>?
+            {pick(
+              <>Para quem é o <strong className="text-[#C9A961]">Share2Inspire</strong>?</>,
+              <>Who is <strong className="text-[#C9A961]">Share2Inspire</strong> for?</>,
+              <>¿Para quién es <strong className="text-[#C9A961]">Share2Inspire</strong>?</>
+            )}
           </h2>
           <div className="w-10 h-0.5 bg-[#C9A961] mx-auto mb-10" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
               <User className="w-6 h-6 text-[#C9A961] mx-auto mb-3" />
-              <p className="text-sm text-white/70 leading-relaxed">Profissionais que não estão a ter respostas às candidaturas</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                {pick(
+                  "Profissionais que não estão a ter respostas às candidaturas",
+                  "Professionals not getting responses to applications",
+                  "Profesionales que no están recibiendo respuestas a sus candidaturas"
+                )}
+              </p>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
               <ArrowRightLeft className="w-6 h-6 text-[#C9A961] mx-auto mb-3" />
-              <p className="text-sm text-white/70 leading-relaxed">Pessoas em transição de carreira</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                {pick("Pessoas em transição de carreira", "People in career transition", "Personas en transición de carrera")}
+              </p>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
               <Timer className="w-6 h-6 text-[#C9A961] mx-auto mb-3" />
-              <p className="text-sm text-white/70 leading-relaxed">Quem quer crescer mas sente falta de direção</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                {pick(
+                  "Quem quer crescer mas sente falta de direção",
+                  "Those who want to grow but lack direction",
+                  "Quienes quieren crecer pero sienten falta de dirección"
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -228,9 +346,15 @@ export default function LandingPage() {
       {/* ─── CTA SECTION ─── */}
       <section className="py-20 px-6" style={{ background: "linear-gradient(180deg, #16213e 0%, #1a1a2e 100%)" }}>
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-[0.68rem] font-bold uppercase tracking-[2.5px] text-[#C9A961] mb-3">Começa hoje</p>
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">Por onde queres começar?</h2>
-          <p className="text-sm text-white/45 mb-10">Resultados em menos de 60 segundos. Sem subscrição.</p>
+          <p className="text-[0.68rem] font-bold uppercase tracking-[2.5px] text-[#C9A961] mb-3">
+            {pick("Começa hoje", "Start today", "Empieza hoy")}
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
+            {pick("Por onde queres começar?", "Where do you want to start?", "¿Por dónde quieres empezar?")}
+          </h2>
+          <p className="text-sm text-white/45 mb-10">
+            {pick("Resultados em menos de 60 segundos. Sem subscrição.", "Results in under 60 seconds. No subscription.", "Resultados en menos de 60 segundos. Sin suscripción.")}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {ctaCards.map((c) => (
               <div
@@ -253,7 +377,10 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="mt-8 text-[0.78rem] text-white/30">
-            Ou <a href="/servicos" className="text-[#C9A961]/60 hover:text-[#C9A961] transition-colors">vê todos os serviços &rarr;</a>
+            {pick("Ou", "Or", "O")}{" "}
+            <a href={lp("/servicos")} className="text-[#C9A961]/60 hover:text-[#C9A961] transition-colors">
+              {pick("vê todos os serviços", "see all services", "ver todos los servicios")} &rarr;
+            </a>
           </p>
         </div>
       </section>
@@ -262,7 +389,11 @@ export default function LandingPage() {
       <section className="py-20 px-6 bg-[#faf8f4]">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-slate-900 mb-2">
-            O que dizem os nossos <strong className="text-[#C9A961]">utilizadores</strong>
+            {pick(
+              <>O que dizem os nossos <strong className="text-[#C9A961]">utilizadores</strong></>,
+              <>What our <strong className="text-[#C9A961]">users</strong> say</>,
+              <>Lo que dicen nuestros <strong className="text-[#C9A961]">usuarios</strong></>
+            )}
           </h2>
           <div className="w-10 h-0.5 bg-[#C9A961] mx-auto mb-10" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

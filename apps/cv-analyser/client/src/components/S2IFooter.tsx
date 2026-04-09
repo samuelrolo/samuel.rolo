@@ -1,9 +1,18 @@
 /**
- * S2IFooter — Matches the Share2Inspire landing page footer exactly.
+ * S2IFooter — Unified i18n footer for PT/EN/ES.
  * Desktop: 5-column row (logo 33% + 4x 16.67%)
  * Mobile (<768px): 2-column grid, logo full-width on top
  */
+import { getLang } from '@/i18n/translations';
+import { localePath } from '@/i18n/useTranslation';
+
 export default function S2IFooter() {
+  const lang = getLang();
+  const lp = (ptPath: string) => localePath(ptPath, lang);
+
+  const pick = (pt: string, en: string, es: string) =>
+    lang === 'pt' ? pt : lang === 'es' ? es : en;
+
   const linkStyle: React.CSSProperties = {
     display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)',
     textDecoration: 'none', marginBottom: '10px', transition: 'color .3s',
@@ -44,34 +53,34 @@ export default function S2IFooter() {
               <img loading="lazy" src="/images/logo-sem-fundo.png" alt="Share2Inspire"
                 style={{ height: '200px', width: 'auto', marginBottom: '16px' }} />
             </div>
-            {/* Navegação */}
+            {/* Navigation */}
             <div>
-              <h5 style={headingStyle}>Navegação</h5>
-              <a href="/" style={linkStyle}>Início</a>
-              <a href="/sobre" style={linkStyle}>Sobre</a>
-              <a href="/servicos" style={linkStyle}>Serviços</a>
-              <a href="/conhecimento" style={{ ...linkStyle, marginBottom: 0 }}>Knowledge Hub</a>
+              <h5 style={headingStyle}>{pick('Navegação', 'Navigation', 'Navegación')}</h5>
+              <a href={lp('/')} style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
+              <a href={lp('/sobre')} style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
+              <a href={lp('/servicos')} style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
+              <a href={lp('/conhecimento')} style={{ ...linkStyle, marginBottom: 0 }}>Knowledge Hub</a>
             </div>
-            {/* Ferramentas */}
+            {/* Tools */}
             <div>
-              <h5 style={headingStyle}>Ferramentas</h5>
-              <a href="/cv-analyser" style={linkStyle}>CV Analyser</a>
-              <a href="/linkedin-roaster" style={linkStyle}>LinkedIn Roaster</a>
-              <a href="/career-path" style={linkStyle}>Career Path</a>
-              <a href="/career-intelligence" style={{ ...linkStyle, marginBottom: 0 }}>Career Intelligence</a>
+              <h5 style={headingStyle}>{pick('Ferramentas', 'Tools', 'Herramientas')}</h5>
+              <a href={lp('/cv-analyser')} style={linkStyle}>CV Analyser</a>
+              <a href={lp('/linkedin-roaster')} style={linkStyle}>LinkedIn Roaster</a>
+              <a href={lp('/career-path')} style={linkStyle}>Career Path</a>
+              <a href={lp('/career-intelligence')} style={{ ...linkStyle, marginBottom: 0 }}>Career Intelligence</a>
             </div>
             {/* Legal */}
             <div>
               <h5 style={headingStyle}>Legal</h5>
-              <a href="/politica-privacidade" style={linkStyle}>Privacidade</a>
+              <a href="/politica-privacidade" style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
               <a href="/politica-cookies" style={linkStyle}>Cookies</a>
-              <a href="/informacao-legal" style={linkStyle}>Informação Legal</a>
-              <a href="/termos-condicoes" style={linkStyle}>Termos e Condições</a>
-              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>Tratamento de Dados</a>
+              <a href="/informacao-legal" style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
+              <a href="/termos-condicoes" style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
+              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
             </div>
-            {/* Contacto */}
+            {/* Contact */}
             <div>
-              <h5 style={headingStyle}>Contacto</h5>
+              <h5 style={headingStyle}>{pick('Contacto', 'Contact', 'Contacto')}</h5>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.82rem', marginBottom: '15px', wordBreak: 'break-word' }}>
                 <span style={{ color: '#C9A961', marginRight: '8px' }}>✉</span>geral@share2inspire.pt
               </p>
@@ -90,7 +99,7 @@ export default function S2IFooter() {
           {/* Copyright */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '40px', paddingTop: '25px', textAlign: 'center' }}>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1.5px', margin: 0 }}>
-              © 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.
+              © 2026 Share2Inspire | Samuel Rolo. {pick('Todos os direitos reservados.', 'All rights reserved.', 'Todos los derechos reservados.')}
             </p>
           </div>
         </div>

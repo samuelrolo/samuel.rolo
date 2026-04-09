@@ -1,6 +1,5 @@
-// LinkedIn Roaster — Share2Inspire
+// LinkedIn Roaster — Share2Inspire (PT/EN/ES unified)
 // Roast brutal + construtivo ao perfil LinkedIn
-// Análise honesta e directa que mostra o que recrutadores realmente pensam
 
 import { useState, useEffect } from "react";
 import { Linkedin, Flame, Target, Eye, TrendingUp, Star, CheckCircle2, Lock, Sparkles, Search, Globe, Zap, ArrowRight, Shield, Check, Menu, X, AlertCircle, Users, Award, MessageSquare, ThumbsDown, ThumbsUp, Lightbulb, CreditCard, Smartphone, Ticket } from "lucide-react";
@@ -10,61 +9,81 @@ import { sendConversion } from "@/lib/gtag";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
+import useTranslation from "@/i18n/useTranslation";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
-const PRICE = '3,99';
 const PRICE_NUM = 3.99;
 
-/* ─── Testimonials ─── */
-const testimonials = [
-  {
-    name: "Miguel Santos",
-    role: "Founder @ TechStartup",
-    text: "Recebi o roast e ri-me tanto que quase chorei. Mas depois apliquei tudo — e em 2 semanas recebi 3x mais mensagens de recrutadores.",
-    rating: 5,
-  },
-  {
-    name: "Ana Rodrigues",
-    role: "Marketing Manager",
-    text: "O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.",
-    rating: 5,
-  },
-  {
-    name: "Pedro Oliveira",
-    role: "Engenheiro DevOps",
-    text: "Descobri que o meu perfil parecia um CV dos anos 2000. 15 minutos de mudanças depois do roast e já tinha um perfil que gera leads.",
-    rating: 5,
-  },
-];
-
-const roastHeadlines = [
-  { text: "O teu LinkedIn precisa de um roast,", highlight: "não de mais likes" },
-  { text: "Descobre o que os recrutadores pensam", highlight: "mas nunca te dizem" },
-  { text: "O teu perfil não convence ninguém?", highlight: "Vamos mudar isso" },
-];
-
-const roastFeatures = [
-  { icon: Flame, label: "Roast Score", desc: "Nota de 0-100 com classificação brutal" },
-  { icon: Eye, label: "Visão do Recrutador", desc: "O que vêem nos primeiros 6 segundos" },
-  { icon: ThumbsDown, label: "Red Flags", desc: "Erros que te eliminam automaticamente" },
-  { icon: ThumbsUp, label: "Green Flags", desc: "O que já tens de bom (se tiveres)" },
-  { icon: Lightbulb, label: "QuickFixes", desc: "Mudanças de 5 min com impacto máximo" },
-  { icon: Target, label: "Headline Killer", desc: "Headline optimizado que gera cliques" },
-];
-
-const whatYouGet = [
-  "Análise do Headline — o teu cartão de visita digital",
-  "Review da foto e banner — primeira impressão conta",
-  "Scan do About/Resumo — copy que vende ou que afasta",
-  "Experiência profissional — como a apresentas importa",
-  "Skills & Endorsements — relevância vs ruído",
-  "Headline killer pronto a usar",
-  "Plano de acção com 5 quick-fixes prioritários",
-];
+/* ─── COMPONENT ─── */
 
 export default function LinkedInRoasterHome() {
-  useEffect(() => { document.title = "LinkedIn Roaster — Roast Brutal ao teu Perfil LinkedIn | Share2Inspire"; }, []);
+  const { pick, lang, localePath: lp } = useTranslation();
+  const isPT = lang === 'pt';
+
+  const PRICE = isPT ? '3,99' : '3.99';
+  const priceDisplay = isPT ? `${PRICE}€` : `€${PRICE}`;
+
+  /* ─── i18n data ─── */
+  const testimonials = isPT ? [
+    { name: "Miguel Santos", role: "Founder @ TechStartup", text: "Recebi o roast e ri-me tanto que quase chorei. Mas depois apliquei tudo — e em 2 semanas recebi 3x mais mensagens de recrutadores.", rating: 5 },
+    { name: "Ana Rodrigues", role: "Marketing Manager", text: "O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.", rating: 5 },
+    { name: "Pedro Oliveira", role: "Engenheiro DevOps", text: "Descobri que o meu perfil parecia um CV dos anos 2000. 15 minutos de mudanças depois do roast e já tinha um perfil que gera leads.", rating: 5 },
+  ] : [
+    { name: "James Mitchell", role: "Founder @ TechStartup", text: "I got the roast and laughed so hard I nearly cried. But then I applied everything — and within 2 weeks I got 3x more recruiter messages.", rating: 5 },
+    { name: "Sarah Thompson", role: "Marketing Manager", text: "My headline was just 'Marketing Manager' and I thought that was enough. The Roaster showed me why nobody was finding me. Brutal but necessary.", rating: 5 },
+    { name: "David Chen", role: "DevOps Engineer", text: "Discovered my profile looked like a CV from 2005. 15 minutes of changes after the roast and I had a profile that generates leads.", rating: 5 },
+  ];
+
+  const roastHeadlines = [
+    { text: pick("O teu LinkedIn precisa de um roast,", "Your LinkedIn needs a roast,", "Tu LinkedIn necesita un roast,"), highlight: pick("não de mais likes", "not more likes", "no más likes") },
+    { text: pick("Descobre o que os recrutadores pensam", "Find out what recruiters think", "Descubre lo que los reclutadores piensan"), highlight: pick("mas nunca te dizem", "but never tell you", "pero nunca te dicen") },
+    { text: pick("O teu perfil não convence ninguém?", "Your profile isn't convincing anyone?", "¿Tu perfil no convence a nadie?"), highlight: pick("Vamos mudar isso", "Let's fix that", "Vamos a cambiarlo") },
+  ];
+
+  const roastFeatures = [
+    { icon: Flame, label: "Roast Score", desc: pick("Nota de 0-100 com classificação brutal", "Score from 0-100 with brutal feedback", "Nota de 0-100 con clasificación brutal") },
+    { icon: Eye, label: pick("Visão do Recrutador", "Recruiter View", "Visión del Reclutador"), desc: pick("O que vêem nos primeiros 6 segundos", "What they see in the first 6 seconds", "Lo que ven en los primeros 6 segundos") },
+    { icon: ThumbsDown, label: "Red Flags", desc: pick("Erros que te eliminam automaticamente", "Mistakes that get you auto-rejected", "Errores que te eliminan automáticamente") },
+    { icon: ThumbsUp, label: "Green Flags", desc: pick("O que já tens de bom (se tiveres)", "What's actually good (if anything)", "Lo que ya tienes de bueno (si tienes)") },
+    { icon: Lightbulb, label: "QuickFixes", desc: pick("Mudanças de 5 min com impacto máximo", "5-minute changes with maximum impact", "Cambios de 5 min con impacto máximo") },
+    { icon: Target, label: pick("Headline Killer", "Killer Headline", "Headline Killer"), desc: pick("Headline optimizado que gera cliques", "Optimised headline that drives clicks", "Headline optimizado que genera clics") },
+  ];
+
+  const whatYouGet = isPT ? [
+    "Análise do Headline — o teu cartão de visita digital",
+    "Review da foto e banner — primeira impressão conta",
+    "Scan do About/Resumo — copy que vende ou que afasta",
+    "Experiência profissional — como a apresentas importa",
+    "Skills & Endorsements — relevância vs ruído",
+    "Headline killer pronto a usar",
+    "Plano de acção com 5 quick-fixes prioritários",
+  ] : lang === 'es' ? [
+    "Análisis del Headline — tu tarjeta de visita digital",
+    "Review de foto y banner — la primera impresión cuenta",
+    "Scan del About/Resumen — copy que vende o que aleja",
+    "Experiencia profesional — cómo la presentas importa",
+    "Skills & Endorsements — relevancia vs ruido",
+    "Headline killer listo para usar",
+    "Plan de acción con 5 quick-fixes prioritarios",
+  ] : [
+    "Headline Analysis — your digital business card",
+    "Photo & Banner review — first impressions matter",
+    "About/Summary scan — copy that sells vs repels",
+    "Work experience — presentation matters more than content",
+    "Skills & Endorsements — relevance vs noise",
+    "Killer headline ready to use",
+    "Action plan with 5 priority quick-fixes",
+  ];
+
+  useEffect(() => {
+    document.title = pick(
+      "LinkedIn Roaster — Roast Brutal ao teu Perfil LinkedIn | Share2Inspire",
+      "LinkedIn Roaster — Brutal Profile Roast with AI | Share2Inspire",
+      "LinkedIn Roaster — Roast Brutal a tu Perfil LinkedIn | Share2Inspire"
+    );
+  }, []);
+
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % roastHeadlines.length), 4000); return () => clearInterval(t); }, []);
 
@@ -77,7 +96,7 @@ export default function LinkedInRoasterHome() {
 
   // Payment state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(isPT ? 'mbway' : 'stripe');
   const [phone, setPhone] = useState("");
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -93,7 +112,7 @@ export default function LinkedInRoasterHome() {
   const [discountLoading, setDiscountLoading] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
-  const finalPriceStr = finalPrice.toFixed(2).replace('.', ',');
+  const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
 
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -107,9 +126,9 @@ export default function LinkedInRoasterHome() {
 
   // Step 1: Validate and show payment modal
   const handleProceedToPayment = () => {
-    if (!isValidLinkedinUrl(linkedinUrl)) { setError("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)"); return; }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Introduz um email válido"); return; }
-    if (!acceptedTerms) { setError("Aceita a Política de Privacidade"); return; }
+    if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)", "Enter a valid LinkedIn URL (e.g. linkedin.com/in/yourname)", "Introduce un URL de LinkedIn válido (ej: linkedin.com/in/nombre)")); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick("Introduz um email válido", "Enter a valid email", "Introduce un email válido")); return; }
+    if (!acceptedTerms) { setError(pick("Aceita a Política de Privacidade", "Please accept the Privacy Policy", "Acepta la Política de Privacidad")); return; }
     setError(null);
     localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
     localStorage.setItem('linkedinRoasterUrl', linkedinUrl);
@@ -118,33 +137,25 @@ export default function LinkedInRoasterHome() {
     setShowPaymentModal(true);
   };
 
-  // Step 2: Run analysis - called ONLY from verified payment callbacks
+  // Step 2: Run analysis
   const runAnalysis = async () => {
     setError(null);
     setLoading(true);
     const startTime = Date.now();
 
-    // Loading messages rotation
-    const messages = [
-      "A analisar o teu perfil LinkedIn...",
-      "A comparar com top performers do setor...",
-      "A avaliar headline, about e experiência...",
-      "A verificar SEO e keywords...",
-      "A preparar o teu relatório personalizado..."
-    ];
+    const messages = isPT
+      ? ["A analisar o teu perfil LinkedIn...", "A comparar com top performers do setor...", "A avaliar headline, about e experiência...", "A verificar SEO e keywords...", "A preparar o teu relatório personalizado..."]
+      : lang === 'es'
+      ? ["Analizando tu perfil LinkedIn...", "Comparando con top performers del sector...", "Evaluando headline, about y experiencia...", "Verificando SEO y keywords...", "Preparando tu informe personalizado..."]
+      : ["Analysing your LinkedIn profile...", "Comparing with top performers...", "Evaluating headline, about & experience...", "Checking SEO & keywords...", "Preparing your personalised report..."];
     let msgIdx = 0;
     setLoadingMsg(messages[0]);
-    const msgInterval = setInterval(() => {
-      msgIdx = (msgIdx + 1) % messages.length;
-      setLoadingMsg(messages[msgIdx]);
-    }, 3000);
+    const msgInterval = setInterval(() => { msgIdx = (msgIdx + 1) % messages.length; setLoadingMsg(messages[msgIdx]); }, 3000);
 
     try {
-      // Track conversion
       sendConversion(PRICE_NUM, 'EUR', `roast-${Date.now()}`);
       if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
 
-      // Call edge function
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
         const controller = new AbortController();
@@ -153,50 +164,37 @@ export default function LinkedInRoasterHome() {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              mode: 'linkedin_roast',
-              linkedin_url: linkedinUrl,
-              language: 'pt'
-            }),
+            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: lang }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
-          if (response.ok) {
-            responseData = await response.json();
-            if (responseData.success) break;
-          }
+          if (response.ok) { responseData = await response.json(); if (responseData.success) break; }
           if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
         } catch (fetchError: any) {
           clearTimeout(timeoutId);
-          if (attempt < 2 && fetchError.name !== 'AbortError') {
-            await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-          } else throw fetchError;
+          if (attempt < 2 && fetchError.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+          else throw fetchError;
         }
       }
 
       if (!responseData?.success) {
-        throw new Error(responseData?.error || 'Não foi possível analisar o perfil. Verifica se o URL está correto e o perfil é público.');
+        throw new Error(responseData?.error || pick(
+          'Não foi possível analisar o perfil. Verifica se o URL está correto e o perfil é público.',
+          'Could not analyse the profile. Check the URL and ensure the profile is public.',
+          'No fue posible analizar el perfil. Verifica que el URL sea correcto y el perfil sea público.'
+        ));
       }
 
-      // Store results
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(responseData));
       sessionStorage.setItem('linkedinRoasterEmail', email);
       sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
 
-      // Save to Supabase
       try {
         fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            profile_url: linkedinUrl,
-            user_email: email.trim().toLowerCase(),
-            score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0,
-            analysis_result: JSON.stringify(responseData),
-            domain: 'share2inspire.pt',
-            created_at: new Date().toISOString()
-          }),
+          body: JSON.stringify({ profile_url: linkedinUrl, user_email: email.trim().toLowerCase(), score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
         }).catch(() => {});
       } catch (_) {}
 
@@ -205,35 +203,28 @@ export default function LinkedInRoasterHome() {
         fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: email.trim().toLowerCase(),
-            name: '',
-            source: 'linkedin_roaster',
-            language: 'pt'
-          })
+          body: JSON.stringify({ email: email.trim().toLowerCase(), name: '', source: 'linkedin_roaster', language: lang })
         }).catch(() => {});
       } catch (_) {}
 
-      // Ensure minimum loading time of 2.8s
       const elapsed = Date.now() - startTime;
       if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
 
       clearInterval(msgInterval);
-      setLoadingMsg("Tudo pronto! A abrir o relatório...");
+      setLoadingMsg(pick("Tudo pronto! A abrir o relatório...", "All done! Opening your report...", "¡Todo listo! Abriendo tu informe..."));
 
-      setTimeout(() => {
-        window.location.href = '/linkedin-roaster/results';
-      }, 800);
+      const resultsPath = lp('/linkedin-roaster') + '/results';
+      setTimeout(() => { window.location.href = resultsPath; }, 800);
     } catch (err: any) {
       clearInterval(msgInterval);
-      setError(err.message || "Erro ao processar. Tenta novamente.");
+      setError(err.message || pick("Erro ao processar. Tenta novamente.", "Error processing. Try again.", "Error al procesar. Inténtalo de nuevo."));
       setLoading(false);
     }
   };
 
   /* ─── Payment Handlers ─── */
   const handleMBWayPayment = async () => {
-    if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
+    if (!phone) { setPaymentError(pick('Introduz o teu número de telemóvel', 'Enter your phone number', 'Introduce tu número de teléfono')); return; }
     setPaymentLoading(true);
     if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
@@ -247,11 +238,11 @@ export default function LinkedInRoasterHome() {
         body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: PRICE_NUM.toFixed(2), email, product: 'LinkedIn Roaster — Share2Inspire', description: 'LinkedIn Roaster — Roast Brutal ao Perfil LinkedIn' })
       });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar pago'));
       setPaymentStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu teléfono...'));
       startPolling(orderId);
-    } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
+    } catch (err: any) { setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar pago')); }
     finally { setPaymentLoading(false); }
   };
 
@@ -260,21 +251,22 @@ export default function LinkedInRoasterHome() {
     if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
-      const orderId = `ROAST-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const orderId = `ROAST-${isPT ? '' : lang.toUpperCase() + '-'}${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const currentPath = lp('/linkedin-roaster');
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'eur', product_type: 'linkedin_roast', description: 'LinkedIn Roaster — Roast Brutal — Share2Inspire', orderId, success_url: `${window.location.origin}/linkedin-roaster?paid=true`, cancel_url: `${window.location.origin}/linkedin-roaster` }),
+        body: JSON.stringify({ email, name: email.split('@')[0], amount: isPT ? PRICE_NUM : finalPrice, currency: 'eur', product_type: 'linkedin_roast', language: lang, description: appliedCoupon ? `LinkedIn Roaster — Share2Inspire (${appliedCoupon.percent}% off)` : pick('LinkedIn Roaster — Roast Brutal — Share2Inspire', 'LinkedIn Roaster — Brutal Profile Roast — Share2Inspire', 'LinkedIn Roaster — Roast Brutal — Share2Inspire'), orderId, success_url: `${window.location.origin}${currentPath}?paid=true`, cancel_url: `${window.location.origin}${currentPath}` }),
       });
       const data = await response.json();
       if (data.url) { localStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
-      else throw new Error(data.error || 'Erro ao criar sessão de pagamento');
-    } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
+      else throw new Error(data.error || pick('Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear sesión de pago'));
+    } catch (err: any) { setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar pago')); }
     finally { setPaymentLoading(false); }
   };
 
   const handlePayPalPayment = () => {
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${isPT ? PRICE_NUM : finalPrice}EUR`, '_blank');
     setPaymentStep('success');
   };
 
@@ -289,22 +281,22 @@ export default function LinkedInRoasterHome() {
         if (!res.ok) { if (attempts >= 20) { clearInterval(interval); setPollingExpired(true); } return; }
         const data = await res.json();
         if (data.paid) { clearInterval(interval); setShowPaymentModal(false); runAnalysis(); return; }
-        if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg('Tempo esgotado.'); }
-        else setPollingMsg(attempts < 6 ? 'Confirma o pagamento na app MB WAY...' : 'Ainda a aguardar confirmação...');
+        if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg(pick('Tempo esgotado.', 'Time expired.', 'Tiempo agotado.')); }
+        else setPollingMsg(attempts < 6 ? pick('Confirma o pagamento na app MB WAY...', 'Confirm the payment in MB WAY...', 'Confirma el pago en MB WAY...') : pick('Ainda a aguardar confirmação...', 'Still waiting for confirmation...', 'Aún esperando confirmación...'));
       } catch { }
     }, 5000);
   };
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar...');
+    setPollingMsg(pick('A verificar...', 'Checking...', 'Verificando...'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
       const data = await res.json();
       if (data.paid) { setShowPaymentModal(false); runAnalysis(); }
-      else { setPollingExpired(true); setPollingMsg('Pagamento não confirmado.'); startPolling(currentOrderId); }
-    } catch { setPollingMsg('Erro.'); setPollingExpired(true); }
+      else { setPollingExpired(true); setPollingMsg(pick('Pagamento não confirmado.', 'Payment not confirmed.', 'Pago no confirmado.')); startPolling(currentOrderId); }
+    } catch { setPollingMsg(pick('Erro.', 'Error.', 'Error.')); setPollingExpired(true); }
   };
 
   /* ─── Discount Code Handler ─── */
@@ -316,7 +308,7 @@ export default function LinkedInRoasterHome() {
   };
 
   const handleDiscountCode = async () => {
-    if (!discountCode.trim()) { setDiscountError('Introduz um código'); return; }
+    if (!discountCode.trim()) { setDiscountError(pick('Introduz um código', 'Enter a code', 'Introduce un código')); return; }
     setDiscountLoading(true); setDiscountError(null);
     const code = discountCode.trim().toUpperCase();
     try {
@@ -325,25 +317,32 @@ export default function LinkedInRoasterHome() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Código ainda não ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Código expirado.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Código atingiu o limite.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(pick('Código ainda não ativo.', 'This code is not yet active.', 'Código aún no activo.')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Código expirado.', 'This code has expired.', 'Código expirado.')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Código atingiu o limite.', 'This code has reached its usage limit.', 'Código alcanzó el límite.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster') && !products.includes('roaster')) { setDiscountError('Código não aplicável.'); return; }
+        if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster') && !products.includes('roaster')) { setDiscountError(pick('Código não aplicável.', 'Code not applicable to this product.', 'Código no aplicable.')); return; }
         if (coupon.discount_percent === 100) { incrementCouponUsage(code); setShowDiscountModal(false); runAnalysis(); return; }
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code); setShowDiscountModal(false); return;
       }
-      const vRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+      // Check vouchers table — use is_active for PT, is_used for EN/ES
+      const vQuery = isPT
+        ? `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`
+        : `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_used=eq.false&select=*`;
+      const vRes = await fetch(vQuery, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
       const vouchers = await vRes.json();
-      if (vouchers && vouchers.length > 0) {
+      if (Array.isArray(vouchers) && vouchers.length > 0) {
         const v = vouchers[0];
-        if (v.valid_until && new Date(v.valid_until) < new Date()) { setDiscountError('Voucher expirado.'); return; }
-        fetch(`${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: false, redeemed_at: new Date().toISOString() }) }).catch(() => {});
+        if (v.valid_until && new Date(v.valid_until) < new Date()) { setDiscountError(pick('Voucher expirado.', 'Voucher expired.', 'Voucher expirado.')); return; }
+        const patchBody = isPT
+          ? JSON.stringify({ is_active: false, redeemed_at: new Date().toISOString() })
+          : JSON.stringify({ is_used: true, used_at: new Date().toISOString() });
+        fetch(`${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: patchBody }).catch(() => {});
         setShowDiscountModal(false); runAnalysis(); return;
       }
-      setDiscountError('Código inválido ou já utilizado.');
-    } catch { setDiscountError('Erro ao verificar.'); }
+      setDiscountError(pick('Código inválido ou já utilizado.', 'Invalid or already used code.', 'Código inválido o ya utilizado.'));
+    } catch { setDiscountError(pick('Erro ao verificar.', 'Error verifying code.', 'Error al verificar.')); }
     finally { setDiscountLoading(false); }
   };
 
@@ -351,7 +350,8 @@ export default function LinkedInRoasterHome() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true') {
-      window.history.replaceState({}, '', '/linkedin-roaster');
+      const currentPath = lp('/linkedin-roaster');
+      window.history.replaceState({}, '', currentPath);
       const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
       const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
       if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => runAnalysis(), 500); }
@@ -366,8 +366,12 @@ export default function LinkedInRoasterHome() {
       {/* Price Bar */}
       <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] text-white py-2.5 px-4 text-center text-sm">
         <span className="inline-flex items-center gap-2">
-          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{PRICE}€</span>
-          <span className="font-medium">Roast completo ao teu perfil LinkedIn — <span className="text-[#C9A961]">descobre o que recrutadores realmente pensam</span></span>
+          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{priceDisplay}</span>
+          <span className="font-medium">{pick(
+            <>Roast completo ao teu perfil LinkedIn — <span className="text-[#C9A961]">descobre o que recrutadores realmente pensam</span></>,
+            <>Complete LinkedIn profile roast — <span className="text-[#C9A961]">find out what recruiters really think</span></>,
+            <>Roast completo a tu perfil LinkedIn — <span className="text-[#C9A961]">descubre lo que los reclutadores realmente piensan</span></>
+          )}</span>
         </span>
       </div>
 
@@ -377,7 +381,7 @@ export default function LinkedInRoasterHome() {
           {/* Hero */}
           <section className="text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 text-sm text-orange-700 font-medium">
-              <Flame className="w-4 h-4" /> Brutal. Honesto. Eficaz.
+              <Flame className="w-4 h-4" /> {pick("Brutal. Honesto. Eficaz.", "Brutal. Honest. Effective.", "Brutal. Honesto. Eficaz.")}
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight max-w-3xl mx-auto min-h-[5rem]">
@@ -388,8 +392,11 @@ export default function LinkedInRoasterHome() {
             </h1>
 
             <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              A nossa IA analisa o teu perfil LinkedIn como um recrutador sénior com 20 anos de experiência
-              — e <strong>diz-te a verdade que ninguém te diz</strong>. Em 30 segundos.
+              {pick(
+                <>A nossa IA analisa o teu perfil LinkedIn como um recrutador sénior com 20 anos de experiência — e <strong>diz-te a verdade que ninguém te diz</strong>. Em 30 segundos.</>,
+                <>Our AI analyses your LinkedIn profile like a senior recruiter with 20 years of experience — and <strong>tells you the truth nobody else will</strong>. In 30 seconds.</>,
+                <>Nuestra IA analiza tu perfil LinkedIn como un reclutador senior con 20 años de experiencia — y <strong>te dice la verdad que nadie te dice</strong>. En 30 segundos.</>
+              )}
             </p>
 
             {/* Feature badges */}
@@ -407,24 +414,24 @@ export default function LinkedInRoasterHome() {
                 onClick={() => document.getElementById('roast-input')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 min-w-[200px]"
               >
-                <Flame className="w-5 h-5" /> Quero o meu roast
+                <Flame className="w-5 h-5" /> {pick("Quero o meu roast", "Get my roast", "Quiero mi roast")}
               </button>
-              <p className="text-xs text-slate-400 mt-3">Apenas {PRICE}€ · Resultado em 30 segundos · 100% confidencial</p>
+              <p className="text-xs text-slate-400 mt-3">{pick(`Apenas ${PRICE}€ · Resultado em 30 segundos · 100% confidencial`, `Only €${PRICE} · Results in 30 seconds · 100% confidential`, `Solo ${PRICE}€ · Resultado en 30 segundos · 100% confidencial`)}</p>
             </div>
           </section>
 
           {/* Social proof bar */}
           <div className="flex flex-wrap justify-center gap-8 text-center pt-4">
-            <div><span className="text-2xl font-bold text-slate-900">12.847+</span><p className="text-xs text-slate-500">Perfis roasted</p></div>
-            <div><span className="text-2xl font-bold text-slate-900">73%</span><p className="text-xs text-slate-500">Melhoraram em 1 semana</p></div>
-            <div><span className="text-2xl font-bold text-slate-900">4.8★</span><p className="text-xs text-slate-500">Avaliação média</p></div>
+            <div><span className="text-2xl font-bold text-slate-900">{isPT ? '12.847+' : '12,847+'}</span><p className="text-xs text-slate-500">{pick("Perfis roasted", "Profiles roasted", "Perfiles roasted")}</p></div>
+            <div><span className="text-2xl font-bold text-slate-900">73%</span><p className="text-xs text-slate-500">{pick("Melhoraram em 1 semana", "Improved in 1 week", "Mejoraron en 1 semana")}</p></div>
+            <div><span className="text-2xl font-bold text-slate-900">4.8★</span><p className="text-xs text-slate-500">{pick("Avaliação média", "Average rating", "Evaluación media")}</p></div>
           </div>
 
           {/* ─── WHAT THE ROAST COVERS ─── */}
           <section className="bg-gradient-to-br from-slate-50 to-orange-50 rounded-2xl p-8 sm:p-10 border border-slate-200">
             <div className="text-center mb-8">
-              <p className="text-xs font-bold uppercase tracking-widest text-orange-600 mb-2">O QUE O ROAST ANALISA</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Vê exactamente o que vais receber</h2>
+              <p className="text-xs font-bold uppercase tracking-widest text-orange-600 mb-2">{pick("O QUE O ROAST ANALISA", "WHAT THE ROAST COVERS", "QUÉ ANALIZA EL ROAST")}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{pick("Vê exactamente o que vais receber", "See exactly what you'll get", "Ve exactamente lo que vas a recibir")}</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {roastFeatures.map(({ icon: Icon, label, desc }) => (
@@ -441,22 +448,22 @@ export default function LinkedInRoasterHome() {
           <section id="roast-input" className="bg-white rounded-2xl p-8 sm:p-10 border-2 border-orange-200 shadow-lg scroll-mt-24">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-orange-100 rounded-full px-4 py-1.5 text-sm font-bold text-orange-700 mb-4">
-                <Flame className="w-4 h-4" /> PRONTO PARA O ROAST?
+                <Flame className="w-4 h-4" /> {pick("PRONTO PARA O ROAST?", "READY FOR THE ROAST?", "¿LISTO PARA EL ROAST?")}
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Cola o teu perfil LinkedIn</h2>
-              <p className="text-slate-600 mt-2">É só colar o URL. Nós fazemos o resto em 30 segundos.</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{pick("Cola o teu perfil LinkedIn", "Paste your LinkedIn profile", "Pega tu perfil LinkedIn")}</h2>
+              <p className="text-slate-600 mt-2">{pick("É só colar o URL. Nós fazemos o resto em 30 segundos.", "Just paste the URL. We'll do the rest in 30 seconds.", "Solo pega el URL. Nosotros hacemos el resto en 30 segundos.")}</p>
             </div>
 
             <div className="max-w-lg mx-auto space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-1.5 block">URL do LinkedIn</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("URL do LinkedIn", "LinkedIn URL", "URL de LinkedIn")}</label>
                 <div className="relative">
                   <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600" />
                   <input
                     type="url"
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
-                    placeholder="https://www.linkedin.com/in/teu-perfil"
+                    placeholder={pick("https://www.linkedin.com/in/teu-perfil", "https://www.linkedin.com/in/your-profile", "https://www.linkedin.com/in/tu-perfil")}
                     className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                   />
                   {isValidLinkedinUrl(linkedinUrl) && (
@@ -466,19 +473,23 @@ export default function LinkedInRoasterHome() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-1.5 block">Email para receber o roast</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("Email para receber o roast", "Email to receive the roast", "Email para recibir el roast")}</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="teu@email.com"
+                  placeholder={pick("teu@email.com", "your@email.com", "tu@email.com")}
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                 />
               </div>
 
               <label className="flex items-start gap-2 cursor-pointer pt-1">
                 <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
-                <span className="text-xs text-slate-500">Aceito os <a href="https://www.share2inspire.pt/pages/privacidade.html" className="text-[#C9A961] underline" target="_blank">termos e condições</a>. O perfil é analisado de forma confidencial.</span>
+                <span className="text-xs text-slate-500">{pick(
+                  <>Aceito os <a href="https://www.share2inspire.pt/pages/privacidade.html" className="text-[#C9A961] underline" target="_blank">termos e condições</a>. O perfil é analisado de forma confidencial.</>,
+                  <>I accept the <a href="https://www.share2inspire.pt/en/pages/privacy" className="text-[#C9A961] underline" target="_blank">terms and conditions</a>. The profile is analysed confidentially.</>,
+                  <>Acepto los <a href="https://www.share2inspire.pt/es/pages/privacidad" className="text-[#C9A961] underline" target="_blank">términos y condiciones</a>. El perfil se analiza de forma confidencial.</>
+                )}</span>
               </label>
 
               {error && (
@@ -493,29 +504,32 @@ export default function LinkedInRoasterHome() {
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all disabled:shadow-none disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || 'A preparar o teu roast...'}</>
+                  <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || pick('A preparar o teu roast...', 'Preparing your roast...', 'Preparando tu roast...')}</>
                 ) : (
-                  <><Flame className="w-5 h-5" /> {appliedCoupon ? `Pagar ${finalPriceStr}€ e receber o roast` : `Pagar ${PRICE}€ e receber o roast`} 🔥</>
+                  <><Flame className="w-5 h-5" /> {appliedCoupon
+                    ? pick(`Pagar ${finalPriceStr}€ e receber o roast`, `Pay €${finalPriceStr} & get roasted`, `Pagar ${finalPriceStr}€ y recibir el roast`)
+                    : pick(`Pagar ${PRICE}€ e receber o roast`, `Pay €${PRICE} & get roasted`, `Pagar ${PRICE}€ y recibir el roast`)
+                  } 🔥</>
                 )}
               </button>
 
               {appliedCoupon && (
                 <div className="text-center">
                   <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 rounded-full px-3 py-1 text-xs font-medium text-green-700">
-                    <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}: -{appliedCoupon.percent}% aplicado
+                    <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}: -{appliedCoupon.percent}% {pick("aplicado", "applied", "aplicado")}
                   </span>
                 </div>
               )}
 
               <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2">
-                <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> 100% Confidencial</span>
-                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> Resultado em 30s</span>
-                <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Pagamento seguro</span>
+                <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> {pick("100% Confidencial", "100% Confidential", "100% Confidencial")}</span>
+                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> {pick("Resultado em 30s", "Results in 30s", "Resultado en 30s")}</span>
+                <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> {pick("Pagamento seguro", "Secure payment", "Pago seguro")}</span>
               </div>
 
               <div className="text-center pt-1">
                 <button onClick={() => setShowDiscountModal(true)} className="text-xs text-[#C9A961] hover:underline inline-flex items-center gap-1">
-                  <Ticket className="w-3 h-3" /> Tens um código de desconto?
+                  <Ticket className="w-3 h-3" /> {pick("Tens um código de desconto?", "Have a discount code?", "¿Tienes un código de descuento?")}
                 </button>
               </div>
             </div>
@@ -524,8 +538,8 @@ export default function LinkedInRoasterHome() {
           {/* ─── WHAT YOU GET ─── */}
           <section className="space-y-8">
             <div className="text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C9A961] mb-2">DEPOIS DO ROAST VAIS TER</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Tudo o que precisas para transformar o teu perfil</h2>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#C9A961] mb-2">{pick("DEPOIS DO ROAST VAIS TER", "AFTER THE ROAST YOU'LL HAVE", "DESPUÉS DEL ROAST TENDRÁS")}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{pick("Tudo o que precisas para transformar o teu perfil", "Everything you need to transform your profile", "Todo lo que necesitas para transformar tu perfil")}</h2>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
               <ul className="space-y-4">
@@ -542,8 +556,8 @@ export default function LinkedInRoasterHome() {
           {/* ─── TESTIMONIALS ─── */}
           <section className="space-y-8">
             <div className="text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C9A961] mb-2">O QUE DIZEM</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Brutal mas eficaz — é o que todos dizem</h2>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#C9A961] mb-2">{pick("O QUE DIZEM", "WHAT THEY SAY", "QUÉ DICEN")}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{pick("Brutal mas eficaz — é o que todos dizem", "Brutal but effective — that's the consensus", "Brutal pero eficaz — eso es lo que todos dicen")}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((t, i) => (
@@ -566,27 +580,35 @@ export default function LinkedInRoasterHome() {
           {/* ─── FINAL CTA ─── */}
           <section className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-10 text-center text-white">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-              O teu LinkedIn está a trabalhar <span className="text-orange-400">contra ti</span>?
+              {pick(
+                <>O teu LinkedIn está a trabalhar <span className="text-orange-400">contra ti</span>?</>,
+                <>Is your LinkedIn working <span className="text-orange-400">against you</span>?</>,
+                <>¿Tu LinkedIn está trabajando <span className="text-orange-400">en tu contra</span>?</>
+              )}
             </h2>
             <p className="text-slate-300 max-w-xl mx-auto mb-8">
-              Roast completo por apenas {PRICE}€. Resultado em 30 segundos. Sem rodeios.
+              {pick(
+                `Roast completo por apenas ${PRICE}€. Resultado em 30 segundos. Sem rodeios.`,
+                `Complete roast for just €${PRICE}. Results in 30 seconds. No sugarcoating.`,
+                `Roast completo por solo ${PRICE}€. Resultado en 30 segundos. Sin rodeos.`
+              )}
             </p>
             <button
               onClick={() => document.getElementById('roast-input')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-lg shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
             >
-              <Flame className="w-5 h-5" /> Quero saber a verdade
+              <Flame className="w-5 h-5" /> {pick("Quero saber a verdade", "I want the truth", "Quiero saber la verdad")}
             </button>
             <p className="text-xs text-slate-400 mt-4">
-              Também temos: <a href="/cv-analyser" className="text-[#C9A961] hover:underline">CV Analyser</a> · <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path</a> · <a href="/career-intelligence" className="text-[#C9A961] hover:underline">Career Intelligence</a>
+              {pick("Também temos", "Also available", "También tenemos")}: <a href={lp("/cv-analyser")} className="text-[#C9A961] hover:underline">CV Analyser</a> · <a href={lp("/career-path")} className="text-[#C9A961] hover:underline">Career Path</a> · <a href={lp("/career-intelligence")} className="text-[#C9A961] hover:underline">Career Intelligence</a>
             </p>
           </section>
 
           {/* Cross-sell */}
           <div className="flex items-center justify-center gap-2 py-4">
-            <span className="text-sm text-slate-500">Queres mais do que um roast?</span>
-            <a href="/bundle" className="text-sm font-medium text-[#C9A961] hover:underline flex items-center gap-1">
-              Ver Bundle completo <ArrowRight className="w-4 h-4" />
+            <span className="text-sm text-slate-500">{pick("Queres mais do que um roast?", "Want more than a roast?", "¿Quieres más que un roast?")}</span>
+            <a href={lp("/bundle")} className="text-sm font-medium text-[#C9A961] hover:underline flex items-center gap-1">
+              {pick("Ver Bundle completo", "See full Bundle", "Ver Bundle completo")} <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
@@ -601,36 +623,38 @@ export default function LinkedInRoasterHome() {
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onClick={() => { if (!paymentLoading) setShowPaymentModal(false); }}>
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Pagar {PRICE}€</h3>
-              <button onClick={() => setShowPaymentModal(false)} className="p-1 hover:bg-slate-100 rounded-full"><X className="w-5 h-5" /></button>
+              <h3 className="text-lg font-bold text-slate-900">{pick(`Pagar ${PRICE}€`, `Pay €${appliedCoupon ? finalPriceStr : PRICE}`, `Pagar ${PRICE}€`)}</h3>
+              <button onClick={() => setShowPaymentModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label={pick("Fechar", "Close", "Cerrar")}><X className="w-5 h-5" /></button>
             </div>
 
             {paymentStep === 'payment' && (
               <div className="space-y-4">
-                <p className="text-sm text-slate-600">LinkedIn Roaster — Roast Brutal ao teu perfil LinkedIn</p>
+                <p className="text-sm text-slate-600">{pick("LinkedIn Roaster — Roast Brutal ao teu perfil LinkedIn", "LinkedIn Roaster — Brutal Profile Roast", "LinkedIn Roaster — Roast Brutal a tu perfil LinkedIn")}</p>
                 {appliedCoupon && (
                   <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
                     <span className="text-sm text-green-700 font-medium"><Ticket className="w-4 h-4 inline mr-1" />{appliedCoupon.code}: -{appliedCoupon.percent}%</span>
-                    <span className="text-sm font-bold text-green-800">{finalPriceStr}€ <span className="line-through text-slate-400 font-normal text-xs">{PRICE}€</span></span>
+                    <span className="text-sm font-bold text-green-800">{finalPriceStr}{isPT ? '€' : ''} {!isPT && '€'}<span className="line-through text-slate-400 font-normal text-xs">{PRICE}{isPT ? '€' : ''}</span></span>
                   </div>
                 )}
 
-                {/* Payment method tabs */}
+                {/* Payment method tabs — MB WAY only for PT */}
                 <div className="flex gap-2">
-                  <button onClick={() => setPaymentMethod('mbway')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'mbway' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-                    <Smartphone className="w-4 h-4 inline mr-1" />MB WAY
-                  </button>
+                  {isPT && (
+                    <button onClick={() => setPaymentMethod('mbway')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'mbway' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                      <Smartphone className="w-4 h-4 inline mr-1" />MB WAY
+                    </button>
+                  )}
                   <button onClick={() => setPaymentMethod('stripe')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'stripe' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-                    <CreditCard className="w-4 h-4 inline mr-1" />Cartão
+                    <CreditCard className="w-4 h-4 inline mr-1" />{pick("Cartão", "Card", "Tarjeta")}
                   </button>
                   <button onClick={() => setPaymentMethod('paypal')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'paypal' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                     PayPal
                   </button>
                 </div>
 
-                {paymentMethod === 'mbway' && (
+                {paymentMethod === 'mbway' && isPT && (
                   <div>
-                    <label className="text-sm font-medium text-slate-700 mb-1 block">Número de telemóvel</label>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">{pick("Número de telemóvel", "Phone number", "Número de teléfono")}</label>
                     <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="912 345 678" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                 )}
@@ -642,10 +666,10 @@ export default function LinkedInRoasterHome() {
                   disabled={paymentLoading || (paymentMethod === 'mbway' && !phone)}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {paymentLoading ? 'A processar...' : `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`}
+                  {paymentLoading ? pick('A processar...', 'Processing...', 'Procesando...') : pick(`Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`, `Pay €${appliedCoupon ? finalPriceStr : PRICE}`, `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`)}
                 </button>
 
-                <p className="text-xs text-slate-400 text-center">Pagamento seguro via {paymentMethod === 'mbway' ? 'MB WAY' : paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}</p>
+                <p className="text-xs text-slate-400 text-center">{pick("Pagamento seguro via", "Secure payment via", "Pago seguro vía")} {paymentMethod === 'mbway' ? 'MB WAY' : paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}</p>
               </div>
             )}
 
@@ -654,7 +678,7 @@ export default function LinkedInRoasterHome() {
                 <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
                 <p className="text-sm text-slate-600">{pollingMsg}</p>
                 {pollingExpired && (
-                  <button onClick={handleManualCheck} className="px-6 py-2 bg-[#C9A961] text-white rounded-lg text-sm font-semibold">Já paguei — verificar</button>
+                  <button onClick={handleManualCheck} className="px-6 py-2 bg-[#C9A961] text-white rounded-lg text-sm font-semibold">{pick("Já paguei — verificar", "I've paid — verify", "Ya pagué — verificar")}</button>
                 )}
               </div>
             )}
@@ -662,8 +686,8 @@ export default function LinkedInRoasterHome() {
             {paymentStep === 'success' && (
               <div className="text-center py-6 space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-                <p className="text-sm text-slate-600">Após confirmar o pagamento, clica abaixo:</p>
-                <button onClick={() => { setShowPaymentModal(false); runAnalysis(); }} className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold">Iniciar Roast 🔥</button>
+                <p className="text-sm text-slate-600">{pick("Após confirmar o pagamento, clica abaixo:", "After confirming payment, click below:", "Tras confirmar el pago, haz clic abajo:")}</p>
+                <button onClick={() => { setShowPaymentModal(false); runAnalysis(); }} className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold">{pick("Iniciar Roast 🔥", "Start Roast 🔥", "Iniciar Roast 🔥")}</button>
               </div>
             )}
           </div>
@@ -675,14 +699,14 @@ export default function LinkedInRoasterHome() {
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onClick={() => setShowDiscountModal(false)}>
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Ticket className="w-5 h-5 text-[#C9A961]" /> Código de desconto</h3>
-              <button onClick={() => setShowDiscountModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label="Fechar"><X className="w-5 h-5" /></button>
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Ticket className="w-5 h-5 text-[#C9A961]" /> {pick("Código de desconto", "Discount code", "Código de descuento")}</h3>
+              <button onClick={() => setShowDiscountModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label={pick("Fechar", "Close", "Cerrar")}><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
-              <input type="text" value={discountCode} onChange={e => setDiscountCode(e.target.value.toUpperCase())} placeholder="Introduz o código" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm uppercase tracking-wider focus:ring-2 focus:ring-orange-500 outline-none" />
+              <input type="text" value={discountCode} onChange={e => setDiscountCode(e.target.value.toUpperCase())} placeholder={pick("Introduz o código", "Enter your code", "Introduce el código")} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm uppercase tracking-wider focus:ring-2 focus:ring-orange-500 outline-none" />
               {discountError && <p className="text-sm text-red-600">{discountError}</p>}
               <button onClick={handleDiscountCode} disabled={discountLoading || !discountCode.trim()} className="w-full py-3 rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold disabled:opacity-50 transition-all">
-                {discountLoading ? 'A verificar...' : 'Aplicar código'}
+                {discountLoading ? pick('A verificar...', 'Verifying...', 'Verificando...') : pick('Aplicar código', 'Apply code', 'Aplicar código')}
               </button>
             </div>
           </div>

@@ -77,8 +77,8 @@ export function useTranslation() {
     lang,
     /** Translate a key */
     t: (key: string, replacements?: Record<string, string>) => translate(key, lang, replacements),
-    /** Pick between PT / EN / ES inline strings */
-    pick: (pt: string, en: string, es: string) => pickFn(pt, en, es, lang),
+    /** Pick between PT / EN / ES inline values (strings or JSX) */
+    pick: <T = string>(pt: T, en: T, es: T): T => pickFn<T>(pt, en, es, lang),
     /** Convert a PT-canonical path to the current language equivalent */
     localePath: (ptPath: string) => localePath(ptPath, lang),
     /** Get the URL to switch to a different language */
