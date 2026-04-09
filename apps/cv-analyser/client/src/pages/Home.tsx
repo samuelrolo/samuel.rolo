@@ -1321,7 +1321,7 @@ export default function Home() {
           >
             <span className="inline-flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5" />
-              Sem o CV no telemóvel? <span className="underline underline-offset-2">Vê as opções</span>
+              {pick('Sem o CV no telemóvel?', 'No CV on your phone?', '¿Sin CV en el móvil?')} <span className="underline underline-offset-2">{pick('Vê as opções', 'See options', 'Ver opciones')}</span>
             </span>
           </button>
 
@@ -1337,8 +1337,8 @@ export default function Home() {
                   <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center">
                     <FileText className="w-4 h-4 text-[#C9A961]" />
                   </div>
-                  <p className="text-sm font-medium text-foreground">Comprar Análise Agora</p>
-                  <p className="text-[11px] text-muted-foreground leading-tight">Recebe um voucher por email e faz upload do CV mais tarde no PC.</p>
+                  <p className="text-sm font-medium text-foreground">{pick('Comprar Análise Agora', 'Buy Analysis Now', 'Comprar Análisis Ahora')}</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{pick('Recebe um voucher por email e faz upload do CV mais tarde no PC.', 'Receive a voucher by email and upload your CV later on PC.', 'Recibe un voucher por email y sube tu CV más tarde en el PC.')}</p>
                 </button>
                 {/* Option 2: Send link by email */}
                 <button
@@ -1349,8 +1349,8 @@ export default function Home() {
                   <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                   </div>
-                  <p className="text-sm font-medium text-foreground">Enviar Link por Email</p>
-                  <p className="text-[11px] text-muted-foreground leading-tight">Recebe o link no email e testa a análise gratuita no computador.</p>
+                  <p className="text-sm font-medium text-foreground">{pick('Enviar Link por Email', 'Send Link by Email', 'Enviar Enlace por Email')}</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{pick('Recebe o link no email e testa a análise gratuita no computador.', 'Receive the link by email and test the free analysis on your computer.', 'Recibe el enlace por email y prueba el análisis gratuito en el ordenador.')}</p>
                 </button>
               </div>
             </div>
@@ -1359,7 +1359,7 @@ export default function Home() {
           {/* Email link panel (shown when option 2 is selected) */}
           {showEmailLink && (
             <div data-email-link className="space-y-2 animate-in slide-in-from-top-2 duration-200 p-4 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground">Recebe o link no teu email para testares mais tarde no computador.</p>
+              <p className="text-xs text-muted-foreground">{pick('Recebe o link no teu email para testares mais tarde no computador.', 'Receive the link in your email to test later on your computer.', 'Recibe el enlace en tu email para probarlo más tarde en tu ordenador.')}</p>
               <div className="flex gap-2">
                 <input
                   type="email"
@@ -1465,7 +1465,7 @@ export default function Home() {
                     ) : voucherPaymentLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> A processar...</>
                     ) : (
-                      <>Comprar Voucher — {pricingPlans[voucherSelectedPlan].price}€</>
+                      <>{pick('Comprar Voucher', 'Buy Voucher', 'Comprar Voucher')} — {pricingPlans[voucherSelectedPlan].price}€</>
                     )}
                   </button>
                 </>
@@ -1484,8 +1484,8 @@ export default function Home() {
                 <Briefcase className="w-5 h-5 text-[#C9A961]" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">Queres analisar para uma vaga específica?</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Compara o teu CV com os requisitos da vaga</p>
+                <p className="text-sm font-semibold text-foreground">{pick('Queres analisar para uma vaga específica?', 'Want to analyse for a specific job?', '¿Quieres analizar para una oferta específica?')}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{pick('Compara o teu CV com os requisitos da vaga', 'Compare your CV with the job requirements', 'Compara tu CV con los requisitos de la oferta')}</p>
               </div>
               <div className={`w-11 h-6 rounded-full transition-colors duration-200 flex items-center px-0.5 ${
                 wantsJobMatch ? 'bg-[#C9A961]' : 'bg-muted'
@@ -1506,11 +1506,11 @@ export default function Home() {
                   id="job-input"
                   value={jobInput}
                   onChange={(e) => setJobInput(e.target.value)}
-                  placeholder="Ex: https://linkedin.com/jobs/... ou 'Data Analyst - Lisboa, experiência em Python e SQL'"
+                  placeholder={pick("Ex: https://linkedin.com/jobs/... ou 'Data Analyst - Lisboa, experiência em Python e SQL'", "E.g.: https://linkedin.com/jobs/... or 'Data Analyst - London, Python and SQL experience'", "Ej: https://linkedin.com/jobs/... o 'Data Analyst - Madrid, experiencia en Python y SQL'")}
                   className="w-full min-h-[80px] p-3 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] resize-y"
                   disabled={loading}
                 />
-                <p className="text-[11px] text-muted-foreground/70">Cola o link do anúncio de emprego, o nome da função, ou a descrição da vaga. Quanto mais detalhes, melhor a análise.</p>
+                <p className="text-[11px] text-muted-foreground/70">{pick('Cola o link do anúncio de emprego, o nome da função, ou a descrição da vaga. Quanto mais detalhes, melhor a análise.', 'Paste the job posting link, job title, or job description. The more details, the better the analysis.', 'Pega el enlace de la oferta, el nombre del puesto o la descripción. Cuantos más detalles, mejor el análisis.')}</p>
               </div>
             )}
           </div>
@@ -1741,12 +1741,12 @@ export default function Home() {
                     {liPaywallStatus === 'polling' ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Confirma no telemóvel (MB Way)...</>
                     ) : liPaywallLoading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> A processar...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> {pick('A processar...', 'Processing...', 'Procesando...')}</>
                     ) : (
-                      <>Comprar e Analisar — {pricingPlans[liPaywallPlan].price}€</>
+                      <>{pick('Comprar e Analisar', 'Buy and Analyse', 'Comprar y Analizar')} — {pricingPlans[liPaywallPlan].price}€</>
                     )}
                   </button>
-                  <p className="text-[10px] text-white/40 text-center">Pagamento seguro via MB Way. A análise inicia automaticamente.</p>
+                  <p className="text-[10px] text-white/40 text-center">{pick('Pagamento seguro via MB Way. A análise inicia automaticamente.', 'Secure payment via Stripe/PayPal. Analysis starts automatically.', 'Pago seguro. El análisis comienza automáticamente.')}</p>
                 </div>
               )}
 
@@ -1756,7 +1756,7 @@ export default function Home() {
                 disabled={liPaywallLoading}
                 className="w-full text-center text-xs text-white/40 hover:text-white/70 transition-colors py-1 disabled:opacity-30"
               >
-                Cancelar
+                {pick('Cancelar', 'Cancel', 'Cancelar')}
               </button>
             </div>
           )}
@@ -1780,7 +1780,7 @@ export default function Home() {
             >
               <span className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Award className="w-4 h-4 text-[#C9A961]" />
-                CV Analyser vs Outras Soluções
+                {pick('CV Analyser vs Outras Soluções', 'CV Analyser vs Other Solutions', 'CV Analyser vs Otras Soluciones')}
               </span>
               {pricingOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
             </button>
@@ -1789,7 +1789,7 @@ export default function Home() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-muted/50">
-                      <th className="text-left p-3 font-semibold text-foreground text-xs">Funcionalidade</th>
+                      <th className="text-left p-3 font-semibold text-foreground text-xs">{pick('Funcionalidade', 'Feature', 'Funcionalidad')}</th>
                       <th className="p-3 text-center">
                         <span className="text-xs font-bold text-[#C9A961]">CV Analyser</span>
                       </th>
@@ -2017,7 +2017,7 @@ export default function Home() {
                 >
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs font-bold px-4 py-1 rounded-full">
-                      Mais Popular
+                      {pick('Mais Popular', 'Most Popular', 'Más Popular')}
                     </div>
                   )}
                   {plan.badge && (
@@ -2028,7 +2028,7 @@ export default function Home() {
                   <div className="space-y-1">
                     <h3 className={`text-lg font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{plan.name}</h3>
                     <p className={`text-sm ${plan.popular ? 'text-white/80' : 'text-muted-foreground'}`}>
-                      {plan.name === 'Completo' ? 'CV + Career Path' : `${plan.analyses} ${plan.analyses === 1 ? 'Análise Completa' : 'Análises Completas'}`}
+                      {plan.name === 'Completo' ? 'CV + Career Path' : `${plan.analyses} ${plan.analyses === 1 ? pick('Análise Completa', 'Full Analysis', 'Análisis Completo') : pick('Análises Completas', 'Full Analyses', 'Análisis Completos')}`}
                     </p>
                   </div>
                   <div className="space-y-0">
@@ -2039,7 +2039,7 @@ export default function Home() {
                       {plan.name === 'Completo' ? (
                         <>CV Analyser + Career Path</>
                       ) : (
-                        <>{plan.perUnit}€ por análise</>
+                        <>{plan.perUnit}€ {pick('por análise', 'per analysis', 'por análisis')}</>
                       )}
                     </p>
                   </div>
@@ -2058,7 +2058,7 @@ export default function Home() {
                         : 'bg-[#C9A961] text-white hover:bg-[#A88B4E]'
                     }`}
                   >
-                    Escolher Pacote
+                    {pick('Escolher Pacote', 'Choose Plan', 'Elegir Plan')}
                   </Button>
                 </div>
               ))}

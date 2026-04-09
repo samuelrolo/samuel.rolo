@@ -656,10 +656,10 @@ export default function CareerPathHome() {
             <div className="relative rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
               <div className="p-8 md:p-10 space-y-6">
                 <div className="text-center space-y-3">
-                  <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">Exemplo Real de Resultado</p>
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">Vê exactamente o que vais receber</h2>
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Exemplo Real de Resultado', 'Real Result Example', 'Ejemplo Real de Resultado')}</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">{pick('Vê exactamente o que vais receber', 'See exactly what you will receive', 'Ve exactamente lo que vas a recibir')}</h2>
                   <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-                    Roadmap de carreira personalizado, análise de gaps, cargos recomendados com % de fit, formações, certificações, estratégia de networking e plano de acção imediato.
+                    {pick('Roadmap de carreira personalizado, análise de gaps, cargos recomendados com % de fit, formações, certificações, estratégia de networking e plano de acção imediato.', 'Personalised career roadmap, skills gap analysis, recommended roles with % fit, training, certifications, networking strategy and immediate action plan.', 'Roadmap de carrera personalizado, análisis de gaps, puestos recomendados con % de fit, formaciones, certificaciones, estrategia de networking y plan de acción inmediato.')}
                   </p>
                 </div>
 
@@ -755,22 +755,22 @@ export default function CareerPathHome() {
               <div className="p-6 md:p-8 space-y-4">
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Brain className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-lg font-bold text-foreground">Quer mais do que um roadmap?</h3>
+                  <h3 className="text-lg font-bold text-foreground">{pick('Quer mais do que um roadmap?', 'Want more than a roadmap?', '¿Quieres más que un roadmap?')}</h3>
                 </div>
                 <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto">
-                  O <strong className="text-foreground">Career Intelligence</strong> compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.
+                  {pick('O', 'The', 'El')} <strong className="text-foreground">Career Intelligence</strong> {pick('compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.', 'compares multiple strategic career directions side by side, analyses trade-offs and gives you a well-founded recommendation — to decide with confidence.', 'compara múltiples direcciones estratégicas de carrera lado a lado, analiza trade-offs y te da una recomendación fundamentada — para decidir con confianza.')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                   {/* Opção 1: Upgrade após Career Path */}
                   <div className="p-4 rounded-xl bg-white border border-border flex flex-col h-full">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">POUPAR</span>
+                      <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">{pick('POUPAR', 'SAVE', 'AHORRAR')}</span>
                       <span className="text-sm font-semibold text-foreground">{pick('Começa com Career Path', 'Start with Career Path', 'Empieza con Career Path')}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-2 flex-1">{pick(`Obtém o teu Career Path por ${PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.`, `Get your Career Path for ${PRICE_DISPLAY} and upgrade to Career Intelligence for just €29.`, `Obtén tu Career Path por ${PRICE_DISPLAY} y haz upgrade a Career Intelligence por solo 29€.`)}</p>
                     <div className="flex items-baseline gap-1.5 mt-2">
                       <span className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</span>
-                      <span className="text-xs text-muted-foreground">depois +€29 upgrade</span>
+                      <span className="text-xs text-muted-foreground">{pick('depois +€29 upgrade', 'then +€29 upgrade', 'luego +29€ upgrade')}</span>
                     </div>
                   </div>
                   {/* Opção 2: Career Intelligence completo */}
@@ -856,8 +856,8 @@ export default function CareerPathHome() {
                     ) : (
                       <>
                         <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                        <p className="text-sm font-semibold text-foreground">Arrasta o teu CV ou clica para escolher</p>
-                        <p className="text-xs text-muted-foreground">PDF ou DOCX (máx. 5MB)</p>
+                        <p className="text-sm font-semibold text-foreground">{pick('Arrasta o teu CV ou clica para escolher', 'Drag your CV or click to choose', 'Arrastra tu CV o haz clic para elegir')}</p>
+                        <p className="text-xs text-muted-foreground">{pick('PDF ou DOCX (máx. 5MB)', 'PDF or DOCX (max. 5MB)', 'PDF o DOCX (máx. 5MB)')}</p>
                       </>
                     )}
                   </div>
@@ -883,27 +883,27 @@ export default function CareerPathHome() {
                 </div>
                 {/* Transparency note */}
                 <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
-                  <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> O sistema irá analisar automaticamente:</p>
+                  <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> {pick('O sistema irá analisar automaticamente:', 'The system will automatically analyse:', 'El sistema analizará automáticamente:')}</p>
                   <div className="grid grid-cols-2 gap-1">
-                    {['Experiência profissional', 'Área de actuação', 'Competências identificadas', 'Evolução de funções'].map((item, i) => (
+                    {[pick('Experiência profissional', 'Professional experience', 'Experiencia profesional'), pick('Área de actuação', 'Area of expertise', 'Área de actuación'), pick('Competências identificadas', 'Identified skills', 'Competencias identificadas'), pick('Evolução de funções', 'Role progression', 'Evolución de funciones')].map((item, i) => (
                       <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {item}</p>
                     ))}
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1.5 italic">Nenhum dado será publicado ou partilhado.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1.5 italic">{pick('Nenhum dado será publicado ou partilhado.', 'No data will be published or shared.', 'Ningún dato será publicado ni compartido.')}</p>
                 </div>
               </div>
 
               {/* Career Goal (optional quick question) */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground">3. Qual é o teu principal objectivo profissional? <span className="text-muted-foreground font-normal">(opcional)</span></label>
+                <label className="text-sm font-semibold text-foreground">3. {pick('Qual é o teu principal objectivo profissional?', 'What is your main professional goal?', '¿Cuál es tu principal objetivo profesional?')} <span className="text-muted-foreground font-normal">({pick('opcional', 'optional', 'opcional')})</span></label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { value: 'grow', label: 'Crescer na área actual' },
-                    { value: 'change', label: 'Mudar de área' },
-                    { value: 'responsibility', label: 'Mais responsabilidade' },
-                    { value: 'salary', label: 'Aumentar salário' },
-                    { value: 'tech', label: 'Tecnologia / Inovação' },
-                    { value: 'leadership', label: 'Liderança' },
+                    { value: 'grow', label: pick('Crescer na área actual', 'Grow in current field', 'Crecer en el área actual') },
+                    { value: 'change', label: pick('Mudar de área', 'Change field', 'Cambiar de área') },
+                    { value: 'responsibility', label: pick('Mais responsabilidade', 'More responsibility', 'Más responsabilidad') },
+                    { value: 'salary', label: pick('Aumentar salário', 'Increase salary', 'Aumentar salario') },
+                    { value: 'tech', label: pick('Tecnologia / Inovação', 'Technology / Innovation', 'Tecnología / Innovación') },
+                    { value: 'leadership', label: pick('Liderança', 'Leadership', 'Liderazgo') },
                   ].map((goal) => (
                     <button
                       key={goal.value}

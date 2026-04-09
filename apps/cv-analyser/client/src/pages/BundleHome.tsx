@@ -976,7 +976,7 @@ export default function BundleHome() {
                   )}
                 </div>
                 {appliedCoupon && (
-                  <p className="text-xs text-green-600 mt-1">Cupão {appliedCoupon.code} — {appliedCoupon.percent}% desconto</p>
+                  <p className="text-xs text-green-600 mt-1">{pick('Cupão', 'Coupon', 'Cupón')} {appliedCoupon.code} — {appliedCoupon.percent}% {pick('desconto', 'discount', 'descuento')}</p>
                 )}
               </div>
 

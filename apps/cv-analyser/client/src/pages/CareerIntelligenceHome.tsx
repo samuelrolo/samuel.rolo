@@ -682,13 +682,13 @@ export default function CareerIntelligenceHome() {
             <div className="text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Scale className="w-4 h-4" />
-                Powered by IA Avançada
+                {pick('Powered by IA Avançada', 'Powered by Advanced AI', 'Powered by IA Avanzada')}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
                 {ciHeadlines[headlineIndex].text} <span className="text-[#C9A961]">{ciHeadlines[headlineIndex].highlight}</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A nossa IA analisa o teu CV e LinkedIn, compara os 3 caminhos de carreira com maior potencial e entrega uma recomendação final — com dados, não com intuição.
+                {pick('A nossa IA analisa o teu CV e LinkedIn, compara os 3 caminhos de carreira com maior potencial e entrega uma recomendação final — com dados, não com intuição.', 'Our AI analyses your CV and LinkedIn, compares the 3 career paths with the most potential and delivers a final recommendation — with data, not intuition.', 'Nuestra IA analiza tu CV y LinkedIn, compara los 3 caminos de carrera con mayor potencial y entrega una recomendación final — con datos, no con intuición.')}
               </p>
 
               {/* Primary CTA — immediately visible above the fold */}
@@ -698,9 +698,9 @@ export default function CareerIntelligenceHome() {
                   className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
                 >
                   <Scale className="w-5 h-5 mr-2" />
-                  Obter a minha recomendação de carreira
+                  {pick('Obter a minha recomendação de carreira', 'Get my career recommendation', 'Obtener mi recomendación de carrera')}
                 </Button>
-                <p className="text-xs text-muted-foreground">Análise completa por {PRICE_DISPLAY} · Pagamento único · Resultado em menos de 1 minuto{isUpgrade && <span className="ml-1 text-green-600 font-medium">(preço upgrade Career Path)</span>}</p>
+                <p className="text-xs text-muted-foreground">{pick('Análise completa por', 'Complete analysis for', 'Análisis completo por')} {PRICE_DISPLAY} · {pick('Pagamento único', 'One-time payment', 'Pago único')} · {pick('Resultado em menos de 1 minuto', 'Result in less than 1 minute', 'Resultado en menos de 1 minuto')}{isUpgrade && <span className="ml-1 text-green-600 font-medium">({pick('preço upgrade Career Path', 'Career Path upgrade price', 'precio upgrade Career Path')})</span>}</p>
               </div>
 
               {/* Trust badges inline */}
@@ -720,17 +720,17 @@ export default function CareerIntelligenceHome() {
 
             {/* What's included — simplified */}
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-center text-foreground">O que recebes com a análise</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('O que recebes com a análise', 'What you get with the analysis', 'Lo que recibes con el análisis')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2.5 p-5 rounded-xl bg-card border border-border">
                   <div className="flex items-center gap-2 mb-3">
                     <Compass className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-semibold text-muted-foreground">Diagnóstico completo</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{pick('Diagnóstico completo', 'Complete diagnosis', 'Diagnóstico completo')}</p>
                   </div>
                   {[
-                    "Roadmap de carreira personalizado",
-                    "Análise de gaps de competências",
-                    "Estimativa salarial por etapa",
+                    pick('Roadmap de carreira personalizado', 'Personalised career roadmap', 'Roadmap de carrera personalizado'),
+                    pick('Análise de gaps de competências', 'Skills gap analysis', 'Análisis de gaps de competencias'),
+                    pick('Estimativa salarial por etapa', 'Salary estimate per stage', 'Estimación salarial por etapa'),
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Check className="w-4 h-4 text-green-500 shrink-0" />
@@ -741,12 +741,12 @@ export default function CareerIntelligenceHome() {
                 <div className="space-y-2.5 p-5 rounded-xl bg-gradient-to-b from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/30">
                   <div className="flex items-center gap-2 mb-3">
                     <Scale className="w-4 h-4 text-[#C9A961]" />
-                    <p className="text-sm font-semibold text-[#C9A961]">Decisão Estratégica</p>
+                    <p className="text-sm font-semibold text-[#C9A961]">{pick('Decisão Estratégica', 'Strategic Decision', 'Decisión Estratégica')}</p>
                   </div>
                   {[
-                    "3 caminhos comparados com probabilidade de sucesso",
-                    "Recomendação final com justificação",
-                    "Plano de acção por caminho",
+                    pick('3 caminhos comparados com probabilidade de sucesso', '3 paths compared with success probability', '3 caminos comparados con probabilidad de éxito'),
+                    pick('Recomendação final com justificação', 'Final recommendation with justification', 'Recomendación final con justificación'),
+                    pick('Plano de acção por caminho', 'Action plan per path', 'Plan de acción por camino'),
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-foreground font-medium">
                       <Sparkles className="w-4 h-4 text-[#C9A961] shrink-0" />
@@ -764,23 +764,23 @@ export default function CareerIntelligenceHome() {
                   style={{ background: 'rgba(201,169,97,0.07)' }}
                 >
                   <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  Vê um exemplo de análise
+                  {pick('Vê um exemplo de análise', 'View an analysis example', 'Ver un ejemplo de análisis')}
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
                 <p className="text-xs text-muted-foreground">
-                  Só o diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
+                  {pick('Só o diagnóstico?', 'Just the diagnosis?', '¿Solo el diagnóstico?')} <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
                 </p>
               </div>
             </div>
 
             {/* How it works */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">3 passos. 1 minuto. 1 decisão.</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('3 passos. 1 minuto. 1 decisão.', '3 steps. 1 minute. 1 decision.', '3 pasos. 1 minuto. 1 decisión.')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { step: "1", title: "Carrega o teu CV", desc: "Faz upload do CV e partilha o teu LinkedIn.", time: "30 seg" },
-                  { step: "2", title: "A IA analisa tudo", desc: "Cruzamos experiência, competências, mercado e probabilidades.", time: "30 seg" },
-                  { step: "3", title: "Recebe a recomendação", desc: "3 caminhos comparados + recomendação final fundamentada.", time: "Imediato" },
+                  { step: "1", title: pick('Carrega o teu CV', 'Upload your CV', 'Sube tu CV'), desc: pick('Faz upload do CV e partilha o teu LinkedIn.', 'Upload your CV and share your LinkedIn.', 'Sube tu CV y comparte tu LinkedIn.'), time: pick('30 seg', '30 sec', '30 seg') },
+                  { step: "2", title: pick('A IA analisa tudo', 'AI analyses everything', 'La IA analiza todo'), desc: pick('Cruzamos experiência, competências, mercado e probabilidades.', 'We cross-reference experience, skills, market and probabilities.', 'Cruzamos experiencia, competencias, mercado y probabilidades.'), time: pick('30 seg', '30 sec', '30 seg') },
+                  { step: "3", title: pick('Recebe a recomendação', 'Get the recommendation', 'Recibe la recomendación'), desc: pick('3 caminhos comparados + recomendação final fundamentada.', '3 paths compared + well-founded final recommendation.', '3 caminos comparados + recomendación final fundamentada.'), time: pick('Imediato', 'Instant', 'Inmediato') },
                 ].map((item, i) => (
                   <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
                     <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
@@ -797,15 +797,15 @@ export default function CareerIntelligenceHome() {
             {/* Value anchor */}
             <div className="space-y-4 p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border border-[#C9A961]/20 text-center">
               <Scale className="w-8 h-8 text-[#C9A961] mx-auto" />
-              <h3 className="text-lg font-bold text-white">O equivalente a uma sessão de coaching estratégico.</h3>
+              <h3 className="text-lg font-bold text-white">{pick('O equivalente a uma sessão de coaching estratégico.', 'The equivalent of a strategic coaching session.', 'El equivalente a una sesión de coaching estratégico.')}</h3>
               <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por <strong className="text-[#C9A961]">{PRICE_DISPLAY}</strong>.
+                {pick('Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por', 'A career coach charges between €300 and €600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and well-founded recommendation — for', 'Un coach de carrera cobra entre 300€ y 600€ por sesión para ayudarte a decidir. El Career Intelligence entrega el mismo análisis — con datos objetivos, comparación estructurada y recomendación fundamentada — por')} <strong className="text-[#C9A961]">{PRICE_DISPLAY}</strong>.
               </p>
             </div>
 
             {/* Testimonials */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">O que dizem os utilizadores</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">{pick('O que dizem os utilizadores', 'What users say', 'Lo que dicen los usuarios')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {testimonials.map((t, i) => (
                   <div key={i} className="p-5 rounded-xl bg-card border border-border space-y-3">
@@ -826,17 +826,17 @@ export default function CareerIntelligenceHome() {
 
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Não precisas de mais opções. Precisas de saber qual escolher.</h2>
-              <p className="text-muted-foreground">Diagnóstico completo + decisão estratégica por {PRICE_DISPLAY}. Pagamento único. Sem subscrição.</p>
+              <h2 className="text-2xl font-bold text-foreground">{pick('Não precisas de mais opções. Precisas de saber qual escolher.', "You don't need more options. You need to know which to choose.", 'No necesitas más opciones. Necesitas saber cuál elegir.')}</h2>
+              <p className="text-muted-foreground">{pick('Diagnóstico completo + decisão estratégica por', 'Complete diagnosis + strategic decision for', 'Diagnóstico completo + decisión estratégica por')} {PRICE_DISPLAY}. {pick('Pagamento único. Sem subscrição.', 'One-time payment. No subscription.', 'Pago único. Sin suscripción.')}</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal"
               >
                 <Scale className="w-5 h-5 mr-2 flex-shrink-0" />
-                Obter a minha recomendação de carreira
+                {pick('Obter a minha recomendação de carreira', 'Get my career recommendation', 'Obtener mi recomendación de carrera')}
               </Button>
               <p className="text-xs text-muted-foreground">
-                Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
+                {pick('Só precisas do diagnóstico?', 'Just need the diagnosis?', '¿Solo necesitas el diagnóstico?')} <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
               </p>
             </div>
           </div>
