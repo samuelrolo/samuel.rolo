@@ -2,7 +2,7 @@
 // Sections: Hero, Articles & Guides, Research & Data, Video, Podcast, E-book, Newsletter, External Publications
 import { useState } from "react";
 import { Search, Play, ExternalLink, Download, BookOpen, Headphones, Mail } from "lucide-react";
-import S2IHeader from "@/components/S2IHeader";
+import S2IHeaderEN from "@/components/S2IHeaderEN";
 import S2IFooter from "@/components/S2IFooter";
 
 /* ─── DATA ─── */
@@ -269,7 +269,7 @@ export default function KnowledgeHubPageEN() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <S2IHeader activePage="knowledge-hub" />
+      <S2IHeaderEN activePage="knowledge-hub" langToggleHref="/conhecimento" esHref="/es/pages/knowledge" />
 
       {/* ─── HERO ─── */}
       <section className="pt-28 pb-10 text-center bg-[#f9f7f4]">

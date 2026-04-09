@@ -8,6 +8,7 @@ import { Globe, Menu, X, ChevronDown } from "lucide-react";
 interface S2IHeaderENProps {
   activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'student-pack' | 'services' | 'knowledge-hub' | 'about' | 'contact' | 'home' | '';
   langToggleHref?: string;
+  esHref?: string;
 }
 
 const navItems = [
@@ -24,10 +25,7 @@ const navItems = [
   { href: "https://www.share2inspire.pt/en/pages/contact", label: "Contact", id: "contact" },
 ];
 
-// ES always points to the area-cliente with ?lang=es
-const ES_HREF = "/area-cliente/?lang=es";
-
-export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHeaderENProps) {
+export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = '/area-cliente/?lang=es' }: S2IHeaderENProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolledDown, setScrolledDown] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -109,7 +107,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
                     EN — English
                   </span>
                   {/* ES */}
-                  <a href={ES_HREF} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+                  <a href={esHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
                     <span className="w-2 h-2 rounded-full bg-slate-300" />
                     ES — Español
                   </a>
@@ -162,7 +160,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
             <span className="w-2 h-2 rounded-full bg-[#C9A961]" />
             EN — English
           </span>
-          <a href={ES_HREF} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+          <a href={esHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
             <span className="w-2 h-2 rounded-full bg-slate-300" />
             ES — Español
           </a>
@@ -214,7 +212,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref }: S2IHead
                   EN — English
                 </span>
                 <a
-                  href={ES_HREF}
+                  href={esHref}
                   onClick={() => setMobileMenuOpen(false)}
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                 >
