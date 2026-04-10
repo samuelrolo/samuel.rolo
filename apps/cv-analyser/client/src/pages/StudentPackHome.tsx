@@ -225,9 +225,9 @@ export default function StudentPackHome() {
             const requestBody: any = { mode: 'student_pack', language: 'pt', country: currentCountry, region: currentRegion, linkedin_url: currentLinkedinUrl };
             if (useServerExtraction && base64Content) { requestBody.file = base64Content; requestBody.filename = file?.name || 'cv.pdf'; }
             else { requestBody.cv_text = cvText.substring(0, 8000); }
-            setTimeout(() => setAnalysisMsg("A cruzar com o teu perfil LinkedIn..."), 5000);
-            setTimeout(() => setAnalysisMsg("A construir o teu plano de entrada no mercado..."), 12000);
-            setTimeout(() => setAnalysisMsg("A preparar recomendações personalizadas..."), 20000);
+            setTimeout(() => setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn...")), 5000);
+            setTimeout(() => setAnalysisMsg(pick("A construir o teu plano de entrada no mercado...", "Building your market entry plan...", "Construyendo tu plan de entrada al mercado...")), 12000);
+            setTimeout(() => setAnalysisMsg(pick("A preparar recomendações personalizadas...", "Preparing personalised recommendations...", "Preparando recomendaciones personalizadas...")), 20000);
             const response = await fetch(SUPABASE_EDGE_URL_PT, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody), signal: controller.signal });
             clearTimeout(timeoutId);
             if (response.ok) { responseData = await response.json(); if (responseData.success) break; }
@@ -338,11 +338,11 @@ export default function StudentPackHome() {
       trackPaymentStart('student_pack', finalPrice);
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: finalPrice.toFixed(2), email, product: 'Pack Estudante — CV Analyser + LinkedIn Roaster', description: appliedCoupon ? `Pack Estudante (${appliedCoupon.percent}% desconto: ${appliedCoupon.code})` : 'Pack Estudante — CV Analyser + LinkedIn Roaster' }) });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
       setPaymentStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
       startPolling(orderId);
-    } catch (err: any) { setPaymentError(err.message || 'Erro ao processar pagamento'); }
+    } catch (err: any) { setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago')); }
     finally { setPaymentLoading(false); }
   };
 
@@ -383,14 +383,14 @@ export default function StudentPackHome() {
       attempts++;
       try {
         const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId }) });
-        if (!res.ok) { consecutiveErrors++; if (consecutiveErrors >= 8) { clearInterval(interval); setPollingExpired(true); setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".'); } return; }
+        if (!res.ok) { consecutiveErrors++; if (consecutiveErrors >= 8) { clearInterval(interval); setPollingExpired(true); setPollingMsg(pick('Não foi possível verificar. Usa o botão "Já paguei".', 'Could not verify. Use the "I already paid" button.', 'No se pudo verificar. Usa el botón "Ya pagué".')); } return; }
         consecutiveErrors = 0;
         const data = await res.json();
         if (data.paid) { clearInterval(interval); setShowPaymentModal(false); runBothEngines(); return; }
         const elapsed = Date.now() - startTime;
-        if (data.expired && elapsed > 90000) { clearInterval(interval); setPollingExpired(true); setPollingMsg('O pagamento expirou.'); return; }
-        setPollingMsg(elapsed < 30000 ? 'Confirma o pagamento na app MB WAY...' : elapsed < 60000 ? 'Ainda a aguardar...' : 'A aguardar confirmação...');
-        if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg('Tempo esgotado.'); }
+        if (data.expired && elapsed > 90000) { clearInterval(interval); setPollingExpired(true); setPollingMsg(pick('O pagamento expirou.', 'Payment expired.', 'El pago expiró.')); return; }
+        setPollingMsg(elapsed < 30000 ? pick('Confirma o pagamento na app MB WAY...', 'Confirm the payment in MB WAY...', 'Confirma el pago en MB WAY...') : elapsed < 60000 ? pick('Ainda a aguardar...', 'Still waiting...', 'Todavía esperando...') : pick('A aguardar confirmação...', 'Waiting for confirmation...', 'Esperando confirmación...'));
+        if (attempts >= 60) { clearInterval(interval); setPollingExpired(true); setPollingMsg(pick('Tempo esgotado.', 'Time expired.', 'Tiempo agotado.')); }
       } catch { consecutiveErrors++; }
     }, 5000);
   };
@@ -403,8 +403,8 @@ export default function StudentPackHome() {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
       const data = await res.json();
       if (data.paid) { setShowPaymentModal(false); runBothEngines(); }
-      else { setPollingExpired(true); setPollingMsg('Pagamento ainda não confirmado.'); startPolling(currentOrderId); }
-    } catch { setPollingMsg('Erro ao verificar.'); setPollingExpired(true); }
+      else { setPollingExpired(true); setPollingMsg(pick('Pagamento ainda não confirmado.', 'Payment not yet confirmed.', 'Pago aún no confirmado.')); startPolling(currentOrderId); }
+    } catch { setPollingMsg(pick('Erro ao verificar.', 'Error verifying.', 'Error al verificar.')); setPollingExpired(true); }
   };
 
   /* ─── Discount Code Handler ─── */
