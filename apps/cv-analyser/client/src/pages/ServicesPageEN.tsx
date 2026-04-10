@@ -143,6 +143,318 @@ const testimonials = [
   { quote: "CV Analyser identified points I would never have seen. Free and extremely useful.", name: "Ricardo P.", role: "Consultant", initials: "RP" },
 ];
 
+/* ─── SCHEMA.ORG JSON-LD ─── */
+function ServicesSchemaLD() {
+  const baseUrl = "https://share2inspire.pt";
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${baseUrl}/#organization`,
+    "name": "Share2Inspire",
+    "url": baseUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${baseUrl}/logo.png`
+    },
+    "description": "AI-powered career development tools helping professionals take control of their careers.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": "hello@share2inspire.pt",
+      "availableLanguage": ["English", "Portuguese", "Spanish"]
+    },
+    "sameAs": [
+      "https://www.linkedin.com/company/share2inspire",
+      "https://www.instagram.com/share2inspire"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": "152"
+    }
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Share2Inspire",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Services",
+        "item": `${baseUrl}/en/services`
+      }
+    ]
+  };
+
+  const servicesSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Share2Inspire Career Services",
+    "description": "AI-powered career tools: CV analysis, LinkedIn audit, career path planning and strategic career intelligence.",
+    "url": `${baseUrl}/en/services`,
+    "numberOfItems": 6,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/cv-analyser#service`,
+          "name": "CV Analyser",
+          "url": `${baseUrl}/cv-analyser`,
+          "description": "Instant AI-powered CV diagnosis. Employability score 0-100, ATS rejection rate, PDF report with 15+ recommendations.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "CV Analysis",
+          "category": "Career Development",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Free Analysis",
+              "price": "0",
+              "priceCurrency": "EUR",
+              "availability": "https://schema.org/InStock",
+              "url": `${baseUrl}/cv-analyser`,
+              "description": "Free CV analysis with employability score and key recommendations."
+            },
+            {
+              "@type": "Offer",
+              "name": "Full Report",
+              "price": "9.99",
+              "priceCurrency": "EUR",
+              "availability": "https://schema.org/InStock",
+              "url": `${baseUrl}/cv-analyser`,
+              "description": "Full PDF report with 15+ detailed recommendations and ATS rate."
+            }
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "148"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/linkedin-roaster#service`,
+          "name": "LinkedIn Roaster",
+          "url": `${baseUrl}/linkedin-roaster`,
+          "description": "Complete LinkedIn profile audit. Visibility score 0-10, critical errors, SEO keywords and priority recommendations.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "LinkedIn Profile Audit",
+          "category": "Career Development",
+          "offers": {
+            "@type": "Offer",
+            "price": "3.99",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": `${baseUrl}/linkedin-roaster`
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "89"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/career-path#service`,
+          "name": "Career Path",
+          "url": `${baseUrl}/career-path`,
+          "description": "Personalised career roadmap with skills gap analysis, salary estimates by stage, recommended training and a 30-60-90 day plan.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "Career Planning",
+          "category": "Career Development",
+          "offers": {
+            "@type": "Offer",
+            "price": "19.99",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": `${baseUrl}/career-path`
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "134"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/career-intelligence#service`,
+          "name": "Career Intelligence",
+          "url": `${baseUrl}/career-intelligence`,
+          "description": "Strategic career decision-making. 3 paths with success probability, side-by-side comparison, trade-offs and a final justified recommendation. Market context included.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "Career Intelligence",
+          "category": "Career Development",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Standard",
+              "price": "49.99",
+              "priceCurrency": "EUR",
+              "availability": "https://schema.org/InStock",
+              "url": `${baseUrl}/career-intelligence`
+            },
+            {
+              "@type": "Offer",
+              "name": "Career Path Upgrade",
+              "price": "29.00",
+              "priceCurrency": "EUR",
+              "availability": "https://schema.org/InStock",
+              "url": `${baseUrl}/career-intelligence`,
+              "description": "Upgrade price for existing Career Path customers."
+            }
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "67"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/estudante#service`,
+          "name": "Student Pack",
+          "url": `${baseUrl}/estudante`,
+          "description": "CV Analyser + LinkedIn Roaster together. Full AI CV analysis, LinkedIn profile audit, CV\u2194LinkedIn consistency report and weekly integrated action plan.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "Career Starter Bundle",
+          "category": "Career Development",
+          "offers": {
+            "@type": "Offer",
+            "price": "7.99",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": `${baseUrl}/estudante`,
+            "priceValidUntil": "2026-12-31"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "112"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "item": {
+          "@type": "Service",
+          "@id": `${baseUrl}/bundle#service`,
+          "name": "CV Analyser + Career Path Bundle",
+          "url": `${baseUrl}/bundle`,
+          "description": "Full CV diagnosis + personalised career roadmap. Everything you need to get started — at a discounted bundle price.",
+          "provider": { "@id": `${baseUrl}/#organization` },
+          "serviceType": "Career Bundle",
+          "category": "Career Development",
+          "offers": {
+            "@type": "Offer",
+            "price": "29.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": `${baseUrl}/bundle`,
+            "priceValidUntil": "2026-12-31"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "95"
+          }
+        }
+      }
+    ]
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is CV Analyser really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The initial analysis with maturity score and key recommendations is 100% free. If you want the full report with 15+ detailed recommendations and ATS rate, it costs \u20AC9.99."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the difference between Career Path and Career Intelligence?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Career Path gives you a personalised roadmap with your ideal next step. Career Intelligence goes further: it compares multiple paths, analyses trade-offs and gives you a justified recommendation. If you already know the direction, Career Path is enough. If you're torn between options, Career Intelligence is for you."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to get results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CV Analyser and LinkedIn Roaster are instant \u2014 you get results in seconds. Career Path and Career Intelligence are generated in under 5 minutes after payment."
+        }
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+    </>
+  );
+}
+
 /* ─── COMPONENTS ─── */
 function ServiceCard({ svc, featured }: { svc: any; featured?: boolean }) {
   return (
@@ -208,6 +520,9 @@ export default function ServicesPageEN() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
+      {/* ─── SCHEMA.ORG JSON-LD ─── */}
+      <ServicesSchemaLD />
+
       <S2IHeader  />
 
       {/* ─── HERO ─── */}
