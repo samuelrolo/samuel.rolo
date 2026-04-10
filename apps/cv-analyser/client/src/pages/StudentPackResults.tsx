@@ -696,16 +696,16 @@ export default function StudentPackResults() {
                             {Array.isArray(cargo.o_que_ja_tens) && (
                               <div className="bg-green-50/30 rounded-lg p-3">
                                 <p className="text-xs font-semibold text-green-700 mb-2">✅ {pick('O que já tens', 'What you already have', 'Lo que ya tienes')}</p>
-                                <ul className="space-y-1">{cargo.o_que_ja_tens.map((t: string, j: number) => (
-                                  <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><CheckCircle2 className="w-3 h-3 text-green-500 shrink-0 mt-0.5" />{t}</li>
+                                <ul className="space-y-1">{cargo.o_que_ja_tens.map((item: string, j: number) => (
+                                  <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><CheckCircle2 className="w-3 h-3 text-green-500 shrink-0 mt-0.5" />{item}</li>
                                 ))}</ul>
                               </div>
                             )}
                             {Array.isArray(cargo.o_que_ainda_precisas) && (
                               <div className="bg-amber-50/30 rounded-lg p-3">
                                 <p className="text-xs font-semibold text-amber-700 mb-2">⚠️ {pick('O que precisas', 'What you need', 'Lo que necesitas')}</p>
-                                <ul className="space-y-1">{cargo.o_que_ainda_precisas.map((t: string, j: number) => (
-                                  <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><AlertTriangle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />{t}</li>
+                                <ul className="space-y-1">{cargo.o_que_ainda_precisas.map((item: string, j: number) => (
+                                  <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><AlertTriangle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />{item}</li>
                                 ))}</ul>
                               </div>
                             )}
