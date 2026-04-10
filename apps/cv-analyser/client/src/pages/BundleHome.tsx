@@ -238,7 +238,7 @@ export default function BundleHome() {
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       // ─── ENGINE 1: CV Analyser ───
-      setAnalysisMsg("A analisar o teu CV com IA...");
+      setAnalysisMsg(pick("A analisar o teu CV com IA...", "Analysing your CV with AI...", "Analizando tu CV con IA..."));
       let cvResponseData: any = null;
       const maxRetries = 2;
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -296,7 +296,7 @@ export default function BundleHome() {
       window.currentReportData = cvAnalysisSource;
 
       // ─── ENGINE 2: Career Path ───
-      setAnalysisMsg("A gerar o teu Career Path...");
+      setAnalysisMsg(pick("A gerar o teu Career Path...", "Generating your Career Path...", "Generando tu Career Path..."));
 
       // Store Career Path data
       sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
@@ -523,7 +523,7 @@ export default function BundleHome() {
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar pagamento...');
+    setPollingMsg(pick('A verificar pagamento...', 'Verifying payment...', 'Verificando pago...'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
