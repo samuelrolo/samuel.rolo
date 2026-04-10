@@ -254,7 +254,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         <button
           onClick={() => setMobileMenuOpen(true)}
           className="lg:hidden fixed top-3 right-3 z-[60] p-2.5 bg-white/95 shadow-lg border border-slate-100 rounded-xl text-slate-800"
-          aria-label="Menu"
+          aria-label={menuLabel}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -309,7 +309,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
                 href="/area-cliente/"
                 className="s2i-login-btn block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
               >
-                Login
+                {loginLabel}
               </a>
             </div>
           </div>

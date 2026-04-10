@@ -3,7 +3,7 @@
  * Desktop: 5-column row (logo 33% + 4x 16.67%)
  * Mobile (<768px): 2-column grid, logo full-width on top
  */
-import { getLang } from '@/i18n/translations';
+import { getLang } from '@/i18n';
 import { localePath } from '@/i18n/useTranslation';
 
 export default function S2IFooter() {
@@ -72,11 +72,11 @@ export default function S2IFooter() {
             {/* Legal */}
             <div>
               <h5 style={headingStyle}>{pick('Legal', 'Legal', 'Legal')}</h5>
-              <a href="/politica-privacidade" style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
-              <a href="/politica-cookies" style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
-              <a href="/informacao-legal" style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
-              <a href="/termos-condicoes" style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
-              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
+              <a href={lp('/politica-privacidade')} style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
+              <a href={lp('/politica-cookies')} style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
+              <a href={lp('/informacao-legal')} style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
+              <a href={lp('/termos-condicoes')} style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
+              <a href={lp('/tratamento-dados')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
             </div>
             {/* Contact */}
             <div>

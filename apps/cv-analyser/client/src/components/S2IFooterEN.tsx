@@ -1,10 +1,18 @@
 /**
- * S2IFooterEN — English version, responsive footer.
+ * S2IFooterEN — English footer, now using central i18n module.
  * Desktop: 5-column row (logo 33% + 4x 16.67%)
  * Mobile (<768px): 2-column grid, logo full-width on top
  */
+import { getLang } from '@/i18n';
+import { localePath } from '@/i18n/useTranslation';
+
 export default function S2IFooterEN() {
-  const pick = (pt: string, en: string, es: string) => en;
+  const lang = getLang();
+  const lp = (ptPath: string) => localePath(ptPath, lang);
+
+  const pick = (pt: string, en: string, es: string) =>
+    lang === 'pt' ? pt : lang === 'es' ? es : en;
+
   const linkStyle: React.CSSProperties = {
     display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)',
     textDecoration: 'none', marginBottom: '10px', transition: 'color .3s',
@@ -48,27 +56,27 @@ export default function S2IFooterEN() {
             {/* Navigation */}
             <div>
               <h5 style={headingStyle}>{pick('Navegação', 'Navigation', 'Navegación')}</h5>
-              <a href="/en" style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
-              <a href="/en/pages/about" style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
-              <a href="/en/pages/services" style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
-              <a href="/en/pages/knowledge" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Knowledge Hub', 'Knowledge Hub', 'Hub de Conocimiento')}</a>
+              <a href={lp('/')} style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
+              <a href={lp('/sobre')} style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
+              <a href={lp('/servicos')} style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
+              <a href={lp('/conhecimento')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Knowledge Hub', 'Knowledge Hub', 'Hub de Conocimiento')}</a>
             </div>
             {/* Tools */}
             <div>
               <h5 style={headingStyle}>{pick('Ferramentas', 'Tools', 'Herramientas')}</h5>
-              <a href="/en/cv-analyser" style={linkStyle}>CV Analyser</a>
-              <a href="/en/linkedin-roaster" style={linkStyle}>LinkedIn Roaster</a>
-              <a href="/en/career-path" style={linkStyle}>Career Path</a>
-              <a href="/en/career-intelligence" style={{ ...linkStyle, marginBottom: 0 }}>Career Intelligence</a>
+              <a href={lp('/cv-analyser')} style={linkStyle}>CV Analyser</a>
+              <a href={lp('/linkedin-roaster')} style={linkStyle}>LinkedIn Roaster</a>
+              <a href={lp('/career-path')} style={linkStyle}>Career Path</a>
+              <a href={lp('/career-intelligence')} style={{ ...linkStyle, marginBottom: 0 }}>Career Intelligence</a>
             </div>
             {/* Legal */}
             <div>
               <h5 style={headingStyle}>{pick('Legal', 'Legal', 'Legal')}</h5>
-              <a href="/politica-privacidade" style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
-              <a href="/politica-cookies" style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
-              <a href="/informacao-legal" style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
-              <a href="/termos-condicoes" style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
-              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
+              <a href={lp('/politica-privacidade')} style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
+              <a href={lp('/politica-cookies')} style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
+              <a href={lp('/informacao-legal')} style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
+              <a href={lp('/termos-condicoes')} style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
+              <a href={lp('/tratamento-dados')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
             </div>
             {/* Contact */}
             <div>

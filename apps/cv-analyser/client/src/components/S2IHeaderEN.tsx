@@ -1,9 +1,11 @@
 /**
  * S2IHeaderEN — Shared header component for all EN React pages.
- * Single source of truth for English navigation.
+ * Now uses the central i18n module for language detection and URL switching.
  */
 import { useState, useEffect, useRef } from "react";
 import { Globe, Menu, X, ChevronDown } from "lucide-react";
+import { getLang, type Lang } from "@/i18n";
+import { switchLangUrl, localePath } from "@/i18n/useTranslation";
 
 interface S2IHeaderENProps {
   activePage?: 'cv-analyser' | 'career-path' | 'career-intelligence' | 'linkedin-roaster' | 'bundle' | 'student-pack' | 'services' | 'knowledge-hub' | 'about' | 'contact' | 'home' | '';
@@ -11,7 +13,9 @@ interface S2IHeaderENProps {
   esHref?: string;
 }
 
-const pick = (pt: string, en: string, es: string) => en;
+function pick(lang: Lang, pt: string, en: string, es: string): string {
+  return lang === 'en' ? en : lang === 'es' ? es : pt;
+}
 
 const navItems = [
   { href: "https://www.share2inspire.pt/en/pages/home", label: "Home", id: "home" },
@@ -27,13 +31,16 @@ const navItems = [
   { href: "https://www.share2inspire.pt/en/pages/contact", label: "Contact", id: "contact" },
 ];
 
-export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = '/area-cliente/?lang=es' }: S2IHeaderENProps) {
+export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref }: S2IHeaderENProps) {
+  const lang = getLang();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const loginLabel = pick('Login', 'Login', 'Login');
-  const menuLabel = pick('Menu', 'Menu', 'Menú');
-  const closeMenuLabel = pick('Fechar menu', 'Close menu', 'Cerrar menú');
-  const languageLabel = pick('Idioma', 'Language', 'Idioma');
-  const logoAlt = pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire');
+  const loginLabel = pick(lang, 'Login', 'Login', 'Login');
+  const menuLabel = pick(lang, 'Menu', 'Menu', 'Menú');
+  const closeMenuLabel = pick(lang, 'Fechar menu', 'Close menu', 'Cerrar menú');
+  const languageLabel = pick(lang, 'Idioma', 'Language', 'Idioma');
+  const logoAlt = pick(lang, 'Share2Inspire', 'Share2Inspire', 'Share2Inspire');
+  const ptHref = langToggleHref || switchLangUrl('pt');
+  const esHrefResolved = esHref || switchLangUrl('es');
   const [scrolledDown, setScrolledDown] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
@@ -102,21 +109,19 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
               {langDropdownOpen && (
                 <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
                   {/* PT */}
-                  {langToggleHref && (
-                    <a href={langToggleHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
-                      <span className="w-2 h-2 rounded-full bg-slate-300" />
-                      {pick('PT — Português', 'PT — Portuguese', 'PT — Portugués')}
-                    </a>
-                  )}
+                  <a href={ptHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+                    <span className="w-2 h-2 rounded-full bg-slate-300" />
+                    {pick(lang, 'PT — Português', 'PT — Portuguese', 'PT — Portugués')}
+                  </a>
                   {/* EN — active */}
                   <span className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C9A961] bg-[#C9A961]/5 cursor-default">
                     <span className="w-2 h-2 rounded-full bg-[#C9A961]" />
-                    {pick('EN — Inglês', 'EN — English', 'EN — Inglés')}
+                    {pick(lang, 'EN — Inglês', 'EN — English', 'EN — Inglés')}
                   </span>
                   {/* ES */}
-                  <a href={esHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+                  <a href={esHrefResolved} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
                     <span className="w-2 h-2 rounded-full bg-slate-300" />
-                    {pick('ES — Espanhol', 'ES — Spanish', 'ES — Español')}
+                    {pick(lang, 'ES — Espanhol', 'ES — Spanish', 'ES — Español')}
                   </a>
                 </div>
               )}
@@ -148,7 +153,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
         <button
           onClick={() => setMobileMenuOpen(true)}
           className="lg:hidden fixed top-3 right-3 z-[60] p-2.5 bg-white/95 shadow-lg border border-slate-100 rounded-xl text-slate-800"
-          aria-label="Menu"
+          aria-label={menuLabel}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -157,19 +162,17 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
       {/* Mobile Language Dropdown — shown inline below header when globe is tapped */}
       {langDropdownOpen && !mobileMenuOpen && (
         <div className="lg:hidden fixed top-11 right-3 z-[55] w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1">
-          {langToggleHref && (
-            <a href={langToggleHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
-              <span className="w-2 h-2 rounded-full bg-slate-300" />
-              PT — Português
-            </a>
-          )}
+          <a href={ptHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+            <span className="w-2 h-2 rounded-full bg-slate-300" />
+            {pick(lang, 'PT — Português', 'PT — Portuguese', 'PT — Portugués')}
+          </a>
           <span className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C9A961] bg-[#C9A961]/5 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[#C9A961]" />
-            EN — English
+            {pick(lang, 'EN — Inglês', 'EN — English', 'EN — Inglés')}
           </span>
-          <a href={esHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
+          <a href={esHrefResolved} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
             <span className="w-2 h-2 rounded-full bg-slate-300" />
-            ES — Español
+            {pick(lang, 'ES — Espanhol', 'ES — Spanish', 'ES — Español')}
           </a>
         </div>
       )}
@@ -206,24 +209,22 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
                 <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">{languageLabel}</span>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                {langToggleHref && (
-                  <a
-                    href={langToggleHref}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-                  >
-                    {pick('PT — Português', 'PT — Portuguese', 'PT — Portugués')}
-                  </a>
-                )}
-                <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30 text-sm font-semibold text-[#C9A961] cursor-default">
-                  EN — English
-                </span>
                 <a
-                  href={esHref}
+                  href={ptHref}
                   onClick={() => setMobileMenuOpen(false)}
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                 >
-                  ES — Español
+                  {pick(lang, 'PT — Português', 'PT — Portuguese', 'PT — Portugués')}
+                </a>
+                <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30 text-sm font-semibold text-[#C9A961] cursor-default">
+                  {pick(lang, 'EN — Inglês', 'EN — English', 'EN — Inglés')}
+                </span>
+                <a
+                  href={esHrefResolved}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  {pick(lang, 'ES — Espanhol', 'ES — Spanish', 'ES — Español')}
                 </a>
               </div>
             </div>
