@@ -774,7 +774,7 @@ export default function CareerPathHome() {
                   <h3 className="text-lg font-bold text-foreground">{pick('Quer mais do que um roadmap?', 'Want more than a roadmap?', '¿Quieres más que un roadmap?')}</h3>
                 </div>
                 <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto">
-                  {pick('O', 'The', 'El')} <strong className="text-foreground">Career Intelligence</strong> {pick('compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.', 'compares multiple strategic career directions side by side, analyses trade-offs and gives you a well-founded recommendation — to decide with confidence.', 'compara múltiples direcciones estratégicas de carrera lado a lado, analiza trade-offs y te da una recomendación fundamentada — para decidir con confianza.')}
+                  {pick('O', 'The', 'El')} <strong className="text-foreground">{pick("Career Intelligence", "Career Intelligence", "Career Intelligence")}</strong> {pick('compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.', 'compares multiple strategic career directions side by side, analyses trade-offs and gives you a well-founded recommendation — to decide with confidence.', 'compara múltiples direcciones estratégicas de carrera lado a lado, analiza trade-offs y te da una recomendación fundamentada — para decidir con confianza.')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                   {/* Opção 1: Upgrade após Career Path */}
@@ -792,8 +792,8 @@ export default function CareerPathHome() {
                   {/* Opção 2: Career Intelligence completo */}
                   <div className="p-4 rounded-xl bg-white border border-purple-200 flex flex-col h-full">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">COMPLETO</span>
-                      <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">{pick("COMPLETO", "FULL", "COMPLETO")}</span>
+                      <span className="text-sm font-semibold text-foreground">{pick("Career Intelligence", "Career Intelligence", "Career Intelligence")}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-2 flex-1">{pick('Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.', 'Everything in Career Path + strategic comparison, trade-offs and final recommendation.', 'Todo del Career Path + comparación estratégica, trade-offs y recomendación final.')}</p>
                     <div className="flex items-center gap-3 mt-2">
@@ -1153,7 +1153,7 @@ export default function CareerPathHome() {
             <div className="space-y-4">
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Career Path</p>
+                  <p className="text-sm font-semibold text-foreground">{pick("Career Path", "Career Path", "Career Path")}</p>
                   <p className="text-xs text-muted-foreground">{pick('Mapa de carreira personalizado', 'Personalised career map', 'Mapa de carrera personalizado')}</p>
                 </div>
                 <div className="text-right">
@@ -1196,7 +1196,7 @@ export default function CareerPathHome() {
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Email</label>
+                <label className="text-xs font-semibold text-foreground">{pick("Email", "Email", "Email")}</label>
                 <input
                   type="email"
                   value={email}
