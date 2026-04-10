@@ -370,11 +370,11 @@
     },
     {
       "source": "/en/estudante",
-      "destination": "/en/estudante"
+      "destination": "/en/student-pack"
     },
     {
       "source": "/en/estudante/:path*",
-      "destination": "/en/estudante"
+      "destination": "/en/student-pack"
     },
     {
       "source": "/estudos",
@@ -478,11 +478,11 @@
     },
     {
       "source": "/estudante",
-      "destination": "/estudante"
+      "destination": "/estudante/index.html"
     },
     {
       "source": "/estudante/:path*",
-      "destination": "/estudante"
+      "destination": "/estudante/index.html"
     },
     {
       "source": "/en/student-pack",

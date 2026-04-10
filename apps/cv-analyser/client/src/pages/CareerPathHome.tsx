@@ -328,7 +328,7 @@ export default function CareerPathHome() {
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         try {
-          const requestBody: any = { mode: 'cv_extraction' };
+          const requestBody: any = { mode: 'cv_extraction', language: lang };
           if (useServerExtraction) {
             // Send base64 file for server-side Gemini Vision extraction
             requestBody.file = base64Content;

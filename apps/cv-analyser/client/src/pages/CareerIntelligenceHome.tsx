@@ -360,7 +360,7 @@ export default function CareerIntelligenceHome() {
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         try {
-          const requestBody: any = { mode: 'cv_extraction' };
+          const requestBody: any = { mode: 'cv_extraction', language: lang };
           if (useServerExtraction) {
             requestBody.file = base64Content;
             requestBody.filename = file.name;

@@ -27,6 +27,32 @@ const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
+/**
+ * Fire-and-forget: send welcome email after CV analysis.
+ * Never blocks the user flow. Errors are silently caught.
+ */
+function sendWelcomeEmail(email: string, name: string, lang: string = 'en') {
+  try {
+    const sentKey = `welcome_email_sent_${email}`;
+    if (sessionStorage.getItem(sentKey)) return;
+    sessionStorage.setItem(sentKey, 'true');
+    fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ type: 'cv_analysis', email, name, lang }),
+    }).then(res => {
+      console.log('[WELCOME] Email sent, status:', res.status);
+    }).catch(err => {
+      console.warn('[WELCOME] Failed to send welcome email (non-critical):', err.message);
+    });
+  } catch (e) {
+    // Never throw - this is purely engagement
+  }
+}
+
 function logAnalysisToSupabase(analysisResult: any, analysisSource: any, cvText?: string) {
   try {
     const score = analysisResult.overallScore || null;

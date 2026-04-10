@@ -461,6 +461,7 @@ export default function Home() {
         try {
           const requestBody: any = {
             mode: 'cv_extraction',
+            language: lang,
             country: selectedCountry,
             region: selectedRegion || undefined,
             ...(jobInput.trim() ? { job_description: jobInput.trim().substring(0, 3000) } : {})
@@ -748,6 +749,7 @@ export default function Home() {
 
       const requestBody: any = {
         mode: 'cv_extraction',
+        language: lang,
         country: selectedCountry,
         region: selectedRegion || undefined,
         cv_text: scrapeData.cv_text.substring(0, 8000),

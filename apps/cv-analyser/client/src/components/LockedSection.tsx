@@ -1,20 +1,24 @@
 import { Lock } from "lucide-react";
-import { t, pick, getLang } from '../pages/en/translations';
+import { t } from '../i18n/translations';
 
 interface LockedSectionProps {
   title: string;
   previewItems?: string[];
   children?: React.ReactNode;
   isEN?: boolean;
+  visibleHint?: string;
 }
 
-const LockedSection = ({ title, previewItems, children, isEN = false }: LockedSectionProps) => {
+const LockedSection = ({ title, previewItems, children, isEN = false, visibleHint }: LockedSectionProps) => {
   return (
     <div className="relative rounded-lg border border-border bg-card p-6 overflow-hidden">
       {/* Blur overlay */}
       <div className="absolute inset-0 backdrop-blur-sm bg-background/30 z-10 flex flex-col items-center justify-center">
         <Lock className="w-8 h-8 text-[#C9A961] mb-3" />
         <p className="text-sm font-semibold text-card-foreground mb-2">{t('desbloqueia_para_ver')}</p>
+        {visibleHint && (
+          <p className="text-xs text-muted-foreground mb-2 text-center px-4">{visibleHint}</p>
+        )}
         {previewItems && (
           <ul className="text-sm text-muted-foreground space-y-1">
             {previewItems.map((item, i) => (

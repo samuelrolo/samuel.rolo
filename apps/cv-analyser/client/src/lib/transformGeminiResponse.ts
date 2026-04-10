@@ -1,3 +1,5 @@
+import { t, pick, getLang } from '../i18n/translations';
+
 /**
  * transformGeminiResponse — converts the raw Gemini JSON (from cv_extraction or cv_analysis)
  * into the internal format consumed by Results.tsx.
@@ -6,8 +8,9 @@
  * (new prompt format), use them directly. Only fall back to hardcoded/computed values when the
  * Gemini response does NOT include those fields.
  */
-export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt'): any {
+export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' = 'pt'): any {
   const isEN = lang === 'en';
+  const isES = lang === 'es';
   let atsRejectionRate = 35;
   let atsTopFactor: string | undefined;
   let quadrants: any[] = [];
@@ -67,6 +70,8 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
         if (isNaN(benchmark)) {
           const defaultBenchmarks: Record<string, number> = isEN
             ? { 'Structure': 65, 'Content': 70, 'Education': 60, 'Experience': 70 }
+            : isES
+            ? { 'Estructura': 65, 'Contenido': 70, 'Formación': 60, 'Experiencia': 70 }
             : { 'Estrutura': 65, 'Conteúdo': 70, 'Formação': 60, 'Experiência': 70 };
           benchmark = defaultBenchmarks[normalizedTitle] || 65;
         }
@@ -74,7 +79,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
           title: normalizedTitle,
           score: Math.min(100, Math.max(0, score)),
           benchmark: Math.min(100, Math.max(0, benchmark)),
-          impactPhrase: q.impactPhrase || q.impact_phrase || (pick(`Análise de ${normalizedTitle}`, `Analysis of ${normalizedTitle}`, `Análise de ${normalizedTitle}`)),
+          impactPhrase: q.impactPhrase || q.impact_phrase || (pick(`Análise de ${normalizedTitle}`, `Analysis of ${normalizedTitle}`, `Análisis de ${normalizedTitle}`)),
           strengths: Array.isArray(q.strengths) ? q.strengths.slice(0, 3) : undefined,
           weaknesses: Array.isArray(q.weaknesses) ? q.weaknesses.slice(0, 3) : undefined,
           detailedFeedback: q.detailed_feedback || q.detailedFeedback || undefined,
@@ -83,7 +88,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
       // Recalculate overallScore from quadrant scores (weighted average)
       if (quadrants.length === 4) {
         const weights = [0.25, 0.30, 0.15, 0.30]; // Structure, Content, Education, Experience
-        const order = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
+        const order = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : lang === 'es' ? ['Estructura', 'Contenido', 'Formación', 'Experiencia'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
         const sorted = [...quadrants].sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title));
         let weightedSum = 0;
         for (let i = 0; i < sorted.length; i++) {
@@ -163,7 +168,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' = 'pt')
     }
 
     // Sort quadrants in standard order
-    const sortOrder = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
+    const sortOrder = lang === 'en' ? ['Structure', 'Content', 'Education', 'Experience'] : lang === 'es' ? ['Estructura', 'Contenido', 'Formación', 'Experiencia'] : ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
     quadrants.sort((a: any, b: any) => sortOrder.indexOf(a.title) - sortOrder.indexOf(b.title));
 
     // ─── 2b. OVERRIDE: If Gemini returned atsRejectionRate directly, use it ───
@@ -563,7 +568,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'missing',
         importance: i < 2 ? 'high' : i < 4 ? 'medium' : 'low',
-        suggestion: pick(`Adicionar "${kw}" na secção de competências ou experiência relevante`, `Add "${kw}" to the skills or relevant experience section`, `Adicionar "${kw}" na secção de competências ou experiência relevante`),
+        suggestion: pick(`Adicionar "${kw}" na secção de competências ou experiência relevante`, `Add "${kw}" to the skills or relevant experience section`, `Añadir "${kw}" en la sección de competencias o experiencia relevante`),
       });
     });
   } else {
@@ -590,7 +595,7 @@ function computeATSDeepScan(
         keyword: kw,
         status: 'missing',
         importance: i === 0 ? 'high' : 'medium',
-        suggestion: pick(`Reformular para incluir: ${kw}`, `Reformulate to include: ${kw}`, `Reformular para incluir: ${kw}`),
+        suggestion: pick(`Reformular para incluir: ${kw}`, `Reformulate to include: ${kw}`, `Reformular para incluir: ${kw}`, lang),
       });
     });
     // Add partial matches from cv_problems

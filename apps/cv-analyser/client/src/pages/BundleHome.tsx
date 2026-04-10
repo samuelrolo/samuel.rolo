@@ -369,7 +369,7 @@ export default function BundleHome() {
 
       // Redirect to CV Analyser results (which also shows Career Path link)
       setTimeout(() => {
-        window.location.href = '/cv-analyser/results';
+        window.location.href = localePath('/cv-analyser') + '/results';
       }, 1500);
 
     } catch (err: any) {

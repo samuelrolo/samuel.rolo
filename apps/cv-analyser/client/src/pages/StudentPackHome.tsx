@@ -261,7 +261,7 @@ export default function StudentPackHome() {
         setAnalysisMsg(pick("Tudo pronto! A redirecionar...", "All done! Redirecting...", "¡Todo listo! Redirigiendo..."));
         setStep('done');
         try { saveToUserAnalyses('student_pack', { score: responseData?.analysis?.score_global?.valor || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
-        setTimeout(() => { window.location.href = '/estudante/results'; }, 1500);
+        setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 1500);
       } else {
         // ─── EN/ES: two separate engines ───
         const langCode = lang;
