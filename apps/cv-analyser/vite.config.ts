@@ -20,10 +20,21 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Warn when any individual chunk exceeds 500 KB (uncompressed)
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
+          // ─── PDF generation (jspdf + html2canvas) ─────────────────────
+          // Only loaded on Results pages that export a PDF
           'vendor-pdf': ['jspdf', 'html2canvas'],
+
+          // ─── PDF/DOCX parsing (pdfjs-dist + mammoth) ──────────────────
+          // Loaded on every Home page for CV upload; isolate so it can be
+          // preloaded independently and cached across pages
+          'vendor-pdf-parse': ['pdfjs-dist', 'mammoth'],
+
+          // ─── Radix UI primitives ──────────────────────────────────────
           'vendor-radix': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-select',
@@ -35,7 +46,13 @@ export default defineConfig({
             '@radix-ui/react-radio-group',
             '@radix-ui/react-popover',
           ],
+
+          // ─── Animation library ────────────────────────────────────────
           'vendor-motion': ['framer-motion'],
+
+          // ─── Charts (recharts) ────────────────────────────────────────
+          // Only used in Results pages; keep in its own cacheable chunk
+          'vendor-charts': ['recharts'],
         },
       },
     },

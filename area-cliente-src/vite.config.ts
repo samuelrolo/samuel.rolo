@@ -20,6 +20,48 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Warn when any individual chunk exceeds 500 KB (uncompressed)
+    chunkSizeWarningLimit: 500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // ─── Supabase client ─────────────────────────────────────────────
+          // Auth + DB client; large but needed on every page
+          'vendor-supabase': ['@supabase/supabase-js'],
+
+          // ─── PDF/DOCX parsing (pdfjs-dist + mammoth) ──────────────────
+          // Only used in MemberArea for CV upload; lazy-load friendly
+          'vendor-pdf-parse': ['pdfjs-dist', 'mammoth'],
+
+          // ─── PDF generation (jspdf + html2canvas) ─────────────────────
+          // Only loaded when user exports a PDF
+          'vendor-pdf-gen': ['jspdf', 'html2canvas'],
+
+          // ─── Radix UI primitives ──────────────────────────────────────
+          'vendor-radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-select',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-progress',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-radio-group',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-switch',
+          ],
+
+          // ─── Animation library ────────────────────────────────────────
+          'vendor-motion': ['framer-motion'],
+
+          // ─── Charts (recharts) ────────────────────────────────────────
+          // Only used in analytics/dashboard views
+          'vendor-charts': ['recharts'],
+        },
+      },
+    },
   },
   server: {
     port: 3000,
