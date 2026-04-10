@@ -3,7 +3,7 @@
  * Substitui a página /auth dedicada
  */
 import { useState } from 'react';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, type Lang } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Eye, EyeOff, X } from 'lucide-react';
 
@@ -24,8 +24,14 @@ type Props = {
   onSuccess?: () => void;
 };
 
+function pick(lang: Lang, pt: string, en: string, es: string): string {
+  if (lang === 'pt') return pt;
+  if (lang === 'es') return es;
+  return en;
+}
+
 export default function LoginModal({ open, onClose, onSuccess }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { signIn, signUp, resetPassword, signInWithGoogle } = useAuth();
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
@@ -53,7 +59,7 @@ export default function LoginModal({ open, onClose, onSuccess }: Props) {
         if (error) { setError(error); } else { onSuccess?.(); }
       } else if (mode === 'register') {
         if (password !== confirmPassword) { setError(t('auth.passwordMismatch')); setLoading(false); return; }
-        if (password.length < 6) { setError('A palavra-passe deve ter pelo menos 6 caracteres.'); setLoading(false); return; }
+        if (password.length < 6) { setError(pick(lang, 'A palavra-passe deve ter pelo menos 6 caracteres.', 'Password must be at least 6 characters.', 'La contraseña debe tener al menos 6 caracteres.')); setLoading(false); return; }
         const { error } = await signUp(email, password, firstName, lastName);
         if (error) { setError(error); } else { setSuccess(t('auth.checkEmail')); }
       } else {
@@ -168,7 +174,7 @@ export default function LoginModal({ open, onClose, onSuccess }: Props) {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              placeholder="o.teu@email.com"
+              placeholder={pick(lang, 'o.teu@email.com', 'your@email.com', 'tu@email.com')}
               className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/60 focus:outline-none transition-colors"
             />
           </div>
