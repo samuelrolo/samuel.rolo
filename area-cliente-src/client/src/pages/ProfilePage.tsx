@@ -593,7 +593,7 @@ export default function ProfilePage() {
                   <div>
                     <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.jobRegion')}</label>
                     <select value={jobRegion} onChange={e => setJobRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-[#fafaf9] focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all" disabled={!jobCountry}>
-                      <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
+                      <option value="">{lang === 'pt' ? 'Selecionar região...' : lang === 'es' ? 'Seleccionar región...' : 'Select region...'}</option>
                       {(countries.find(c => c.country === jobCountry)?.regions || []).map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </div>
