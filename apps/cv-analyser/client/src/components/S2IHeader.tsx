@@ -5,6 +5,10 @@
  *
  * Props:
  *   activePage: current page identifier for highlighting
+ *
+ * Auth: When the user is authenticated via Supabase, the LOGIN button is
+ * replaced with a circle showing the user's initials (e.g. "SR" for Samuel Rolo).
+ * Clicking the avatar links to the member area (/area-cliente/membros).
  */
 import { useState, useEffect, useRef } from "react";
 import { Globe, Menu, X, ChevronDown } from "lucide-react";
@@ -13,6 +17,90 @@ import { switchLangUrl, localePath } from "@/i18n/useTranslation";
 
 interface S2IHeaderProps {
   activePage?: string;
+}
+
+/* ── Supabase constants (same project as area-cliente) ── */
+const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const SUPABASE_STORAGE_KEY = 'sb-cvlumvgrbuolrnwrtrgz-auth-token';
+
+/* ── Helper: derive initials from a full name or email ── */
+function deriveInitials(firstName: string, lastName: string, email: string): string {
+  if (firstName && lastName) {
+    return (firstName[0] + lastName[0]).toUpperCase();
+  }
+  if (firstName) {
+    return firstName.slice(0, 2).toUpperCase();
+  }
+  if (email) {
+    const local = email.split('@')[0];
+    const parts = local.split(/[._\-+]/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return local.slice(0, 2).toUpperCase();
+  }
+  return '';
+}
+
+/* ── Hook: read Supabase session from localStorage and fetch user initials ── */
+function useUserInitials(): { initials: string; isLoaded: boolean } {
+  const [initials, setInitials] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const stored = localStorage.getItem(SUPABASE_STORAGE_KEY);
+        if (!stored) { setIsLoaded(true); return; }
+
+        const parsed = JSON.parse(stored);
+        const accessToken = parsed?.access_token;
+        const userId = parsed?.user?.id;
+        const userMeta = parsed?.user?.user_metadata;
+        const userEmail = parsed?.user?.email || '';
+
+        if (!accessToken || !userId) { setIsLoaded(true); return; }
+
+        // Check token expiry
+        const expiresAt = parsed?.expires_at;
+        if (expiresAt && Date.now() / 1000 > expiresAt) { setIsLoaded(true); return; }
+
+        // Try to fetch profile for first_name / last_name
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}&select=first_name,last_name,email`,
+          {
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (res.ok) {
+          const rows = await res.json();
+          const row = rows?.[0];
+          if (row) {
+            const derived = deriveInitials(row.first_name || '', row.last_name || '', row.email || userEmail);
+            if (derived) { setInitials(derived); setIsLoaded(true); return; }
+          }
+        }
+
+        // Fallback: use user_metadata from the JWT payload
+        const metaFirst = userMeta?.first_name || userMeta?.given_name || '';
+        const metaLast = userMeta?.last_name || userMeta?.family_name || '';
+        const derived = deriveInitials(metaFirst, metaLast, userEmail);
+        setInitials(derived);
+      } catch {
+        // silently ignore — treat as unauthenticated
+      } finally {
+        setIsLoaded(true);
+      }
+    }
+    load();
+  }, []);
+
+  return { initials, isLoaded };
 }
 
 /* ── Nav item definitions per language ── */
@@ -84,10 +172,66 @@ function getHomeUrl(lang: Lang): string {
   return localePath('/', 'pt');
 }
 
+/* ── UserAvatar: circle with initials or LOGIN button ── */
+function UserAvatar({
+  initials,
+  isLoaded,
+  loginLabel,
+  isMobile = false,
+  onClick,
+}: {
+  initials: string;
+  isLoaded: boolean;
+  loginLabel: string;
+  isMobile?: boolean;
+  onClick?: () => void;
+}) {
+  // While loading, render nothing to avoid flash of LOGIN button
+  if (!isLoaded) return null;
+
+  if (initials) {
+    // Authenticated: show avatar circle linking to member area
+    return (
+      <a
+        href="/area-cliente/membros"
+        title="Área de Membro"
+        onClick={onClick}
+        className={
+          isMobile
+            ? "flex items-center justify-center w-9 h-9 rounded-full bg-[#C9A961] text-white text-sm font-bold uppercase tracking-wide shadow-sm hover:bg-[#b8954f] transition-colors"
+            : "flex items-center justify-center w-8 h-8 rounded-full bg-[#C9A961] text-white text-xs font-bold uppercase tracking-wide shadow-sm hover:bg-[#b8954f] transition-colors"
+        }
+        aria-label="Área de Membro"
+      >
+        {initials}
+      </a>
+    );
+  }
+
+  // Not authenticated: show LOGIN button
+  return isMobile ? (
+    <a
+      href="/area-cliente/"
+      onClick={onClick}
+      className="s2i-login-btn block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
+    >
+      {loginLabel}
+    </a>
+  ) : (
+    <a
+      href="/area-cliente/"
+      className="s2i-login-btn px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors"
+    >
+      {loginLabel}
+    </a>
+  );
+}
+
 export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   const lang = getLang();
   const navItems = getNavItems(lang);
   const langOptions = getLangOptions(lang);
+  const { initials, isLoaded } = useUserInitials();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolledDown, setScrolledDown] = useState(false);
@@ -204,12 +348,12 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-2">
-            <a
-              href="/area-cliente/"
-              className="s2i-login-btn px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors"
-              >
-              {loginLabel}
-            </a>
+            {/* LOGIN button or user avatar */}
+            <UserAvatar
+              initials={initials}
+              isLoaded={isLoaded}
+              loginLabel={loginLabel}
+            />
 
             {/* Desktop Language Dropdown */}
             <div ref={langDropdownRef} className="relative">
@@ -303,14 +447,15 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
                 {langOptions.map(opt => <LangOption key={opt.code} opt={opt} isMobile />)}
               </div>
             </div>
-            {/* Login Button */}
+            {/* Login Button or User Avatar */}
             <div className="pt-3">
-              <a
-                href="/area-cliente/"
-                className="s2i-login-btn block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
-              >
-                {loginLabel}
-              </a>
+              <UserAvatar
+                initials={initials}
+                isLoaded={isLoaded}
+                loginLabel={loginLabel}
+                isMobile
+                onClick={() => setMobileMenuOpen(false)}
+              />
             </div>
           </div>
         </div>
