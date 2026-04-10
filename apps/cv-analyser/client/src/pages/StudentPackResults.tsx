@@ -11,7 +11,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
-import { t, pick, getLang } from './en/translations';
+import { t, pick, getLang, localePath } from '@/i18n';
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -139,8 +139,8 @@ function ProgressBar({ value, max = 100, color = 'emerald' }: { value: number; m
 // ════════════════════════════════════════
 export default function StudentPackResults() {
   const [, setLocation] = useLocation();
-  const isEN = window.location.pathname.includes('/en/');
-  useEffect(() => { document.title = t('resultados_pack_estudante_share2inspire'); }, [isEN]);
+  const lang = getLang();
+  useEffect(() => { document.title = t('resultados_pack_estudante_share2inspire'); }, [lang]);
 
   const rawData = useMemo(() => {
     try {
@@ -156,7 +156,7 @@ export default function StudentPackResults() {
   }, []);
 
   const isPaid = sessionStorage.getItem('studentPackPaid') === 'true';
-  useEffect(() => { if (!isPaid) window.location.href = '/estudante'; }, [isPaid]);
+  useEffect(() => { if (!isPaid) window.location.href = localePath('/estudante'); }, [isPaid]);
 
   // Extract data from the unified student_pack response, sanitize to prevent {txt,href} objects crashing React
   const analysis = deepSanitize(rawData?.analysis || rawData?.data || rawData || {});
@@ -195,8 +195,8 @@ export default function StudentPackResults() {
           <button 
             onClick={() => { 
                 clearSensitiveData(); 
-                window.location.href = t('estudante'); 
-            }}
+window.location.href = localePath('/estudante'); 
+            }
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-sm font-medium text-emerald-700 transition-colors"
           >
             <RefreshCw className="w-4 h-4" /> {t('nova_anlise')}
@@ -207,7 +207,7 @@ export default function StudentPackResults() {
           >
             {t('concluir')}
           </button>
-          <button onClick={() => { sessionStorage.clear(); window.location.href = t('estudante'); }}
+          <button onClick={() => { sessionStorage.clear(); window.location.href = localePath('/estudante'); }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-sm font-medium text-emerald-700 transition-colors">
             <RefreshCw className="w-4 h-4" /> {t('nova_anlise')}
           </button>
@@ -218,7 +218,7 @@ export default function StudentPackResults() {
             <GraduationCap className="w-12 h-12 mx-auto mb-4 text-slate-300" />
             <h2 className="text-xl font-bold text-slate-700 mb-2">{pick('Sem dados de análise', 'No analysis data', 'Sin datos de análisis')}</h2>
             <p className="text-slate-500 mb-6">{pick('A análise não retornou resultados. Tenta novamente.', 'The analysis did not return any results. Please try again.', 'El análisis no devolvió resultados. Inténtalo de nuevo.')}</p>
-            <a href={t('estudante')} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold">
+            <a href={localePath('/estudante')} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold">
               <GraduationCap className="w-5 h-5" /> {pick('Tentar novamente', 'Try again', 'Intentar de nuevo')}
             </a>
           </div>
@@ -242,7 +242,7 @@ export default function StudentPackResults() {
                   </div>
 
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="text-2xl md:text-3xl font-bold mb-1">{perfil?.nome || 'Relatório'}</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1">{perfil?.nome || pick('Relatório', 'Report', 'Informe')}</h1>
                     <p className="text-emerald-200 text-sm mb-3">{perfil?.curso || perfil?.area_alvo || ''}</p>
                     {nivel && (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${nivelBadge(nivel)}`}>
@@ -778,10 +778,10 @@ export default function StudentPackResults() {
                 </div>
                 <p className="text-base md:text-lg font-medium text-slate-800 leading-relaxed mb-6">{recomendacaoPrioritaria}</p>
                 <div className="flex flex-wrap gap-3">
-                  <a href="/cv-analyser" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
+                  <a href={localePath('/cv-analyser')} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
                     {pick('CV Analyser Pro', 'CV Analyser Pro', 'CV Analyser Pro')} <ArrowRight className="w-4 h-4" />
                   </a>
-                  <a href="/career-path" className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#C9A961] text-[#B8963E] text-sm font-semibold rounded-xl hover:bg-[#C9A961]/10 transition-colors">
+                  <a href={localePath('/career-path')} className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#C9A961] text-[#B8963E] text-sm font-semibold rounded-xl hover:bg-[#C9A961]/10 transition-colors">
                     {pick('Career Path', 'Career Path', 'Career Path')} <ArrowRight className="w-4 h-4" />
                   </a>
                 </div>
