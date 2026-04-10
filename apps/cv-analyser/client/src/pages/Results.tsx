@@ -429,6 +429,7 @@ function PayPalIcon({ className }: { className?: string }) {
 }
 
 export default function Results() {
+  const lang = getLang();
   useEffect(() => { document.title = "Resultados da Análise de CV | Share2Inspire"; }, []);
 
   const [, setLocation] = useLocation();
@@ -448,7 +449,6 @@ export default function Results() {
     if (pPT) return 'mbway';
     return sessionStorage.getItem('analysisLang') === 'en' ? 'stripe' : 'mbway';
   });
-  const lang = getLang();
   const isEN = lang === 'en';
 
   // Currency & pricing: PT = EUR, EN = USD
