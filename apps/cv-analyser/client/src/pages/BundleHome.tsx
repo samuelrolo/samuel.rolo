@@ -93,7 +93,7 @@ export default function BundleHome() {
   const PRICE = pick('29,00', '29', '29');
   const bundleHeadlines = pick(bundleHeadlinesPT, bundleHeadlinesEN, bundleHeadlinesES);
   const isPT = lang === 'pt';
-  useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
+  useEffect(() => { document.title = pick('Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire'); }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % bundleHeadlines.length), 4000); return () => clearInterval(t); }, []);
   const [, setLocation] = useLocation();
@@ -287,7 +287,7 @@ export default function BundleHome() {
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', cvFilename);
-      sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisLang', lang);
       sessionStorage.setItem('isPaid', 'true');
       sessionStorage.setItem('paymentEmail', currentEmail.trim().toLowerCase());
       // Store country/region for Career Path localisation
@@ -401,11 +401,11 @@ export default function BundleHome() {
           amount: finalPrice.toFixed(2),
           email,
           product: 'Bundle CV Analyser + Career Path',
-          description: appliedCoupon ? `Bundle completo — CV Analyser + Career Path (${appliedCoupon.percent}% desconto: ${appliedCoupon.code})` : 'Bundle completo — CV Analyser + Career Path',
+          description: appliedCoupon ? `Bundle — CV Analyser + Career Path (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})` : 'Bundle — CV Analyser + Career Path',
         })
       });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
       setPaymentStep('polling');
       setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
       startPolling(orderId);
@@ -442,7 +442,7 @@ export default function BundleHome() {
           amount: finalPrice,
           currency: 'eur',
           product_type: 'bundle',
-          description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% desconto)` : 'Bundle CV Analyser + Career Path — Share2Inspire',
+          description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')})` : 'Bundle CV Analyser + Career Path — Share2Inspire',
           orderId,
           success_url: `${window.location.origin}/bundle?paid=true`,
           cancel_url: `${window.location.origin}/bundle`,
@@ -699,7 +699,7 @@ export default function BundleHome() {
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Próximos cargos recomendados', 'Recommended next roles', 'Próximos cargos recomendados')}</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Formações sugeridas', 'Suggested training', 'Formaciones sugeridas')}</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking')}</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Skills gap analysis</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick('Skills gap analysis', 'Skills gap analysis', 'Análisis de brechas de competencias')}</li>
               </ul>
             </div>
           </div>

@@ -24,8 +24,8 @@ const scoreBg = (s: number) => {
 const scoreRing = (s: number) => s >= 65 ? 'stroke-green-500' : s >= 50 ? 'stroke-amber-500' : 'stroke-red-500';
 const nivelBadge = (nivel: string) => {
   const l = (nivel || '').toLowerCase();
-  if (l.includes('destacado')) return 'bg-green-100 text-green-700 border-green-300';
-  if (l.includes('competitivo')) return 'bg-blue-100 text-blue-700 border-blue-300';
+  if (l.includes('destacado') || l.includes('outstanding')) return 'bg-green-100 text-green-700 border-green-300';
+  if (l.includes('competitivo') || l.includes('competitive')) return 'bg-blue-100 text-blue-700 border-blue-300';
   return 'bg-amber-100 text-amber-700 border-amber-300';
 };
 
@@ -142,7 +142,7 @@ function adaptLegacyToUnified(legacy: any): any {
   const rawCv = (() => { try { return JSON.parse(sessionStorage.getItem('studentPackCvRaw') || '{}'); } catch { return {}; } })();
   const cp = rawCv.candidate_profile || {};
   const overallScore = cv.overallScore || 0;
-  const nivel = overallScore >= 75 ? 'Destacado' : overallScore >= 50 ? 'Competitivo' : 'Em Desenvolvimento';
+  const nivel = overallScore >= 75 ? pick('Destacado', 'Outstanding', 'Destacado') : overallScore >= 50 ? pick('Competitivo', 'Competitive', 'Competitivo') : pick('Em Desenvolvimento', 'In Development', 'En Desarrollo');
   // Build scores_cv from quadrants
   const scoresCv: Record<string, any> = {};
   if (Array.isArray(cv.quadrants)) {
@@ -231,7 +231,7 @@ function adaptLegacyToUnified(legacy: any): any {
       vs_mercado_entrada: liAnalysis.benchmarking?.resumo || ''
     },
     auditoria_perfil_dual: {
-      coerencia_cv_linkedin: overallScore >= 65 ? 'Alta' : overallScore >= 45 ? 'Média' : 'Baixa',
+      coerencia_cv_linkedin: overallScore >= 65 ? pick('Alta', 'High', 'Alta') : overallScore >= 45 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja'),
       analise_coerencia: liAnalysis.sumario_executivo || '',
       primeira_impressao_cv: strengths.slice(0, 2).join('. ') || '',
       primeira_impressao_linkedin: liAnalysis.hook_vendas || liAnalysis.sumario_executivo || '',
@@ -427,8 +427,8 @@ export default function StudentPackResults() {
               <Section title={pick('Auditoria de Perfil Dual', 'Dual Profile Audit', 'Auditoría de Perfil Dual')} subtitle={pick('CV + LinkedIn como sistema único', 'CV + LinkedIn as a single system', 'CV + LinkedIn como un sistema único')} icon={Eye} defaultOpen={true} color="blue"
                 badge={auditoria.coerencia_cv_linkedin && (
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                    auditoria.coerencia_cv_linkedin === 'Alta' ? 'bg-green-50 text-green-700 border-green-200' :
-                    auditoria.coerencia_cv_linkedin === 'Média' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                    ['Alta', 'High'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-green-50 text-green-700 border-green-200' :
+                    ['Média', 'Medium', 'Media'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-amber-50 text-amber-700 border-amber-200' :
                     'bg-red-50 text-red-700 border-red-200'
                   }`}>{pick('Coerência', 'Consistency', 'Coherencia')}: {auditoria.coerencia_cv_linkedin}</span>
                 )}>
@@ -563,8 +563,8 @@ export default function StudentPackResults() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold text-slate-500">{pick('Peso da instituição', 'Institution weight', 'Peso de la institución')}:</span>
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
-                        capitalAcademico.instituicao_prestigio === 'Alta' ? 'bg-green-50 text-green-700 border-green-200' :
-                        capitalAcademico.instituicao_prestigio === 'Emergente' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                        ['Alta', 'High'].includes(capitalAcademico.instituicao_prestigio) ? 'bg-green-50 text-green-700 border-green-200' :
+                        ['Emergente', 'Emerging'].includes(capitalAcademico.instituicao_prestigio) ? 'bg-blue-50 text-blue-700 border-blue-200' :
                         'bg-amber-50 text-amber-700 border-amber-200'
                       }`}>{capitalAcademico.instituicao_prestigio}</span>
                     </div>
@@ -692,7 +692,7 @@ export default function StudentPackResults() {
                       <div className="flex flex-wrap gap-1.5">
                         {keywords.keywords_presentes.map((kw: any, i: number) => (
                           <span key={i} className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
-                            kw.onde === 'Ambos' ? 'bg-green-50 text-green-700 border-green-200' :
+                            ['Ambos', 'Both'].includes(kw.onde) ? 'bg-green-50 text-green-700 border-green-200' :
                             kw.onde === 'CV' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                             'bg-purple-50 text-purple-700 border-purple-200'
                           }`}>{kw.keyword} <span className="opacity-60">({kw.onde})</span></span>

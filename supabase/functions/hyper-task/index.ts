@@ -1802,14 +1802,14 @@ Return ONLY the extracted text in a clean CV-like format. If you cannot access t
 
         // Build prompt based on whether job_description is provided
 
-        const jobSection = hasJob ? isEN ? `\n\nJOB POSTING TO MATCH AGAINST:\n${jobDescription.substring(0, 2000)}\n\nIMPORTANT: The "cv_problems" MUST be about gaps between this CV and the job posting above. Also include "job_match" in your JSON response.` : `\n\nVAGA DE EMPREGO PARA COMPARAR:\n${jobDescription.substring(0, 2000)}\n\nIMPORTANTE: Os "cv_problems" DEVEM ser sobre lacunas entre este CV e a vaga acima. Inclui também "job_match" na resposta JSON.` : '';
-
+        const jobSection = hasJob ? isEN ? `\n\nJOB POSTING TO MATCH AGAINST:\n${jobDescription.substring(0, 2000)}\n\nIMPORTANT: The "cv_problems" MUST be about gaps between this CV and the job posting above. Also include "job_match" in your JSON response.` : isES ? `\n\nOFERTA DE EMPLEO PARA COMPARAR:\n${jobDescription.substring(0, 2000)}\n\nIMPORTANTE: Los "cv_problems" DEBEN ser sobre brechas entre este CV y la oferta de empleo anterior. Incluye también "job_match" en tu respuesta JSON.` : `\n\nVAGA DE EMPREGO PARA COMPARAR:\n${jobDescription.substring(0, 2000)}\n\nIMPORTANTE: Os "cv_problems" DEVEM ser sobre lacunas entre este CV e a vaga acima. Inclui também "job_match" na resposta JSON.` : '';
         const jobJsonEN = hasJob ? `,"job_match":{"ats_compatibility_score":72,"keyword_gaps":["Skill1","Skill2","Skill3"],"matched_keywords":["Skill1","Skill2"],"job_title":"Detected Job Title","overall_fit":"Brief 1-2 sentence assessment of candidate fit"}` : '';
-
+        const jobJsonES = hasJob ? `,"job_match":{"ats_compatibility_score":72,"keyword_gaps":["Competencia1","Competencia2","Competencia3"],"matched_keywords":["Competencia1","Competencia2"],"job_title":"Título del Puesto Detectado","overall_fit":"Evaluación breve de 1-2 frases sobre la adecuación"}` : '';
         const jobJsonPT = hasJob ? `,"job_match":{"ats_compatibility_score":72,"keyword_gaps":["Competência1","Competência2","Competência3"],"matched_keywords":["Competência1","Competência2"],"job_title":"Título da Função Detetado","overall_fit":"Avaliação breve de 1-2 frases sobre adequação"}` : '';
 
         const cvProblemsContextEN = hasJob ? 'CRITICAL: "cv_problems" must reference specific gaps between THIS CV and the JOB POSTING. Example: if job requires Python but CV has no Python, that is a problem.' : 'CRITICAL: "cv_problems" must be specific to THIS CV. Reference concrete elements. Never use generic advice.';
 
+        const cvProblemsContextES = hasJob ? 'CRÍTICO: "cv_problems" deben referenciar brechas específicas entre ESTE CV y la OFERTA DE EMPLEO. Ejemplo: si la oferta pide Python pero el CV no tiene Python, eso es un problema.' : 'CRÍTICO: "cv_problems" deben ser específicos para ESTE CV. Referencia elementos concretos. Nunca uses consejos genéricos.';
         const cvProblemsContextPT = hasJob ? 'CRÍTICO: "cv_problems" devem referenciar lacunas específicas entre ESTE CV e a VAGA. Exemplo: se a vaga pede Python mas o CV não tem Python, isso é um problema.' : 'CRÍTICO: "cv_problems" devem ser específicos para ESTE CV. Referencia elementos concretos. Nunca uses conselhos genéricos.';
 
         const promptEN = `You are a BRUTALLY HONEST senior CV analyst. You score CVs STRICTLY — most CVs score between 35-65. A score above 75 is EXCEPTIONAL and rare. You MUST adapt ALL analysis to the ACTUAL professional field detected in the CV (e.g., physiotherapy, nursing, teaching, engineering, retail — NOT just business/corporate).
@@ -2510,7 +2510,7 @@ CV:
 ${sanitized}${jobSection}
 ${country ? `MERCADO OBJETIVO: ${getMarketContext(country, region)}
 MONEDA: ${currency.symbol} (${currency.code})` : ''}
-${cvProblemsContextPT.replace('CRÍTICO:', 'CRÍTICO:').replace('ESTE CV', 'ESTE CV').replace('VAGA', 'OFERTA')}
+${cvProblemsContextES}
 TABLA SALARIAL DE REFERENCIA (mensual bruto, base Portugal — escala proporcionalmente para otros mercados usando el MERCADO OBJETIVO arriba):
 SALUD: Fisioterapeuta 900-2200, Enfermero 1100-2400, Médico 2500-5500
 EDUCACIÓN: Profesor 1200-2800, Profesor Universitario 1800-4500
@@ -2611,7 +2611,7 @@ PRODUCE UN JSON CON LA SIGUIENTE ESTRUCTURA EXACTA:
       "correction_example": "Antes → Después",
       "rewrite_suggestion": "Sugerencia de reescritura"
     }
-  ]${jobJsonPT.replace('job_match', 'job_match').replace('ats_compatibility_score', 'ats_compatibility_score')}
+  ]${jobJsonES}
 }
 REGLAS CRÍTICAS:
 1. global_score DEBE ser calculado como media ponderada: Estructura 25% + Contenido 30% + Educación 15% + Experiencia 30%

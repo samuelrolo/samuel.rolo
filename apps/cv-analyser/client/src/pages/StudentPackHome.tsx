@@ -255,7 +255,7 @@ export default function StudentPackHome() {
         sessionStorage.setItem('studentPackPaid', 'true');
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
-        sessionStorage.setItem('analysisLang', 'pt');
+        sessionStorage.setItem('analysisLang', lang);
         try {
           const cp = cvAnalysisSourcePT?.candidate_profile || {};
           fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResultPT.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSourcePT), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-PT-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
@@ -345,7 +345,7 @@ export default function StudentPackHome() {
       const formattedPhone = cleanPhone.startsWith('351') ? cleanPhone : (cleanPhone.length === 9 ? '351' + cleanPhone : cleanPhone);
       const orderId = `STUDPACK-${Date.now()}`;
       trackPaymentStart('student_pack', finalPrice);
-      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: finalPrice.toFixed(2), email, product: 'Pack Estudante — CV Analyser + LinkedIn Roaster', description: appliedCoupon ? `Pack Estudante (${appliedCoupon.percent}% desconto: ${appliedCoupon.code})` : 'Pack Estudante — CV Analyser + LinkedIn Roaster' }) });
+      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: finalPrice.toFixed(2), email, product: pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster'), description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster') }) });
       const data = await response.json();
       if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
       setPaymentStep('polling');
@@ -374,7 +374,7 @@ export default function StudentPackHome() {
       const orderId = `STUDPACK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const successPath = localePath('/estudante') + '?paid=true';
       const cancelPath = localePath('/estudante');
-      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, product_type: 'student_pack', language: lang, description: appliedCoupon ? `Student Pack — Share2Inspire (${appliedCoupon.percent}% off)` : 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', orderId, success_url: `${window.location.origin}${successPath}`, cancel_url: `${window.location.origin}${cancelPath}` }) });
+      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, product_type: 'student_pack', language: lang, description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} — Share2Inspire (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Pack Estudiante — CV Analyser + LinkedIn Roaster — Share2Inspire'), orderId, success_url: `${window.location.origin}${successPath}`, cancel_url: `${window.location.origin}${cancelPath}` }) });
       const data = await response.json();
       if (data.url) { localStorage.setItem('studentPackPendingOrderId', orderId); localStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
       else throw new Error(data.error || pick('Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear la sesión de pago'));
