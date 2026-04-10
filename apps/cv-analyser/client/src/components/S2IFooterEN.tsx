@@ -4,6 +4,7 @@
  * Mobile (<768px): 2-column grid, logo full-width on top
  */
 export default function S2IFooterEN() {
+  const pick = (pt: string, en: string, es: string) => en;
   const linkStyle: React.CSSProperties = {
     display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)',
     textDecoration: 'none', marginBottom: '10px', transition: 'color .3s',
@@ -46,15 +47,15 @@ export default function S2IFooterEN() {
             </div>
             {/* Navigation */}
             <div>
-              <h5 style={headingStyle}>Navigation</h5>
-              <a href="/en" style={linkStyle}>Home</a>
-              <a href="/en/pages/about" style={linkStyle}>About</a>
-              <a href="/en/pages/services" style={linkStyle}>Services</a>
-              <a href="/en/pages/knowledge" style={{ ...linkStyle, marginBottom: 0 }}>Knowledge Hub</a>
+              <h5 style={headingStyle}>{pick('Navegação', 'Navigation', 'Navegación')}</h5>
+              <a href="/en" style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
+              <a href="/en/pages/about" style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
+              <a href="/en/pages/services" style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
+              <a href="/en/pages/knowledge" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Knowledge Hub', 'Knowledge Hub', 'Hub de Conocimiento')}</a>
             </div>
             {/* Tools */}
             <div>
-              <h5 style={headingStyle}>Tools</h5>
+              <h5 style={headingStyle}>{pick('Ferramentas', 'Tools', 'Herramientas')}</h5>
               <a href="/en/cv-analyser" style={linkStyle}>CV Analyser</a>
               <a href="/en/linkedin-roaster" style={linkStyle}>LinkedIn Roaster</a>
               <a href="/en/career-path" style={linkStyle}>Career Path</a>
@@ -62,16 +63,16 @@ export default function S2IFooterEN() {
             </div>
             {/* Legal */}
             <div>
-              <h5 style={headingStyle}>Legal</h5>
-              <a href="/politica-privacidade" style={linkStyle}>Privacy Policy</a>
-              <a href="/politica-cookies" style={linkStyle}>Cookies</a>
-              <a href="/informacao-legal" style={linkStyle}>Legal Information</a>
-              <a href="/termos-condicoes" style={linkStyle}>Terms &amp; Conditions</a>
-              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>Data Processing</a>
+              <h5 style={headingStyle}>{pick('Legal', 'Legal', 'Legal')}</h5>
+              <a href="/politica-privacidade" style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
+              <a href="/politica-cookies" style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
+              <a href="/informacao-legal" style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
+              <a href="/termos-condicoes" style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
+              <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
             </div>
             {/* Contact */}
             <div>
-              <h5 style={headingStyle}>Contact</h5>
+              <h5 style={headingStyle}>{pick('Contacto', 'Contact', 'Contacto')}</h5>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.82rem', marginBottom: '15px', wordBreak: 'break-word' }}>
                 <span style={{ color: '#C9A961', marginRight: '8px' }}>✉</span>geral@share2inspire.pt
               </p>
@@ -90,7 +91,7 @@ export default function S2IFooterEN() {
           {/* Copyright */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '40px', paddingTop: '25px', textAlign: 'center' }}>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1.5px', margin: 0 }}>
-              © 2026 Share2Inspire | Samuel Rolo. All rights reserved.
+              © 2026 Share2Inspire | Samuel Rolo. {pick('Todos os direitos reservados.', 'All rights reserved.', 'Todos los derechos reservados.')}
             </p>
           </div>
         </div>

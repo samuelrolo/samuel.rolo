@@ -59,7 +59,7 @@ export default function S2IFooter() {
               <a href={lp('/')} style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
               <a href={lp('/sobre')} style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
               <a href={lp('/servicos')} style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
-              <a href={lp('/conhecimento')} style={{ ...linkStyle, marginBottom: 0 }}>Knowledge Hub</a>
+              <a href={lp('/conhecimento')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Knowledge Hub', 'Knowledge Hub', 'Hub de Conocimiento')}</a>
             </div>
             {/* Tools */}
             <div>
@@ -71,9 +71,9 @@ export default function S2IFooter() {
             </div>
             {/* Legal */}
             <div>
-              <h5 style={headingStyle}>Legal</h5>
+              <h5 style={headingStyle}>{pick('Legal', 'Legal', 'Legal')}</h5>
               <a href="/politica-privacidade" style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
-              <a href="/politica-cookies" style={linkStyle}>Cookies</a>
+              <a href="/politica-cookies" style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
               <a href="/informacao-legal" style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
               <a href="/termos-condicoes" style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
               <a href="/tratamento-dados" style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
