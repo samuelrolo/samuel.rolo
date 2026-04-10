@@ -11,7 +11,7 @@ import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
+import { getDefaultCountryByLanguage, getCountries, getRegions } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
@@ -107,8 +107,8 @@ export default function BundleHome() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState("");
-  const countries = getLocalizedCountries(lang);
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const countries = getCountries(lang);
+  const regionOptions = getRegions(selectedCountry, lang);
 
   useEffect(() => {
     setSelectedCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -868,17 +868,17 @@ export default function BundleHome() {
                 >
                   <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                   {countries.map(c => (
-                    <option key={c.code} value={c.country}>{c.label}</option>
+                    <option key={c.code} value={c.value}>{c.label}</option>
                   ))}
                 </select>
-                {countryData && countryData.regions.length > 1 && (
+                {regionOptions.length > 1 && (
                   <select
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
                   >
                     <option value="">{pick('Selecciona a região (opcional)...', 'Select your region (optional)...', 'Selecciona la región (opcional)...')}</option>
-                    {countryData.regions.map(r => (
+                    {regionOptions.map(r => (
                       <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>
