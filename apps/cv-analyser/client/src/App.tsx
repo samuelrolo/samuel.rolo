@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
+import { pick } from "./i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -42,7 +43,7 @@ function PageLoader() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-slate-500">A carregar...</p>
+        <p className="text-sm text-slate-500">{pick('A carregar...', 'Loading...', 'Cargando...')}</p>
       </div>
     </div>
   );

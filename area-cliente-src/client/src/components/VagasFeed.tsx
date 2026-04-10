@@ -234,6 +234,7 @@ function CompanyDetailCard({ companyName, lang, onClose }: { companyName: string
   const [loading, setLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const isPT = lang === 'pt';
+  const isES = lang === 'es';
 
   useEffect(() => {
     let cancelled = false;
@@ -262,7 +263,7 @@ function CompanyDetailCard({ companyName, lang, onClose }: { companyName: string
       <div ref={cardRef} className="mt-2 mx-2 sm:mx-0 p-4 bg-gradient-to-br from-[#fdf8ed] to-white border border-[#BF9A33]/25 rounded-lg shadow-md animate-in fade-in duration-200">
         <div className="flex items-center gap-2 text-[#a57b0a] text-xs">
           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          {isPT ? 'A carregar dados da empresa...' : 'Loading company data...'}
+          {isPT ? 'A carregar dados da empresa...' : isES ? 'Cargando datos de la empresa...' : 'Loading company data...'}
         </div>
       </div>
     );
@@ -271,8 +272,8 @@ function CompanyDetailCard({ companyName, lang, onClose }: { companyName: string
   if (!info) {
     return (
       <div ref={cardRef} className="mt-2 mx-2 sm:mx-0 p-3 bg-[#f8f9fa] border border-[#e9ecef] rounded-lg text-xs text-[#6c757d]">
-        {isPT ? 'Dados da empresa não disponíveis.' : 'Company data not available.'}
-        <button onClick={onClose} className="ml-2 text-[#a57b0a] font-medium hover:underline">{isPT ? 'Fechar' : 'Close'}</button>
+        {isPT ? 'Dados da empresa não disponíveis.' : isES ? 'Datos de la empresa no disponibles.' : 'Company data not available.'}
+        <button onClick={onClose} className="ml-2 text-[#a57b0a] font-medium hover:underline">{isPT ? 'Fechar' : isES ? 'Cerrar' : 'Close'}</button>
       </div>
     );
   }
