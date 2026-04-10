@@ -540,8 +540,8 @@ export default function StudentPackHome() {
                 </div>
                 <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
                   <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Auditoria do perfil", "Profile audit", "Auditoría del perfil")}</span></li>
-                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>Headline &amp; About optimization</span></li>
-                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>SEO keywords</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Optimização de Headline & About", "Headline & About optimization", "Optimización de Headline y About")}</span></li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Keywords SEO", "SEO keywords", "Palabras clave SEO")}</span></li>
                   <li className="hidden md:flex items-start gap-1.5"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> {pick("Score de visibilidade", "Visibility score", "Puntuación de visibilidad")}</li>
                 </ul>
               </div>
@@ -569,7 +569,7 @@ export default function StudentPackHome() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { icon: <Upload className="w-5 h-5 text-emerald-600" />, title: pick("Carrega o teu CV", "Upload your CV", "Sube tu CV"), desc: pick("Upload do CV + URL do LinkedIn. Uma única vez para os dois motores.", "Upload CV + LinkedIn URL. Once for both engines.", "Sube el CV + URL de LinkedIn. Una sola vez para los dos motores.") },
-                { icon: <CreditCard className="w-5 h-5 text-emerald-600" />, title: isPT ? "Paga €7,99" : `Pay ${CUR}${PRICE_NUM.toFixed(2)}`, desc: pick("Pagamento único via MB WAY, Cartão ou PayPal. Sem subscrição.", "One-time payment via Card or PayPal. No subscription.", "Pago único con Tarjeta o PayPal. Sin suscripción.") },
+                { icon: <CreditCard className="w-5 h-5 text-emerald-600" />, title: pick(`Paga ${finalPriceStr}€`, `Pay ${CUR}${finalPriceStr}`, `Paga ${CUR}${finalPriceStr}`), desc: pick("Pagamento único via MB WAY, Cartão ou PayPal. Sem subscrição.", "One-time payment via Card or PayPal. No subscription.", "Pago único con Tarjeta o PayPal. Sin suscripción.") },
                 { icon: <Zap className="w-5 h-5 text-emerald-600" />, title: pick("Relatório integrado", "Integrated report", "Informe integrado"), desc: pick("Recebe análise CV + LinkedIn + consistência cruzada em < 1 minuto.", "Get CV + LinkedIn + cross-consistency analysis in < 1 minute.", "Recibe análisis CV + LinkedIn + consistencia cruzada en < 1 minuto.") },
               ].map((s, i) => (
                 <div key={i} className="text-center space-y-3">

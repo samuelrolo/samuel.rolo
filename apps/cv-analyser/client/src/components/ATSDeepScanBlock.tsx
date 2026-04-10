@@ -56,29 +56,41 @@ function ScoreRing({ score, size = 64, label, color }: { score: number; size?: n
   );
 }
 
-function renderATSSummary(score: number, missingCount: number, formatIssues: number, lang: string, isEN: boolean) {
-  const pct = (100 - score).toString() + '%';
+function renderATSSummary(score: number, missingCount: number, formatIssues: number, lang: string) {
+  const pct = `${100 - score}%`;
+  const pickByLang = (pt: React.ReactNode, en: React.ReactNode, es: React.ReactNode) =>
+    lang === 'es' ? es : lang === 'en' ? en : pt;
+
   if (score >= 80) {
-    if (isEN) return <><strong>Excellent ATS compatibility.</strong> Keywords are well-placed and formatting follows best practices. Most ATS systems will parse your CV correctly.</>;
-    if (lang === 'es') return <><strong>Excelente compatibilidad ATS.</strong> Las palabras clave están bien posicionadas y el formato sigue las mejores prácticas. La mayoría de los sistemas ATS leerán tu CV correctamente.</>;
-    return <><strong>Excelente compatibilidade ATS.</strong> As keywords estão bem posicionadas e a formatação segue as melhores práticas. A maioria dos sistemas ATS vai ler o teu CV correctamente.</>;
+    return pickByLang(
+      <><strong>Excelente compatibilidade ATS.</strong> As keywords estão bem posicionadas e a formatação segue as melhores práticas. A maioria dos sistemas ATS vai ler o teu CV correctamente.</>,
+      <><strong>Excellent ATS compatibility.</strong> Keywords are well-placed and formatting follows best practices. Most ATS systems will parse your CV correctly.</>,
+      <><strong>Excelente compatibilidad ATS.</strong> Las palabras clave están bien posicionadas y el formato sigue las mejores prácticas. La mayoría de los sistemas ATS leerán tu CV correctamente.</>
+    );
   }
   if (score >= 60) {
-    if (isEN) return <>Your CV has <strong>good ATS compatibility</strong> but there are {missingCount} missing keyword{missingCount !== 1 ? 's' : ''} and {formatIssues} formatting issue{formatIssues !== 1 ? 's' : ''} to address.</>;
-    if (lang === 'es') return <>Tu CV tiene <strong>buena compatibilidad ATS</strong> pero hay {missingCount} palabra{missingCount !== 1 ? 's' : ''} clave faltante{missingCount !== 1 ? 's' : ''} y {formatIssues} problema{formatIssues !== 1 ? 's' : ''} de formato a resolver.</>;
-    return <>O teu CV tem <strong>boa compatibilidade ATS</strong> mas existem {missingCount} keyword{missingCount !== 1 ? 's' : ''} em falta e {formatIssues} questões de formatação a resolver.</>;
+    return pickByLang(
+      <>O teu CV tem <strong>boa compatibilidade ATS</strong> mas existem {missingCount} keyword{missingCount !== 1 ? 's' : ''} em falta e {formatIssues} questões de formatação a resolver.</>,
+      <>Your CV has <strong>good ATS compatibility</strong> but there are {missingCount} missing keyword{missingCount !== 1 ? 's' : ''} and {formatIssues} formatting issue{formatIssues !== 1 ? 's' : ''} to address.</>,
+      <>Tu CV tiene <strong>buena compatibilidad ATS</strong> pero hay {missingCount} palabra{missingCount !== 1 ? 's' : ''} clave faltante{missingCount !== 1 ? 's' : ''} y {formatIssues} problema{formatIssues !== 1 ? 's' : ''} de formato a resolver.</>
+    );
   }
   if (score >= 40) {
-    if (isEN) return <>Your CV has <strong>moderate ATS compatibility</strong>. With a <strong>{pct} rejection probability</strong>, about half of online applications may be filtered. Addressing {missingCount} missing keywords and {formatIssues} formatting issues can significantly reduce this rate.</>;
-    if (lang === 'es') return <>Tu CV tiene <strong>compatibilidad moderada</strong> con sistemas ATS. Con una <strong>probabilidad de rechazo del {pct}</strong>, aproximadamente la mitad de las candidaturas online pueden ser filtradas. Corregir las {missingCount} palabras clave faltantes y {formatIssues} problemas de formato puede reducir significativamente esta tasa.</>;
-    return <>O teu CV tem <strong>compatibilidade moderada</strong> com sistemas ATS. Com <strong>{pct} de probabilidade de rejeição</strong>, cerca de metade das candidaturas online podem ser filtradas. Corrigir as {missingCount} keywords em falta e {formatIssues} questões de formatação pode reduzir esta taxa significativamente.</>;
+    return pickByLang(
+      <>O teu CV tem <strong>compatibilidade moderada</strong> com sistemas ATS. Com <strong>{pct} de probabilidade de rejeição</strong>, cerca de metade das candidaturas online podem ser filtradas. Corrigir as {missingCount} keywords em falta e {formatIssues} questões de formatação pode reduzir esta taxa significativamente.</>,
+      <>Your CV has <strong>moderate ATS compatibility</strong>. With a <strong>{pct} rejection probability</strong>, about half of online applications may be filtered. Addressing {missingCount} missing keywords and {formatIssues} formatting issues can significantly reduce this rate.</>,
+      <>Tu CV tiene <strong>compatibilidad moderada</strong> con sistemas ATS. Con una <strong>probabilidad de rechazo del {pct}</strong>, aproximadamente la mitad de las candidaturas online pueden ser filtradas. Corregir las {missingCount} palabras clave faltantes y {formatIssues} problemas de formato puede reducir significativamente esta tasa.</>
+    );
   }
-  if (isEN) return <>Your CV has <strong>low ATS compatibility</strong>. With a <strong>{pct} rejection probability</strong>, most online applications will be automatically filtered. It is urgent to restructure the format and add the missing keywords.</>;
-  if (lang === 'es') return <>Tu CV tiene <strong>baja compatibilidad con sistemas ATS</strong>. Con una <strong>probabilidad de rechazo del {pct}</strong>, la mayoría de las candidaturas online serán filtradas automáticamente. Es urgente reestructurar el formato y añadir las palabras clave faltantes.</>;
-  return <>O teu CV tem <strong>compatibilidade baixa com sistemas ATS</strong>. Com <strong>{pct} de probabilidade de rejeição</strong>, a maioria das candidaturas online será filtrada automaticamente. É urgente reformular a estrutura e adicionar as keywords em falta.</>;
+
+  return pickByLang(
+    <>O teu CV tem <strong>compatibilidade baixa com sistemas ATS</strong>. Com <strong>{pct} de probabilidade de rejeição</strong>, a maioria das candidaturas online será filtrada automaticamente. É urgente reformular a estrutura e adicionar as keywords em falta.</>,
+    <>Your CV has <strong>low ATS compatibility</strong>. With a <strong>{pct} rejection probability</strong>, most online applications will be automatically filtered. It is urgent to restructure the format and add the missing keywords.</>,
+    <>Tu CV tiene <strong>baja compatibilidad con sistemas ATS</strong>. Con una <strong>probabilidad de rechazo del {pct}</strong>, la mayoría de las candidaturas online serán filtradas automáticamente. Es urgente reestructurar el formato y añadir las palabras clave faltantes.</>
+  );
 }
 
-const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSDeepScanBlockProps) => {
+const ATSDeepScanBlock = ({ data, isPaid = false, onUnlock }: ATSDeepScanBlockProps) => {
   const [expandedKeyword, setExpandedKeyword] = useState<number | null>(null);
   const [showAllKeywords, setShowAllKeywords] = useState(false);
   const lang = getLang();
@@ -145,7 +157,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-xs font-semibold tracking-wider text-[#C9A961]">ATS DEEP SCAN</p>
+              <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{pick('ATS DEEP SCAN', 'ATS DEEP SCAN', 'ATS DEEP SCAN')}</p>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${verdict.bg} ${verdict.color}`}>{verdict.label}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -182,7 +194,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
             <div className="border border-border rounded-lg overflow-hidden">
               {/* Table Header */}
               <div className="grid grid-cols-[1fr_80px_70px] sm:grid-cols-[1fr_100px_80px] gap-2 p-2.5 bg-muted/30 border-b border-border text-[10px] font-semibold text-muted-foreground">
-                <span>KEYWORD</span>
+                <span>{pick('KEYWORD', 'KEYWORD', 'PALABRA CLAVE')}</span>
                 <span className="text-center">{t('estado')}</span>
                 <span className="text-center">{t('import')}</span>
               </div>
@@ -280,7 +292,8 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
               'text-red-500'
             }`}>{t('resumo_do_deep_scan')}</p>
             <p className="text-sm text-foreground leading-relaxed">
-              {renderATSSummary(data.overallATSScore, missingCount, data.formatChecks.filter(f => f.status !== 'pass').length, lang, isEN)}
+                  {renderATSSummary(data.overallATSScore, missingCount, data.formatChecks.filter(f => f.status !== 'pass').length, lang)}
+
             </p>
           </div>
         </div>

@@ -1,35 +1,24 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { getLang } from "@/i18n";
+import { getLang, pick } from "@/i18n";
 import { localePath } from "@/i18n/useTranslation";
 
 const STORAGE_KEY = "s2i_promo_banner_dismissed_estudante_v1";
 
-const copy = {
-  pt: {
-    badge: "PACK ESTUDANTE",
-    text: "Ferramentas de carreira por 7,99€",
-    discount: "(-43%)",
-    cta: "Descobrir →",
-  },
-  en: {
-    badge: "STUDENT PACK",
-    text: "Career tools for €7.99",
-    discount: "(-43%)",
-    cta: "Discover →",
-  },
-  es: {
-    badge: "PACK ESTUDIANTE",
-    text: "Herramientas de carrera por 7,99€",
-    discount: "(-43%)",
-    cta: "Descubrir →",
-  },
-};
-
 export default function PromoBanner() {
   const [visible, setVisible] = useState(false);
   const lang = getLang();
-  const t = copy[lang] ?? copy.pt;
+
+  const badge = pick("PACK ESTUDANTE", "STUDENT PACK", "PACK ESTUDIANTE");
+  const text = pick(
+    "Ferramentas de carreira por 7,99€",
+    "Career tools for €7.99",
+    "Herramientas de carrera por 7,99€"
+  );
+  const discount = pick("(-43%)", "(-43%)", "(-43%)");
+  const cta = pick("Descobrir →", "Discover →", "Descubrir →");
+  const bannerAriaLabel = pick("Promoção Pack Estudante", "Student Pack promotion", "Promoción Pack Estudiante");
+  const closeLabel = pick("Fechar banner", "Close banner", "Cerrar banner");
 
   useEffect(() => {
     const dismissed = sessionStorage.getItem(STORAGE_KEY);
@@ -47,32 +36,29 @@ export default function PromoBanner() {
     <div
       className="w-full bg-emerald-600 text-white py-2 px-4"
       role="banner"
-      aria-label="Promoção Pack Estudante"
+      aria-label={bannerAriaLabel}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        {/* Left: badge */}
         <span className="hidden sm:inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase whitespace-nowrap">
-          {t.badge}
+          {badge}
         </span>
 
-        {/* Center: text */}
         <p className="flex-1 text-center text-sm font-medium">
-          <span className="sm:hidden font-semibold">{t.badge} — </span>
-          {t.text}{" "}
-          <span className="font-bold">{t.discount}</span>
+          <span className="sm:hidden font-semibold">{badge} — </span>
+          {text}{" "}
+          <span className="font-bold">{discount}</span>
         </p>
 
-        {/* Right: CTA + dismiss */}
         <div className="flex items-center gap-2 shrink-0">
           <a
             href={localePath('/estudante', lang)}
             className="inline-flex items-center rounded-md bg-white text-emerald-700 font-semibold text-xs px-3 py-1 hover:bg-emerald-50 transition-colors whitespace-nowrap"
           >
-            {t.cta}
+            {cta}
           </a>
           <button
             onClick={dismiss}
-            aria-label="Fechar banner"
+            aria-label={closeLabel}
             className="p-1 rounded hover:bg-white/20 transition-colors"
           >
             <X className="w-4 h-4" />

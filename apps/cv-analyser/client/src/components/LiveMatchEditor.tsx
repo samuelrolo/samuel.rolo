@@ -16,7 +16,7 @@ interface LiveMatchEditorProps {
   cvText: string;
   annotations: Annotation[];
   missingKeywords: MatchedKeyword[];
-  lang: 'pt' | 'en';
+  lang: 'pt' | 'en' | 'es';
 }
 
 interface TooltipState {
@@ -33,7 +33,7 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
-  const isPT = lang === 'pt';
+  const pick = (pt: string, en: string, es: string) => (lang === 'es' ? es : lang === 'en' ? en : pt);
 
   // Build annotated segments
   const segments = useMemo(() => {
@@ -111,15 +111,15 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
       <div className="flex flex-wrap items-center gap-3 mb-3 px-1">
         <div className="flex items-center gap-1.5">
           <span className="inline-block w-3 h-0.5 bg-green-500 rounded" />
-          <span className="text-[10px] text-[#888]">{isPT ? 'Encontrada' : 'Found'}</span>
+          <span className="text-[10px] text-[#888]">{pick('Encontrada', 'Found', 'Encontrada')}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block w-3 h-0.5 bg-amber-500 rounded" />
-          <span className="text-[10px] text-[#888]">{isPT ? 'Parcial' : 'Partial'}</span>
+          <span className="text-[10px] text-[#888]">{pick('Parcial', 'Partial', 'Parcial')}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block w-3 h-1 rounded" style={{ background: 'repeating-linear-gradient(90deg, #ef4444 0, #ef4444 2px, transparent 2px, transparent 4px)', backgroundSize: '4px 2px' }} />
-          <span className="text-[10px] text-[#888]">{isPT ? 'Em falta' : 'Missing'}</span>
+          <span className="text-[10px] text-[#888]">{pick('Em falta', 'Missing', 'Falta')}</span>
         </div>
       </div>
 
@@ -160,7 +160,7 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
             <div className="flex items-center gap-1.5">
               <XCircle className="w-3.5 h-3.5 text-red-500" />
               <span className="text-[11px] font-medium text-red-700">
-                {isPT ? `${missingKeywords.length} keywords em falta` : `${missingKeywords.length} missing keywords`}
+                {pick(`${missingKeywords.length} keywords em falta`, `${missingKeywords.length} missing keywords`, `${missingKeywords.length} palabras clave faltantes`)}
               </span>
             </div>
             {missingKeywords.length > 5 && (
@@ -168,7 +168,9 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
                 onClick={() => setShowAllMissing(!showAllMissing)}
                 className="flex items-center gap-0.5 text-[10px] text-red-600 hover:text-red-800 transition-colors"
               >
-                {showAllMissing ? (isPT ? 'Ver menos' : 'Show less') : (isPT ? `Ver todas (${missingKeywords.length})` : `Show all (${missingKeywords.length})`)}
+                {showAllMissing
+                  ? pick('Ver menos', 'Show less', 'Ver menos')
+                  : pick(`Ver todas (${missingKeywords.length})`, `Show all (${missingKeywords.length})`, `Ver todas (${missingKeywords.length})`)}
                 {showAllMissing ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
             )}
@@ -188,17 +190,21 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
                       kw.importance === 'medium' ? 'bg-amber-100 text-amber-600 border-amber-200' :
                       'bg-gray-100 text-gray-500 border-gray-200'
                     }`}>
-                      {kw.importance === 'high' ? (isPT ? 'Alta' : 'High') : kw.importance === 'medium' ? (isPT ? 'Média' : 'Medium') : (isPT ? 'Baixa' : 'Low')}
+                      {kw.importance === 'high'
+                        ? pick('Alta', 'High', 'Alta')
+                        : kw.importance === 'medium'
+                          ? pick('Média', 'Medium', 'Media')
+                          : pick('Baixa', 'Low', 'Baja')}
                     </span>
                   </div>
                   {kw.suggestion && (
                     <button
                       onClick={(e) => { e.stopPropagation(); copySuggestion(kw.suggestion!, i); }}
                       className="flex items-center gap-0.5 text-[9px] text-[#888] hover:text-[#C9A961] transition-colors"
-                      title={isPT ? 'Copiar sugestão' : 'Copy suggestion'}
+                      title={pick('Copiar sugestão', 'Copy suggestion', 'Copiar sugerencia')}
                     >
                       <Copy className="w-2.5 h-2.5" />
-                      {copiedIdx === i ? (isPT ? 'Copiado!' : 'Copied!') : ''}
+                      {copiedIdx === i ? pick('Copiado!', 'Copied!', '¡Copiado!') : ''}
                     </button>
                   )}
                 </div>
@@ -239,13 +245,17 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
                     tooltip.annotation.importance === 'medium' ? 'bg-amber-50 text-amber-600' :
                     'bg-gray-50 text-gray-500'
                   }`}>
-                    {tooltip.annotation.importance === 'high' ? (isPT ? 'Alta' : 'High') : tooltip.annotation.importance === 'medium' ? (isPT ? 'Média' : 'Medium') : (isPT ? 'Baixa' : 'Low')}
+                    {tooltip.annotation.importance === 'high'
+                      ? pick('Alta', 'High', 'Alta')
+                      : tooltip.annotation.importance === 'medium'
+                        ? pick('Média', 'Medium', 'Media')
+                        : pick('Baixa', 'Low', 'Baja')}
                   </span>
                 </div>
                 <p className="text-[10px] text-[#666]">
                   {tooltip.annotation.type === 'found'
-                    ? (isPT ? 'Keyword encontrada no CV — ATS irá detectar.' : 'Keyword found in CV — ATS will detect.')
-                    : (isPT ? 'Match parcial — considere usar o termo exacto.' : 'Partial match — consider using the exact term.')
+                    ? pick('Keyword encontrada no CV — ATS irá detectar.', 'Keyword found in CV — ATS will detect.', 'Palabra clave encontrada en el CV — el ATS la detectará.')
+                    : pick('Match parcial — considere usar o termo exacto.', 'Partial match — consider using the exact term.', 'Coincidencia parcial — considera usar el término exacto.')
                   }
                 </p>
                 {tooltip.annotation.suggestion && (
@@ -263,7 +273,7 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
                   <span className="text-[11px] font-medium text-[#333]">{tooltip.missingKw.keyword}</span>
                 </div>
                 <p className="text-[10px] text-red-600 font-medium">
-                  {isPT ? 'Keyword não encontrada no CV' : 'Keyword not found in CV'}
+                  {pick('Keyword não encontrada no CV', 'Keyword not found in CV', 'Palabra clave no encontrada en el CV')}
                 </p>
                 {tooltip.missingKw.suggestion && (
                   <div className="flex items-start gap-1 p-1.5 bg-[#C9A961]/5 rounded">

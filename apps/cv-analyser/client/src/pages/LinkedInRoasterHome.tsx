@@ -22,13 +22,13 @@ export default function LinkedInRoasterHome() {
   const { pick, lang, localePath: lp } = useTranslation();
   const isPT = lang === 'pt';
 
-  const PRICE = isPT ? '3,99' : '3.99';
-  const priceDisplay = isPT ? `${PRICE}€` : `€${PRICE}`;
+  const PRICE = pick('3,99', '3.99', '3.99');
+  const priceDisplay = pick(`${PRICE}€`, `€${PRICE}`, `€${PRICE}`);
 
   /* ─── i18n data ─── */
   const testimonials = [
     { name: pick("Miguel Santos", "James Mitchell", "Miguel Santos"), role: pick("Founder @ TechStartup", "Founder @ TechStartup", "Founder @ TechStartup"), text: pick("Recebi o roast e ri-me tanto que quase chorei. Mas depois apliquei tudo — e em 2 semanas recebi 3x mais mensagens de recrutadores.", "I got the roast and laughed so hard I nearly cried. But then I applied everything — and within 2 weeks I got 3x more recruiter messages.", "Recibí el roast y me reí tanto que casi lloré. Pero luego apliqué todo — y en 2 semanas recibí 3x más mensajes de reclutadores."), rating: 5 },
-    { name: pick("Ana Rodrigues", "Sarah Thompson", "Ana Rodrigues"), role: "Marketing Manager", text: pick("O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.", "My headline was just 'Marketing Manager' and I thought that was enough. The Roaster showed me why nobody was finding me. Brutal but necessary.", "Mi headline era 'Marketing Manager' y pensaba que bastaba. El Roaster me mostró por qué nadie me encontraba. Brutal pero necesario."), rating: 5 },
+    { name: pick("Ana Rodrigues", "Sarah Thompson", "Ana Rodrigues"), role: pick("Marketing Manager", "Marketing Manager", "Marketing Manager"), text: pick("O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.", "My headline was just 'Marketing Manager' and I thought that was enough. The Roaster showed me why nobody was finding me. Brutal but necessary.", "Mi headline era 'Marketing Manager' y pensaba que bastaba. El Roaster me mostró por qué nadie me encontraba. Brutal pero necesario."), rating: 5 },
     { name: pick("Pedro Oliveira", "David Chen", "Pedro Oliveira"), role: pick("Engenheiro DevOps", "DevOps Engineer", "Ingeniero DevOps"), text: pick("Descobri que o meu perfil parecia um CV dos anos 2000. 15 minutos de mudanças depois do roast e já tinha um perfil que gera leads.", "Discovered my profile looked like a CV from 2005. 15 minutes of changes after the roast and I had a profile that generates leads.", "Descubrí que mi perfil parecía un CV de los años 2000. 15 minutos de cambios después del roast y ya tenía un perfil que genera leads."), rating: 5 },
   ];
 
@@ -39,11 +39,11 @@ export default function LinkedInRoasterHome() {
   ];
 
   const roastFeatures = [
-    { icon: Flame, label: "Roast Score", desc: pick("Nota de 0-100 com classificação brutal", "Score from 0-100 with brutal feedback", "Nota de 0-100 con clasificación brutal") },
+    { icon: Flame, label: pick("Roast Score", "Roast Score", "Roast Score"), desc: pick("Nota de 0-100 com classificação brutal", "Score from 0-100 with brutal feedback", "Nota de 0-100 con clasificación brutal") },
     { icon: Eye, label: pick("Visão do Recrutador", "Recruiter View", "Visión del Reclutador"), desc: pick("O que vêem nos primeiros 6 segundos", "What they see in the first 6 seconds", "Lo que ven en los primeros 6 segundos") },
-    { icon: ThumbsDown, label: "Red Flags", desc: pick("Erros que te eliminam automaticamente", "Mistakes that get you auto-rejected", "Errores que te eliminan automáticamente") },
-    { icon: ThumbsUp, label: "Green Flags", desc: pick("O que já tens de bom (se tiveres)", "What's actually good (if anything)", "Lo que ya tienes de bueno (si tienes)") },
-    { icon: Lightbulb, label: "QuickFixes", desc: pick("Mudanças de 5 min com impacto máximo", "5-minute changes with maximum impact", "Cambios de 5 min con impacto máximo") },
+    { icon: ThumbsDown, label: pick("Red Flags", "Red Flags", "Red Flags"), desc: pick("Erros que te eliminam automaticamente", "Mistakes that get you auto-rejected", "Errores que te eliminan automáticamente") },
+    { icon: ThumbsUp, label: pick("Green Flags", "Green Flags", "Green Flags"), desc: pick("O que já tens de bom (se tiveres)", "What's actually good (if anything)", "Lo que ya tienes de bueno (si tienes)") },
+    { icon: Lightbulb, label: pick("QuickFixes", "QuickFixes", "QuickFixes"), desc: pick("Mudanças de 5 min com impacto máximo", "5-minute changes with maximum impact", "Cambios de 5 min con impacto máximo") },
     { icon: Target, label: pick("Headline Killer", "Killer Headline", "Headline Killer"), desc: pick("Headline optimizado que gera cliques", "Optimised headline that drives clicks", "Headline optimizado que genera clics") },
   ];
 
@@ -63,7 +63,7 @@ export default function LinkedInRoasterHome() {
       "LinkedIn Roaster — Brutal Profile Roast with AI | Share2Inspire",
       "LinkedIn Roaster — Roast Brutal a tu Perfil LinkedIn | Share2Inspire"
     );
-  }, []);
+  }, [pick]);
 
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % roastHeadlines.length), 4000); return () => clearInterval(t); }, []);

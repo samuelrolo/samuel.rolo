@@ -18,7 +18,6 @@ import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
-import { pick as modulePick } from "@/i18n/translations";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
@@ -51,23 +50,23 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 }
 
 /* ─── Testimonials ─── */
-const testimonials = [
+const buildTestimonials = (pick: <T,>(pt: T, en: T, es: T) => T) => [
   {
     name: "Catarina Mendes",
-    role: modulePick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
-    text: modulePick("O Career Path mostrou-me exatamente o que precisava de fazer para chegar a Diretora de RH em 3 anos. O roadmap foi cirúrgico e realista.", "Career Path showed me exactly what I needed to do to become HR Director in 3 years. The roadmap was surgical and realistic.", "Career Path me mostró exactamente lo que necesitaba hacer para llegar a Directora de RRHH en 3 años. El roadmap fue quirúrgico y realista."),
+    role: pick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
+    text: pick("O Career Path mostrou-me exatamente o que precisava de fazer para chegar a Diretora de RH em 3 anos. O roadmap foi cirúrgico e realista.", "Career Path showed me exactly what I needed to do to become HR Director in 3 years. The roadmap was surgical and realistic.", "Career Path me mostró exactamente lo que necesitaba hacer para llegar a Directora de RRHH en 3 años. El roadmap fue quirúrgico y realista."),
     rating: 5,
   },
   {
     name: "Rui Ferreira",
-    role: modulePick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
-    text: modulePick("Estava perdido na minha transição para Product Manager. O plano de carreira identificou os gaps certos e as certificações que realmente importam.", "I was lost in my transition to Product Manager. The career plan identified the right gaps and the certifications that really matter.", "Estaba perdido en mi transición a Product Manager. El plan de carrera identificó los gaps correctos y las certificaciones que realmente importan."),
+    role: pick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
+    text: pick("Estava perdido na minha transição para Product Manager. O plano de carreira identificou os gaps certos e as certificações que realmente importam.", "I was lost in my transition to Product Manager. The career plan identified the right gaps and the certifications that really matter.", "Estaba perdido en mi transición a Product Manager. El plan de carrera identificó los gaps correctos y las certificaciones que realmente importan."),
     rating: 5,
   },
   {
     name: "Sofia Lopes",
-    role: modulePick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
-    text: modulePick("Nunca pensei que uma IA conseguisse cruzar o meu CV com o LinkedIn e perceber o que me faltava para o próximo nível. Impressionante.", "I never thought AI could cross-reference my CV with LinkedIn and understand what I was missing for the next level. Impressive.", "Nunca pensé que una IA pudiera cruzar mi CV con LinkedIn y entender lo que me faltaba para el siguiente nivel. Impresionante."),
+    role: pick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
+    text: pick("Nunca pensei que uma IA conseguisse cruzar o meu CV com o LinkedIn e perceber o que me faltava para o próximo nível. Impressionante.", "I never thought AI could cross-reference my CV with LinkedIn and understand what I was missing for the next level. Impressive.", "Nunca pensé que una IA pudiera cruzar mi CV con LinkedIn y entender lo que me faltaba para el siguiente nivel. Impresionante."),
     rating: 5,
   },
 ];
@@ -79,29 +78,20 @@ const PRICE_DISPLAY_PRO = '19,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
-const careerPathHeadlinesPT = [
-  { text: "Define o teu próximo passo com um plano claro,", highlight: "não com tentativa e erro" },
-  { text: "Sai da estagnação e avança com um caminho", highlight: "estruturado para a tua carreira" },
-  { text: "Deixa de adivinhar o futuro, constrói um percurso", highlight: "com direção e intenção" },
-];
-const careerPathHeadlinesEN = [
-  { text: "Define your next step with a clear plan,", highlight: "not trial and error" },
-  { text: "Break free from stagnation with a", highlight: "structured career path" },
-  { text: "Stop guessing the future, build a path", highlight: "with direction and purpose" },
-];
-const careerPathHeadlinesES = [
-  { text: "Define tu próximo paso con un plan claro,", highlight: "no con prueba y error" },
-  { text: "Sal del estancamiento y avanza con un camino", highlight: "estructurado para tu carrera" },
-  { text: "Deja de adivinar el futuro, construye un recorrido", highlight: "con dirección e intención" },
+const buildCareerPathHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
+  { text: pick("Define o teu próximo passo com um plano claro,", "Define your next step with a clear plan,", "Define tu próximo paso con un plan claro,"), highlight: pick("não com tentativa e erro", "not trial and error", "no con prueba y error") },
+  { text: pick("Sai da estagnação e avança com um caminho", "Break free from stagnation with a", "Sal del estancamiento y avanza con un camino"), highlight: pick("estruturado para a tua carreira", "structured career path", "estructurado para tu carrera") },
+  { text: pick("Deixa de adivinhar o futuro, constrói um percurso", "Stop guessing the future, build a path", "Deja de adivinar el futuro, construye un recorrido"), highlight: pick("com direção e intenção", "with direction and purpose", "con dirección e intención") },
 ];
 
 export default function CareerPathHome() {
   const { t, pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
   const isPT = lang === 'pt';
-  const careerPathHeadlines = pick(careerPathHeadlinesPT, careerPathHeadlinesEN, careerPathHeadlinesES);
+  const testimonials = buildTestimonials(pick);
+  const careerPathHeadlines = buildCareerPathHeadlines(pick);
   const careerPathExampleHref = lang === 'en' ? '/en/career-path/example/' : '/career-path/example/';
-  useEffect(() => { document.title = pick("Career Path — Roadmap de Carreira com IA | Share2Inspire", "Career Path — AI Career Roadmap | Share2Inspire", "Career Path — Roadmap de Carrera con IA | Share2Inspire"); }, []);
+  useEffect(() => { document.title = pick("Career Path — Roadmap de Carreira com IA | Share2Inspire", "Career Path — AI Career Roadmap | Share2Inspire", "Career Path — Roadmap de Carrera con IA | Share2Inspire"); }, [pick]);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
 

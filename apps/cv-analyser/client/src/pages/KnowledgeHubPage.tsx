@@ -13,9 +13,9 @@ type ArticleCategory = "todos" | "big4" | "cv" | "salario" | "carreira";
 
 interface Article {
   category: ArticleCategory;
-  tag: { pt: string; en: string; es: string };
-  title: { pt: string; en: string; es: string };
-  excerpt: { pt: string; en: string; es: string };
+  tag: string;
+  title: string;
+  excerpt: string;
   author: string;
   date?: string;
   readTime: string;
@@ -23,13 +23,13 @@ interface Article {
   featured?: boolean;
 }
 
-const articles: Article[] = [
+const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
   // IA & Liderança
   {
     category: "carreira",
-    tag: { pt: "IA & LIDERANÇA · PRODUTIVIDADE", en: "AI & LEADERSHIP · PRODUCTIVITY", es: "IA & LIDERAZGO · PRODUCTIVIDAD" },
-    title: { pt: "O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", en: "The AI Productivity Paradox: Why Human Leadership is the Missing Link", es: "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido" },
-    excerpt: { pt: "As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", en: "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", es: "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo." },
+    tag: pick("IA & LIDERANÇA · PRODUTIVIDADE", "AI & LEADERSHIP · PRODUCTIVITY", "IA & LIDERAZGO · PRODUCTIVIDAD"),
+    title: pick("O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", "The AI Productivity Paradox: Why Human Leadership is the Missing Link", "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido"),
+    excerpt: pick("As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo."),
     author: "Samuel Rolo",
     date: "Abr 2026",
     readTime: "12 min",
@@ -39,9 +39,9 @@ const articles: Article[] = [
   // Big4 & Consultoria
   {
     category: "big4",
-    tag: { pt: "CONSULTORIA & BIG4 · ESTRATÉGIA 2026-2030", en: "CONSULTING & BIG4 · STRATEGY 2026-2030", es: "CONSULTORÍA & BIG4 · ESTRATEGIA 2026-2030" },
-    title: { pt: "O Futuro da Consultoria nas Big4: Como te Posicionares para os Próximos 5 Anos", en: "The Future of Big4 Consulting: How to Position Yourself for the Next 5 Years", es: "El Futuro de la Consultoría en las Big4: Cómo Posicionarte para los Próximos 5 Años" },
-    excerpt: { pt: "A consultoria está a mudar mais depressa do que as firmas admitem. IA, consolidação de mercado e novas exigências de perfil. O que tens de fazer hoje para seres relevante em 2030.", en: "Consulting is changing faster than firms publicly admit. AI, market consolidation and new profile demands. What you need to do today to remain relevant in 2030.", es: "La consultoría está cambiando más rápido de lo que las firmas admiten. IA, consolidación de mercado y nuevas exigencias de perfil. Lo que necesitas hacer hoy para ser relevante en 2030." },
+    tag: pick("CONSULTORIA & BIG4 · ESTRATÉGIA 2026-2030", "CONSULTING & BIG4 · STRATEGY 2026-2030", "CONSULTORÍA & BIG4 · ESTRATEGIA 2026-2030"),
+    title: pick("O Futuro da Consultoria nas Big4: Como te Posicionares para os Próximos 5 Anos", "The Future of Big4 Consulting: How to Position Yourself for the Next 5 Years", "El Futuro de la Consultoría en las Big4: Cómo Posicionarte para los Próximos 5 Años"),
+    excerpt: pick("A consultoria está a mudar mais depressa do que as firmas admitem. IA, consolidação de mercado e novas exigências de perfil. O que tens de fazer hoje para seres relevante em 2030.", "Consulting is changing faster than firms publicly admit. AI, market consolidation and new profile demands. What you need to do today to remain relevant in 2030.", "La consultoría está cambiando más rápido de lo que las firmas admiten. IA, consolidación de mercado y nuevas exigencias de perfil. Lo que necesitas hacer hoy para ser relevante en 2030."),
     author: "Samuel Rolo",
     date: "Abr 2026",
     readTime: "14 min",
@@ -50,9 +50,9 @@ const articles: Article[] = [
   },
   {
     category: "big4",
-    tag: { pt: "BIG4 · DECISÃO DE CARREIRA", en: "BIG4 · CAREER DECISION", es: "BIG4 · DECISIÓN DE CARRERA" },
-    title: { pt: "Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década", en: "Senior at Big4: Stay or Leave? The Decision That Defines the Next Decade", es: "Senior en las Big4: ¿Quedarse o Salir? La Decisión que Define la Próxima Década" },
-    excerpt: { pt: "O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.", en: "What changes when you reach Senior, what you gain if you progress to Manager, and what you lose if you stay too long.", es: "Qué cambia cuando llegas a Senior, qué ganas si progresas a Manager y qué pierdes si te quedas demasiado tiempo." },
+    tag: pick("BIG4 · DECISÃO DE CARREIRA", "BIG4 · CAREER DECISION", "BIG4 · DECISIÓN DE CARRERA"),
+    title: pick("Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década", "Senior at Big4: Stay or Leave? The Decision That Defines the Next Decade", "Senior en las Big4: ¿Quedarse o Salir? La Decisión que Define la Próxima Década"),
+    excerpt: pick("O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.", "What changes when you reach Senior, what you gain if you progress to Manager, and what you lose if you stay too long.", "Qué cambia cuando llegas a Senior, qué ganas si progresas a Manager y qué pierdes si te quedas demasiado tiempo."),
     author: "Samuel Rolo",
     date: "25 Mar 2026",
     readTime: "12 min",
@@ -61,9 +61,9 @@ const articles: Article[] = [
   },
   {
     category: "big4",
-    tag: { pt: "BIG4 · INSIDER", en: "BIG4 · INSIDER", es: "BIG4 · INSIDER" },
-    title: { pt: "Big4 por Dentro: O que Ninguém te Conta Antes de Entrares", en: "Inside Big4: What Nobody Tells You Before You Join", es: "Big4 por Dentro: Lo que Nadie te Cuenta Antes de Entrar" },
-    excerpt: { pt: "10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas.", en: "10 years of Big4 experience condensed into one article. What really happens inside the firms.", es: "10 años de experiencia en las Big4 condensados en un artículo. Lo que realmente pasa dentro de las firmas." },
+    tag: pick("BIG4 · INSIDER", "BIG4 · INSIDER", "BIG4 · INSIDER"),
+    title: pick("Big4 por Dentro: O que Ninguém te Conta Antes de Entrares", "Inside Big4: What Nobody Tells You Before You Join", "Big4 por Dentro: Lo que Nadie te Cuenta Antes de Entrar"),
+    excerpt: pick("10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas.", "10 years of Big4 experience condensed into one article. What really happens inside the firms.", "10 años de experiencia en las Big4 condensados en un artículo. Lo que realmente pasa dentro de las firmas."),
     author: "Samuel Rolo",
     date: "24 Mar 2026",
     readTime: "14 min",
@@ -71,9 +71,9 @@ const articles: Article[] = [
   },
   {
     category: "big4",
-    tag: { pt: "BIG4 · CARREIRA", en: "BIG4 · CAREER", es: "BIG4 · CARRERA" },
-    title: { pt: "De Manager a Sénior Manager nas Big4: O Que Ninguém te Conta", en: "From Manager to Senior Manager at Big4: What Nobody Tells You", es: "De Manager a Senior Manager en las Big4: Lo que Nadie te Cuenta" },
-    excerpt: { pt: "O que muda realmente quando passas de Manager para Sénior Manager. Responsabilidade, política interna e o peso invisível de liderar sem rede.", en: "What really changes when you move from Manager to Senior Manager. Responsibility, internal politics and the invisible weight of leading without a safety net.", es: "Qué cambia realmente cuando pasas de Manager a Senior Manager. Responsabilidad, política interna y el peso invisible de liderar sin red." },
+    tag: pick("BIG4 · CARREIRA", "BIG4 · CAREER", "BIG4 · CARRERA"),
+    title: pick("De Manager a Sénior Manager nas Big4: O Que Ninguém te Conta", "From Manager to Senior Manager at Big4: What Nobody Tells You", "De Manager a Senior Manager en las Big4: Lo que Nadie te Cuenta"),
+    excerpt: pick("O que muda realmente quando passas de Manager para Sénior Manager. Responsabilidade, política interna e o peso invisível de liderar sem rede.", "What really changes when you move from Manager to Senior Manager. Responsibility, internal politics and the invisible weight of leading without a safety net.", "Qué cambia realmente cuando pasas de Manager a Senior Manager. Responsabilidad, política interna y el peso invisible de liderar sin red."),
     author: "Samuel Rolo",
     date: "28 Mar 2026",
     readTime: "12 min",
@@ -81,9 +81,9 @@ const articles: Article[] = [
   },
   {
     category: "big4",
-    tag: { pt: "CONSULTORIA & BIG4", en: "CONSULTING & BIG4", es: "CONSULTORÍA & BIG4" },
-    title: { pt: "Recrutamento nas Big4: Guia Completo para Candidatos 2026", en: "Big4 Recruitment: Complete Guide for Candidates 2026", es: "Reclutamiento en las Big4: Guía Completa para Candidatos 2026" },
-    excerpt: { pt: "Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam e erros a evitar.", en: "How to get into Deloitte, PwC, EY or KPMG. The 5 stages of the process, what they evaluate, and mistakes to avoid.", es: "Cómo entrar en Deloitte, PwC, EY o KPMG. Las 5 fases del proceso, qué evalúan y errores a evitar." },
+    tag: pick("CONSULTORIA & BIG4", "CONSULTING & BIG4", "CONSULTORÍA & BIG4"),
+    title: pick("Recrutamento nas Big4: Guia Completo para Candidatos 2026", "Big4 Recruitment: Complete Guide for Candidates 2026", "Reclutamiento en las Big4: Guía Completa para Candidatos 2026"),
+    excerpt: pick("Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam e erros a evitar.", "How to get into Deloitte, PwC, EY or KPMG. The 5 stages of the process, what they evaluate, and mistakes to avoid.", "Cómo entrar en Deloitte, PwC, EY o KPMG. Las 5 fases del proceso, qué evalúan y errores a evitar."),
     author: "Samuel Rolo",
     date: "19 Mar 2026",
     readTime: "12 min",
@@ -91,9 +91,9 @@ const articles: Article[] = [
   },
   {
     category: "big4",
-    tag: { pt: "DESENVOLVIMENTO DE CARREIRA", en: "CAREER DEVELOPMENT", es: "DESARROLLO DE CARRERA" },
-    title: { pt: "As Big4 como Escola de Aprendizagem", en: "Big4 as a School of Learning", es: "Las Big4 como Escuela de Aprendizaje" },
-    excerpt: { pt: "Os 6 activos que formas nas Big4 e que nenhuma universidade te dá. O que realmente se aprende na Deloitte, PwC, EY e KPMG.", en: "The 6 assets you build at Big4 that no university gives you. What you really learn at Deloitte, PwC, EY and KPMG.", es: "Los 6 activos que formas en las Big4 y que ninguna universidad te da. Lo que realmente se aprende en Deloitte, PwC, EY y KPMG." },
+    tag: pick("DESENVOLVIMENTO DE CARREIRA", "CAREER DEVELOPMENT", "DESARROLLO DE CARRERA"),
+    title: pick("As Big4 como Escola de Aprendizagem", "Big4 as a School of Learning", "Las Big4 como Escuela de Aprendizaje"),
+    excerpt: pick("Os 6 activos que formas nas Big4 e que nenhuma universidade te dá. O que realmente se aprende na Deloitte, PwC, EY e KPMG.", "The 6 assets you build at Big4 that no university gives you. What you really learn at Deloitte, PwC, EY and KPMG.", "Los 6 activos que formas en las Big4 y que ninguna universidad te da. Lo que realmente se aprende en Deloitte, PwC, EY y KPMG."),
     author: "Samuel Rolo",
     date: "20 Mar 2026",
     readTime: "12 min",
@@ -102,9 +102,9 @@ const articles: Article[] = [
   // CV & Candidaturas
   {
     category: "cv",
-    tag: { pt: "EMPREGABILIDADE 2026", en: "EMPLOYABILITY 2026", es: "EMPLEABILIDAD 2026" },
-    title: { pt: "O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica", en: "The CV Is Not What It Seems: 5 Lessons on Algorithmic Employability", es: "El Currículum No Es Lo Que Parece: 5 Lecciones sobre Empleabilidad Algorítmica" },
-    excerpt: { pt: "A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.", en: "Modern employability requires moving from perception to actionable data.", es: "La empleabilidad moderna exige pasar de la percepción a los datos accionables." },
+    tag: pick("EMPREGABILIDADE 2026", "EMPLOYABILITY 2026", "EMPLEABILIDAD 2026"),
+    title: pick("O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica", "The CV Is Not What It Seems: 5 Lessons on Algorithmic Employability", "El Currículum No Es Lo Que Parece: 5 Lecciones sobre Empleabilidad Algorítmica"),
+    excerpt: pick("A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.", "Modern employability requires moving from perception to actionable data.", "La empleabilidad moderna exige pasar de la percepción a los datos accionables."),
     author: "Samuel Rolo",
     readTime: "10 min",
     link: "/blog/artigos/guia-superar-ats-curriculo.html",
@@ -112,45 +112,45 @@ const articles: Article[] = [
   },
   {
     category: "cv",
-    tag: { pt: "LITERACIA ALGORÍTMICA", en: "ALGORITHMIC LITERACY", es: "LITERACIA ALGORÍTMICA" },
-    title: { pt: "Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador", en: "The Definitive Guide: How to Beat the ATS and Get Your CV to the Recruiter", es: "Guía Definitiva: Cómo Superar el ATS y Hacer que tu Currículum Llegue al Reclutador" },
-    excerpt: { pt: "Estratégias práticas para ultrapassar os filtros automáticos que eliminam 75% dos CVs.", en: "Practical strategies to bypass the automated filters that eliminate 75% of CVs.", es: "Estrategias prácticas para superar los filtros automáticos que eliminan el 75% de los CVs." },
+    tag: pick("LITERACIA ALGORÍTMICA", "ALGORITHMIC LITERACY", "LITERACIA ALGORÍTMICA"),
+    title: pick("Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador", "The Definitive Guide: How to Beat the ATS and Get Your CV to the Recruiter", "Guía Definitiva: Cómo Superar el ATS y Hacer que tu Currículum Llegue al Reclutador"),
+    excerpt: pick("Estratégias práticas para ultrapassar os filtros automáticos que eliminam 75% dos CVs.", "Practical strategies to bypass the automated filters that eliminate 75% of CVs.", "Estrategias prácticas para superar los filtros automáticos que eliminan el 75% de los CVs."),
     author: "Samuel Rolo",
     readTime: "12 min",
     link: "/blog/artigos/guia-superar-ats-curriculo.html",
   },
   {
     category: "cv",
-    tag: { pt: "CV & CANDIDATURAS", en: "CV & APPLICATIONS", es: "CV & CANDIDATURAS" },
-    title: { pt: "Como Transformar um CV Ignorado num CV que Gera Entrevistas", en: "How to Transform an Ignored CV into One That Generates Interviews", es: "Cómo Transformar un CV Ignorado en uno que Genera Entrevistas" },
-    excerpt: { pt: "Técnicas comprovadas para tornar o teu currículo num íman de entrevistas.", en: "Proven techniques to turn your resume into an interview magnet.", es: "Técnicas comprobadas para convertir tu currículum en un imán de entrevistas." },
+    tag: pick("CV & CANDIDATURAS", "CV & APPLICATIONS", "CV & CANDIDATURAS"),
+    title: pick("Como Transformar um CV Ignorado num CV que Gera Entrevistas", "How to Transform an Ignored CV into One That Generates Interviews", "Cómo Transformar un CV Ignorado en uno que Genera Entrevistas"),
+    excerpt: pick("Técnicas comprovadas para tornar o teu currículo num íman de entrevistas.", "Proven techniques to turn your resume into an interview magnet.", "Técnicas comprobadas para convertir tu currículum en un imán de entrevistas."),
     author: "Samuel Rolo",
     readTime: "10 min",
     link: "/blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html",
   },
   {
     category: "cv",
-    tag: { pt: "CV & CANDIDATURAS", en: "CV & APPLICATIONS", es: "CV & CANDIDATURAS" },
-    title: { pt: "7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados", en: "7 CV Mistakes That Get Many Candidates Rejected", es: "7 Errores en el CV que Hacen que Muchos Candidatos Sean Rechazados" },
-    excerpt: { pt: "Os erros mais comuns que sabotam candidaturas — e como corrigi-los rapidamente.", en: "The most common mistakes that sabotage applications — and how to fix them quickly.", es: "Los errores más comunes que sabotean candidaturas — y cómo corregirlos rápidamente." },
+    tag: pick("CV & CANDIDATURAS", "CV & APPLICATIONS", "CV & CANDIDATURAS"),
+    title: pick("7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados", "7 CV Mistakes That Get Many Candidates Rejected", "7 Errores en el CV que Hacen que Muchos Candidatos Sean Rechazados"),
+    excerpt: pick("Os erros mais comuns que sabotam candidaturas — e como corrigi-los rapidamente.", "The most common mistakes that sabotage applications — and how to fix them quickly.", "Los errores más comunes que sabotean candidaturas — y cómo corregirlos rápidamente."),
     author: "Samuel Rolo",
     readTime: "8 min",
     link: "/blog/artigos/7-erros-cv-candidatos-rejeitados.html",
   },
   {
     category: "cv",
-    tag: { pt: "ENTREVISTAS", en: "INTERVIEWS", es: "ENTREVISTAS" },
-    title: { pt: "Entrevista Presencial vs. Remota: Guia Completo de Preparação", en: "In-Person vs. Remote Interview: Complete Preparation Guide", es: "Entrevista Presencial vs. Remota: Guía Completa de Preparación" },
-    excerpt: { pt: "Como te preparares para ambos os formatos e maximizar as tuas hipóteses de sucesso.", en: "How to prepare for both formats and maximise your chances of success.", es: "Cómo prepararte para ambos formatos y maximizar tus posibilidades de éxito." },
+    tag: pick("ENTREVISTAS", "INTERVIEWS", "ENTREVISTAS"),
+    title: pick("Entrevista Presencial vs. Remota: Guia Completo de Preparação", "In-Person vs. Remote Interview: Complete Preparation Guide", "Entrevista Presencial vs. Remota: Guía Completa de Preparación"),
+    excerpt: pick("Como te preparares para ambos os formatos e maximizar as tuas hipóteses de sucesso.", "How to prepare for both formats and maximise your chances of success.", "Cómo prepararte para ambos formatos y maximizar tus posibilidades de éxito."),
     author: "Samuel Rolo",
     readTime: "10 min",
     link: "/blog/artigos/entrevista-presencial-vs-remota.html",
   },
   {
     category: "cv",
-    tag: { pt: "IA & CARREIRA", en: "AI & CAREER", es: "IA & CARRERA" },
-    title: { pt: "AI Career Path vs Traditional Coaching: Why You're Overpaying", en: "AI Career Path vs Traditional Coaching: Why You're Overpaying", es: "AI Career Path vs Coaching Tradicional: Por Qué Estás Pagando de Más" },
-    excerpt: { pt: "Comparação detalhada entre ferramentas de IA e coaching tradicional para decisões de carreira.", en: "Detailed comparison between AI tools and traditional coaching for career decisions.", es: "Comparación detallada entre herramientas de IA y coaching tradicional para decisiones de carrera." },
+    tag: pick("IA & CARREIRA", "AI & CAREER", "IA & CARRERA"),
+    title: pick("AI Career Path vs Traditional Coaching: Why You're Overpaying", "AI Career Path vs Traditional Coaching: Why You're Overpaying", "AI Career Path vs Coaching Tradicional: Por Qué Estás Pagando de Más"),
+    excerpt: pick("Comparação detalhada entre ferramentas de IA e coaching tradicional para decisões de carreira.", "Detailed comparison between AI tools and traditional coaching for career decisions.", "Comparación detallada entre herramientas de IA y coaching tradicional para decisiones de carrera."),
     author: "Samuel Rolo",
     readTime: "8 min",
     link: "/blog/artigos/ai-career-path-vs-traditional-coaching.html",
@@ -158,9 +158,9 @@ const articles: Article[] = [
   // Salário & Negociação
   {
     category: "salario",
-    tag: { pt: "NEGOCIAÇÃO SALARIAL", en: "SALARY NEGOTIATION", es: "NEGOCIACIÓN SALARIAL" },
-    title: { pt: "Como Negociar Salário em Portugal: Guia Completo 2026", en: "How to Negotiate Salary in Portugal: Complete Guide 2026", es: "Cómo Negociar Salario en Portugal: Guía Completa 2026" },
-    excerpt: { pt: "Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais.", en: "When to ask, what to say, how to use market data, and the mistakes that cost you money. Practical guide with real scripts.", es: "Cuándo pedir, qué decir, cómo usar datos de mercado y los errores que cuestan dinero. Guía práctica con scripts reales." },
+    tag: pick("NEGOCIAÇÃO SALARIAL", "SALARY NEGOTIATION", "NEGOCIACIÓN SALARIAL"),
+    title: pick("Como Negociar Salário em Portugal: Guia Completo 2026", "How to Negotiate Salary in Portugal: Complete Guide 2026", "Cómo Negociar Salario en Portugal: Guía Completa 2026"),
+    excerpt: pick("Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais.", "When to ask, what to say, how to use market data, and the mistakes that cost you money. Practical guide with real scripts.", "Cuándo pedir, qué decir, cómo usar datos de mercado y los errores que cuestan dinero. Guía práctica con scripts reales."),
     author: "Samuel Rolo",
     readTime: "9 min",
     link: "/blog/artigos/como-negociar-salario-portugal.html",
@@ -169,9 +169,9 @@ const articles: Article[] = [
   // Desenvolvimento de Carreira
   {
     category: "carreira",
-    tag: { pt: "AVALIAÇÃO DE CARREIRA", en: "CAREER ASSESSMENT", es: "EVALUACIÓN DE CARRERA" },
-    title: { pt: "Como Saber se Estás Bem Posicionado no Mercado de Trabalho", en: "How to Know if You're Well Positioned in the Job Market", es: "Cómo Saber si Estás Bien Posicionado en el Mercado Laboral" },
-    excerpt: { pt: "Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.", en: "Indicators, benchmarks and clarity on the next steps of your career.", es: "Indicadores, benchmarks y claridad sobre los próximos pasos de tu carrera." },
+    tag: pick("AVALIAÇÃO DE CARREIRA", "CAREER ASSESSMENT", "EVALUACIÓN DE CARRERA"),
+    title: pick("Como Saber se Estás Bem Posicionado no Mercado de Trabalho", "How to Know if You're Well Positioned in the Job Market", "Cómo Saber si Estás Bien Posicionado en el Mercado Laboral"),
+    excerpt: pick("Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.", "Indicators, benchmarks and clarity on the next steps of your career.", "Indicadores, benchmarks y claridad sobre los próximos pasos de tu carrera."),
     author: "Samuel Rolo",
     readTime: "8 min",
     link: "/blog/artigos/posicionamento-mercado.html",
@@ -179,18 +179,18 @@ const articles: Article[] = [
   },
   {
     category: "carreira",
-    tag: { pt: "VISIBILIDADE ONLINE", en: "ONLINE VISIBILITY", es: "VISIBILIDAD ONLINE" },
-    title: { pt: "CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?", en: "CV or LinkedIn: Which Is More Important for Your Career?", es: "CV o LinkedIn: ¿Cuál es Más Importante para tu Carrera?" },
-    excerpt: { pt: "Análise comparativa dos dois pilares da tua presença profissional.", en: "Comparative analysis of the two pillars of your professional presence.", es: "Análisis comparativo de los dos pilares de tu presencia profesional." },
+    tag: pick("VISIBILIDADE ONLINE", "ONLINE VISIBILITY", "VISIBILIDAD ONLINE"),
+    title: pick("CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?", "CV or LinkedIn: Which Is More Important for Your Career?", "CV o LinkedIn: ¿Cuál es Más Importante para tu Carrera?"),
+    excerpt: pick("Análise comparativa dos dois pilares da tua presença profissional.", "Comparative analysis of the two pillars of your professional presence.", "Análisis comparativo de los dos pilares de tu presencia profesional."),
     author: "Samuel Rolo",
     readTime: "8 min",
     link: "/blog/artigos/cv-linkedin-importancia.html",
   },
   {
     category: "carreira",
-    tag: { pt: "VISIBILIDADE ONLINE", en: "ONLINE VISIBILITY", es: "VISIBILIDAD ONLINE" },
-    title: { pt: "Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores", en: "How to Improve Your LinkedIn to Appear in Recruiter Searches", es: "Cómo Mejorar tu LinkedIn para Aparecer en las Búsquedas de Reclutadores" },
-    excerpt: { pt: "Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.", en: "Small profile adjustments that can significantly increase your visibility.", es: "Pequeños ajustes en el perfil que pueden aumentar significativamente tu visibilidad." },
+    tag: pick("VISIBILIDADE ONLINE", "ONLINE VISIBILITY", "VISIBILIDAD ONLINE"),
+    title: pick("Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores", "How to Improve Your LinkedIn to Appear in Recruiter Searches", "Cómo Mejorar tu LinkedIn para Aparecer en las Búsquedas de Reclutadores"),
+    excerpt: pick("Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.", "Small profile adjustments that can significantly increase your visibility.", "Pequeños ajustes en el perfil que pueden aumentar significativamente tu visibilidad."),
     author: "Samuel Rolo",
     readTime: "9 min",
     link: "/blog/artigos/melhorar-linkedin-pesquisas.html",
@@ -199,78 +199,78 @@ const articles: Article[] = [
 
 interface VideoItem {
   id: string;
-  badge?: { pt: string; en: string; es: string };
-  title: { pt: string; en: string; es: string };
-  desc: { pt: string; en: string; es: string };
+  badge?: string;
+  title: string;
+  desc: string;
   guideLink: string;
-  guideLabel: { pt: string; en: string; es: string };
+  guideLabel: string;
   ytLink: string;
   featured?: boolean;
 }
 
-const videos: VideoItem[] = [
+const buildVideos = (pick: <T,>(pt: T, en: T, es: T) => T): VideoItem[] => [
   {
     id: "Tribuqg2Hzk",
-    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
-    title: { pt: "O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", en: "The AI Productivity Paradox: Why Human Leadership is the Missing Link", es: "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido" },
-    desc: { pt: "As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", en: "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", es: "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo." },
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", "The AI Productivity Paradox: Why Human Leadership is the Missing Link", "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido"),
+    desc: pick("As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo."),
     guideLink: "/blog/artigos/ai-productivity-paradox.html",
-    guideLabel: { pt: "LER ARTIGO COMPLETO →", en: "READ FULL ARTICLE →", es: "LEER ARTÍCULO COMPLETO →" },
+    guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
     ytLink: "https://www.youtube.com/watch?v=Tribuqg2Hzk",
     featured: true,
   },
   {
     id: "cFw11WRjuxM",
-    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
-    title: { pt: "O Futuro da Consultoria nas Big4: Sobreviver à Era da IA", en: "The Future of Big4 Consulting: Surviving the AI Era", es: "El Futuro de la Consultoría en las Big4: Sobrevivir a la Era de la IA" },
-    desc: { pt: "A IA está a redefinir o trabalho do consultor. Quais os perfis que vão crescer, quais os que vão desaparecer e o que tens de fazer hoje para seres relevante em 2030. Uma análise honesta do mercado de consultoria nas Big4.", en: "AI is redefining the consultant's work. Which profiles will grow, which will disappear, and what you need to do today to remain relevant in 2030. An honest analysis of the Big4 consulting market.", es: "La IA está redefiniendo el trabajo del consultor. Qué perfiles crecerán, cuáles desaparecerán y qué necesitas hacer hoy para ser relevante en 2030. Un análisis honesto del mercado de consultoría en las Big4." },
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("O Futuro da Consultoria nas Big4: Sobreviver à Era da IA", "The Future of Big4 Consulting: Surviving the AI Era", "El Futuro de la Consultoría en las Big4: Sobrevivir a la Era de la IA"),
+    desc: pick("A IA está a redefinir o trabalho do consultor. Quais os perfis que vão crescer, quais os que vão desaparecer e o que tens de fazer hoje para seres relevante em 2030. Uma análise honesta do mercado de consultoria nas Big4.", "AI is redefining the consultant's work. Which profiles will grow, which will disappear, and what you need to do today to remain relevant in 2030. An honest analysis of the Big4 consulting market.", "La IA está redefiniendo el trabajo del consultor. Qué perfiles crecerán, cuáles desaparecerán y qué necesitas hacer hoy para ser relevante en 2030. Un análisis honesto del mercado de consultoría en las Big4."),
     guideLink: "/blog/artigos/futuro-consultoria-big4-2030.html",
-    guideLabel: { pt: "LER ARTIGO COMPLETO →", en: "READ FULL ARTICLE →", es: "LEER ARTÍCULO COMPLETO →" },
+    guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
     ytLink: "https://www.youtube.com/watch?v=cFw11WRjuxM",
     featured: true,
   },
   {
     id: "LhLmgE1noC8",
-    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
-    title: { pt: "Como Vencer o Filtro ATS: Guia Definitivo", en: "How to Beat the ATS Filter: The Definitive Guide", es: "Cómo Vencer el Filtro ATS: Guía Definitiva" },
-    desc: { pt: "75% dos currículos são rejeitados automaticamente por software. Descobre o processo passo a passo para otimizar o teu CV, LinkedIn e carta de apresentação para passar nos filtros digitais e conseguir mais entrevistas.", en: "75% of CVs are automatically rejected by software. Discover the step-by-step process to optimise your CV, LinkedIn and cover letter to pass digital filters and get more interviews.", es: "El 75% de los currículums son rechazados automáticamente por software. Descubre el proceso paso a paso para optimizar tu CV, LinkedIn y carta de presentación para pasar los filtros digitales y conseguir más entrevistas." },
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("Como Vencer o Filtro ATS: Guia Definitivo", "How to Beat the ATS Filter: The Definitive Guide", "Cómo Vencer el Filtro ATS: Guía Definitiva"),
+    desc: pick("75% dos currículos são rejeitados automaticamente por software. Descobre o processo passo a passo para otimizar o teu CV, LinkedIn e carta de apresentação para passar nos filtros digitais e conseguir mais entrevistas.", "75% of CVs are automatically rejected by software. Discover the step-by-step process to optimise your CV, LinkedIn and cover letter to pass digital filters and get more interviews.", "El 75% de los currículums son rechazados automáticamente por software. Descubre el proceso paso a paso para optimizar tu CV, LinkedIn y carta de presentación para pasar los filtros digitales y conseguir más entrevistas."),
     guideLink: "https://www.youtube.com/watch?v=LhLmgE1noC8",
-    guideLabel: { pt: "VER GUIA COMPLETO →", en: "VIEW COMPLETE GUIDE →", es: "VER GUÍA COMPLETA →" },
+    guideLabel: pick("VER GUIA COMPLETO →", "VIEW COMPLETE GUIDE →", "VER GUÍA COMPLETA →"),
     ytLink: "https://www.youtube.com/watch?v=LhLmgE1noC8",
   },
   {
     id: "6coJJF79Cy0",
-    title: { pt: "Como Criar um CV Compatível com ATS em 2026", en: "How to Create an ATS-Compatible CV in 2026", es: "Cómo Crear un CV Compatible con ATS en 2026" },
-    desc: { pt: "Candidatas-te a empregos e nunca tens resposta? Aprende a criar um currículo que passa nos filtros automáticos e chega às mãos certas.", en: "Applying for jobs and never hearing back? Learn how to create a CV that passes automated filters and reaches the right hands.", es: "¿Te postulas a empleos y nunca recibes respuesta? Aprende a crear un currículum que pase los filtros automáticos y llegue a las manos correctas." },
+    title: pick("Como Criar um CV Compatível com ATS em 2026", "How to Create an ATS-Compatible CV in 2026", "Cómo Crear un CV Compatible con ATS en 2026"),
+    desc: pick("Candidatas-te a empregos e nunca tens resposta? Aprende a criar um currículo que passa nos filtros automáticos e chega às mãos certas.", "Applying for jobs and never hearing back? Learn how to create a CV that passes automated filters and reaches the right hands.", "¿Te postulas a empleos y nunca recibes respuesta? Aprende a crear un currículum que pase los filtros automáticos y llegue a las manos correctas."),
     guideLink: "https://www.youtube.com/watch?v=6coJJF79Cy0",
-    guideLabel: { pt: "COMO CRIAR CV ATS FRIENDLY →", en: "HOW TO CREATE ATS FRIENDLY CV →", es: "CÓMO CREAR CV ATS FRIENDLY →" },
+    guideLabel: pick("COMO CRIAR CV ATS FRIENDLY →", "HOW TO CREATE ATS FRIENDLY CV →", "CÓMO CREAR CV ATS FRIENDLY →"),
     ytLink: "https://www.youtube.com/watch?v=6coJJF79Cy0",
   },
   {
     id: "yU_tJV1Ap94",
-    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
-    title: { pt: "O Segredo para Maximizar o ROI Pós-Big4: 5 Anos Podem Mudar a Tua Vida?", en: "The Secret to Maximising Post-Big4 ROI: Can 5 Years Change Your Life?", es: "El Secreto para Maximizar el ROI Post-Big4: ¿5 Años Pueden Cambiar tu Vida?" },
-    desc: { pt: "Já te perguntaste se o sacrifício de 5 anos nas Big4 realmente vale a pena? Analisamos o ROI real: progressão salarial, horas intermináveis, rede de contactos e custo de oportunidade. Quando sair e como maximizar o teu valor.", en: "Ever wondered if the sacrifice of 5 years at Big4 is really worth it? We analyse the real ROI: salary progression, endless hours, contact network and opportunity cost. When to leave and how to maximise your value.", es: "¿Alguna vez te preguntaste si el sacrificio de 5 años en las Big4 realmente vale la pena? Analizamos el ROI real: progresión salarial, horas interminables, red de contactos y costo de oportunidad. Cuándo salir y cómo maximizar tu valor." },
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("O Segredo para Maximizar o ROI Pós-Big4: 5 Anos Podem Mudar a Tua Vida?", "The Secret to Maximising Post-Big4 ROI: Can 5 Years Change Your Life?", "El Secreto para Maximizar el ROI Post-Big4: ¿5 Años Pueden Cambiar tu Vida?"),
+    desc: pick("Já te perguntaste se o sacrifício de 5 anos nas Big4 realmente vale a pena? Analisamos o ROI real: progressão salarial, horas intermináveis, rede de contactos e custo de oportunidade. Quando sair e como maximizar o teu valor.", "Ever wondered if the sacrifice of 5 years at Big4 is really worth it? We analyse the real ROI: salary progression, endless hours, contact network and opportunity cost. When to leave and how to maximise your value.", "¿Alguna vez te preguntaste si el sacrificio de 5 años en las Big4 realmente vale la pena? Analizamos el ROI real: progresión salarial, horas interminables, red de contactos y costo de oportunidad. Cuándo salir y cómo maximizar tu valor."),
     guideLink: "https://www.youtube.com/watch?v=yU_tJV1Ap94",
-    guideLabel: { pt: "VER GUIA COMPLETO →", en: "VIEW COMPLETE GUIDE →", es: "VER GUÍA COMPLETA →" },
+    guideLabel: pick("VER GUIA COMPLETO →", "VIEW COMPLETE GUIDE →", "VER GUÍA COMPLETA →"),
     ytLink: "https://www.youtube.com/watch?v=yU_tJV1Ap94",
   },
   {
     id: "teIBWJiSEFU",
-    badge: { pt: "NOVO VÍDEO", en: "NEW VIDEO", es: "NUEVO VÍDEO" },
-    title: { pt: "Como Entrar nas Big 4 (Deloitte, PwC, EY, KPMG): Guia Definitivo", en: "How to Get Into the Big 4 (Deloitte, PwC, EY, KPMG): The Definitive Guide", es: "Cómo Entrar en las Big 4 (Deloitte, PwC, EY, KPMG): Guía Definitiva" },
-    desc: { pt: "A taxa de aceitação nas Big 4 é apenas de 2–6%. Vê o playbook completo de 5 fases — desde o CV ATS até à entrevista com partner — para conseguires emprego na Deloitte, PwC, EY ou KPMG.", en: "The acceptance rate at Big 4 is only 2–6%. See the complete 5-phase playbook — from ATS CV to partner interview — to land a job at Deloitte, PwC, EY or KPMG.", es: "La tasa de aceptación en las Big 4 es solo del 2–6%. Ve el playbook completo de 5 fases — desde el CV ATS hasta la entrevista con partner — para conseguir empleo en Deloitte, PwC, EY o KPMG." },
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("Como Entrar nas Big 4 (Deloitte, PwC, EY, KPMG): Guia Definitivo", "How to Get Into the Big 4 (Deloitte, PwC, EY, KPMG): The Definitive Guide", "Cómo Entrar en las Big 4 (Deloitte, PwC, EY, KPMG): Guía Definitiva"),
+    desc: pick("A taxa de aceitação nas Big 4 é apenas de 2–6%. Vê o playbook completo de 5 fases — desde o CV ATS até à entrevista com partner — para conseguires emprego na Deloitte, PwC, EY ou KPMG.", "The acceptance rate at Big 4 is only 2–6%. See the complete 5-phase playbook — from ATS CV to partner interview — to land a job at Deloitte, PwC, EY or KPMG.", "La tasa de aceptación en las Big 4 es solo del 2–6%. Ve el playbook completo de 5 fases — desde el CV ATS hasta la entrevista con partner — para conseguir empleo en Deloitte, PwC, EY o KPMG."),
     guideLink: "https://www.youtube.com/watch?v=teIBWJiSEFU",
-    guideLabel: { pt: "VER GUIA COMPLETO (EN) →", en: "VIEW COMPLETE GUIDE (EN) →", es: "VER GUÍA COMPLETA (EN) →" },
+    guideLabel: pick("VER GUIA COMPLETO (EN) →", "VIEW COMPLETE GUIDE (EN) →", "VER GUÍA COMPLETA (EN) →"),
     ytLink: "https://www.youtube.com/watch?v=teIBWJiSEFU",
   },
   {
     id: "T1AKsHV_Vf0",
-    badge: { pt: "MAIS RECENTE", en: "LATEST", es: "MÁS RECIENTE" },
-    title: { pt: "Porque é que os Melhores Managers Falham na Promoção?", en: "Why the Best Managers Fail at Promotion?", es: "¿Por Qué los Mejores Managers Fallan en la Promoción?" },
-    desc: { pt: "As competências que te levaram a Manager não são as mesmas que te farão ter sucesso como Sénior Manager. Descobre o que muda realmente nesta transição crítica e como navegar a complexidade política e estratégica do próximo nível.", en: "The skills that got you to Manager are not the same ones that will make you succeed as Senior Manager. Discover what really changes in this critical transition and how to navigate the political and strategic complexity of the next level.", es: "Las competencias que te llevaron a Manager no son las mismas que te harán tener éxito como Senior Manager. Descubre qué cambia realmente en esta transición crítica y cómo navegar la complejidad política y estratégica del próximo nivel." },
+    badge: pick("MAIS RECENTE", "LATEST", "MÁS RECIENTE"),
+    title: pick("Porque é que os Melhores Managers Falham na Promoção?", "Why the Best Managers Fail at Promotion?", "¿Por Qué los Mejores Managers Fallan en la Promoción?"),
+    desc: pick("As competências que te levaram a Manager não são as mesmas que te farão ter sucesso como Sénior Manager. Descobre o que muda realmente nesta transição crítica e como navegar a complexidade política e estratégica do próximo nível.", "The skills that got you to Manager are not the same ones that will make you succeed as Senior Manager. Discover what really changes in this critical transition and how to navigate the political and strategic complexity of the next level.", "Las competencias que te llevaron a Manager no son las mismas que te harán tener éxito como Senior Manager. Descubre qué cambia realmente en esta transición crítica y cómo navegar la complejidad política y estratégica del próximo nivel."),
     guideLink: "https://www.youtube.com/watch?v=T1AKsHV_Vf0",
-    guideLabel: { pt: "VER GUIA COMPLETO →", en: "VIEW COMPLETE GUIDE →", es: "VER GUÍA COMPLETA →" },
+    guideLabel: pick("VER GUIA COMPLETO →", "VIEW COMPLETE GUIDE →", "VER GUÍA COMPLETA →"),
     ytLink: "https://www.youtube.com/watch?v=T1AKsHV_Vf0",
   },
 ];
@@ -280,8 +280,9 @@ const videos: VideoItem[] = [
 export default function KnowledgeHubPage() {
   const { pick, lang } = useTranslation();
 
-  // Helper to pick from {pt,en,es} objects
-  const p = (obj: { pt: string; en: string; es: string }) => obj[lang] || obj.pt;
+  const articles = buildArticles(pick);
+
+  const videos = buildVideos(pick);
 
   const categoryLabels: { id: ArticleCategory; label: string }[] = [
     { id: "todos", label: pick("Todos", "All", "Todos") },
@@ -309,9 +310,9 @@ export default function KnowledgeHubPage() {
     const matchesCategory = activeCategory === "todos" || a.category === activeCategory;
     const matchesSearch =
       searchQuery === "" ||
-      p(a.title).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p(a.tag).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p(a.excerpt).toLowerCase().includes(searchQuery.toLowerCase());
+      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -432,12 +433,12 @@ export default function KnowledgeHubPage() {
                         className="block bg-[#1a1a2e] rounded-xl p-6 md:p-8 hover:bg-[#252545] transition-colors group"
                       >
                         <div className="text-xs font-semibold tracking-widest uppercase text-[#C9A961] mb-3">
-                          {p(article.tag)}
+                          {article.tag}
                         </div>
                         <h3 className="text-xl md:text-2xl font-semibold text-white mb-3 group-hover:text-[#C9A961] transition-colors">
-                          {p(article.title)}
+                          {article.title}
                         </h3>
-                        <p className="text-sm text-gray-400 mb-4">{p(article.excerpt)}</p>
+                        <p className="text-sm text-gray-400 mb-4">{article.excerpt}</p>
                         <div className="text-xs text-gray-500">
                           {article.author}
                           {article.date && <> · {article.date}</>}
@@ -451,12 +452,12 @@ export default function KnowledgeHubPage() {
                         className="block border border-gray-100 rounded-xl p-5 hover:border-[#C9A961] hover:shadow-sm transition-all group"
                       >
                         <div className="text-xs font-semibold tracking-widest uppercase text-[#C9A961] mb-2">
-                          {p(article.tag)}
+                          {article.tag}
                         </div>
                         <h3 className="text-base font-semibold text-[#1a1a2e] mb-2 group-hover:text-[#C9A961] transition-colors">
-                          {p(article.title)}
+                          {article.title}
                         </h3>
-                        <p className="text-sm text-gray-500 mb-3">{p(article.excerpt)}</p>
+                        <p className="text-sm text-gray-500 mb-3">{article.excerpt}</p>
                         <div className="text-xs text-gray-400">
                           {article.author}
                           {article.date && <> · {article.date}</>}
@@ -555,7 +556,7 @@ export default function KnowledgeHubPage() {
                         <iframe
                           className="absolute inset-0 w-full h-full"
                           src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
-                          title={p(video.title)}
+                          title={video.title}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                         />
@@ -565,11 +566,11 @@ export default function KnowledgeHubPage() {
                         onClick={() => setActiveVideo(video.id)}
                         className="relative w-full group"
                         style={{ paddingBottom: "56.25%", display: "block" }}
-                        aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${p(video.title)}`}
+                        aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${video.title}`}
                       >
                         <img
                           src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
-                          alt={p(video.title)}
+                          alt={video.title}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -583,13 +584,13 @@ export default function KnowledgeHubPage() {
                   <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
                     {video.badge && (
                       <div className="text-xs font-semibold tracking-widest uppercase text-[#C9A961] mb-3">
-                        {p(video.badge)}
+                        {video.badge}
                       </div>
                     )}
                     <h3 className="text-xl md:text-2xl font-semibold text-[#1a1a2e] mb-3">
-                      {p(video.title)}
+                      {video.title}
                     </h3>
-                    <p className="text-sm text-gray-500 mb-5 leading-relaxed">{p(video.desc)}</p>
+                    <p className="text-sm text-gray-500 mb-5 leading-relaxed">{video.desc}</p>
                     <div className="flex flex-wrap gap-3">
                       <a
                         href={video.guideLink}
@@ -597,7 +598,7 @@ export default function KnowledgeHubPage() {
                         rel="noopener noreferrer"
                         className="text-xs font-semibold tracking-wide text-[#C9A961] border border-[#C9A961]/30 px-4 py-2 rounded-lg hover:bg-[#C9A961]/10 transition-colors"
                       >
-                        {p(video.guideLabel)}
+                        {video.guideLabel}
                       </a>
                       <a
                         href={video.ytLink}
@@ -629,7 +630,7 @@ export default function KnowledgeHubPage() {
                         <iframe
                           className="absolute inset-0 w-full h-full"
                           src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
-                          title={p(video.title)}
+                          title={video.title}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                         />
@@ -639,11 +640,11 @@ export default function KnowledgeHubPage() {
                         onClick={() => setActiveVideo(video.id)}
                         className="relative w-full"
                         style={{ paddingBottom: "56.25%", display: "block" }}
-                        aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${p(video.title)}`}
+                        aria-label={`${pick("Reproduzir", "Play", "Reproducir")}: ${video.title}`}
                       >
                         <img
                           src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
-                          alt={p(video.title)}
+                          alt={video.title}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -656,11 +657,11 @@ export default function KnowledgeHubPage() {
                     <div className="p-4">
                       {video.badge && (
                         <div className="text-[10px] font-semibold tracking-widest uppercase text-[#C9A961] mb-2">
-                          {p(video.badge)}
+                          {video.badge}
                         </div>
                       )}
                       <h4 className="text-sm font-semibold text-[#1a1a2e] mb-2 line-clamp-2">
-                        {p(video.title)}
+                        {video.title}
                       </h4>
                       <div className="flex gap-2">
                         <a

@@ -19,49 +19,23 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
   const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : (t('profissional')));
   const displaySeniority = perceivedSeniority || 'Mid-level';
 
-  const defaultAttentionMap = lang === 'en' ? [
-    "Name and professional title — first impression in 2 seconds",
-    "Latest professional experience — role and company",
-    "Key skills listed — quick matching with the vacancy",
-    "Academic background — validation of base qualifications",
-  ] : lang === 'es' ? [
-    "Nombre y título profesional — primera impresión en 2 segundos",
-    "Última experiencia profesional — cargo y empresa",
-    "Competencias clave listadas — matching rápido con la vacante",
-    "Formación académica — validación de cualificaciones base",
-  ] : [
-    "Nome e título profissional — primeira impressão em 2 segundos",
-    "Última experiência profissional — cargo e empresa",
-    "Competências-chave listadas — matching rápido com a vaga",
-    "Formação académica — validação de qualificações base",
+  const defaultAttentionMap = [
+    pick("Nome e título profissional — primeira impressão em 2 segundos", "Name and professional title — first impression in 2 seconds", "Nombre y título profesional — primera impresión en 2 segundos"),
+    pick("Última experiência profissional — cargo e empresa", "Latest professional experience — role and company", "Última experiencia profesional — cargo y empresa"),
+    pick("Competências-chave listadas — matching rápido com a vaga", "Key skills listed — quick matching with the vacancy", "Competencias clave listadas — matching rápido con la vacante"),
+    pick("Formação académica — validação de qualificações base", "Academic background — validation of base qualifications", "Formación académica — validación de cualificaciones base"),
   ];
 
-  const defaultFrictionPoints = lang === 'en' ? [
-    "High text density may hinder quick reading",
-    "Long sections without bullets or visual highlights",
-    "Contact information may not be sufficiently visible",
-  ] : lang === 'es' ? [
-    "Alta densidad de texto puede dificultar la lectura rápida",
-    "Secciones largas sin viñetas o destacados visuales",
-    "La información de contacto puede no ser suficientemente visible",
-  ] : [
-    "Densidade de texto elevada pode dificultar a leitura rápida",
-    "Secções longas sem bullets ou destaques visuais",
-    "Informação de contacto pode não estar suficientemente visível",
+  const defaultFrictionPoints = [
+    pick("Densidade de texto elevada pode dificultar a leitura rápida", "High text density may hinder quick reading", "Alta densidad de texto puede dificultar la lectura rápida"),
+    pick("Secções longas sem bullets ou destaques visuais", "Long sections without bullets or visual highlights", "Secciones largas sin viñetas o destacados visuales"),
+    pick("Informação de contacto pode não estar suficientemente visível", "Contact information may not be sufficiently visible", "La información de contacto puede no ser suficientemente visible"),
   ];
 
-  const defaultInvoluntaryMessages = lang === 'en' ? [
-    "Professional with consistent trajectory and career progression",
-    "Results-oriented profile with diversified experience",
-    "Candidate with leadership potential and strategic vision",
-  ] : lang === 'es' ? [
-    "Profesional con trayectoria consistente y progresión de carrera",
-    "Perfil orientado a resultados con experiencia diversificada",
-    "Candidato con potencial de liderazgo y visión estratégica",
-  ] : [
-    "Profissional com trajectória consistente e progressão de carreira",
-    "Perfil orientado para resultados com experiência diversificada",
-    "Candidato com potencial de liderança e visão estratégica",
+  const defaultInvoluntaryMessages = [
+    pick("Profissional com trajectória consistente e progressão de carreira", "Professional with consistent trajectory and career progression", "Profesional con trayectoria consistente y progresión de carrera"),
+    pick("Perfil orientado para resultados com experiência diversificada", "Results-oriented profile with diversified experience", "Perfil orientado a resultados con experiencia diversificada"),
+    pick("Candidato com potencial de liderança e visão estratégica", "Candidate with leadership potential and strategic vision", "Candidato con potencial de liderazgo y visión estratégica"),
   ];
 
   const attentionMap = deepAnalysis?.attentionMap?.length ? deepAnalysis.attentionMap : defaultAttentionMap;

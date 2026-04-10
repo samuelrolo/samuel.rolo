@@ -18,7 +18,6 @@ import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
-import { pick as modulePick } from "@/i18n/translations";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
@@ -73,23 +72,23 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 }
 
 /* ─── Testimonials ─── */
-const testimonials = [
+const buildTestimonials = (pick: <T,>(pt: T, en: T, es: T) => T) => [
   {
     name: "Catarina Mendes",
-    role: modulePick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
-    text: modulePick("O Career Intelligence deu-me uma estimativa salarial realista para cada caminho. Percebi que o meu perfil valia mais do que pensava — e negociei um aumento de 18%.", "Career Intelligence gave me a realistic salary estimate for each path. I realised my profile was worth more than I thought — and I negotiated an 18% raise.", "Career Intelligence me dio una estimación salarial realista para cada camino. Me di cuenta de que mi perfil valía más de lo que pensaba — y negocié un aumento del 18%."),
+    role: pick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
+    text: pick("O Career Intelligence deu-me uma estimativa salarial realista para cada caminho. Percebi que o meu perfil valia mais do que pensava — e negociei um aumento de 18%.", "Career Intelligence gave me a realistic salary estimate for each path. I realised my profile was worth more than I thought — and I negotiated an 18% raise.", "Career Intelligence me dio una estimación salarial realista para cada camino. Me di cuenta de que mi perfil valía más de lo que pensaba — y negocié un aumento del 18%."),
     rating: 5,
   },
   {
     name: "Rui Ferreira",
-    role: modulePick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
-    text: modulePick("Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.", "I was undecided between Product Manager and Engineering Manager. Instead of months researching, I got the answer in 1 minute — with concrete market data and clear trade-offs.", "Estaba indeciso entre Product Manager e Engineering Manager. En vez de meses investigando, tuve la respuesta en 1 minuto — con datos concretos de mercado y trade-offs claros."),
+    role: pick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
+    text: pick("Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.", "I was undecided between Product Manager and Engineering Manager. Instead of months researching, I got the answer in 1 minute — with concrete market data and clear trade-offs.", "Estaba indeciso entre Product Manager e Engineering Manager. En vez de meses investigando, tuve la respuesta en 1 minuto — con datos concretos de mercado y trade-offs claros."),
     rating: 5,
   },
   {
     name: "Sofia Lopes",
-    role: modulePick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
-    text: modulePick("A recomendação final veio com um plano de acção tão detalhado que o usei diretamente na entrevista. Entrei no novo cargo com confiança total.", "The final recommendation came with such a detailed action plan that I used it directly in the interview. I started the new role with total confidence.", "La recomendación final vino con un plan de acción tan detallado que lo usé directamente en la entrevista. Entré en el nuevo cargo con confianza total."),
+    role: pick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
+    text: pick("A recomendação final veio com um plano de acção tão detalhado que o usei diretamente na entrevista. Entrei no novo cargo com confiança total.", "The final recommendation came with such a detailed action plan that I used it directly in the interview. I started the new role with total confidence.", "La recomendación final vino con un plan de acción tan detallado que lo usé directamente en la entrevista. Entré en el nuevo cargo con confianza total."),
     rating: 5,
   },
 ];
@@ -104,20 +103,10 @@ const PRICE_DISPLAY_MEMBER_PRO = '9,99€';
 const PRICE_MEMBER_PRO = '9,99';
 const PRICE_NUM_MEMBER_PRO = 9.99;
 
-const ciHeadlinesPT = [
-  { text: "Toma decisões de carreira com dados,", highlight: "não com intuição" },
-  { text: "Percebe para onde o mercado está a ir", highlight: "antes de todos os outros" },
-  { text: "Transforma informação em vantagem real", highlight: "na tua evolução profissional" },
-];
-const ciHeadlinesEN = [
-  { text: "Make career decisions with data,", highlight: "not intuition" },
-  { text: "Understand where the market is heading", highlight: "before everyone else" },
-  { text: "Turn information into real advantage", highlight: "in your professional growth" },
-];
-const ciHeadlinesES = [
-  { text: "Toma decisiones de carrera con datos,", highlight: "no con intuición" },
-  { text: "Entiende hacia dónde va el mercado", highlight: "antes que todos los demás" },
-  { text: "Transforma información en ventaja real", highlight: "en tu evolución profesional" },
+const buildCiHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
+  { text: pick("Toma decisões de carreira com dados,", "Make career decisions with data,", "Toma decisiones de carrera con datos,"), highlight: pick("não com intuição", "not intuition", "no con intuición") },
+  { text: pick("Percebe para onde o mercado está a ir", "Understand where the market is heading", "Entiende hacia dónde va el mercado"), highlight: pick("antes de todos os outros", "before everyone else", "antes que todos los demás") },
+  { text: pick("Transforma informação em vantagem real", "Turn information into real advantage", "Transforma información en ventaja real"), highlight: pick("na tua evolução profissional", "in your professional growth", "en tu evolución profesional") },
 ];
 
 export default function CareerIntelligenceHome() {
@@ -125,8 +114,9 @@ export default function CareerIntelligenceHome() {
   const { symbol: CUR } = useCurrency();
   const careerIntelligenceDemoHref = lang === 'en' ? '/en/career-intelligence/demo' : '/career-intelligence/demo';
   const isPT = lang === 'pt';
-  const ciHeadlines = pick(ciHeadlinesPT, ciHeadlinesEN, ciHeadlinesES);
-  useEffect(() => { document.title = pick("Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire", "Career Intelligence — Strategic Career Decision with AI | Share2Inspire", "Career Intelligence — Decisión Estratégica de Carrera con IA | Share2Inspire"); }, []);
+  const testimonials = buildTestimonials(pick);
+  const ciHeadlines = buildCiHeadlines(pick);
+  useEffect(() => { document.title = pick("Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire", "Career Intelligence — Strategic Career Decision with AI | Share2Inspire", "Career Intelligence — Decisión Estratégica de Carrera con IA | Share2Inspire"); }, [pick]);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % ciHeadlines.length), 4000); return () => clearInterval(t); }, []);
 

@@ -71,29 +71,19 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 // transformGeminiResponse imported from @/lib/transformGeminiResponse
 
-const bundleHeadlinesPT = [
-  { text: "Do diagnóstico à ação, tudo o que precisas para", highlight: "acelerar a tua carreira" },
-  { text: "Percebe onde estás e define exatamente", highlight: "para onde vais" },
-  { text: "Analisa o teu CV, traça o teu caminho e", highlight: "avança com confiança" },
-];
-const bundleHeadlinesEN = [
-  { text: "From diagnosis to action, everything you need to", highlight: "accelerate your career" },
-  { text: "Understand where you are and define exactly", highlight: "where you're going" },
-  { text: "Analyse your CV, map your path and", highlight: "move forward with confidence" },
-];
-const bundleHeadlinesES = [
-  { text: "Del diagnóstico a la acción, todo lo que necesitas para", highlight: "acelerar tu carrera" },
-  { text: "Entiende dónde estás y define exactamente", highlight: "hacia dónde vas" },
-  { text: "Analiza tu CV, traza tu camino y", highlight: "avanza con confianza" },
+const buildBundleHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
+  { text: pick("Do diagnóstico à ação, tudo o que precisas para", "From diagnosis to action, everything you need to", "Del diagnóstico a la acción, todo lo que necesitas para"), highlight: pick("acelerar a tua carreira", "accelerate your career", "acelerar tu carrera") },
+  { text: pick("Percebe onde estás e define exatamente", "Understand where you are and define exactly", "Entiende dónde estás y define exactamente"), highlight: pick("para onde vais", "where you're going", "hacia dónde vas") },
+  { text: pick("Analisa o teu CV, traça o teu caminho e", "Analyse your CV, map your path and", "Analiza tu CV, traza tu camino y"), highlight: pick("avança com confiança", "move forward with confidence", "avanza con confianza") },
 ];
 
 export default function BundleHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
   const PRICE = pick('29,00', '29', '29');
-  const bundleHeadlines = pick(bundleHeadlinesPT, bundleHeadlinesEN, bundleHeadlinesES);
+  const bundleHeadlines = buildBundleHeadlines(pick);
   const isPT = lang === 'pt';
-  useEffect(() => { document.title = pick('Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire'); }, []);
+  useEffect(() => { document.title = pick('Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire', 'Bundle CV Analyser + Career Path | Share2Inspire'); }, [pick]);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % bundleHeadlines.length), 4000); return () => clearInterval(t); }, []);
   const [, setLocation] = useLocation();
@@ -400,8 +390,10 @@ export default function BundleHome() {
           mobileNumber: formattedPhone,
           amount: finalPrice.toFixed(2),
           email,
-          product: 'Bundle CV Analyser + Career Path',
-          description: appliedCoupon ? `Bundle — CV Analyser + Career Path (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})` : 'Bundle — CV Analyser + Career Path',
+          product: pick('Bundle CV Analyser + Career Path', 'Bundle CV Analyser + Career Path', 'Bundle CV Analyser + Career Path'),
+          description: appliedCoupon
+            ? `${pick('Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path')} (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})`
+            : pick('Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path'),
         })
       });
       const data = await response.json();
@@ -417,7 +409,10 @@ export default function BundleHome() {
   };
 
   const handlePayPalPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) {
+      setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu correo electrónico'));
+      return;
+    }
     trackPaymentStart('bundle_cv_career', finalPrice);
     window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
     setPaymentStep('success');

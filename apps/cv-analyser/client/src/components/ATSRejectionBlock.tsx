@@ -32,36 +32,63 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
   const getDetailedFactors = (): string[] => {
     if (detailedFactors && detailedFactors.length > 0) return detailedFactors;
     if (rejectionRate > 60) {
-      return lang === 'en' ? [
-        "Complex formatting with tables or columns that confuse ATS parsers",
-        "Lack of sector-specific keywords in the skills section",
-        "Non-standard headers or sections that ATS cannot recognise",
-        "Excessive use of graphics or visual elements not readable by ATS",
-      ] : [
-        "Formatação complexa com tabelas ou colunas que confundem parsers ATS",
-        "Falta de palavras-chave específicas do sector na secção de competências",
-        "Headers ou secções não standard que o ATS não reconhece",
-        "Uso excessivo de gráficos ou elementos visuais não legíveis por ATS",
+      return [
+        pick(
+          'Formatação complexa com tabelas ou colunas que confundem parsers ATS',
+          'Complex formatting with tables or columns that confuse ATS parsers',
+          'Formato complejo con tablas o columnas que confunden a los parsers ATS'
+        ),
+        pick(
+          'Falta de palavras-chave específicas do sector na secção de competências',
+          'Lack of sector-specific keywords in the skills section',
+          'Falta de palabras clave específicas del sector en la sección de competencias'
+        ),
+        pick(
+          'Headers ou secções não standard que o ATS não reconhece',
+          'Non-standard headers or sections that ATS cannot recognise',
+          'Encabezados o secciones no estándar que el ATS no reconoce'
+        ),
+        pick(
+          'Uso excessivo de gráficos ou elementos visuais não legíveis por ATS',
+          'Excessive use of graphics or visual elements not readable by ATS',
+          'Uso excesivo de gráficos o elementos visuales no legibles por ATS'
+        ),
       ];
     } else if (rejectionRate > 40) {
-      return lang === 'en' ? [
-        "Some sector keywords could be more explicit",
-        "Date or location format may vary between ATS systems",
-        "Skills section could be more detailed for automatic matching",
-      ] : [
-        "Algumas palavras-chave do sector poderiam ser mais explícitas",
-        "Formato de datas ou localização pode variar entre sistemas ATS",
-        "Secção de competências poderia ser mais detalhada para matching automático",
+      return [
+        pick(
+          'Algumas palavras-chave do sector poderiam ser mais explícitas',
+          'Some sector keywords could be more explicit',
+          'Algunas palabras clave del sector podrían ser más explícitas'
+        ),
+        pick(
+          'Formato de datas ou localização pode variar entre sistemas ATS',
+          'Date or location format may vary between ATS systems',
+          'El formato de fecha o ubicación puede variar entre sistemas ATS'
+        ),
+        pick(
+          'Secção de competências poderia ser mais detalhada para matching automático',
+          'Skills section could be more detailed for automatic matching',
+          'La sección de competencias podría ser más detallada para el matching automático'
+        ),
       ];
     }
-    return lang === 'en' ? [
-      "Clear and well-organised structure for automatic reading",
-      "Good density of relevant keywords for the sector",
-      "Format compatible with most screening systems",
-    ] : [
-      "Estrutura clara e bem organizada para leitura automática",
-      "Boa densidade de palavras-chave relevantes para o sector",
-      "Formato compatível com a maioria dos sistemas de triagem",
+    return [
+      pick(
+        'Estrutura clara e bem organizada para leitura automática',
+        'Clear and well-organised structure for automatic reading',
+        'Estructura clara y bien organizada para la lectura automática'
+      ),
+      pick(
+        'Boa densidade de palavras-chave relevantes para o sector',
+        'Good density of relevant keywords for the sector',
+        'Buena densidad de palabras clave relevantes para el sector'
+      ),
+      pick(
+        'Formato compatível com a maioria dos sistemas de triagem',
+        'Format compatible with most screening systems',
+        'Formato compatible con la mayoría de los sistemas de cribado'
+      ),
     ];
   };
 
@@ -91,36 +118,63 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
 
   const getReductionTips = (): string[] => {
     if (rejectionRate > 60) {
-      return lang === 'en' ? [
-        "Convert CV to single-column format without tables",
-        "Add a 'Key Skills' section with sector-specific terms",
-        "Use standard headers: 'Professional Experience', 'Education', 'Skills'",
-        "Remove graphics and replace with descriptive text",
-      ] : [
-        "Converter o CV para formato de coluna única sem tabelas",
-        "Adicionar secção 'Competências-Chave' com termos específicos do sector",
-        "Usar headers standard: 'Experiência Profissional', 'Formação', 'Competências'",
-        "Remover gráficos e substituir por texto descritivo",
+      return [
+        pick(
+          'Converter o CV para formato de coluna única sem tabelas',
+          'Convert CV to single-column format without tables',
+          'Convertir el CV a un formato de una sola columna sin tablas'
+        ),
+        pick(
+          "Adicionar secção 'Competências-Chave' com termos específicos do sector",
+          "Add a 'Key Skills' section with sector-specific terms",
+          "Añadir una sección de 'Competencias Clave' con términos específicos del sector"
+        ),
+        pick(
+          "Usar headers standard: 'Experiência Profissional', 'Formação', 'Competências'",
+          "Use standard headers: 'Professional Experience', 'Education', 'Skills'",
+          "Usar encabezados estándar: 'Experiencia Profesional', 'Formación', 'Competencias'"
+        ),
+        pick(
+          'Remover gráficos e substituir por texto descritivo',
+          'Remove graphics and replace with descriptive text',
+          'Eliminar gráficos y sustituirlos por texto descriptivo'
+        ),
       ];
     } else if (rejectionRate > 40) {
-      return lang === 'en' ? [
-        "Enrich the skills section with sector-specific technical terms",
-        "Standardise date format (MM/YYYY)",
-        "Add keywords from target job descriptions",
-      ] : [
-        "Enriquecer a secção de competências com termos técnicos do sector",
-        "Standardizar formato de datas (MM/AAAA)",
-        "Adicionar palavras-chave da descrição de funções alvo",
+      return [
+        pick(
+          'Enriquecer a secção de competências com termos técnicos do sector',
+          'Enrich the skills section with sector-specific technical terms',
+          'Enriquecer la sección de competencias con términos técnicos del sector'
+        ),
+        pick(
+          'Standardizar formato de datas (MM/AAAA)',
+          'Standardise date format (MM/YYYY)',
+          'Estandarizar el formato de fecha (MM/AAAA)'
+        ),
+        pick(
+          'Adicionar palavras-chave da descrição de funções alvo',
+          'Add keywords from target job descriptions',
+          'Añadir palabras clave de las descripciones de puestos objetivo'
+        ),
       ];
     }
-    return lang === 'en' ? [
-      "Keep the current structure — it is well optimised",
-      "Customise keywords for each specific application",
-      "Regularly update with new sector terms",
-    ] : [
-      "Manter a estrutura actual - está bem optimizada",
-      "Personalizar palavras-chave para cada candidatura específica",
-      "Actualizar regularmente com novos termos do sector",
+    return [
+      pick(
+        'Manter a estrutura actual - está bem optimizada',
+        'Keep the current structure — it is well optimised',
+        'Mantener la estructura actual: está bien optimizada'
+      ),
+      pick(
+        'Personalizar palavras-chave para cada candidatura específica',
+        'Customise keywords for each specific application',
+        'Personalizar palabras clave para cada candidatura específica'
+      ),
+      pick(
+        'Actualizar regularmente com novos termos do sector',
+        'Regularly update with new sector terms',
+        'Actualizar regularmente con nuevos términos del sector'
+      ),
     ];
   };
 
@@ -145,7 +199,11 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
               {showTooltip && (
                 <div className="absolute left-0 top-6 z-50 w-72 p-3 rounded-lg bg-foreground text-background text-xs leading-relaxed shadow-xl">
                   <p className="font-semibold mb-1">{t('o_que_o_ats')}</p>
-                  <p>{lang === 'en' ? 'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.' : lang === 'es' ? 'Applicant Tracking System — software utilizado por el 75% de las empresas para filtrar CVs automáticamente antes de que un reclutador los vea.' : 'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.'}</p>
+                  <p>{pick(
+                    'Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente antes de um recrutador os ver.',
+                    'Applicant Tracking System — software used by 75% of companies to automatically filter CVs before a recruiter sees them.',
+                    'Applicant Tracking System — software utilizado por el 75% de las empresas para filtrar CVs automáticamente antes de que un reclutador los vea.'
+                  )}</p>
                   <div className="absolute -top-1.5 left-3 w-3 h-3 bg-foreground rotate-45" />
                 </div>
               )}

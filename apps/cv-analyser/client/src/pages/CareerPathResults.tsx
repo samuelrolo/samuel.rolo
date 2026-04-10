@@ -228,7 +228,15 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
 }
 
 export default function CareerPathResults() {
-  useEffect(() => { document.title = window.location.pathname.startsWith('/en/') ? "Career Path — Results | Share2Inspire" : "Career Path — Resultados | Share2Inspire"; }, []);
+  const { pick } = useTranslation();
+
+  useEffect(() => {
+    document.title = pick(
+      "Career Path — Resultados | Share2Inspire",
+      "Career Path — Results | Share2Inspire",
+      "Career Path — Resultados | Share2Inspire"
+    );
+  }, [pick]);
 
   const [, setLocation] = useLocation();
 

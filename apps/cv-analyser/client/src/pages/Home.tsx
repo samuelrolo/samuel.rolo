@@ -136,84 +136,119 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 // transformGeminiResponse imported from @/lib/transformGeminiResponse
 
-/* ─── Testimonials Data ─── */
-const testimonials = [
+/* ─── Localized marketing data ─── */
+type PickFn = <T,>(pt: T, en: T, es: T) => T;
+
+const buildTestimonials = (pick: PickFn) => [
   {
     name: "Ana Rodrigues",
-    role: "Marketing Manager",
-    text: "Recebi o relatório em minutos. As sugestões eram tão específicas que consegui melhorar o meu CV nessa mesma noite. Resultado: 3 entrevistas na semana seguinte.",
+    role: pick("Gestora de Marketing", "Marketing Manager", "Gerente de Marketing"),
+    text: pick(
+      "Recebi o relatório em minutos. As sugestões eram tão específicas que consegui melhorar o meu CV nessa mesma noite. Resultado: 3 entrevistas na semana seguinte.",
+      "I received the report in minutes. The suggestions were so specific that I improved my CV that same night. Result: 3 interviews the following week.",
+      "Recibí el informe en minutos. Las sugerencias eran tan específicas que conseguí mejorar mi CV esa misma noche. Resultado: 3 entrevistas la semana siguiente."
+    ),
     rating: 5,
   },
   {
     name: "Pedro Santos",
-    role: "Engenheiro de Software",
-    text: "A análise por quadrantes mostrou-me exactamente onde o meu CV estava fraco. Depois de aplicar as recomendações, passei filtros ATS que antes me rejeitavam.",
+    role: pick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
+    text: pick(
+      "A análise por quadrantes mostrou-me exactamente onde o meu CV estava fraco. Depois de aplicar as recomendações, passei filtros ATS que antes me rejeitavam.",
+      "The quadrant analysis showed me exactly where my CV was weak. After applying the recommendations, I passed ATS filters that used to reject me.",
+      "El análisis por cuadrantes me mostró exactamente dónde fallaba mi CV. Después de aplicar las recomendaciones, superé filtros ATS que antes me rechazaban."
+    ),
     rating: 5,
   },
   {
     name: "Mariana Costa",
-    role: "Gestora de Projetos",
-    text: "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+    role: pick("Gestora de Projetos", "Project Manager", "Gestora de Proyectos"),
+    text: pick(
+      "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+      "It was worth far more than the €9.99 I paid. The normal-curve positioning was an eye-opener — I realised I was in the 40th percentile and now I’m in the 75th.",
+      "Valía mucho más que los 9,99€ que pagué. El posicionamiento en la curva normal fue revelador: entendí que estaba en el percentil 40 y ahora estoy en el 75."
+    ),
     rating: 5,
   },
 ];
 
-/* ─── Pricing Data ─── */
-const pricingPlans = [
+const buildPricingPlans = (pick: PickFn) => [
   {
-    name: "Essencial",
-    price: "9,99",
+    name: pick("Essencial", "Essential", "Esencial"),
+    price: pick("9,99", "9.99", "9,99"),
     analyses: 1,
-    perUnit: "9,99",
+    perUnit: pick("9,99", "9.99", "9,99"),
     popular: false,
     badge: null,
-    features: ["Análise completa desbloqueada", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn"],
+    features: [
+      pick("Análise completa desbloqueada", "Full analysis unlocked", "Análisis completo desbloqueado"),
+      pick("ATS Deep Scan + Análise de Keywords", "ATS Deep Scan + Keyword Analysis", "ATS Deep Scan + Análisis de Palabras Clave"),
+      pick("Live Match — compara CV vs vaga", "Live Match — compare CV vs job", "Live Match — compara CV vs vacante"),
+      pick("Curva normal de posicionamento", "Normal-curve positioning", "Curva normal de posicionamiento"),
+      pick("Estimativa salarial detalhada", "Detailed salary estimate", "Estimación salarial detallada"),
+      pick("Certificação LinkedIn", "LinkedIn certification", "Certificación LinkedIn"),
+    ],
   },
-
   {
-    name: "Profissional",
-    price: "15,99",
+    name: pick("Profissional", "Professional", "Profesional"),
+    price: pick("15,99", "15.99", "15,99"),
     analyses: 3,
-    perUnit: "5,33",
+    perUnit: pick("5,33", "5.33", "5,33"),
     popular: false,
     badge: null,
-    features: ["3 análises completas", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Código reutilizável para futuras análises", "Certificação LinkedIn", "Suporte prioritário por email"],
+    features: [
+      pick("3 análises completas", "3 full analyses", "3 análisis completos"),
+      pick("ATS Deep Scan + Análise de Keywords", "ATS Deep Scan + Keyword Analysis", "ATS Deep Scan + Análisis de Palabras Clave"),
+      pick("Live Match — compara CV vs vaga", "Live Match — compare CV vs job", "Live Match — compara CV vs vacante"),
+      pick("Código reutilizável para futuras análises", "Reusable code for future analyses", "Código reutilizable para futuros análisis"),
+      pick("Certificação LinkedIn", "LinkedIn certification", "Certificación LinkedIn"),
+      pick("Suporte prioritário por email", "Priority email support", "Soporte prioritario por email"),
+    ],
   },
   {
-    name: "Premium",
-    price: "20,49",
+    name: pick("Premium", "Premium", "Premium"),
+    price: pick("20,49", "20.49", "20,49"),
     analyses: 5,
-    perUnit: "4,10",
+    perUnit: pick("4,10", "4.10", "4,10"),
     popular: false,
     badge: null,
-    features: ["5 análises completas", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Código reutilizável para futuras análises", "Certificação LinkedIn", "Partilha com amigos/colegas"],
+    features: [
+      pick("5 análises completas", "5 full analyses", "5 análisis completos"),
+      pick("ATS Deep Scan + Análise de Keywords", "ATS Deep Scan + Keyword Analysis", "ATS Deep Scan + Análisis de Palabras Clave"),
+      pick("Live Match — compara CV vs vaga", "Live Match — compare CV vs job", "Live Match — compara CV vs vacante"),
+      pick("Código reutilizável para futuras análises", "Reusable code for future analyses", "Código reutilizable para futuros análisis"),
+      pick("Certificação LinkedIn", "LinkedIn certification", "Certificación LinkedIn"),
+      pick("Partilha com amigos/colegas", "Share with friends/colleagues", "Compártelo con amigos/colegas"),
+    ],
   },
 ];
 
-/* ─── Comparison Data ─── */
-const comparisonFeatures = [
-  { feature: "Análise por IA avançada", us: true, competitor1: true, competitor2: false },
-  { feature: "Relatório em Português", us: true, competitor1: false, competitor2: true },
-  { feature: "Score ATS real", us: true, competitor1: true, competitor2: false },
-  { feature: "ATS Deep Scan (3 scores)", us: true, competitor1: false, competitor2: false },
-  { feature: "Análise de Keywords", us: true, competitor1: true, competitor2: false },
-  { feature: "Live Match (CV vs Vaga)", us: true, competitor1: false, competitor2: false },
-  { feature: "Checklist de Formato ATS", us: true, competitor1: false, competitor2: false },
-  { feature: "Curva normal de posicionamento", us: true, competitor1: false, competitor2: false },
-  { feature: "Estimativa salarial", us: true, competitor1: false, competitor2: false },
-  { feature: "Análise gratuita incluída", us: true, competitor1: false, competitor2: true },
-  { feature: "Relatório PDF detalhado", us: true, competitor1: true, competitor2: false },
-  { feature: "Career Path (roadmap de carreira)", us: true, competitor1: false, competitor2: false },
-  { feature: "Certificação LinkedIn partilhável", us: true, competitor1: false, competitor2: false },
-  { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false },
-  { feature: "Preço", usText: "Desde €9,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
+const buildComparisonFeatures = (pick: PickFn) => [
+  { feature: pick("Análise por IA avançada", "Advanced AI analysis", "Análisis avanzado con IA"), us: true, competitor1: true, competitor2: false },
+  { feature: pick("Relatório em Português", "Report in English", "Informe en Español"), us: true, competitor1: false, competitor2: true },
+  { feature: pick("Score ATS real", "Real ATS score", "Puntuación ATS real"), us: true, competitor1: true, competitor2: false },
+  { feature: pick("ATS Deep Scan (3 scores)", "ATS Deep Scan (3 scores)", "ATS Deep Scan (3 puntuaciones)"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Análise de Keywords", "Keyword analysis", "Análisis de palabras clave"), us: true, competitor1: true, competitor2: false },
+  { feature: pick("Live Match (CV vs Vaga)", "Live Match (CV vs Job)", "Live Match (CV vs Vacante)"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Checklist de Formato ATS", "ATS format checklist", "Checklist de formato ATS"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Curva normal de posicionamento", "Normal-curve positioning", "Curva normal de posicionamiento"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Estimativa salarial", "Salary estimate", "Estimación salarial"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Análise gratuita incluída", "Free analysis included", "Análisis gratuito incluido"), us: true, competitor1: false, competitor2: true },
+  { feature: pick("Relatório PDF detalhado", "Detailed PDF report", "Informe PDF detallado"), us: true, competitor1: true, competitor2: false },
+  { feature: pick("Career Path (roadmap de carreira)", "Career Path (career roadmap)", "Career Path (roadmap de carrera)"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Certificação LinkedIn partilhável", "Shareable LinkedIn certification", "Certificación de LinkedIn compartible"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Cruzamento CV vs LinkedIn", "CV vs LinkedIn cross-check", "Cruce CV vs LinkedIn"), us: true, competitor1: false, competitor2: false },
+  { feature: pick("Preço", "Price", "Precio"), usText: pick("Desde €9,99", "From €9.99", "Desde 9,99€"), comp1Text: pick("€19,99/mês", "€19.99/month", "19,99€/mes"), comp2Text: pick("€9,99", "€9.99", "9,99€") },
 ];
 
 export default function Home() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
   const isPT = lang === 'pt';
-  useEffect(() => { document.title = "CV Analyser — Análise de CV com IA | Share2Inspire"; }, []);
+  const testimonials = buildTestimonials(pick);
+  const pricingPlans = buildPricingPlans(pick);
+  const comparisonFeatures = buildComparisonFeatures(pick);
+  useEffect(() => { document.title = pick("CV Analyser — Análise de CV com IA | Share2Inspire", "CV Analyser — AI CV Analysis | Share2Inspire", "CV Analyser — Análisis de CV con IA | Share2Inspire"); }, [pick]);
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);

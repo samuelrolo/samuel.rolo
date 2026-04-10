@@ -112,49 +112,22 @@ function pick(lang: Lang, pt: string, en: string, es: string): string {
 
 function getNavItems(lang: Lang): NavItem[] {
   const lp = (ptPath: string) => localePath(ptPath, lang);
-  if (lang === 'en') {
-    return [
-      { href: "https://www.share2inspire.pt/en/pages/home", label: "Home", id: "home" },
-      { href: lp('/cv-analyser'), label: "CV Analyser", id: "cv-analyser" },
-      { href: lp('/career-path'), label: "Career Path", id: "career-path" },
-      { href: lp('/career-intelligence'), label: "Career Intelligence", id: "career-intelligence" },
-      { href: lp('/linkedin-roaster'), label: "LinkedIn Roaster", id: "linkedin-roaster" },
-      { href: lp('/bundle'), label: "Bundle", id: "bundle" },
-      { href: lp('/estudante'), label: "Student Pack", id: "estudante" },
-      { href: "https://www.share2inspire.pt/en/pages/services", label: "Services", id: "servicos" },
-      { href: "https://www.share2inspire.pt/en/pages/knowledge", label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
-      { href: lp('/sobre'), label: "About", id: "sobre" },
-      { href: lp('/contactos'), label: "Contact", id: "contactos" },
-    ];
-  }
-  if (lang === 'es') {
-    return [
-      { href: lp('/'), label: "Inicio", id: "home" },
-      { href: lp('/cv-analyser'), label: "CV Analyser", id: "cv-analyser" },
-      { href: lp('/career-path'), label: "Career Path", id: "career-path" },
-      { href: lp('/career-intelligence'), label: "Career Intelligence", id: "career-intelligence" },
-      { href: lp('/linkedin-roaster'), label: "LinkedIn Roaster", id: "linkedin-roaster" },
-      { href: lp('/bundle'), label: "Bundle", id: "bundle" },
-      { href: lp('/estudante'), label: "Pack Estudiante", id: "estudante" },
-      { href: lp('/servicos'), label: "Servicios", id: "servicos" },
-      { href: lp('/conhecimento'), label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
-      { href: lp('/sobre'), label: "Acerca de", id: "sobre" },
-      { href: lp('/contactos'), label: "Contacto", id: "contactos" },
-    ];
-  }
-  // PT (default)
+  const homeHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/home" : lang === 'es' ? lp('/') : "https://www.share2inspire.pt";
+  const servicesHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/services" : lp('/servicos');
+  const knowledgeHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/knowledge" : lp('/conhecimento');
+
   return [
-    { href: "https://www.share2inspire.pt", label: "Início", id: "home" },
-    { href: "/cv-analyser", label: "CV Analyser", id: "cv-analyser" },
-    { href: "/career-path", label: "Career Path", id: "career-path" },
-    { href: "/career-intelligence", label: "Career Intelligence", id: "career-intelligence" },
-    { href: "/linkedin-roaster", label: "LinkedIn Roaster", id: "linkedin-roaster" },
-    { href: "/bundle", label: "Bundle", id: "bundle" },
-    { href: "/estudante", label: "Pack Estudante", id: "estudante" },
-    { href: "/servicos", label: "Serviços", id: "servicos" },
-    { href: "/conhecimento", label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
-    { href: "/sobre", label: "Sobre", id: "sobre" },
-    { href: "/contactos", label: "Contactos", id: "contactos" },
+    { href: homeHref, label: pick(lang, "Início", "Home", "Inicio"), id: "home" },
+    { href: lp('/cv-analyser'), label: pick(lang, "CV Analyser", "CV Analyser", "CV Analyser"), id: "cv-analyser" },
+    { href: lp('/career-path'), label: pick(lang, "Career Path", "Career Path", "Career Path"), id: "career-path" },
+    { href: lp('/career-intelligence'), label: pick(lang, "Career Intelligence", "Career Intelligence", "Career Intelligence"), id: "career-intelligence" },
+    { href: lp('/linkedin-roaster'), label: pick(lang, "LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster"), id: "linkedin-roaster" },
+    { href: lp('/bundle'), label: pick(lang, "Bundle", "Bundle", "Bundle"), id: "bundle" },
+    { href: lp('/estudante'), label: pick(lang, "Pack Estudante", "Student Pack", "Pack Estudiante"), id: "estudante" },
+    { href: servicesHref, label: pick(lang, "Serviços", "Services", "Servicios"), id: "servicos" },
+    { href: knowledgeHref, label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
+    { href: lp('/sobre'), label: pick(lang, "Sobre", "About", "Acerca de"), id: "sobre" },
+    { href: lp('/contactos'), label: pick(lang, "Contactos", "Contact", "Contacto"), id: "contactos" },
   ];
 }
 
@@ -177,12 +150,14 @@ function UserAvatar({
   initials,
   isLoaded,
   loginLabel,
+  memberAreaLabel,
   isMobile = false,
   onClick,
 }: {
   initials: string;
   isLoaded: boolean;
   loginLabel: string;
+  memberAreaLabel: string;
   isMobile?: boolean;
   onClick?: () => void;
 }) {
@@ -194,14 +169,14 @@ function UserAvatar({
     return (
       <a
         href="/area-cliente/membros"
-        title="Área de Membro"
+        title={memberAreaLabel}
         onClick={onClick}
         className={
           isMobile
             ? "flex items-center justify-center w-9 h-9 rounded-full bg-[#C9A961] text-white text-sm font-bold uppercase tracking-wide shadow-sm hover:bg-[#b8954f] transition-colors"
             : "flex items-center justify-center w-8 h-8 rounded-full bg-[#C9A961] text-white text-xs font-bold uppercase tracking-wide shadow-sm hover:bg-[#b8954f] transition-colors"
         }
-        aria-label="Área de Membro"
+        aria-label={memberAreaLabel}
       >
         {initials}
       </a>
@@ -275,6 +250,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   const closeMenuLabel = pick(lang, 'Fechar menu', 'Close menu', 'Cerrar menú');
   const langSectionLabel = pick(lang, 'Idioma', 'Language', 'Idioma');
   const loginLabel = pick(lang, 'Login', 'Login', 'Login');
+  const memberAreaLabel = pick(lang, 'Área de Membro', 'Member Area', 'Área de Miembro');
   const menuLabel = pick(lang, 'Menu', 'Menu', 'Menú');
   const logoAlt = pick(lang, 'Share2Inspire', 'Share2Inspire', 'Share2Inspire');
 
@@ -353,6 +329,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
               initials={initials}
               isLoaded={isLoaded}
               loginLabel={loginLabel}
+              memberAreaLabel={memberAreaLabel}
             />
 
             {/* Desktop Language Dropdown */}
@@ -453,6 +430,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
                 initials={initials}
                 isLoaded={isLoaded}
                 loginLabel={loginLabel}
+                memberAreaLabel={memberAreaLabel}
                 isMobile
                 onClick={() => setMobileMenuOpen(false)}
               />

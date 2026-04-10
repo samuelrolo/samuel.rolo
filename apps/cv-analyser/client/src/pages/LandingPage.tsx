@@ -11,13 +11,13 @@ export default function LandingPage() {
   const { pick, localePath: lp } = useTranslation();
 
   useEffect(() => {
-    document.title = "Share2Inspire | Career Intelligence Platform";
-  }, []);
+    document.title = pick("Share2Inspire | Plataforma de Inteligência de Carreira", "Share2Inspire | Career Intelligence Platform", "Share2Inspire | Plataforma de Inteligencia de Carrera");
+  }, [pick]);
 
   const tools = [
     {
       icon: <FileText className="w-6 h-6" />,
-      title: "CV Analyser",
+      title: pick("CV Analyser", "CV Analyser", "CV Analyser"),
       desc: pick(
         "Diagnóstico ATS em 30 segundos. Percebe porque não estás a ser chamado.",
         "ATS diagnosis in 30 seconds. Find out why you're not getting callbacks.",
@@ -29,7 +29,7 @@ export default function LandingPage() {
     },
     {
       icon: <Linkedin className="w-6 h-6" />,
-      title: "LinkedIn Roaster",
+      title: pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster"),
       desc: pick(
         "Feedback honesto sobre o teu perfil. O que os recrutadores realmente veem.",
         "Honest feedback on your profile. What recruiters actually see.",
@@ -41,7 +41,7 @@ export default function LandingPage() {
     },
     {
       icon: <Route className="w-6 h-6" />,
-      title: "Career Path",
+      title: pick("Career Path", "Career Path", "Career Path"),
       desc: pick(
         "Roadmap personalizado com IA. 3 funções ideais, gaps e plano de ação.",
         "AI-powered personalised roadmap. 3 ideal roles, gaps and action plan.",
@@ -53,7 +53,7 @@ export default function LandingPage() {
     },
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Career Intelligence",
+      title: pick("Career Intelligence", "Career Intelligence", "Career Intelligence"),
       desc: pick(
         "Comparação estratégica dos 3 caminhos com trade-offs e recomendação final.",
         "Strategic comparison of 3 career paths with trade-offs and final recommendation.",
@@ -77,7 +77,7 @@ export default function LandingPage() {
     },
     {
       icon: <Rocket className="w-6 h-6" />,
-      title: "KickStart Pro",
+      title: pick("KickStart Pro", "KickStart Pro", "KickStart Pro"),
       desc: pick(
         "Sessão estratégica 1:1 para clarificar opções e definir os próximos passos.",
         "1:1 strategic session to clarify options and define your next steps.",
@@ -97,7 +97,7 @@ export default function LandingPage() {
         "Pasé de 45 a 82 puntos ATS en 10 minutos. Absolutamente esencial para quien busca empleo."
       ),
       name: "Ana M.",
-      role: "Senior Manager",
+      role: pick("Gestora Sénior", "Senior Manager", "Manager Sénior"),
       initials: "AM",
     },
     {
@@ -107,7 +107,7 @@ export default function LandingPage() {
         "El LinkedIn Roaster me dio feedback que nunca había recibido. Mi perfil está mucho más fuerte."
       ),
       name: "Diogo S.",
-      role: "Software Engineer",
+      role: pick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
       initials: "DS",
     },
     {
@@ -117,7 +117,7 @@ export default function LandingPage() {
         "Por fin una herramienta que me dice exactamente lo que los reclutadores quieren ver. Un game-changer."
       ),
       name: "Mariana C.",
-      role: "Product Manager",
+      role: pick("Product Manager", "Product Manager", "Product Manager"),
       initials: "MC",
     },
   ];
@@ -125,7 +125,7 @@ export default function LandingPage() {
   const ctaCards = [
     {
       icon: <FileText className="w-5 h-5" />,
-      label: "CV Analyser",
+      label: pick("CV Analyser", "CV Analyser", "CV Analyser"),
       title: pick(
         "Queres mais chamadas de recrutadores?",
         "Want more recruiter callbacks?",
@@ -141,7 +141,7 @@ export default function LandingPage() {
     },
     {
       icon: <Linkedin className="w-5 h-5" />,
-      label: "LinkedIn Roaster",
+      label: pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster"),
       title: pick(
         "O teu perfil está a atrair oportunidades?",
         "Is your profile attracting opportunities?",
@@ -157,7 +157,7 @@ export default function LandingPage() {
     },
     {
       icon: <Route className="w-5 h-5" />,
-      label: "Career Path",
+      label: pick("Career Path", "Career Path", "Career Path"),
       title: pick(
         "Queres clareza sobre o teu próximo passo?",
         "Want clarity on your next step?",
