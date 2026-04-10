@@ -769,7 +769,7 @@ Genera SOLO el post.`);
               </div>
               <div>
                 <h3 className="text-white text-sm font-semibold leading-tight">{t('member.careerBot')}</h3>
-                <p className="text-white/60 text-[10px]">Share2Inspire AI</p>
+                <p className="text-white/60 text-[10px]">{pick("Share2Inspire AI", "Share2Inspire AI", "Share2Inspire AI")}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -1039,8 +1039,8 @@ Genera SOLO el post.`);
                     <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.headlineLanguage')}</label>
                     <select value={hlLang} onChange={e => setHlLang(e.target.value)}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
-                      <option value="pt">PT</option>
-                      <option value="en">EN</option>
+                      <option value="pt">{pick("PT", "PT", "PT")}</option>
+                      <option value="en">{pick("EN", "EN", "EN")}</option>
                     </select>
                   </div>
                   <div>
