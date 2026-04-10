@@ -299,6 +299,212 @@ export const countryDefinitions: CountryRegionDefinition[] = [
     ],
   },
   {
+    value: 'Cape Verde',
+    code: 'CV',
+    currency: 'CVE',
+    label: { pt: 'Cabo Verde', en: 'Cape Verde', es: 'Cabo Verde' },
+    regions: [
+      { value: 'Praia', label: { pt: 'Praia', en: 'Praia', es: 'Praia' } },
+      { value: 'Mindelo', label: { pt: 'Mindelo', en: 'Mindelo', es: 'Mindelo' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Guinea-Bissau',
+    code: 'GW',
+    currency: 'XOF',
+    label: { pt: 'Guiné-Bissau', en: 'Guinea-Bissau', es: 'Guinea-Bisáu' },
+    regions: [
+      { value: 'Bissau', label: { pt: 'Bissau', en: 'Bissau', es: 'Bisáu' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'São Tomé and Príncipe',
+    code: 'ST',
+    currency: 'STN',
+    label: { pt: 'São Tomé e Príncipe', en: 'São Tomé and Príncipe', es: 'Santo Tomé y Príncipe' },
+    regions: [
+      { value: 'São Tomé', label: { pt: 'São Tomé', en: 'São Tomé', es: 'Santo Tomé' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Timor-Leste',
+    code: 'TL',
+    currency: 'USD',
+    label: { pt: 'Timor-Leste', en: 'Timor-Leste', es: 'Timor Oriental' },
+    regions: [
+      { value: 'Dili', label: { pt: 'Díli', en: 'Dili', es: 'Dili' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Belgium',
+    code: 'BE',
+    currency: 'EUR',
+    label: { pt: 'Bélgica', en: 'Belgium', es: 'Bélgica' },
+    regions: [
+      { value: 'Brussels', label: { pt: 'Bruxelas', en: 'Brussels', es: 'Bruselas' } },
+      { value: 'Flanders', label: { pt: 'Flandres', en: 'Flanders', es: 'Flandes' } },
+      { value: 'Wallonia', label: { pt: 'Valónia', en: 'Wallonia', es: 'Valonia' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Austria',
+    code: 'AT',
+    currency: 'EUR',
+    label: { pt: 'Áustria', en: 'Austria', es: 'Austria' },
+    regions: [
+      { value: 'Vienna', label: { pt: 'Viena', en: 'Vienna', es: 'Viena' } },
+      { value: 'Salzburg', label: { pt: 'Salzburgo', en: 'Salzburg', es: 'Salzburgo' } },
+      { value: 'Graz', label: { pt: 'Graz', en: 'Graz', es: 'Graz' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Denmark',
+    code: 'DK',
+    currency: 'DKK',
+    label: { pt: 'Dinamarca', en: 'Denmark', es: 'Dinamarca' },
+    regions: [
+      { value: 'Copenhagen', label: { pt: 'Copenhaga', en: 'Copenhagen', es: 'Copenhague' } },
+      { value: 'Aarhus', label: { pt: 'Aarhus', en: 'Aarhus', es: 'Aarhus' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Norway',
+    code: 'NO',
+    currency: 'NOK',
+    label: { pt: 'Noruega', en: 'Norway', es: 'Noruega' },
+    regions: [
+      { value: 'Oslo', label: { pt: 'Oslo', en: 'Oslo', es: 'Oslo' } },
+      { value: 'Bergen', label: { pt: 'Bergen', en: 'Bergen', es: 'Bergen' } },
+      { value: 'Stavanger', label: { pt: 'Stavanger', en: 'Stavanger', es: 'Stavanger' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Poland',
+    code: 'PL',
+    currency: 'PLN',
+    label: { pt: 'Polónia', en: 'Poland', es: 'Polonia' },
+    regions: [
+      { value: 'Warsaw', label: { pt: 'Varsóvia', en: 'Warsaw', es: 'Varsovia' } },
+      { value: 'Kraków', label: { pt: 'Cracóvia', en: 'Kraków', es: 'Cracovia' } },
+      { value: 'Wrocław', label: { pt: 'Breslávia', en: 'Wrocław', es: 'Breslavia' } },
+      { value: 'Gdańsk', label: { pt: 'Gdańsk', en: 'Gdańsk', es: 'Gdańsk' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Luxembourg',
+    code: 'LU',
+    currency: 'EUR',
+    label: { pt: 'Luxemburgo', en: 'Luxembourg', es: 'Luxemburgo' },
+    regions: [
+      { value: 'Luxembourg City', label: { pt: 'Cidade do Luxemburgo', en: 'Luxembourg City', es: 'Ciudad de Luxemburgo' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Japan',
+    code: 'JP',
+    currency: 'JPY',
+    label: { pt: 'Japão', en: 'Japan', es: 'Japón' },
+    regions: [
+      { value: 'Tokyo', label: { pt: 'Tóquio', en: 'Tokyo', es: 'Tokio' } },
+      { value: 'Osaka', label: { pt: 'Osaka', en: 'Osaka', es: 'Osaka' } },
+      { value: 'Nagoya', label: { pt: 'Nagoia', en: 'Nagoya', es: 'Nagoya' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'South Korea',
+    code: 'KR',
+    currency: 'KRW',
+    label: { pt: 'Coreia do Sul', en: 'South Korea', es: 'Corea del Sur' },
+    regions: [
+      { value: 'Seoul', label: { pt: 'Seul', en: 'Seoul', es: 'Seúl' } },
+      { value: 'Busan', label: { pt: 'Busan', en: 'Busan', es: 'Busan' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Mexico',
+    code: 'MX',
+    currency: 'MXN',
+    label: { pt: 'México', en: 'Mexico', es: 'México' },
+    regions: [
+      { value: 'Mexico City', label: { pt: 'Cidade do México', en: 'Mexico City', es: 'Ciudad de México' } },
+      { value: 'Monterrey', label: { pt: 'Monterrey', en: 'Monterrey', es: 'Monterrey' } },
+      { value: 'Guadalajara', label: { pt: 'Guadalajara', en: 'Guadalajara', es: 'Guadalajara' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'South Africa',
+    code: 'ZA',
+    currency: 'ZAR',
+    label: { pt: 'África do Sul', en: 'South Africa', es: 'Sudáfrica' },
+    regions: [
+      { value: 'Johannesburg', label: { pt: 'Joanesburgo', en: 'Johannesburg', es: 'Johannesburgo' } },
+      { value: 'Cape Town', label: { pt: 'Cidade do Cabo', en: 'Cape Town', es: 'Ciudad del Cabo' } },
+      { value: 'Durban', label: { pt: 'Durban', en: 'Durban', es: 'Durban' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'New Zealand',
+    code: 'NZ',
+    currency: 'NZD',
+    label: { pt: 'Nova Zelândia', en: 'New Zealand', es: 'Nueva Zelanda' },
+    regions: [
+      { value: 'Auckland', label: { pt: 'Auckland', en: 'Auckland', es: 'Auckland' } },
+      { value: 'Wellington', label: { pt: 'Wellington', en: 'Wellington', es: 'Wellington' } },
+      { value: 'Christchurch', label: { pt: 'Christchurch', en: 'Christchurch', es: 'Christchurch' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Colombia',
+    code: 'CO',
+    currency: 'COP',
+    label: { pt: 'Colômbia', en: 'Colombia', es: 'Colombia' },
+    regions: [
+      { value: 'Bogotá', label: { pt: 'Bogotá', en: 'Bogotá', es: 'Bogotá' } },
+      { value: 'Medellín', label: { pt: 'Medellín', en: 'Medellín', es: 'Medellín' } },
+      { value: 'Cali', label: { pt: 'Cali', en: 'Cali', es: 'Cali' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Chile',
+    code: 'CL',
+    currency: 'CLP',
+    label: { pt: 'Chile', en: 'Chile', es: 'Chile' },
+    regions: [
+      { value: 'Santiago', label: { pt: 'Santiago', en: 'Santiago', es: 'Santiago' } },
+      { value: 'Valparaíso', label: { pt: 'Valparaíso', en: 'Valparaíso', es: 'Valparaíso' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+  {
+    value: 'Argentina',
+    code: 'AR',
+    currency: 'ARS',
+    label: { pt: 'Argentina', en: 'Argentina', es: 'Argentina' },
+    regions: [
+      { value: 'Buenos Aires', label: { pt: 'Buenos Aires', en: 'Buenos Aires', es: 'Buenos Aires' } },
+      { value: 'Córdoba', label: { pt: 'Córdoba', en: 'Córdoba', es: 'Córdoba' } },
+      { value: 'Rosario', label: { pt: 'Rosário', en: 'Rosario', es: 'Rosario' } },
+      { value: 'Other', label: otherLabel },
+    ],
+  },
+
+  {
     value: 'Other',
     code: 'XX',
     currency: 'USD',
@@ -343,4 +549,35 @@ export function getDefaultCountryByLanguage(lang: SupportedLanguage): string {
 export function isEUCountry(countryValue: string): boolean {
   const country = getCountryDefinition(countryValue);
   return country ? EU_COUNTRY_CODES.includes(country.code) : false;
+}
+
+// --- Helper Functions ---
+
+export function getCountryName(codeOrValue: string, lang: SupportedLanguage): string {
+  const country = getCountryDefinition(codeOrValue);
+  return country ? country.label[lang] : codeOrValue;
+}
+
+export function getRegionName(countryCodeOrValue: string, regionValue: string, lang: SupportedLanguage): string {
+  const country = getCountryDefinition(countryCodeOrValue);
+  if (!country) return regionValue;
+  const region = country.regions.find(r => r.value === regionValue);
+  return region ? region.label[lang] : regionValue;
+}
+
+export function getCountries(lang: SupportedLanguage): Array<{ code: string; value: string; label: string }> {
+  return countryDefinitions.map(c => ({
+    code: c.code,
+    value: c.value,
+    label: c.label[lang]
+  }));
+}
+
+export function getRegions(countryCodeOrValue: string, lang: SupportedLanguage): Array<{ value: string; label: string }> {
+  const country = getCountryDefinition(countryCodeOrValue);
+  if (!country) return [];
+  return country.regions.map(r => ({
+    value: r.value,
+    label: r.label[lang]
+  }));
 }
