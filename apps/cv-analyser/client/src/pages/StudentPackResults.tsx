@@ -90,7 +90,7 @@ function CopyBtn({ text }: { text: string }) {
   return (
     <button onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
       className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-medium text-slate-600 transition-colors shrink-0">
-      {copied ? <><Check className="w-3.5 h-3.5 text-green-500" /> Copiado!</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
+      {copied ? <><Check className="w-3.5 h-3.5 text-green-500" /> {pick('Copiado!', 'Copied!', '¡Copiado!')}</> : <><Copy className="w-3.5 h-3.5" /> {pick('Copiar', 'Copy', 'Copiar')}</>}
     </button>
   );
 }
@@ -229,7 +229,7 @@ export default function StudentPackResults() {
               <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
               <div className="relative z-10">
                 <div className="flex items-center gap-2 text-emerald-200 text-xs font-bold uppercase tracking-wider mb-4">
-                  <GraduationCap className="w-4 h-4" /> Pack Estudante — Relatório Completo
+                  <GraduationCap className="w-4 h-4" /> {pick('Pack Estudante — Relatório Completo', 'Student Pack — Full Report', 'Pack Estudiante — Informe Completo')}
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-8">
@@ -251,7 +251,7 @@ export default function StudentPackResults() {
                     )}
                     {scoreGlobal?.percentil_estudantes && (
                       <span className="ml-2 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-white/15 text-white">
-                        Top {100 - scoreGlobal.percentil_estudantes}% estudantes
+                        {pick(`Top ${100 - scoreGlobal.percentil_estudantes}% estudantes`, `Top ${100 - scoreGlobal.percentil_estudantes}% students`, `Top ${100 - scoreGlobal.percentil_estudantes}% estudiantes`)}
                       </span>
                     )}
                   </div>
@@ -267,7 +267,7 @@ export default function StudentPackResults() {
             {scoreGlobal?.interpretacao && (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6 shadow-sm">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#B8963E] mb-3">
-                  <Sparkles className="w-4 h-4" /> O que significa o teu score
+                  <Sparkles className="w-4 h-4" /> {pick('O que significa o teu score', 'What your score means', 'Qué significa tu puntuación')}
                 </div>
                 <p className="text-slate-700 leading-relaxed">{scoreGlobal.interpretacao}</p>
                 {scoreGlobal?.vs_mercado_entrada && (
@@ -278,13 +278,13 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 2 — AUDITORIA DUAL ═══ */}
             {Object.keys(auditoria).length > 0 && (
-              <Section title="Auditoria de Perfil Dual" subtitle="CV + LinkedIn como sistema único" icon={Eye} defaultOpen={true} color="blue"
+              <Section title={pick('Auditoria de Perfil Dual', 'Dual Profile Audit', 'Auditoría de Perfil Dual')} subtitle={pick('CV + LinkedIn como sistema único', 'CV + LinkedIn as a single system', 'CV + LinkedIn como un sistema único')} icon={Eye} defaultOpen={true} color="blue"
                 badge={auditoria.coerencia_cv_linkedin && (
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
                     auditoria.coerencia_cv_linkedin === 'Alta' ? 'bg-green-50 text-green-700 border-green-200' :
                     auditoria.coerencia_cv_linkedin === 'Média' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                     'bg-red-50 text-red-700 border-red-200'
-                  }`}>Coerência: {auditoria.coerencia_cv_linkedin}</span>
+                  }`}>{pick('Coerência', 'Consistency', 'Coherencia')}: {auditoria.coerencia_cv_linkedin}</span>
                 )}>
                 <div className="space-y-4">
                   {auditoria.analise_coerencia && (
@@ -295,13 +295,13 @@ export default function StudentPackResults() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {auditoria.primeira_impressao_cv && (
                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-slate-800 text-sm mb-2 flex items-center gap-1.5"><FileText className="w-4 h-4 text-blue-500" /> Primeira Impressão — CV</h4>
+                        <h4 className="font-semibold text-slate-800 text-sm mb-2 flex items-center gap-1.5"><FileText className="w-4 h-4 text-blue-500" /> {pick('Primeira Impressão — CV', 'First Impression — CV', 'Primera Impresión — CV')}</h4>
                         <p className="text-sm text-slate-600 leading-relaxed">{auditoria.primeira_impressao_cv}</p>
                       </div>
                     )}
                     {auditoria.primeira_impressao_linkedin && (
                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-slate-800 text-sm mb-2 flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> Primeira Impressão — LinkedIn</h4>
+                        <h4 className="font-semibold text-slate-800 text-sm mb-2 flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> {pick('Primeira Impressão — LinkedIn', 'First Impression — LinkedIn', 'Primera Impresión — LinkedIn')}</h4>
                         <p className="text-sm text-slate-600 leading-relaxed">{auditoria.primeira_impressao_linkedin}</p>
                       </div>
                     )}
@@ -310,13 +310,13 @@ export default function StudentPackResults() {
                   {/* CV Scores */}
                   {auditoria.scores_cv && (
                     <div>
-                      <h4 className="font-semibold text-slate-800 text-sm mb-3 flex items-center gap-1.5"><FileText className="w-4 h-4 text-blue-500" /> Scores CV</h4>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-3 flex items-center gap-1.5"><FileText className="w-4 h-4 text-blue-500" /> {pick('Scores CV', 'CV Scores', 'Puntuaciones CV')}</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {Object.entries(auditoria.scores_cv).map(([key, val]: [string, any]) => (
                           <div key={key} className={`rounded-xl p-3 border ${scoreBg(val?.valor || 0)}`}>
                             <p className={`text-2xl font-bold ${scoreColor(val?.valor || 0, true)}`}>{val?.valor || 0}</p>
                             <p className="text-xs text-slate-600 capitalize font-medium">{key.replace(/_/g, ' ')}</p>
-                            {val?.benchmark_estudantes && <p className="text-[10px] text-slate-400 mt-1">Benchmark: {val.benchmark_estudantes}</p>}
+                            {val?.benchmark_estudantes && <p className="text-[10px] text-slate-400 mt-1">{pick('Referência', 'Benchmark', 'Referencia')}: {val.benchmark_estudantes}</p>}
                           </div>
                         ))}
                       </div>
@@ -326,7 +326,7 @@ export default function StudentPackResults() {
                   {/* LinkedIn Scores */}
                   {auditoria.scores_linkedin && (
                     <div>
-                      <h4 className="font-semibold text-slate-800 text-sm mb-3 flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> Scores LinkedIn</h4>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-3 flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> {pick('Scores LinkedIn', 'LinkedIn Scores', 'Puntuaciones LinkedIn')}</h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {Object.entries(auditoria.scores_linkedin).map(([key, val]: [string, any]) => (
                           <div key={key} className={`rounded-xl p-3 border ${scoreBg((val?.valor || 0) * 10)}`}>
@@ -346,21 +346,21 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 3 — PRONTIDÃO PARA O MERCADO ═══ */}
             {(prontidao?.score_estagio || prontidao?.score_primeiro_emprego) && (
-              <Section title="Prontidão para o Mercado" subtitle="Estágio vs primeiro emprego" icon={Target} defaultOpen={true} color="emerald"
-                badge={<span className={`text-sm font-bold ${scoreColor(prontidao.score_estagio || 0, true)}`}>Estágio: {prontidao.score_estagio || 0}%</span>}>
+              <Section title={pick('Prontidão para o Mercado', 'Market Readiness', 'Preparación para el Mercado')} subtitle={pick('Estágio vs primeiro emprego', 'Internship vs first job', 'Prácticas vs primer empleo')} icon={Target} defaultOpen={true} color="emerald"
+                badge={<span className={`text-sm font-bold ${scoreColor(prontidao.score_estagio || 0, true)}`}>{pick('Estágio', 'Internship', 'Prácticas')}: {prontidao.score_estagio || 0}%</span>}>
                 <div className="space-y-4">
                   {/* Two score bars */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-5">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-slate-700">Estágio</span>
+                        <span className="text-sm font-semibold text-slate-700">{pick('Estágio', 'Internship', 'Prácticas')}</span>
                         <span className={`text-2xl font-bold ${scoreColor(prontidao.score_estagio || 0, true)}`}>{prontidao.score_estagio || 0}%</span>
                       </div>
                       <ProgressBar value={prontidao.score_estagio || 0} color="emerald" />
                     </div>
                     <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-5">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-slate-700">Primeiro Emprego</span>
+                        <span className="text-sm font-semibold text-slate-700">{pick('Primeiro Emprego', 'First Job', 'Primer Empleo')}</span>
                         <span className={`text-2xl font-bold ${scoreColor(prontidao.score_primeiro_emprego || 0, true)}`}>{prontidao.score_primeiro_emprego || 0}%</span>
                       </div>
                       <ProgressBar value={prontidao.score_primeiro_emprego || 0} color="blue" />
@@ -375,7 +375,7 @@ export default function StudentPackResults() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Array.isArray(prontidao.o_que_ja_tens) && prontidao.o_que_ja_tens.length > 0 && (
                       <div className="bg-green-50/30 border border-green-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-green-700 text-sm mb-3">✅ O que já tens</h4>
+                        <h4 className="font-semibold text-green-700 text-sm mb-3">✅ {pick('O que já tens', 'What you already have', 'Lo que ya tienes')}</h4>
                         <ul className="space-y-2">
                           {prontidao.o_que_ja_tens.map((item: string, i: number) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
@@ -387,7 +387,7 @@ export default function StudentPackResults() {
                     )}
                     {Array.isArray(prontidao.o_que_ainda_precisas) && prontidao.o_que_ainda_precisas.length > 0 && (
                       <div className="bg-amber-50/30 border border-amber-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-amber-700 text-sm mb-3">⚠️ O que ainda precisas</h4>
+                        <h4 className="font-semibold text-amber-700 text-sm mb-3">⚠️ {pick('O que ainda precisas', 'What you still need', 'Lo que aún necesitas')}</h4>
                         <ul className="space-y-2">
                           {prontidao.o_que_ainda_precisas.map((item: string, i: number) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
@@ -401,7 +401,7 @@ export default function StudentPackResults() {
 
                   {prontidao.diferenciadores_vs_pares && (
                     <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-emerald-700 text-sm mb-2 flex items-center gap-1.5"><Star className="w-4 h-4" /> O que te diferencia dos teus pares</h4>
+                      <h4 className="font-semibold text-emerald-700 text-sm mb-2 flex items-center gap-1.5"><Star className="w-4 h-4" /> {pick('O que te diferencia dos teus pares', 'What sets you apart from your peers', 'Lo que te diferencia de tus pares')}</h4>
                       <p className="text-sm text-slate-700 leading-relaxed">{prontidao.diferenciadores_vs_pares}</p>
                     </div>
                   )}
@@ -411,11 +411,11 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 4 — CAPITAL ACADÉMICO ═══ */}
             {Object.keys(capitalAcademico).length > 0 && (
-              <Section title="Capital Académico" subtitle="Maximiza o valor do teu percurso" icon={GraduationCap} defaultOpen={true} color="purple">
+              <Section title={pick('Capital Académico', 'Academic Capital', 'Capital Académico')} subtitle={pick('Maximiza o valor do teu percurso', 'Maximize the value of your journey', 'Maximiza el valor de tu recorrido')} icon={GraduationCap} defaultOpen={true} color="purple">
                 <div className="space-y-4">
                   {capitalAcademico.instituicao_prestigio && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-slate-500">Peso da instituição:</span>
+                      <span className="text-xs font-semibold text-slate-500">{pick('Peso da instituição', 'Institution weight', 'Peso de la institución')}:</span>
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
                         capitalAcademico.instituicao_prestigio === 'Alta' ? 'bg-green-50 text-green-700 border-green-200' :
                         capitalAcademico.instituicao_prestigio === 'Emergente' ? 'bg-blue-50 text-blue-700 border-blue-200' :
@@ -426,7 +426,7 @@ export default function StudentPackResults() {
 
                   {Array.isArray(capitalAcademico.pontos_fortes_academicos) && capitalAcademico.pontos_fortes_academicos.length > 0 && (
                     <div className="bg-green-50/30 border border-green-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-green-700 text-sm mb-3">🎓 Pontos Fortes Académicos</h4>
+                      <h4 className="font-semibold text-green-700 text-sm mb-3">🎓 {pick('Pontos Fortes Académicos', 'Academic Strengths', 'Fortalezas Académicas')}</h4>
                       <ul className="space-y-2">
                         {capitalAcademico.pontos_fortes_academicos.map((p: string, i: number) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
@@ -439,7 +439,7 @@ export default function StudentPackResults() {
 
                   {Array.isArray(capitalAcademico.oportunidades_nao_aproveitadas) && capitalAcademico.oportunidades_nao_aproveitadas.length > 0 && (
                     <div className="bg-amber-50/30 border border-amber-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-amber-700 text-sm mb-3">💡 Oportunidades Não Aproveitadas</h4>
+                      <h4 className="font-semibold text-amber-700 text-sm mb-3">💡 {pick('Oportunidades Não Aproveitadas', 'Missed Opportunities', 'Oportunidades No Aprovechadas')}</h4>
                       <ul className="space-y-2">
                         {capitalAcademico.oportunidades_nao_aproveitadas.map((o: string, i: number) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
@@ -457,7 +457,7 @@ export default function StudentPackResults() {
                   {/* Certificações recomendadas */}
                   {Array.isArray(capitalAcademico.certificacoes_recomendadas) && capitalAcademico.certificacoes_recomendadas.length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-slate-800 text-sm mb-3">📜 Certificações Recomendadas</h4>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-3">📜 {pick('Certificações Recomendadas', 'Recommended Certifications', 'Certificaciones Recomendadas')}</h4>
                       <div className="space-y-3">
                         {capitalAcademico.certificacoes_recomendadas.map((cert: any, i: number) => (
                           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
@@ -487,7 +487,7 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 5 — COMPETÊNCIAS TRANSFERÍVEIS ═══ */}
             {(competencias?.mapa_competencias?.length > 0 || competencias?.gaps_criticos?.length > 0) && (
-              <Section title="Competências Transferíveis" subtitle="Do académico para o profissional" icon={Zap} defaultOpen={true} color="amber">
+              <Section title={pick('Competências Transferíveis', 'Transferable Skills', 'Competencias Transferibles')} subtitle={pick('Do académico para o profissional', 'From academia to professional life', 'De lo académico a lo profesional')} icon={Zap} defaultOpen={true} color="amber">
                 <div className="space-y-4">
                   {Array.isArray(competencias.mapa_competencias) && competencias.mapa_competencias.map((comp: any, i: number) => (
                     <div key={i} className="bg-gradient-to-r from-amber-50/30 to-orange-50/30 border border-amber-200 rounded-xl p-4">
@@ -496,16 +496,16 @@ export default function StudentPackResults() {
                         <h5 className="font-semibold text-slate-900 text-sm">{comp.competencia}</h5>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                        <div><span className="font-semibold text-slate-500">Origem:</span> <span className="text-slate-700">{comp.origem}</span></div>
-                        <div><span className="font-semibold text-slate-500">No mercado:</span> <span className="text-slate-700">{comp.traducao_mercado}</span></div>
-                        <div><span className="font-semibold text-slate-500">Evidência:</span> <span className="text-slate-700">{comp.evidencia_sugerida}</span></div>
+                        <div><span className="font-semibold text-slate-500">{pick('Origem', 'Origin', 'Origen')}:</span> <span className="text-slate-700">{comp.origem}</span></div>
+                        <div><span className="font-semibold text-slate-500">{pick('No mercado', 'In the market', 'En el mercado')}:</span> <span className="text-slate-700">{comp.traducao_mercado}</span></div>
+                        <div><span className="font-semibold text-slate-500">{pick('Evidência', 'Evidence', 'Evidencia')}:</span> <span className="text-slate-700">{comp.evidencia_sugerida}</span></div>
                       </div>
                     </div>
                   ))}
 
                   {Array.isArray(competencias.gaps_criticos) && competencias.gaps_criticos.length > 0 && (
                     <div className="bg-red-50/30 border border-red-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-red-700 text-sm mb-3">⚠️ Gaps Críticos</h4>
+                      <h4 className="font-semibold text-red-700 text-sm mb-3">⚠️ {pick('Gaps Críticos', 'Critical Gaps', 'Brechas Críticas')}</h4>
                       <div className="space-y-2">
                         {competencias.gaps_criticos.map((gap: any, i: number) => (
                           <div key={i} className="flex items-start gap-3 text-sm">
@@ -526,23 +526,23 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 6 — ESTRATÉGIA DE KEYWORDS ═══ */}
             {(keywords?.keywords_presentes?.length > 0 || keywords?.keywords_em_falta?.length > 0) && (
-              <Section title="Estratégia de Keywords Unificada" subtitle="ATS + SEO LinkedIn" icon={Search} defaultOpen={false} color="blue"
+              <Section title={pick('Estratégia de Keywords Unificada', 'Unified Keyword Strategy', 'Estrategia Unificada de Keywords')} subtitle={pick('ATS + SEO LinkedIn', 'ATS + LinkedIn SEO', 'ATS + SEO de LinkedIn')} icon={Search} defaultOpen={false} color="blue"
                 badge={keywords.ats_score ? <span className="text-xs font-bold text-slate-500">ATS: {keywords.ats_score}% · SEO: {keywords.seo_linkedin_score}/10</span> : undefined}>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
                       <p className={`text-2xl font-bold ${scoreColor(keywords.ats_score || 0, true)}`}>{keywords.ats_score || 0}%</p>
-                      <p className="text-xs text-slate-600">ATS Score</p>
+                      <p className="text-xs text-slate-600">{pick('Pontuação ATS', 'ATS Score', 'Puntuación ATS')}</p>
                     </div>
                     <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
                       <p className={`text-2xl font-bold ${scoreColor((keywords.seo_linkedin_score || 0) * 10, true)}`}>{keywords.seo_linkedin_score || 0}/10</p>
-                      <p className="text-xs text-slate-600">LinkedIn SEO</p>
+                      <p className="text-xs text-slate-600">{pick('SEO LinkedIn', 'LinkedIn SEO', 'SEO LinkedIn')}</p>
                     </div>
                   </div>
 
                   {Array.isArray(keywords.keywords_presentes) && keywords.keywords_presentes.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">Keywords Presentes</p>
+                      <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">{pick('Keywords Presentes', 'Present Keywords', 'Keywords Presentes')}</p>
                       <div className="flex flex-wrap gap-1.5">
                         {keywords.keywords_presentes.map((kw: any, i: number) => (
                           <span key={i} className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
@@ -557,7 +557,7 @@ export default function StudentPackResults() {
 
                   {Array.isArray(keywords.keywords_em_falta) && keywords.keywords_em_falta.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-red-700 uppercase tracking-wider mb-2">Keywords em Falta</p>
+                      <p className="text-xs font-semibold text-red-700 uppercase tracking-wider mb-2">{pick('Keywords em Falta', 'Missing Keywords', 'Keywords que Faltan')}</p>
                       <div className="space-y-2">
                         {keywords.keywords_em_falta.map((kw: any, i: number) => (
                           <div key={i} className="flex items-start gap-2 text-sm bg-red-50/50 border border-red-100 rounded-lg p-2.5">
@@ -582,12 +582,12 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 7 — MARCA PESSOAL ═══ */}
             {Object.keys(marcaPessoal).length > 0 && (
-              <Section title="Marca Pessoal" subtitle="Headlines, About e correções prioritárias" icon={Sparkles} defaultOpen={true} color="emerald">
+              <Section title={pick('Marca Pessoal', 'Personal Brand', 'Marca Personal')} subtitle={pick('Headlines, About e correções prioritárias', 'Headlines, About and priority fixes', 'Titulares, About y correcciones prioritarias')} icon={Sparkles} defaultOpen={true} color="emerald">
                 <div className="space-y-4">
                   {/* Headlines sugeridas */}
                   {Array.isArray(marcaPessoal.headline_linkedin_sugeridas) && marcaPessoal.headline_linkedin_sugeridas.length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-slate-800 text-sm mb-3">✨ Headlines LinkedIn Sugeridas</h4>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-3">✨ {pick('Headlines LinkedIn Sugeridas', 'Suggested LinkedIn Headlines', 'Titulares Sugeridos para LinkedIn')}</h4>
                       <div className="space-y-2.5">
                         {marcaPessoal.headline_linkedin_sugeridas.map((h: string, i: number) => (
                           <div key={i} className="flex items-center justify-between bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-4">
@@ -606,7 +606,7 @@ export default function StudentPackResults() {
                   {marcaPessoal.resumo_linkedin_sugerido && (
                     <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-semibold text-slate-800 text-sm flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> Resumo LinkedIn — Pronto a usar</h4>
+                        <h4 className="font-semibold text-slate-800 text-sm flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> {pick('Resumo LinkedIn — Pronto a usar', 'LinkedIn Summary — Ready to use', 'Resumen de LinkedIn — Listo para usar')}</h4>
                         <CopyBtn text={marcaPessoal.resumo_linkedin_sugerido} />
                       </div>
                       <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{marcaPessoal.resumo_linkedin_sugerido}</p>
@@ -616,7 +616,7 @@ export default function StudentPackResults() {
                   {/* Problemas críticos CV */}
                   {Array.isArray(marcaPessoal.problemas_criticos_cv) && marcaPessoal.problemas_criticos_cv.length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-slate-800 text-sm mb-3">🔧 Problemas Críticos do CV</h4>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-3">🔧 {pick('Problemas Críticos do CV', 'Critical CV Issues', 'Problemas Críticos del CV')}</h4>
                       <div className="space-y-2">
                         {marcaPessoal.problemas_criticos_cv.map((p: any, i: number) => (
                           <div key={i} className="border border-red-200 rounded-xl overflow-hidden">
@@ -636,7 +636,7 @@ export default function StudentPackResults() {
                                 {p.explicacao_completa && <p className="text-xs text-slate-600 pt-3">{p.explicacao_completa}</p>}
                                 {p.exemplo_correcao && (
                                   <div className="bg-green-50/50 border border-green-200 rounded-lg p-3">
-                                    <p className="text-xs font-semibold text-green-700 mb-1">Exemplo de correção:</p>
+                                    <p className="text-xs font-semibold text-green-700 mb-1">{pick('Exemplo de correção', 'Correction example', 'Ejemplo de corrección')}:</p>
                                     <p className="text-xs text-slate-700">{p.exemplo_correcao}</p>
                                   </div>
                                 )}
@@ -657,7 +657,7 @@ export default function StudentPackResults() {
                   {/* Ações LinkedIn prioritárias */}
                   {Array.isArray(marcaPessoal.acoes_linkedin_prioritarias) && marcaPessoal.acoes_linkedin_prioritarias.length > 0 && (
                     <div className="bg-blue-50/30 border border-blue-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-blue-700 text-sm mb-3 flex items-center gap-1.5"><Linkedin className="w-4 h-4" /> Ações LinkedIn Prioritárias</h4>
+                      <h4 className="font-semibold text-blue-700 text-sm mb-3 flex items-center gap-1.5"><Linkedin className="w-4 h-4" /> {pick('Ações LinkedIn Prioritárias', 'Priority LinkedIn Actions', 'Acciones Prioritarias en LinkedIn')}</h4>
                       <ul className="space-y-2">
                         {marcaPessoal.acoes_linkedin_prioritarias.map((a: string, i: number) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
@@ -673,7 +673,7 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 8 — PRIMEIROS CARGOS ALVO ═══ */}
             {Array.isArray(cargosAlvo) && cargosAlvo.length > 0 && (
-              <Section title="Primeiros Cargos Alvo" subtitle="Onde candidatar-te" icon={Briefcase} defaultOpen={true} color="blue">
+              <Section title={pick('Primeiros Cargos Alvo', 'First Target Roles', 'Primeros Puestos Objetivo')} subtitle={pick('Onde candidatar-te', 'Where to apply', 'Dónde postularte')} icon={Briefcase} defaultOpen={true} color="blue">
                 <div className="space-y-3">
                   {cargosAlvo.map((cargo: any, i: number) => (
                     <div key={i} className={`border rounded-xl overflow-hidden transition-all ${expandedCargo === i ? 'border-blue-300 shadow-md' : 'border-slate-200'}`}>
@@ -699,7 +699,7 @@ export default function StudentPackResults() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {Array.isArray(cargo.o_que_ja_tens) && (
                               <div className="bg-green-50/30 rounded-lg p-3">
-                                <p className="text-xs font-semibold text-green-700 mb-2">✅ O que já tens</p>
+                                <p className="text-xs font-semibold text-green-700 mb-2">✅ {pick('O que já tens', 'What you already have', 'Lo que ya tienes')}</p>
                                 <ul className="space-y-1">{cargo.o_que_ja_tens.map((t: string, j: number) => (
                                   <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><CheckCircle2 className="w-3 h-3 text-green-500 shrink-0 mt-0.5" />{t}</li>
                                 ))}</ul>
@@ -707,7 +707,7 @@ export default function StudentPackResults() {
                             )}
                             {Array.isArray(cargo.o_que_ainda_precisas) && (
                               <div className="bg-amber-50/30 rounded-lg p-3">
-                                <p className="text-xs font-semibold text-amber-700 mb-2">⚠️ O que precisas</p>
+                                <p className="text-xs font-semibold text-amber-700 mb-2">⚠️ {pick('O que precisas', 'What you need', 'Lo que necesitas')}</p>
                                 <ul className="space-y-1">{cargo.o_que_ainda_precisas.map((t: string, j: number) => (
                                   <li key={j} className="text-xs text-slate-600 flex items-start gap-1"><AlertTriangle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />{t}</li>
                                 ))}</ul>
@@ -716,7 +716,7 @@ export default function StudentPackResults() {
                           </div>
                           {Array.isArray(cargo.empresas_onde_candidatar) && (
                             <div className="bg-blue-50/30 rounded-lg p-3">
-                              <p className="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1"><MapPin className="w-3 h-3" /> Empresas onde candidatar</p>
+                              <p className="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pick('Empresas onde candidatar', 'Companies to apply to', 'Empresas donde postular')}</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {cargo.empresas_onde_candidatar.map((e: string, j: number) => (
                                   <span key={j} className="px-2.5 py-1 bg-white border border-blue-200 text-slate-700 rounded-full text-xs">{e}</span>
@@ -734,13 +734,13 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 9 — PLANO 90 DIAS ═══ */}
             {Object.keys(plano90).length > 1 && (
-              <Section title="Plano 90 Dias" subtitle="Da análise à acção" icon={Calendar} defaultOpen={true} color="emerald">
+              <Section title={pick('Plano 90 Dias', '90-Day Plan', 'Plan de 90 Días')} subtitle={pick('Da análise à acção', 'From analysis to action', 'Del análisis a la acción')} icon={Calendar} defaultOpen={true} color="emerald">
                 <div className="space-y-4">
                   {[
-                    { key: 'semana_1_2', label: 'Semanas 1-2', color: 'emerald', icon: FileText },
-                    { key: 'semana_3_4', label: 'Semanas 3-4', color: 'blue', icon: Search },
-                    { key: 'mes_2', label: 'Mês 2', color: 'purple', icon: Users },
-                    { key: 'mes_3', label: 'Mês 3', color: 'amber', icon: TrendingUp },
+                    { key: 'semana_1_2', label: pick('Semanas 1-2', 'Weeks 1-2', 'Semanas 1-2'), color: 'emerald', icon: FileText },
+                    { key: 'semana_3_4', label: pick('Semanas 3-4', 'Weeks 3-4', 'Semanas 3-4'), color: 'blue', icon: Search },
+                    { key: 'mes_2', label: pick('Mês 2', 'Month 2', 'Mes 2'), color: 'purple', icon: Users },
+                    { key: 'mes_3', label: pick('Mês 3', 'Month 3', 'Mes 3'), color: 'amber', icon: TrendingUp },
                   ].map(({ key, label, color: phaseColor, icon: PhaseIcon }) => {
                     const phase = (plano90 as any)[key];
                     if (!phase) return null;
@@ -774,15 +774,15 @@ export default function StudentPackResults() {
             {recomendacaoPrioritaria && (
               <div className="bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border-2 border-[#C9A961]/30 rounded-2xl p-6 md:p-8 mb-6">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#B8963E] mb-3">
-                  <Target className="w-4 h-4" /> Recomendação Prioritária
+                  <Target className="w-4 h-4" /> {pick('Recomendação Prioritária', 'Priority Recommendation', 'Recomendación Prioritaria')}
                 </div>
                 <p className="text-base md:text-lg font-medium text-slate-800 leading-relaxed mb-6">{recomendacaoPrioritaria}</p>
                 <div className="flex flex-wrap gap-3">
                   <a href="/cv-analyser" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
-                    CV Analyser Pro <ArrowRight className="w-4 h-4" />
+                    {pick('CV Analyser Pro', 'CV Analyser Pro', 'CV Analyser Pro')} <ArrowRight className="w-4 h-4" />
                   </a>
                   <a href="/career-path" className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#C9A961] text-[#B8963E] text-sm font-semibold rounded-xl hover:bg-[#C9A961]/10 transition-colors">
-                    Career Path <ArrowRight className="w-4 h-4" />
+                    {pick('Career Path', 'Career Path', 'Career Path')} <ArrowRight className="w-4 h-4" />
                   </a>
                 </div>
               </div>
