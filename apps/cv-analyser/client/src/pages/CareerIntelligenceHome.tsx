@@ -18,6 +18,7 @@ import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
+import { pick as modulePick } from "@/i18n/translations";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
@@ -75,20 +76,20 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 const testimonials = [
   {
     name: "Catarina Mendes",
-    role: "Gestora de RH",
-    text: "O Career Intelligence deu-me uma estimativa salarial realista para cada caminho. Percebi que o meu perfil valia mais do que pensava — e negociei um aumento de 18%.",
+    role: modulePick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
+    text: modulePick("O Career Intelligence deu-me uma estimativa salarial realista para cada caminho. Percebi que o meu perfil valia mais do que pensava — e negociei um aumento de 18%.", "Career Intelligence gave me a realistic salary estimate for each path. I realised my profile was worth more than I thought — and I negotiated an 18% raise.", "Career Intelligence me dio una estimación salarial realista para cada camino. Me di cuenta de que mi perfil valía más de lo que pensaba — y negocié un aumento del 18%."),
     rating: 5,
   },
   {
     name: "Rui Ferreira",
-    role: "Engenheiro de Software",
-    text: "Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.",
+    role: modulePick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
+    text: modulePick("Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.", "I was undecided between Product Manager and Engineering Manager. Instead of months researching, I got the answer in 1 minute — with concrete market data and clear trade-offs.", "Estaba indeciso entre Product Manager e Engineering Manager. En vez de meses investigando, tuve la respuesta en 1 minuto — con datos concretos de mercado y trade-offs claros."),
     rating: 5,
   },
   {
     name: "Sofia Lopes",
-    role: "Consultora de Estratégia",
-    text: "A recomendação final veio com um plano de acção tão detalhado que o usei diretamente na entrevista. Entrei no novo cargo com confiança total.",
+    role: modulePick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
+    text: modulePick("A recomendação final veio com um plano de acção tão detalhado que o usei diretamente na entrevista. Entrei no novo cargo com confiança total.", "The final recommendation came with such a detailed action plan that I used it directly in the interview. I started the new role with total confidence.", "La recomendación final vino con un plan de acción tan detallado que lo usé directamente en la entrevista. Entré en el nuevo cargo con confianza total."),
     rating: 5,
   },
 ];
@@ -125,7 +126,7 @@ export default function CareerIntelligenceHome() {
   const careerIntelligenceDemoHref = lang === 'en' ? '/en/career-intelligence/demo' : '/career-intelligence/demo';
   const isPT = lang === 'pt';
   const ciHeadlines = pick(ciHeadlinesPT, ciHeadlinesEN, ciHeadlinesES);
-  useEffect(() => { document.title = "Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire"; }, []);
+  useEffect(() => { document.title = pick("Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire", "Career Intelligence — Strategic Career Decision with AI | Share2Inspire", "Career Intelligence — Decisión Estratégica de Carrera con IA | Share2Inspire"); }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % ciHeadlines.length), 4000); return () => clearInterval(t); }, []);
 
@@ -240,12 +241,12 @@ export default function CareerIntelligenceHome() {
     if (selectedFile) {
       const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (!validTypes.includes(selectedFile.type)) {
-        setError('Por favor, carregue um ficheiro PDF ou DOCX');
+        setError(pick('Por favor, carregue um ficheiro PDF ou DOCX', 'Please upload a PDF or DOCX file', 'Por favor, sube un fichero PDF o DOCX'));
         setFile(null);
         return;
       }
       if (selectedFile.size > 5 * 1024 * 1024) {
-        setError('O ficheiro não pode exceder 5MB');
+        setError(pick('O ficheiro não pode exceder 5MB', 'File cannot exceed 5MB', 'El fichero no puede exceder 5MB'));
         setFile(null);
         return;
       }
@@ -284,10 +285,10 @@ export default function CareerIntelligenceHome() {
       const rows = await voucherRes.json();
       if (Array.isArray(rows) && rows.length > 0) {
         const v = rows[0];
-        if (!v.is_active) { setDiscountError('Este código já foi utilizado'); return; }
-        if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já não tem utilizações disponíveis'); return; }
+        if (!v.is_active) { setDiscountError(pick('Este código já foi utilizado', 'This code has already been used', 'Este código ya fue utilizado')); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já não tem utilizações disponíveis', 'This code has no uses left', 'Este código ya no tiene usos disponibles')); return; }
         if (v.voucher_type !== 'career_intelligence_full' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
-          setDiscountError('Este código não é válido para o Career Intelligence'); return;
+          setDiscountError(pick('Este código não é válido para o Career Intelligence', 'This code is not valid for Career Intelligence', 'Este código no es válido para Career Intelligence')); return;
         }
         // Mark voucher as used
         await fetch(
@@ -313,9 +314,9 @@ export default function CareerIntelligenceHome() {
       }
 
       // Not found in either table
-      setDiscountError('Código inválido ou expirado');
+      setDiscountError(pick('Código inválido ou expirado', 'Invalid or expired code', 'Código inválido o expirado'));
     } catch {
-      setDiscountError('Erro ao validar código');
+      setDiscountError(pick('Erro ao validar código', 'Error validating code', 'Error al validar código'));
     } finally {
       setDiscountLoading(false);
     }
@@ -324,7 +325,7 @@ export default function CareerIntelligenceHome() {
   const handleAnalyze = async () => {
     if (!file) return;
     if (!isValidLinkedinUrl(linkedinUrl)) {
-      setError('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)');
+      setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
     trackAnalysisStart('career_intelligence_full');
@@ -397,8 +398,8 @@ export default function CareerIntelligenceHome() {
         }
       }
 
-      if (!response?.ok) throw new Error('Erro na análise IA. Por favor, tente novamente.');
-      if (!responseData?.success) throw new Error(responseData?.error || 'Erro na análise IA.');
+      if (!response?.ok) throw new Error(pick('Erro na análise IA. Por favor, tente novamente.', 'Error in AI analysis. Please try again.', 'Error en el análisis IA. Por favor, inténtalo de nuevo.'));
+      if (!responseData?.success) throw new Error(responseData?.error || pick('Erro na análise IA.', 'Error in AI analysis.', 'Error en el análisis IA.'));
 
       const analysisSource = responseData.analysis || responseData;
 
@@ -434,9 +435,9 @@ export default function CareerIntelligenceHome() {
 
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        setError('A análise demorou demasiado. Por favor, tente novamente.');
+        setError(pick('A análise demorou demasiado. Por favor, tente novamente.', 'The analysis took too long. Please try again.', 'El análisis tardó demasiado. Por favor, inténtalo de nuevo.'));
       } else {
-        setError(err.message || 'Erro ao analisar o CV. Por favor, tente novamente.');
+        setError(err.message || pick('Erro ao analisar o CV. Por favor, tente novamente.', 'Error analysing CV. Please try again.', 'Error al analizar el CV. Por favor, inténtalo de nuevo.'));
       }
       setLoading(false);
     }
@@ -444,10 +445,10 @@ export default function CareerIntelligenceHome() {
 
   /* ─── Payment handlers ─── */
   const handleMBWayPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
-    if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
+    if (!phone) { setPaymentError(pick('Introduz o teu número de telemóvel', 'Enter your phone number', 'Introduce tu número de móvil')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
@@ -482,22 +483,22 @@ export default function CareerIntelligenceHome() {
       });
 
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
 
       setPaymentStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
       startPolling(orderId);
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
   };
 
   const handlePayPalPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
@@ -517,9 +518,9 @@ export default function CareerIntelligenceHome() {
   };
 
   const handleStripePayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
@@ -554,13 +555,13 @@ export default function CareerIntelligenceHome() {
         })
       });
       const data = await response.json();
-      if (!data.success || !data.url) throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+      if (!data.success || !data.url) throw new Error(data.error || pick('Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear sesión de pago'));
       localStorage.setItem('cpOrderId', orderId);
       localStorage.setItem('cpPaymentEmail', email);
       localStorage.setItem('stripeSessionId', data.sessionId);
       redirectToCheckout(data.url);
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
@@ -588,7 +589,7 @@ export default function CareerIntelligenceHome() {
           if (consecutiveErrors >= 8) {
             clearInterval(interval);
             setPollingExpired(true);
-            setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".');
+            setPollingMsg(pick('Não foi possível verificar. Usa o botão "Já paguei".', 'Could not verify. Use the "I already paid" button.', 'No se pudo verificar. Usa el botón "Ya pagué".'));
           }
           return;
         }
@@ -604,27 +605,27 @@ export default function CareerIntelligenceHome() {
         const elapsed = Date.now() - startTime;
         if (data.expired) {
           if (elapsed < MIN_BEFORE_EXPIRED) {
-            setPollingMsg('A verificar pagamento... Confirma na app MB WAY.');
+            setPollingMsg(pick('A verificar pagamento... Confirma na app MB WAY.', 'Verifying payment... Confirm in the MB WAY app.', 'Verificando pago... Confirma en la app MB WAY.'));
           } else {
             clearInterval(interval);
             setPollingExpired(true);
-            setPollingMsg('O pagamento expirou. Usa o botão abaixo se já pagaste.');
+            setPollingMsg(pick('O pagamento expirou. Usa o botão abaixo se já pagaste.', 'Payment expired. Use the button below if you already paid.', 'El pago expiró. Usa el botón de abajo si ya pagaste.'));
           }
           return;
         }
 
         if (elapsed < 30000) {
-          setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+          setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
         } else if (elapsed < 60000) {
-          setPollingMsg('Ainda a aguardar... Verifica a app MB WAY.');
+          setPollingMsg(pick('Ainda a aguardar... Verifica a app MB WAY.', 'Still waiting... Check the MB WAY app.', 'Todavía esperando... Revisa la app MB WAY.'));
         } else {
-          setPollingMsg('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+          setPollingMsg(pick('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.', 'Waiting for confirmation... If you already approved, wait a few more seconds.', 'Esperando confirmación... Si ya aprobaste, espera unos segundos más.'));
         }
 
         if (attempts >= maxAttempts) {
           clearInterval(interval);
           setPollingExpired(true);
-          setPollingMsg('Tempo esgotado. Se já pagaste, usa o botão abaixo.');
+          setPollingMsg(pick('Tempo esgotado. Se já pagaste, usa o botão abaixo.', 'Time expired. If you already paid, use the button below.', 'Tiempo agotado. Si ya pagaste, usa el botón de abajo.'));
         }
       } catch { consecutiveErrors++; }
     }, 5000);
@@ -659,7 +660,7 @@ export default function CareerIntelligenceHome() {
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar pagamento...');
+    setPollingMsg(pick('A verificar pagamento...', 'Verifying payment...', 'Verificando pago...'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
@@ -672,12 +673,12 @@ export default function CareerIntelligenceHome() {
         unlockAndRedirect(currentOrderId);
       } else {
         setPollingExpired(true);
-        setPollingMsg('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
+        setPollingMsg(pick('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.', 'Payment not yet confirmed. Wait a few seconds and try again.', 'Pago aún no confirmado. Espera unos segundos e inténtalo de nuevo.'));
         startPolling(currentOrderId);
       }
     } catch {
       setPollingExpired(true);
-      setPollingMsg('Erro ao verificar. Tenta novamente em alguns segundos.');
+      setPollingMsg(pick('Erro ao verificar. Tenta novamente em alguns segundos.', 'Error verifying. Try again in a few seconds.', 'Error al verificar. Inténtalo de nuevo en unos segundos.'));
     }
   };
 
@@ -1054,7 +1055,7 @@ export default function CareerIntelligenceHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  "Iniciar análise"
+                  pick('Iniciar análise', 'Start analysis', 'Iniciar análisis')
                 )}
               </Button>
 
@@ -1085,10 +1086,10 @@ export default function CareerIntelligenceHome() {
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Análise concluída
+                {pick('Análise concluída', 'Analysis completed', 'Análisis completado')}
               </div>
-              <h2 className="text-xl font-bold text-foreground">O teu perfil percebido pela IA</h2>
-              <p className="text-sm text-muted-foreground">Isto é o que os recrutadores vêem quando analisam o teu CV</p>
+              <h2 className="text-xl font-bold text-foreground">{pick('O teu perfil percebido pela IA', 'Your profile as perceived by AI', 'Tu perfil percibido por la IA')}</h2>
+              <p className="text-sm text-muted-foreground">{pick('Isto é o que os recrutadores vêem quando analisam o teu CV', 'This is what recruiters see when they analyse your CV', 'Esto es lo que los reclutadores ven cuando analizan tu CV')}</p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
@@ -1098,16 +1099,16 @@ export default function CareerIntelligenceHome() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
-                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">SENIORIDADE</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">{pick('SENIORIDADE', 'SENIORITY', 'SENIORIDAD')}</p>
                   <p className="text-sm font-bold text-foreground">{previewData.seniority}</p>
                 </div>
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
-                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">EXPERIÊNCIA</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">{pick('EXPERIÊNCIA', 'EXPERIENCE', 'EXPERIENCIA')}</p>
                   <p className="text-sm font-bold text-foreground">{previewData.experience}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">TOP COMPETÊNCIAS DETETADAS</p>
+                <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">{pick('TOP COMPETÊNCIAS DETETADAS', 'TOP DETECTED SKILLS', 'TOP COMPETENCIAS DETECTADAS')}</p>
                 <div className="flex flex-wrap gap-2">
                   {previewData.skills.map((skill: string, i: number) => (
                     <span key={i} className="text-xs font-medium bg-[#C9A961]/10 text-[#C9A961] px-3 py-1 rounded-full border border-[#C9A961]/20">{skill}</span>
@@ -1116,9 +1117,9 @@ export default function CareerIntelligenceHome() {
               </div>
               {previewData.nextRole && (
                 <div className="p-4 bg-gradient-to-r from-[#C9A961]/5 to-[#C9A961]/10 rounded-xl border border-[#C9A961]/20">
-                  <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">PRÓXIMO PASSO DE CARREIRA MAIS PROVÁVEL</p>
+                  <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">{pick('PRÓXIMO PASSO DE CARREIRA MAIS PROVÁVEL', 'MOST LIKELY NEXT CAREER STEP', 'PRÓXIMO PASO DE CARRERA MÁS PROBABLE')}</p>
                   <p className="text-base font-bold text-foreground">{previewData.nextRole}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Descobre o roadmap completo + recomendação final ↓</p>
+                  <p className="text-xs text-muted-foreground mt-1">{pick('Descobre o roadmap completo + recomendação final ↓', 'Discover the complete roadmap + final recommendation ↓', 'Descubre el roadmap completo + recomendación final ↓')}</p>
                 </div>
               )}
             </div>
@@ -1127,7 +1128,7 @@ export default function CareerIntelligenceHome() {
             <div className="relative bg-card border border-border rounded-2xl p-6 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/60 to-white z-10" />
               <div className="filter blur-sm select-none">
-                <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">COMPARAÇÃO ESTRATÉGICA DOS 3 CAMINHOS</p>
+                <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">{pick('COMPARAÇÃO ESTRATÉGICA DOS 3 CAMINHOS', 'STRATEGIC COMPARISON OF 3 PATHS', 'COMPARACIÓN ESTRATÉGICA DE LOS 3 CAMINOS')}</p>
                 <div className="space-y-2">
                   <div className="h-4 bg-muted rounded w-3/4" />
                   <div className="h-4 bg-muted rounded w-1/2" />
@@ -1139,7 +1140,7 @@ export default function CareerIntelligenceHome() {
               <div className="absolute inset-0 flex items-center justify-center z-20">
                 <div className="text-center">
                   <Lock className="w-6 h-6 text-[#C9A961] mx-auto mb-2" />
-                  <p className="text-sm font-semibold text-foreground">Análise completa bloqueada</p>
+                  <p className="text-sm font-semibold text-foreground">{pick('Análise completa bloqueada', 'Full analysis locked', 'Análisis completo bloqueado')}</p>
                 </div>
               </div>
             </div>
@@ -1155,9 +1156,9 @@ export default function CareerIntelligenceHome() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Scale className="w-5 h-5 mr-2" />
-                Desbloquear Career Intelligence — {PRICE}€
+                {pick(`Desbloquear Career Intelligence — ${CUR}${PRICE}`, `Unlock Career Intelligence — ${CUR}${PRICE}`, `Desbloquear Career Intelligence — ${CUR}${PRICE}`)}
               </Button>
-              <p className="text-center text-[10px] text-muted-foreground">Diagnóstico + 3 caminhos + comparação + trade-offs + recomendação final</p>
+              <p className="text-center text-[10px] text-muted-foreground">{pick('Diagnóstico + 3 caminhos + comparação + trade-offs + recomendação final', 'Diagnosis + 3 paths + comparison + trade-offs + final recommendation', 'Diagnóstico + 3 caminos + comparación + trade-offs + recomendación final')}</p>
               <button
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
@@ -1176,7 +1177,7 @@ export default function CareerIntelligenceHome() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Scale className="w-5 h-5 text-[#C9A961]" />
-              Career Intelligence — Pagamento
+              {pick('Career Intelligence — Pagamento', 'Career Intelligence — Payment', 'Career Intelligence — Pago')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1185,7 +1186,7 @@ export default function CareerIntelligenceHome() {
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Career Intelligence</p>
-                  <p className="text-xs text-muted-foreground">Diagnóstico + Decisão Estratégica</p>
+                  <p className="text-xs text-muted-foreground">{pick('Diagnóstico + Decisão Estratégica', 'Diagnosis + Strategic Decision', 'Diagnóstico + Decisión Estratégica')}</p>
                 </div>
                 <div className="text-right">
                   {discountPercent > 0 ? (
@@ -1202,13 +1203,13 @@ export default function CareerIntelligenceHome() {
 
               {/* Unified discount code (coupon or voucher) */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Código de desconto (opcional)</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Código de desconto (opcional)', 'Discount code (optional)', 'Código de descuento (opcional)')}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={discountCode}
                     onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); setDiscountType(null); }}
-                    placeholder="CÓDIGO"
+                    placeholder={pick('CÓDIGO', 'CODE', 'CÓDIGO')}
                     className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                     onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidate()}
                   />
@@ -1218,21 +1219,21 @@ export default function CareerIntelligenceHome() {
                     variant="outline"
                     className="text-sm"
                   >
-                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : 'Aplicar'}
+                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : pick('Aplicar', 'Apply', 'Aplicar')}
                   </Button>
                 </div>
                 {discountError && <p className="text-xs text-red-500">{discountError}</p>}
-                {discountValid && <p className="text-xs text-green-600 font-semibold">Desconto de {discountPercent}% aplicado!</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">{pick(`Desconto de ${discountPercent}% aplicado!`, `${discountPercent}% discount applied!`, `¡Descuento de ${discountPercent}% aplicado!`)}</p>}
               </div>
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Email</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Email')}</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
+                  placeholder={pick('seu@email.com', 'your@email.com', 'tu@email.com')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>
@@ -1241,7 +1242,7 @@ export default function CareerIntelligenceHome() {
                 <>
                   {/* Payment method */}
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
+                    <label className="text-xs font-semibold text-foreground">{pick('Método de pagamento', 'Payment method', 'Método de pago')}</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
                         <button
@@ -1253,7 +1254,7 @@ export default function CareerIntelligenceHome() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
                         </button>
                       ))}
                     </div>
@@ -1261,7 +1262,7 @@ export default function CareerIntelligenceHome() {
 
                   {paymentMethod === 'mbway' && (
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
+                      <label className="text-xs font-semibold text-foreground">{pick('Telemóvel (MB WAY)', 'Phone (MB WAY)', 'Móvil (MB WAY)')}</label>
                       <input
                         type="tel"
                         value={phone}
@@ -1295,7 +1296,7 @@ export default function CareerIntelligenceHome() {
                 </>
               ) : (
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Voltar</Button>
+                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">{pick('Voltar', 'Back', 'Volver')}</Button>
                   <Button
                     onClick={() => {
                       setShowPaymentModal(false);
@@ -1311,7 +1312,7 @@ export default function CareerIntelligenceHome() {
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >
-                    <Unlock className="w-4 h-4 mr-2" /> Desbloquear grátis
+                    <Unlock className="w-4 h-4 mr-2" /> {pick('Desbloquear grátis', 'Unlock for free', 'Desbloquear gratis')}
                   </Button>
                 </div>
               )}
@@ -1328,7 +1329,7 @@ export default function CareerIntelligenceHome() {
                 <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
               )}
               <p className="text-sm font-semibold text-foreground">{pollingMsg}</p>
-              {!pollingExpired && <p className="text-xs text-muted-foreground">A aguardar confirmação do pagamento...</p>}
+              {!pollingExpired && <p className="text-xs text-muted-foreground">{pick('A aguardar confirmação do pagamento...', 'Waiting for payment confirmation...', 'Esperando confirmación del pago...')}</p>}
               {pollingExpired && (
                 <Button onClick={handleManualCheck} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">
                   <CheckCircle2 className="w-4 h-4 mr-2" />{pick('Já paguei — verificar novamente', 'I already paid — verify again', 'Ya pagué — verificar de nuevo')}
@@ -1340,10 +1341,10 @@ export default function CareerIntelligenceHome() {
           {paymentStep === 'success' && (
             <div className="text-center space-y-4 py-4">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-base font-bold text-foreground">Pagamento confirmado!</p>
-              <p className="text-sm text-muted-foreground">A gerar o teu Career Intelligence completo...</p>
+              <p className="text-base font-bold text-foreground">{pick('Pagamento confirmado!', 'Payment confirmed!', '¡Pago confirmado!')}</p>
+              <p className="text-sm text-muted-foreground">{pick('A gerar o teu Career Intelligence completo...', 'Generating your complete Career Intelligence...', 'Generando tu Career Intelligence completo...')}</p>
               <Button onClick={handlePaymentSuccess} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">
-                Gerar Career Intelligence
+                {pick('Gerar Career Intelligence', 'Generate Career Intelligence', 'Generar Career Intelligence')}
               </Button>
             </div>
           )}
