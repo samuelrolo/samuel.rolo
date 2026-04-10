@@ -226,7 +226,7 @@ export default function BundleHome() {
         });
       } else {
         cvText = localStorage.getItem('bundleCvText') || sessionStorage.getItem('bundleCvText') || '';
-        if (!cvText) throw new Error('CV não foi restaurado. Tenta novamente ou avisa o suporte.');
+        if (!cvText) throw new Error(pick('CV não foi restaurado. Tenta novamente ou avisa o suporte.', 'CV was not restored. Try again or contact support.', 'CV no fue restaurado. Inténtalo de nuevo o contacta soporte.'));
       }
       
       const currentLinkedinUrl = linkedinUrl || localStorage.getItem('bundleLinkedinUrl') || sessionStorage.getItem('bundleLinkedinUrl') || '';
@@ -277,7 +277,7 @@ export default function BundleHome() {
         }
       }
       if (!cvResponseData?.success) {
-        throw new Error('Erro na análise do CV. Tenta novamente.');
+        throw new Error(pick('Erro na análise do CV. Tenta novamente.', 'Error in CV analysis. Try again.', 'Error en el análisis del CV. Inténtalo de nuevo.'));
       }
 
       const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
@@ -374,15 +374,15 @@ export default function BundleHome() {
 
     } catch (err: any) {
       clearInterval(msgInterval);
-      setError(err.message || 'Erro na análise. Tenta novamente.');
+      setError(err.message || pick('Erro na análise. Tenta novamente.', 'Error in analysis. Try again.', 'Error en el análisis. Inténtalo de nuevo.'));
       setStep('upload');
     }
   };
 
   /* ─── Payment Handlers ─── */
   const handleMBWayPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
-    if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
+    if (!phone) { setPaymentError(pick('Introduz o teu número de telemóvel', 'Enter your phone number', 'Introduce tu número de móvil')); return; }
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
@@ -407,10 +407,10 @@ export default function BundleHome() {
       const data = await response.json();
       if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
       setPaymentStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
       startPolling(orderId);
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
@@ -427,7 +427,7 @@ export default function BundleHome() {
   };
 
   const handleStripePayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
@@ -456,10 +456,10 @@ export default function BundleHome() {
         sessionStorage.setItem('bundleEmail', email);
         redirectToCheckout(data.url);
       } else {
-        throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+        throw new Error(data.error || pick('Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear sesión de pago'));
       }
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
@@ -485,7 +485,7 @@ export default function BundleHome() {
           if (consecutiveErrors >= 8) {
             clearInterval(interval);
             setPollingExpired(true);
-            setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".');
+            setPollingMsg(pick('Não foi possível verificar. Usa o botão "Já paguei".', 'Could not verify. Use the "I already paid" button.', 'No se pudo verificar. Usa el botón "Ya pagué".'));
           }
           return;
         }
@@ -502,20 +502,20 @@ export default function BundleHome() {
         if (data.expired && elapsed > 90000) {
           clearInterval(interval);
           setPollingExpired(true);
-          setPollingMsg('O pagamento expirou. Usa o botão abaixo se já pagaste.');
+          setPollingMsg(pick('O pagamento expirou. Usa o botão abaixo se já pagaste.', 'Payment expired. Use the button below if you already paid.', 'El pago expiró. Usa el botón de abajo si ya pagaste.'));
           return;
         }
         if (elapsed < 30000) {
-          setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+          setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
         } else if (elapsed < 60000) {
-          setPollingMsg('Ainda a aguardar... Verifica a app MB WAY.');
+          setPollingMsg(pick('Ainda a aguardar... Verifica a app MB WAY.', 'Still waiting... Check the MB WAY app.', 'Todavía esperando... Revisa la app MB WAY.'));
         } else {
-          setPollingMsg('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+          setPollingMsg(pick('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.', 'Waiting for confirmation... If you already approved, wait a few more seconds.', 'Esperando confirmación... Si ya aprobaste, espera unos segundos más.'));
         }
         if (attempts >= maxAttempts) {
           clearInterval(interval);
           setPollingExpired(true);
-          setPollingMsg('Tempo esgotado. Se já pagaste, usa o botão abaixo.');
+          setPollingMsg(pick('Tempo esgotado. Se já pagaste, usa o botão abaixo.', 'Time expired. If you already paid, use the button below.', 'Tiempo agotado. Si ya pagaste, usa el botón de abajo.'));
         }
       } catch { consecutiveErrors++; }
     }, 5000);
@@ -537,18 +537,18 @@ export default function BundleHome() {
         runBothEngines();
       } else {
         setPollingExpired(true);
-        setPollingMsg('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
+        setPollingMsg(pick('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.', 'Payment not yet confirmed. Wait a few seconds and try again.', 'Pago aún no confirmado. Espera unos segundos e inténtalo de nuevo.'));
         startPolling(currentOrderId);
       }
     } catch {
-      setPollingMsg('Erro ao verificar. Tenta novamente.');
+      setPollingMsg(pick('Erro ao verificar. Tenta novamente.', 'Error verifying. Try again.', 'Error al verificar. Inténtalo de nuevo.'));
       setPollingExpired(true);
     }
   };
 
   /* ─── Unified Discount Code Handler (checks coupons first, then vouchers) ─── */
   const handleDiscountCode = async () => {
-    if (!discountCode.trim()) { setDiscountError('Introduz um código'); return; }
+    if (!discountCode.trim()) { setDiscountError(pick('Introduz um código', 'Enter a code', 'Introduce un código')); return; }
     setDiscountLoading(true);
     setDiscountError(null);
     const code = discountCode.trim().toUpperCase();
@@ -561,11 +561,11 @@ export default function BundleHome() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Este código atingiu o limite.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(pick('Este código ainda não está ativo.', 'This code is not active yet.', 'Este código aún no está activo.')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ya expiró.')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite.', 'This code has reached its limit.', 'Este código alcanzó el límite.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('bundle') && !products.includes('complete')) { setDiscountError('Este código não é aplicável a este pacote.'); return; }
+        if (products.length > 0 && !products.includes('all') && !products.includes('bundle') && !products.includes('complete')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'This code is not applicable to this bundle.', 'Este código no es aplicable a este paquete.')); return; }
         if (coupon.discount_percent === 100) {
           incrementCouponUsage(code);
           trackAffiliateConversion({ product: 'bundle', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
@@ -585,14 +585,14 @@ export default function BundleHome() {
         headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
-      if (!vouchers || vouchers.length === 0) { setDiscountError('Código inválido ou já utilizado.'); return; }
+      if (!vouchers || vouchers.length === 0) { setDiscountError(pick('Código inválido ou já utilizado.', 'Invalid or already used code.', 'Código inválido o ya utilizado.')); return; }
       const v = vouchers[0];
-      if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já foi totalmente utilizado.'); return; }
+      if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já foi totalmente utilizado.', 'This code has been fully used.', 'Este código ya fue totalmente utilizado.')); return; }
       setShowDiscountModal(false);
       if (v.email) sessionStorage.setItem('paymentEmail', v.email);
       runBothEngines();
     } catch {
-      setDiscountError('Erro ao verificar código. Tenta novamente.');
+      setDiscountError(pick('Erro ao verificar código. Tenta novamente.', 'Error verifying code. Try again.', 'Error al verificar código. Inténtalo de nuevo.'));
     } finally {
       setDiscountLoading(false);
     }
