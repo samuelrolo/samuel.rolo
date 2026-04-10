@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { getLang } from "@/pages/en/translations";
+import { getLang } from "@/i18n";
+import { localePath } from "@/i18n/useTranslation";
 
 const STORAGE_KEY = "s2i_promo_banner_dismissed_estudante_v1";
 
@@ -64,7 +65,7 @@ export default function PromoBanner() {
         {/* Right: CTA + dismiss */}
         <div className="flex items-center gap-2 shrink-0">
           <a
-            href="/estudante"
+            href={localePath('/estudante', lang)}
             className="inline-flex items-center rounded-md bg-white text-emerald-700 font-semibold text-xs px-3 py-1 hover:bg-emerald-50 transition-colors whitespace-nowrap"
           >
             {t.cta}

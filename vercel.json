@@ -116,6 +116,11 @@
       "statusCode": 301
     },
     {
+      "source": "/pages/knowledge",
+      "destination": "/conhecimento",
+      "statusCode": 301
+    },
+    {
       "source": "/en/pages/conhecimento",
       "destination": "/en/pages/knowledge",
       "statusCode": 301
