@@ -57,6 +57,8 @@ export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
   const { t, lang, setLang } = useI18n();
   const pick = (pt: string, en: string, es: string) => lang === 'pt' ? pt : lang === 'es' ? es : en;
+  const nextLang = ({ pt: 'en', en: 'es', es: 'pt' } as const)[lang as 'pt' | 'en' | 'es'] ?? 'pt';
+  const languageSwitchTitleKey = ({ pt: 'bot.switchToEnglish', en: 'bot.switchToSpanish', es: 'bot.switchToPortuguese' } as const)[lang as 'pt' | 'en' | 'es'] ?? 'bot.switchToEnglish';
 
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -599,17 +601,19 @@ Genera SOLO el post.`);
     setHlResults([]);
 
     const toneMap: Record<string, Record<string, string>> = {
-      profissional: { pt: 'profissional e confiante', en: 'professional and confident' },
-      criativo: { pt: 'criativo e original, com metáforas ou estruturas não convencionais', en: 'creative and original, with unconventional structures' },
-      direto: { pt: 'direto e impactante, sem floreados', en: 'direct and impactful, no fluff' },
-      inspirador: { pt: 'inspirador e com impacto emocional', en: 'inspiring and emotionally impactful' },
+      profissional: { pt: 'profissional e confiante', en: 'professional and confident', es: 'profesional y seguro' },
+      criativo: { pt: 'criativo e original, com metáforas ou estruturas não convencionais', en: 'creative and original, with unconventional structures', es: 'creativo y original, con metáforas o estructuras no convencionales' },
+      direto: { pt: 'direto e impactante, sem floreados', en: 'direct and impactful, no fluff', es: 'directo e impactante, sin relleno' },
+      inspirador: { pt: 'inspirador e com impacto emocional', en: 'inspiring and emotionally impactful', es: 'inspirador y con impacto emocional' },
     };
 
-    const langInstruction = hlLang === 'pt'
-      ? 'Escreve TODAS as headlines em Português (Portugal), não em inglês.'
-      : 'Write ALL headlines in English.';
+    const headlinePrompt = pick(
+      `Escreve TODAS as headlines em Português (Portugal), não em inglês.\n\nGera exatamente ${hlNum} headlines para perfil LinkedIn. Cada headline deve ter no máximo 220 caracteres (o limite do LinkedIn).\n\nDados da pessoa:\n- Nome: ${profile?.first_name || 'não fornecido'} ${profile?.last_name || ''}\n- Cargo atual: ${hlCargo || 'não fornecido'}\n- Área/Setor: ${hlArea || 'não fornecido'}\n- Experiência: ${hlAnos || 'não fornecido'}\n- O que faz / valor que traz: ${hlValor || 'não fornecido'}\n- Público-alvo: ${hlPublico || 'não fornecido'}\n${hlKeywords ? `- Incluir palavras-chave: ${hlKeywords}` : ''}\n\nTom desejado: ${toneMap[hlTone]?.pt || hlTone}\n\nInstruções importantes:\n1. Cada headline deve ser única e usar estruturas diferentes\n2. Mistura abordagens: orientada a resultados, focada no cliente, baseada em identidade, focada em transformação\n3. Usa separadores como | · — quando fizer sentido\n4. NÃO incluas o nome da pessoa na headline\n5. NÃO uses clichês como "apaixonado por" ou "guru"\n6. Máximo ABSOLUTO: 220 caracteres por headline\n\nResponde APENAS com um JSON válido neste formato (sem markdown, sem texto extra):\n{"headlines": ["headline 1", "headline 2", "headline 3"]}`,
+      `Write ALL headlines in English.\n\nGenerate exactly ${hlNum} headlines for a LinkedIn profile. Each headline must be no more than 220 characters (LinkedIn's limit).\n\nPerson details:\n- Name: ${profile?.first_name || 'not provided'} ${profile?.last_name || ''}\n- Current role: ${hlCargo || 'not provided'}\n- Area/Sector: ${hlArea || 'not provided'}\n- Experience: ${hlAnos || 'not provided'}\n- What they do / value they bring: ${hlValor || 'not provided'}\n- Target audience: ${hlPublico || 'not provided'}\n${hlKeywords ? `- Include keywords: ${hlKeywords}` : ''}\n\nDesired tone: ${toneMap[hlTone]?.en || hlTone}\n\nImportant instructions:\n1. Each headline must be unique and use different structures\n2. Mix approaches: results-oriented, client-focused, identity-based, transformation-focused\n3. Use separators like | · — when helpful\n4. DO NOT include the person's name in the headline\n5. DO NOT use clichés like "passionate about" or "guru"\n6. ABSOLUTE maximum: 220 characters per headline\n\nReply ONLY with valid JSON in this format (no markdown, no extra text):\n{"headlines": ["headline 1", "headline 2", "headline 3"]}`,
+      `Escribe TODOS los titulares en español.\n\nGenera exactamente ${hlNum} titulares para un perfil de LinkedIn. Cada titular debe tener un máximo de 220 caracteres (el límite de LinkedIn).\n\nDatos de la persona:\n- Nombre: ${profile?.first_name || 'no proporcionado'} ${profile?.last_name || ''}\n- Puesto actual: ${hlCargo || 'no proporcionado'}\n- Área/Sector: ${hlArea || 'no proporcionado'}\n- Experiencia: ${hlAnos || 'no proporcionado'}\n- Lo que hace / valor que aporta: ${hlValor || 'no proporcionado'}\n- Público objetivo: ${hlPublico || 'no proporcionado'}\n${hlKeywords ? `- Incluir palabras clave: ${hlKeywords}` : ''}\n\nTono deseado: ${toneMap[hlTone]?.es || hlTone}\n\nInstrucciones importantes:\n1. Cada titular debe ser único y usar estructuras diferentes\n2. Mezcla enfoques: orientado a resultados, centrado en el cliente, basado en identidad, centrado en la transformación\n3. Usa separadores como | · — cuando tenga sentido\n4. NO incluyas el nombre de la persona en el titular\n5. NO uses clichés como "apasionado por" o "gurú"\n6. Máximo ABSOLUTO: 220 caracteres por titular\n\nResponde SOLO con JSON válido en este formato (sin markdown, sin texto extra):\n{"headlines": ["headline 1", "headline 2", "headline 3"]}`
+    );
 
-    const prompt = `${langInstruction}\n\nGera exatamente ${hlNum} headlines para perfil LinkedIn. Cada headline deve ter no máximo 220 caracteres (o limite do LinkedIn).\n\nDados da pessoa:\n- Nome: ${profile?.first_name || 'não fornecido'} ${profile?.last_name || ''}\n- Cargo atual: ${hlCargo || 'não fornecido'}\n- Área/Setor: ${hlArea || 'não fornecido'}\n- Experiência: ${hlAnos || 'não fornecido'}\n- O que faz / valor que traz: ${hlValor || 'não fornecido'}\n- Público-alvo: ${hlPublico || 'não fornecido'}\n${hlKeywords ? `- Incluir palavras-chave: ${hlKeywords}` : ''}\n\nTom desejado: ${toneMap[hlTone]?.[hlLang] || hlTone}\n\nInstruções importantes:\n1. Cada headline deve ser única e usar estruturas diferentes\n2. Mistura abordagens: orientada a resultados, focada no cliente, baseada em identidade, focada em transformação\n3. Usa separadores como | · — quando fizer sentido\n4. NÃO incluas o nome da pessoa na headline\n5. NÃO uses clichês como "apaixonado por" ou "guru"\n6. Máximo ABSOLUTO: 220 caracteres por headline\n\nResponde APENAS com um JSON válido neste formato (sem markdown, sem texto extra):\n{"headlines": ["headline 1", "headline 2", "headline 3"]}`;
+    const prompt = headlinePrompt;
 
     try {
       const response = await fetch(HYPER_TASK_URL, {
@@ -737,7 +741,7 @@ Genera SOLO el post.`);
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:shadow-xl"
           style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
-          title="Career Advisory"
+          title={t('member.careerBot')}
         >
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -764,15 +768,15 @@ Genera SOLO el post.`);
                 </svg>
               </div>
               <div>
-                <h3 className="text-white text-sm font-semibold leading-tight">Career Advisory</h3>
+                <h3 className="text-white text-sm font-semibold leading-tight">{t('member.careerBot')}</h3>
                 <p className="text-white/60 text-[10px]">Share2Inspire AI</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => { const langs: Array<'pt'|'en'|'es'> = ['pt','en','es']; setLang(langs[(langs.indexOf(lang)+1)%3]); }}
+                onClick={() => setLang(nextLang)}
                 className="px-2 py-1 rounded-lg hover:bg-white/20 transition-colors text-white/80 hover:text-white text-[10px] font-bold tracking-wider flex items-center gap-1 border border-white/20"
-                title={lang === 'pt' ? 'Switch to English' : lang === 'en' ? 'Cambiar a Español' : 'Mudar para Português'}
+                title={t(languageSwitchTitleKey)}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 {lang.toUpperCase()}
@@ -973,7 +977,7 @@ Genera SOLO el post.`);
                   <div>
                     <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.currentRole')} *</label>
                     <input type="text" value={hlCargo} onChange={e => setHlCargo(e.target.value)}
-                      placeholder="Ex: HR Manager, Coach"
+                      placeholder={t('bot.placeholderRoleExample')}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                   <div>

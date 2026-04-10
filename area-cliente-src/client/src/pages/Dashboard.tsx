@@ -37,6 +37,8 @@ const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; colo
   cv_analyser:         { label: 'CV Analyser',         icon: FileSearch, color: 'text-blue-400',    link: 'https://share2inspire.pt/cv-analyser' },
   linkedin_roaster:    { label: 'LinkedIn Roaster',    icon: Linkedin,   color: 'text-amber-400',   link: 'https://share2inspire.pt/linkedin-roaster' },
   career_path:         { label: 'Career Path',         icon: Compass,    color: 'text-emerald-400', link: 'https://share2inspire.pt/career-path' },
+  student_pack:        { label: 'Student Pack',        icon: BookOpen,   color: 'text-sky-400',     link: 'https://share2inspire.pt/student-pack' },
+  bundle:              { label: 'Bundle',              icon: Sparkles,   color: 'text-fuchsia-400', link: 'https://share2inspire.pt/bundle' },
   career_intelligence: { label: 'Career Intelligence', icon: BarChart3,  color: 'text-violet-400',  link: 'https://share2inspire.pt/career-intelligence' },
   career_energy:       { label: 'Career Energy Score', icon: BarChart3,  color: 'text-purple-400',  link: 'https://share2inspire.pt/#career-energy' },
 };
@@ -65,6 +67,8 @@ const ALL_TOOLS: { type: string; label: string; icon: typeof FileSearch; desc: s
   { type: 'career_bot',          label: 'Career Bot',          icon: Sparkles,   desc: 'Assistente de carreira por IA',          link: 'https://share2inspire.pt/career-bot',           minTier: 'essential', quota: 'incluído' },
   { type: 'job_feed',            label: 'Job Feed',            icon: Compass,    desc: 'Vagas com matching inteligente',         link: 'https://share2inspire.pt/vagas',                minTier: 'growth',    quota: 'incluído' },
   { type: 'career_path',         label: 'Career Path',         icon: Compass,    desc: 'Mapeamento de trajetória profissional',  link: 'https://share2inspire.pt/career-path',          minTier: 'growth',    quota: 'bonus' },
+  { type: 'student_pack',        label: 'Student Pack',        icon: BookOpen,   desc: 'Recursos essenciais para estudantes',     link: 'https://share2inspire.pt/student-pack',         minTier: 'free',      quota: 'avulso' },
+  { type: 'bundle',              label: 'Bundle',              icon: Sparkles,   desc: 'Pack completo de recursos de carreira',   link: 'https://share2inspire.pt/bundle',               minTier: 'free',      quota: 'avulso' },
   { type: 'career_intelligence', label: 'Career Intelligence', icon: BarChart3,  desc: 'Caminhos estratégicos com dados',        link: 'https://share2inspire.pt/career-intelligence',  minTier: 'pro',       quota: 'incluído' },
 ];
 

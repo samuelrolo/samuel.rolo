@@ -33,9 +33,9 @@ export default defineConfig({
           // Only used in MemberArea for CV upload; lazy-load friendly
           'vendor-pdf-parse': ['pdfjs-dist', 'mammoth'],
 
-          // ─── PDF generation (jspdf + html2canvas) ─────────────────────
+          // ─── PDF generation (jspdf) ─────────────────────────────────────
           // Only loaded when user exports a PDF
-          'vendor-pdf-gen': ['jspdf', 'html2canvas'],
+          'vendor-pdf-gen': ['jspdf'],
 
           // ─── Radix UI primitives ──────────────────────────────────────
           'vendor-radix': [
