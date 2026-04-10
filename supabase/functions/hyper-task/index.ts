@@ -7996,7 +7996,7 @@ FINAL RULES:
 
 REGLAS ABSOLUTAS DE IDIOMA Y TONO:
 
-1. Responde SIEMPRE en Español.
+1. Escribe SIEMPRE en Español.
 
 2. El tono debe ser PROFESIONAL y RESPETUOSO — sin sarcasmo, sin ironía y sin bromas. Esta es una auditoría seria de un servicio de pago.
 
@@ -8016,175 +8016,321 @@ ${roastCompanyContext}
 
 ANÁLISIS OBLIGATORIO — Evalúa TODOS estos elementos en base a los datos reales del perfil:
 
+
+
 1. HEADLINE: ¿Es una propuesta de valor clara o solo un cargo? ¿Incluye keywords estratégicas? ¿Comunica diferenciación?
 
-2. ABOUT: ¿Tiene storytelling profesional? ¿Está escrita en primera persona? ¿Termina con un Call to Action? ¿Está optimizada para SEO?
+2. SECCIÓN ACERCA DE (ABOUT): ¿Tiene storytelling profesional? ¿Usa primera persona? ¿Termina con un Call to Action? ¿Está optimizada para SEO?
 
-3. EXPERIENCIA PROFESIONAL: ¿Se centra en logros cuantificables o parece una lista de tareas? ¿Las descripciones muestran impacto y resultados?
+3. EXPERIENCIA PROFESIONAL: ¿Se centra en logros cuantificables o son listas de tareas? ¿Las descripciones muestran impacto y resultados?
 
-4. SKILLS: ¿Están alineadas con el área objetivo? ¿Faltan keywords? ¿Están ordenadas estratégicamente?
+4. COMPETENCIAS (SKILLS): ¿Están alineadas con el área objetivo? ¿Faltan keywords? ¿Están ordenadas estratégicamente?
 
-5. EDUCACIÓN: ¿Está bien presentada? ¿Incluye detalles relevantes? ¿Refuerza credibilidad para el mercado objetivo?
+5. FORMACIÓN ACADÉMICA: ¿Está bien presentada? ¿Incluye detalles relevantes (calificaciones, distinciones, programas ejecutivos)?
 
-6. CERTIFICACIONES: ¿Son actuales y relevantes? ¿Faltan certificaciones importantes para este nivel?
+6. CERTIFICACIONES Y LICENCIAS: ¿Están actualizadas? ¿Son relevantes para el campo?
 
-7. RECOMENDACIONES: ¿Existen? ¿Son específicas? ¿Refuerzan autoridad y credibilidad?
+7. PREMIOS Y DISTINCIONES: ¿Están bien destacados? ¿Podrían tener más visibilidad?
 
-8. RED Y ALCANCE: ¿La dimensión y calidad aparente de la red son coherentes con la seniority y objetivos de carrera?
+8. PUBLICACIONES Y PROYECTOS: ¿Demuestran thought leadership? ¿Se están aprovechando?
 
-9. SEO DE LINKEDIN: ¿El perfil está optimizado para aparecer en búsquedas de reclutadores?
+9. RECOMENDACIONES: Cantidad y calidad — ¿son suficientes para el nivel de seniority?
 
-10. POSICIONAMIENTO COMPETITIVO: Comparado con top performers del sector, ¿qué le falta a este perfil para destacar de verdad?
+10. RED Y ALCANCE: Número de seguidores/conexiones, engagement, newsletter — ¿se está aprovechando bien?
 
+11. IDIOMAS: ¿Están completos y con niveles de competencia?
 
-
-IMPORTANTE:
-
-- Usa EXCLUSIVAMENTE los datos reales del perfil proporcionado arriba.
-
-- Si falta información, dilo claramente. NUNCA inventes datos.
-
-- No uses nombres, cargos, empresas, logros o ejemplos ficticios.
-
-- Si mencionas una empresa, cargo, formación o logro, debe existir de forma real en el perfil analizado.
-
-- El nombre del profesional DEBE salir de los datos reales del perfil. Si no aparece, usa "este profesional".
+12. CONSISTENCIA GENERAL: ¿La narrativa del perfil cuenta una historia coherente de progresión profesional? NOTA: experiencias paralelas o simultáneas (ej: emprendedor + empleado, profesor + consultor) son perfectamente normales y NO deben criticarse como inconsistencia.
 
 
 
-DEVUELVE EXCLUSIVAMENTE JSON VÁLIDO con esta estructura exacta:
+BENCHMARKING SECTORIAL:
+
+En base al campo de actuación del profesional, compara el perfil con las mejores prácticas de perfiles de referencia en el mismo sector. Estima en qué percentil se encuentra el perfil (ej: top 30% del sector). Identifica las brechas más significativas respecto a los top performers.
+
+
+
+ANÁLISIS SEO LINKEDIN:
+
+Evalúa la presencia de keywords estratégicas en cada sección del perfil. Identifica keywords primarias (esenciales para el campo), secundarias (complementarias) y keywords ausentes. Sugiere dónde colocar cada keyword para máximo impacto en el algoritmo de LinkedIn.
+
+
+
+REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIO):
+
+- Escribe como un consultor especialista en conversación directa con el profesional — dirígete a él/ella por su nombre de pila.
+
+- Cada campo de texto debe ser un párrafo elaborado, no un bullet point disfrazado de frase.
+
+- Mínimos de palabras: sumario_executivo = 100 palabras; cada analise en dimensoes = 60 palabras; cada analise en scores_seccao = 40 palabras; benchmarking resumo = 80 palabras; cada gap_vs_top = 40 palabras; cada area_melhoria diagnostico+recomendacao = 80 palabras combinados; recomendacao_prioritaria = 80 palabras; analise_formacao y analise_rede = 60 palabras cada uno; recomendacoes_seo = 80 palabras.
+
+- Referencia siempre datos concretos del perfil — cargo, empresa, número de seguidores, certificación, publicación.
+
+- Varía los inicios de frase — evita empezar frases consecutivas con el mismo sujeto.
+
+
+
+OUTPUT OBLIGATORIO (Devolver SOLO en formato JSON válido, sin formato markdown alrededor):
 
 {
+
   "teaser": {
-    "nota_geral": "<entero 1-10 o 1-100, pero consistente con el resto>",
-    "hook_vendas": "2-3 frases. Resume con precisión el principal problema u oportunidad del perfil y por qué merece la pena mejorar ya. Debe ser específico para este profesional."
+
+    "nota_geral": <entero 1-10, no string>,
+
+    "hook_vendas": "2 frases máximo. Frase profesional y específica sobre el potencial no aprovechado de este perfil, referenciando un dato concreto del perfil (cargo actual, empresa, premio específico, número de seguidores, publicación). Suficientemente específico para que el profesional sepa que es sobre él."
+
   },
+
   "analise_completa": {
-    "sumario_executivo": "5-7 frases. Diagnóstico global del perfil, específico y accionable.",
-    "visibilidade_algoritmo": "Alta, Media o Baja",
+
+    "sumario_executivo": "5-7 frases. Resume la evaluación global del perfil dirigiéndose al profesional por su nombre de pila: trayectoria profesional, empleadores actuales y anteriores relevantes, lo que el perfil comunica bien, las 2-3 principales oportunidades de mejora, y una frase de encuadre sobre el potencial del perfil. Específico y personalizado — no puede aplicarse a otro perfil.",
+
+    "visibilidade_algoritmo": "Baja / Media / Alta — seguido de 2-3 frases de justificación basadas en datos concretos del perfil (completitud, actividad, keywords, engagement observado).",
+
     "dimensoes": {
+
       "headline_sumario": {
+
         "score": "<entero 1-10>",
-        "analise": "2-3 frases específicas sobre headline y about."
+
+        "analise": "3-4 frases. Evalúa la headline y sección Acerca de referenciando el contenido real: cita la headline actual, evalúa si es propuesta de valor o solo un cargo, identifica keywords presentes y ausentes, y evalúa el About en cuanto a storytelling, primera persona, CTA y extensión."
+
       },
+
       "experiencia_conteudo": {
+
         "score": "<entero 1-10>",
-        "analise": "2-3 frases específicas sobre experiencia y contenido."
+
+        "analise": "3-4 frases. Evalúa las descripciones de experiencia referenciando funciones y empresas reales del perfil: proporción logros vs tareas, presencia de métricas y resultados cuantificados, verbos de acción, y legibilidad de las descripciones."
+
       },
+
       "formacao_certificacoes": {
+
         "score": "<entero 1-10>",
-        "analise": "2-3 frases específicas sobre formación y certificaciones."
+
+        "analise": "3-4 frases. Evalúa la formación y certificaciones referenciando títulos y certificaciones reales del perfil: nivel académico adecuado para el campo, actualidad de las certificaciones, lo que falta para el nivel de seniority identificado."
+
       },
+
       "rede_alcance": {
+
         "score": "<entero 1-10>",
-        "analise": "2-3 frases específicas sobre red y alcance."
+
+        "analise": "3-4 frases. Evalúa la red y alcance con datos concretos del perfil: número de seguidores/conexiones si está disponible, presencia de newsletter, frecuencia de publicaciones, engagement visible, y calidad aparente de la red para el campo de actuación."
+
       },
+
       "seo_keywords": {
+
         "score": "<entero 1-10>",
-        "analise": "2-3 frases específicas sobre SEO y keywords."
+
+        "analise": "3-4 frases. Evalúa la densidad y estrategia de keywords: qué keywords clave del campo están presentes, en qué secciones, cuáles están completamente ausentes, y cuál es el impacto estimado en la búsqueda de reclutadores."
+
       }
+
     },
+
     "scores_seccao": {
+
       "headline": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa claridad, propuesta de valor, diferenciación y keywords."
+
+        "analise": "3 frases. Cita la headline actual, evalúa: ¿es propuesta de valor o solo un cargo?, ¿contiene keywords estratégicas?, ¿diferencia al profesional en el mercado? Sugiere qué cambiar."
+
       },
+
       "about": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa storytelling, claridad, credibilidad, CTA y SEO."
+
+        "analise": "3 frases. Evalúa la sección Acerca de: storytelling profesional, primera persona, termina con CTA, optimizada para SEO, extensión adecuada (1500-2000 caracteres ideal). Referencia el contenido real si está disponible."
+
       },
+
       "experience": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa estructura, foco en impacto, métricas, resultados y alineación con el objetivo profesional."
+
+        "analise": "3 frases. Evalúa las descripciones de experiencia: proporción logros/tareas, métricas de impacto presentes, verbos de acción fuertes. Referencia cargos y empresas reales del perfil."
+
       },
+
       "skills": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa competencias: alineación con el área objetivo, orden estratégico, keywords faltantes y cantidad."
+
+        "analise": "3 frases. Evalúa las competencias: alineación con el área objetivo, ordenación estratégica (competencias más relevantes primero), keywords faltantes, y cantidad (ideal: 50 competencias con endorsements)."
+
       },
+
       "education": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa la formación: presentación, detalles relevantes y adecuación al nivel de seniority."
+
+        "analise": "3 frases. Evalúa la formación: presentación adecuada, incluye detalles relevantes (calificaciones, actividades, programas ejecutivos), adecuación al nivel de seniority del perfil. Referencia formaciones reales."
+
       },
+
       "certifications": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa actualidad, relevancia y carencias para el mercado."
+
+        "analise": "3 frases. Evalúa las certificaciones: actualidad, relevancia para el campo, lo que falta dado el nivel de seniority y los requisitos del mercado para esta área. Referencia certificaciones reales del perfil."
+
       },
+
       "recommendations": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa cantidad, calidad, especificidad y diversidad de fuentes."
+
+        "analise": "3 frases. Evalúa las recomendaciones: cantidad (benchmark: 5+ para sénior), calidad y especificidad, diversidad de fuentes (pares, superiores, clientes), adecuación al nivel de seniority."
+
       },
+
       "network": {
+
         "score": "<entero 1-10>",
-        "analise": "3 frases. Evalúa dimensión, calidad aparente y aprovechamiento de la red."
+
+        "analise": "3 frases. Evalúa la red: dimensión relativa al tiempo de carrera, calidad aparente (presencia de decisores, líderes del campo), engagement con el contenido, y aprovechamiento de la red para visibilidad."
+
       }
+
     },
+
     "benchmarking": {
-      "setor": "Nombre específico del sector o industria identificado en el perfil",
-      "percentil_estimado": "<entero 1-100 — donde 1=bajo, 100=top del sector>",
-      "resumo": "4-5 frases. Posiciona el perfil frente a los top performers del sector.",
+
+      "setor": "Nombre específico del sector/industria identificado en el perfil",
+
+      "percentil_estimado": "<entero 1-100 — donde 1=bottom, 100=top del sector>",
+
+      "resumo": "4-5 frases. Posiciona el perfil frente a los top performers del sector dirigiéndose al profesional por su nombre: qué tienen los mejores perfiles de esta área que este aún no tiene, dónde este perfil ya es competitivo, y qué lo colocaría en el top 10-20% del sector.",
+
       "gaps_vs_top": [
-        { "area": "Área 1", "gap": "2-3 frases específicas." },
+
+        { "area": "Nombre específico del área (ej: Thought Leadership, Personal Branding Visual)", "gap": "2-3 frases. Describe la brecha concreta frente a los top performers del sector en esta área específica, con ejemplos de lo que los mejores hacen que este perfil no hace." },
+
         { "area": "Área 2", "gap": "2-3 frases específicas." },
-        { "area": "Área 3", "gap": "2-3 frases específicas." }
+
+        { "area": "Área 3", "gap": "2-3 frases específicas." },
+
+        { "area": "Área 4 — opcional", "gap": "2-3 frases específicas." }
+
       ],
+
       "vantagens_competitivas": [
-        "Ventaja competitiva 1 — específica y basada en datos reales.",
-        "Ventaja competitiva 2 — específica.",
-        "Ventaja competitiva 3 — específica."
+
+        "Ventaja competitiva 1 — específica, referenciando datos reales (ej: 'Combinación poco frecuente de experiencia en Big 4 + sector farmacéutico que pocos profesionales de RRHH poseen en este mercado')",
+
+        "Ventaja competitiva 2 — específica",
+
+        "Ventaja competitiva 3 — específica"
+
       ]
+
     },
+
     "seo_linkedin": {
-      "keywords_primarias": ["6-8 keywords esenciales y específicas"],
-      "keywords_secundarias": ["6-8 keywords complementarias"],
-      "keywords_em_falta": ["4-6 keywords importantes que faltan"],
+
+      "keywords_primarias": ["6-8 keywords esenciales para el campo de este profesional — específicas a su área"],
+
+      "keywords_secundarias": ["6-8 keywords complementarias relevantes para el campo"],
+
+      "keywords_em_falta": ["4-6 keywords importantes que NO están en el perfil pero deberían estar dado el cargo y área"],
+
       "keywords_por_seccao": {
-        "headline": ["3-4 keywords recomendadas"],
-        "about": ["4-5 keywords recomendadas"],
-        "experience": ["3-4 keywords recomendadas"],
-        "skills": ["4-6 keywords recomendadas"]
+
+        "headline": ["3-4 keywords recomendadas específicamente para la headline de este profesional"],
+
+        "about": ["4-5 keywords para integrar naturalmente en la sección Acerca de"],
+
+        "experience": ["3-4 keywords para reforzar en las descripciones de experiencia"],
+
+        "skills": ["4-6 keywords para añadir a la lista de competencias"]
+
       },
+
       "densidade_score": "<entero 1-10>",
-      "recomendacoes_seo": "4-5 frases con recomendaciones SEO específicas y accionables."
+
+      "recomendacoes_seo": "4-5 frases con recomendaciones específicas y accionables para mejorar la visibilidad en las búsquedas de reclutadores. Nombra secciones concretas, keywords específicas y dónde colocarlas para máximo impacto en el algoritmo de LinkedIn."
+
     },
+
     "pontos_fortes": [
-      "Punto fuerte 1 — 2 frases específicas y basadas en datos reales.",
-      "Punto fuerte 2 — 2 frases específicas.",
-      "Punto fuerte 3 — 2 frases específicas."
+
+      "Punto fuerte 1 — 2 frases. Específico, referenciando datos reales del perfil (empleador, cargo, logro, certificación, cifra). Explica por qué esto es una ventaja en el mercado.",
+
+      "Punto fuerte 2 — 2 frases. Específico.",
+
+      "Punto fuerte 3 — 2 frases. Específico.",
+
+      "Punto fuerte 4 — 2 frases. Opcional para perfiles sénior."
+
     ],
+
     "areas_melhoria": [
+
       {
-        "area": "Nombre específico del área",
-        "diagnostico": "3-4 frases específicas sobre el problema.",
-        "recomendacao": "3-4 frases específicas sobre qué cambiar y cómo hacerlo."
+
+        "area": "Nombre específico del área (ej: Sección Acerca de, Descripciones de Experiencia en [Empresa X])",
+
+        "diagnostico": "3-4 frases. Diagnóstico detallado y específico del problema, referenciando el contenido actual del perfil. Qué existe, qué falta, y el impacto concreto de este problema en la visibilidad y en las candidaturas.",
+
+        "recomendacao": "3-4 frases. Recomendación concreta y accionable: qué hacer, cómo hacerlo, y un ejemplo específico de cómo quedaría después de la mejora."
+
       },
+
       {
+
         "area": "Área 2",
+
         "diagnostico": "3-4 frases específicas.",
-        "recomendacao": "3-4 frases específicas."
+
+        "recomendacao": "3-4 frases concretas."
+
       },
+
       {
+
         "area": "Área 3",
+
         "diagnostico": "3-4 frases específicas.",
-        "recomendacao": "3-4 frases específicas."
+
+        "recomendacao": "3-4 frases concretas."
+
       }
+
     ],
+
     "headlines_sugeridas": [
-      "Opción 1 — headline completa lista para usar, optimizada para SEO y basada en datos reales del perfil.",
-      "Opción 2 — variante con otro enfoque.",
-      "Opción 3 — variante más diferenciadora."
+
+      "Opción 1 — headline completa lista para usar, optimizada para SEO y con propuesta de valor clara, usando datos reales del perfil (cargo, área, especialización). Máx 220 caracteres.",
+
+      "Opción 2 — variante con énfasis diferente (ej: más enfocada en resultados o en especialización específica). Máx 220 caracteres.",
+
+      "Opción 3 — variante más audaz o diferenciadora. Máx 220 caracteres."
+
     ],
+
     "dicas_seo": ["keyword 1", "keyword 2", "keyword 3", "keyword 4", "keyword 5", "keyword 6", "keyword 7", "keyword 8"],
-    "analise_formacao": "3-4 frases específicas sobre formación y certificaciones reales del perfil.",
-    "analise_rede": "3-4 frases específicas sobre red, alcance y presencia digital.",
-    "recomendacao_prioritaria": "4-5 frases. La mejora más importante y de mayor impacto inmediato para este profesional."
+
+    "analise_formacao": "3-4 frases sobre la formación académica y certificaciones de este profesional específicamente: qué está bien presentado, qué puede mejorar, y qué credenciales adicionales fortalecerían el perfil en su campo de actuación. Referencia formaciones y certificaciones reales del perfil.",
+
+    "analise_rede": "3-4 frases sobre la red, alcance y presencia digital de este profesional: dimensión relativa al nivel de seniority y tiempo de carrera, calidad aparente de la red, actividad de contenido, y cómo aprovechar mejor la red actual para aumentar la visibilidad.",
+
+    "recomendacao_prioritaria": "4-5 frases. El cambio más importante y de mayor impacto inmediato que este profesional debe hacer. Debe ser concreto, accionable, específico de este perfil, y explicar el impacto esperado en los próximos 30-60 días en términos de visibilidad o candidaturas."
+
   }
+
 }
 
 
 
 REGLAS FINALES:
 
-- NUNCA critiques solapamientos de fechas entre experiencias profesionales — es perfectamente normal tener varios cargos a la vez.
+- NUNCA critiques solapamientos de fechas entre experiencias profesionales — es perfectamente normal tener varios cargos a la vez (profesores, médicos, consultores, emprendedores, freelancers, cargos paralelos). Esto NO es una inconsistencia ni un problema.
 
 - NUNCA critiques fechas futuras en experiencias — pueden representar cargos ya confirmados que empiezan pronto.
 
@@ -8194,15 +8340,22 @@ REGLAS FINALES:
 
 - Los "pontos_fortes" deben tener SIEMPRE al menos 3 ítems que reconozcan de forma genuina lo que el perfil hace bien.
 
-- La nota debe reflejar objetivamente la calidad del perfil.
+- La nota debe reflejar objetivamente la calidad del perfil — un perfil con buena experiencia, premios y publicaciones NO debe tener nota baja.
 
-- Los scores de dimensiones y secciones DEBEN variar entre sí — no pueden ser todos iguales ni muy próximos.
+- VARIABILIDAD DE SCORES: Los scores de dimensiones y secciones DEBEN variar entre sí — no pueden ser todos iguales ni muy próximos. Secciones más débiles deben puntuar claramente menos que secciones fuertes.
 
-- Toda la respuesta y todo el análisis deben estar en Español.
+- El campo "dimensoes" DEBE contener objetos con "score" (entero 1-10) y "analise" (texto explicativo de 2-3 frases) para cada dimensión, evaluados independientemente.
 
-- El análisis completo debe aportar valor real al profesional.
+- El campo "scores_seccao" DEBE contener scores independientes para cada sección del perfil LinkedIn (headline, about, experience, skills, education, certifications, recommendations, network), cada uno con "score" (entero 1-10) y "analise" (2-3 frases específicas).
 
-- NUNCA hagas comentarios genéricos que podrían aplicarse a cualquier perfil.`;
+- El campo "benchmarking" DEBE posicionar el perfil frente al sector, con "percentil_estimado" como entero 1-100 (donde 1=bottom, 100=top), brechas concretas vs top performers, y ventajas competitivas.
+
+- El campo "seo_linkedin" DEBE contener keywords primarias, secundarias, ausentes, por sección, y recomendaciones SEO específicas.
+
+- Todo el análisis debe aportar valor real al profesional — algo que justifique la inversión.
+
+- NUNCA hagas comentarios genéricos que podrían aplicarse a cualquier perfil. Cada frase debe ser específica de este profesional.`;
+
 
         const roastPrompt = isEN ? roastPromptEN : isES ? roastPromptES : roastPromptPT;
 
