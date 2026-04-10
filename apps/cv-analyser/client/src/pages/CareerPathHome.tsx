@@ -119,10 +119,10 @@ export default function CareerPathHome() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
-  const localizedCountries = getLocalizedCountries(lang);
   const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [region, setRegion] = useState<string>('');
-  const countryData = localizedCountries.find(c => c.country === country);
+  const countries = getLocalizedCountries(lang);
+  const countryData = countries.find(c => c.country === country);
 
   useEffect(() => {
     setCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -958,7 +958,7 @@ export default function CareerPathHome() {
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
                     <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
-                    {localizedCountries.map(c => (
+                    {countries.map(c => (
                       <option key={c.code} value={c.country}>{c.label}</option>
                     ))}
                   </select>
