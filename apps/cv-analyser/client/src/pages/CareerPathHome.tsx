@@ -18,6 +18,7 @@ import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
+import { pick as modulePick } from "@/i18n/translations";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
@@ -53,20 +54,20 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 const testimonials = [
   {
     name: "Catarina Mendes",
-    role: "Gestora de RH",
-    text: "O Career Path mostrou-me exatamente o que precisava de fazer para chegar a Diretora de RH em 3 anos. O roadmap foi cirúrgico e realista.",
+    role: modulePick("Gestora de RH", "HR Manager", "Gestora de RRHH"),
+    text: modulePick("O Career Path mostrou-me exatamente o que precisava de fazer para chegar a Diretora de RH em 3 anos. O roadmap foi cirúrgico e realista.", "Career Path showed me exactly what I needed to do to become HR Director in 3 years. The roadmap was surgical and realistic.", "Career Path me mostró exactamente lo que necesitaba hacer para llegar a Directora de RRHH en 3 años. El roadmap fue quirúrgico y realista."),
     rating: 5,
   },
   {
     name: "Rui Ferreira",
-    role: "Engenheiro de Software",
-    text: "Estava perdido na minha transição para Product Manager. O plano de carreira identificou os gaps certos e as certificações que realmente importam.",
+    role: modulePick("Engenheiro de Software", "Software Engineer", "Ingeniero de Software"),
+    text: modulePick("Estava perdido na minha transição para Product Manager. O plano de carreira identificou os gaps certos e as certificações que realmente importam.", "I was lost in my transition to Product Manager. The career plan identified the right gaps and the certifications that really matter.", "Estaba perdido en mi transición a Product Manager. El plan de carrera identificó los gaps correctos y las certificaciones que realmente importan."),
     rating: 5,
   },
   {
     name: "Sofia Lopes",
-    role: "Consultora de Estratégia",
-    text: "Nunca pensei que uma IA conseguisse cruzar o meu CV com o LinkedIn e perceber o que me faltava para o próximo nível. Impressionante.",
+    role: modulePick("Consultora de Estratégia", "Strategy Consultant", "Consultora de Estrategia"),
+    text: modulePick("Nunca pensei que uma IA conseguisse cruzar o meu CV com o LinkedIn e perceber o que me faltava para o próximo nível. Impressionante.", "I never thought AI could cross-reference my CV with LinkedIn and understand what I was missing for the next level. Impressive.", "Nunca pensé que una IA pudiera cruzar mi CV con LinkedIn y entender lo que me faltaba para el siguiente nivel. Impresionante."),
     rating: 5,
   },
 ];
@@ -100,7 +101,7 @@ export default function CareerPathHome() {
   const isPT = lang === 'pt';
   const careerPathHeadlines = pick(careerPathHeadlinesPT, careerPathHeadlinesEN, careerPathHeadlinesES);
   const careerPathExampleHref = lang === 'en' ? '/en/career-path/example/' : '/career-path/example/';
-  useEffect(() => { document.title = "Career Path — Roadmap de Carreira com IA | Share2Inspire"; }, []);
+  useEffect(() => { document.title = pick("Career Path — Roadmap de Carreira com IA | Share2Inspire", "Career Path — AI Career Roadmap | Share2Inspire", "Career Path — Roadmap de Carrera con IA | Share2Inspire"); }, []);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
 
@@ -229,11 +230,11 @@ export default function CareerPathHome() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Este código atingiu o limite de utilizações.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(pick('Este código ainda não está ativo.', 'This code is not active yet.', 'Este código aún no está activo.')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ya expiró.')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite de utilizações.', 'This code has reached the usage limit.', 'Este código alcanzó el límite de usos.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError('Este código não é aplicável ao Career Path.'); return; }
+        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError(pick('Este código não é aplicável ao Career Path.', 'This code is not applicable to Career Path.', 'Este código no es aplicable al Career Path.')); return; }
         setDiscountPercent(coupon.discount_percent);
         setDiscountValid(true);
         // If 100% discount, unlock immediately
@@ -257,9 +258,9 @@ export default function CareerPathHome() {
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length > 0) {
         const v = rows[0];
-        if (!v.is_active) { setDiscountError('Este código já foi utilizado'); return; }
-        if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já não tem utilizações disponíveis'); return; }
-        if (v.voucher_type !== 'career_path' && !v.includes_career_path) { setDiscountError('Este código não é válido para o Career Path'); return; }
+        if (!v.is_active) { setDiscountError(pick('Este código já foi utilizado', 'This code has already been used', 'Este código ya fue utilizado')); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já não tem utilizações disponíveis', 'This code has no uses left', 'Este código ya no tiene usos disponibles')); return; }
+        if (v.voucher_type !== 'career_path' && !v.includes_career_path) { setDiscountError(pick('Este código não é válido para o Career Path', 'This code is not valid for Career Path', 'Este código no es válido para Career Path')); return; }
         await fetch(
           `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
           {
@@ -276,9 +277,9 @@ export default function CareerPathHome() {
         return;
       }
 
-      setDiscountError('Código inválido ou expirado');
+      setDiscountError(pick('Código inválido ou expirado', 'Invalid or expired code', 'Código inválido o expirado'));
     } catch {
-      setDiscountError('Erro ao validar código');
+      setDiscountError(pick('Erro ao validar código', 'Error validating code', 'Error al validar código'));
     } finally {
       setDiscountLoading(false);
     }
@@ -287,7 +288,7 @@ export default function CareerPathHome() {
   const handleAnalyze = async () => {
     if (!file) return;
     if (!isValidLinkedinUrl(linkedinUrl)) {
-      setError('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)');
+      setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
     trackAnalysisStart('career_path');
@@ -371,11 +372,11 @@ export default function CareerPathHome() {
       }
 
       if (!response?.ok) {
-        throw new Error('Erro na análise IA. Por favor, tente novamente.');
+        throw new Error(pick('Erro na análise IA. Por favor, tente novamente.', 'Error in AI analysis. Please try again.', 'Error en el análisis IA. Por favor, inténtalo de nuevo.'));
       }
 
       if (!responseData?.success) {
-        throw new Error(responseData?.error || 'Erro na análise IA.');
+        throw new Error(responseData?.error || pick('Erro na análise IA.', 'Error in AI analysis.', 'Error en el análisis IA.'));
       }
 
       const analysisSource = responseData.analysis || responseData;
@@ -419,9 +420,9 @@ export default function CareerPathHome() {
 
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        setError('A análise demorou demasiado. Por favor, tente novamente.');
+        setError(pick('A análise demorou demasiado. Por favor, tente novamente.', 'The analysis took too long. Please try again.', 'El análisis tardó demasiado. Por favor, inténtalo de nuevo.'));
       } else {
-        setError(err.message || 'Erro ao analisar o CV. Por favor, tente novamente.');
+        setError(err.message || pick('Erro ao analisar o CV. Por favor, tente novamente.', 'Error analyzing CV. Please try again.', 'Error al analizar el CV. Por favor, inténtalo de nuevo.'));
       }
       setLoading(false);
     }
@@ -429,10 +430,10 @@ export default function CareerPathHome() {
 
   /* ─── Payment handlers ─── */
   const handleMBWayPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
-    if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
+    if (!phone) { setPaymentError(pick('Introduz o teu número de telemóvel', 'Enter your phone number', 'Introduce tu número de móvil')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
@@ -458,22 +459,22 @@ export default function CareerPathHome() {
       });
 
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
 
       setPaymentStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
       startPolling(orderId);
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
   };
 
   const handlePayPalPayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
     localStorage.setItem('cpPaymentEmail', email);
     trackPaymentStart('career_path', FINAL_PRICE);
@@ -485,9 +486,9 @@ export default function CareerPathHome() {
   };
 
   const handleStripePayment = async () => {
-    if (!email) { setPaymentError('Introduz o teu email'); return; }
+    if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
@@ -515,14 +516,14 @@ export default function CareerPathHome() {
       });
       const data = await response.json();
       if (!data.success || !data.url) {
-        throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+        throw new Error(data.error || pick('Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear sesión de pago'));
       }
       localStorage.setItem('cpOrderId', orderId);
       localStorage.setItem('cpPaymentEmail', email);
       localStorage.setItem('stripeSessionId', data.sessionId);
       redirectToCheckout(data.url);
     } catch (err: any) {
-      setPaymentError(err.message || 'Erro ao processar pagamento');
+      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
     } finally {
       setPaymentLoading(false);
     }
@@ -550,7 +551,7 @@ export default function CareerPathHome() {
           if (consecutiveErrors >= 8) {
             clearInterval(interval);
             setPollingExpired(true);
-            setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".');
+            setPollingMsg(pick('Não foi possível verificar. Usa o botão "Já paguei".', 'Could not verify. Use the "I already paid" button.', 'No se pudo verificar. Usa el botón "Ya pagué".'));
           }
           return;
         }
@@ -568,27 +569,27 @@ export default function CareerPathHome() {
         const elapsed = Date.now() - startTime;
         if (data.expired) {
           if (elapsed < MIN_BEFORE_EXPIRED) {
-            setPollingMsg('A verificar pagamento... Confirma na app MB WAY.');
+            setPollingMsg(pick('A verificar pagamento... Confirma na app MB WAY.', 'Verifying payment... Confirm in the MB WAY app.', 'Verificando pago... Confirma en la app MB WAY.'));
           } else {
             clearInterval(interval);
             setPollingExpired(true);
-            setPollingMsg('O pagamento expirou. Usa o botão abaixo se já pagaste.');
+            setPollingMsg(pick('O pagamento expirou. Usa o botão abaixo se já pagaste.', 'Payment expired. Use the button below if you already paid.', 'El pago expiró. Usa el botón de abajo si ya pagaste.'));
           }
           return;
         }
 
         if (elapsed < 30000) {
-          setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+          setPollingMsg(pick('Confirma o pagamento na app MB WAY do teu telemóvel...', 'Confirm the payment in the MB WAY app on your phone...', 'Confirma el pago en la app MB WAY de tu móvil...'));
         } else if (elapsed < 60000) {
-          setPollingMsg('Ainda a aguardar... Verifica a app MB WAY.');
+          setPollingMsg(pick('Ainda a aguardar... Verifica a app MB WAY.', 'Still waiting... Check the MB WAY app.', 'Todavía esperando... Revisa la app MB WAY.'));
         } else {
-          setPollingMsg('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+          setPollingMsg(pick('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.', 'Waiting for confirmation... If you already approved, wait a few more seconds.', 'Esperando confirmación... Si ya aprobaste, espera unos segundos más.'));
         }
 
         if (attempts >= maxAttempts) {
           clearInterval(interval);
           setPollingExpired(true);
-          setPollingMsg('Tempo esgotado. Se já pagaste, usa o botão abaixo.');
+          setPollingMsg(pick('Tempo esgotado. Se já pagaste, usa o botão abaixo.', 'Time expired. If you already paid, use the button below.', 'Tiempo agotado. Si ya pagaste, usa el botón de abajo.'));
         }
       } catch { consecutiveErrors++; }
     }, 5000);
@@ -596,7 +597,7 @@ export default function CareerPathHome() {
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar pagamento...');
+    setPollingMsg(pick('A verificar pagamento...', 'Verifying payment...', 'Verificando pago...'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
@@ -611,12 +612,12 @@ export default function CareerPathHome() {
         setTimeout(() => { setLocation('/results'); }, 400);
       } else {
         setPollingExpired(true);
-        setPollingMsg('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
+        setPollingMsg(pick('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.', 'Payment not yet confirmed. Wait a few seconds and try again.', 'Pago aún no confirmado. Espera unos segundos e inténtalo de nuevo.'));
         startPolling(currentOrderId);
       }
     } catch {
       setPollingExpired(true);
-      setPollingMsg('Erro ao verificar. Tenta novamente em alguns segundos.');
+      setPollingMsg(pick('Erro ao verificar. Tenta novamente em alguns segundos.', 'Error verifying. Try again in a few seconds.', 'Error al verificar. Inténtalo de nuevo en unos segundos.'));
     }
   };
 
@@ -845,7 +846,7 @@ export default function CareerPathHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">{pick('Começa pelo diagnóstico. A decisão vem depois.', 'Start with the diagnosis. The decision comes later.', 'Empieza por el diagnóstico. La decisión viene después.')}</h2>
-              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
+              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">({pick('desconto de membro', 'member discount', 'descuento de miembro')} {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
@@ -949,7 +950,7 @@ export default function CareerPathHome() {
 
               {/* País e Região */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
+                <p className="text-sm font-medium">4. {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span></p>
                 <div className="grid grid-cols-1 gap-3">
                   <select
                     value={country}
@@ -967,7 +968,7 @@ export default function CareerPathHome() {
                       onChange={(e) => setRegion(e.target.value)}
                       className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                     >
-                      <option value="">Selecciona a região (opcional)...</option>
+                      <option value="">{pick('Selecciona a região (opcional)...', 'Select region (optional)...', 'Selecciona la región (opcional)...')}</option>
                       {countryData.regions.map(r => (
                         <option key={r.value} value={r.value}>{r.label}</option>
                       ))}
@@ -999,11 +1000,11 @@ export default function CareerPathHome() {
                   className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]"
                 />
                 <label htmlFor="cp-terms" className="text-sm text-muted-foreground cursor-pointer">
-                  Concordo com a{" "}
+                  {pick('Concordo com a', 'I agree with the', 'Acepto la')}{" "}
                   <a href="https://www.share2inspire.pt/pages/politica-privacidade.html" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
-                    Política de Privacidade
+                    {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
                   </a>{" "}
-                  e autorizo o processamento dos meus dados para análise de carreira.
+                  {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para análisis de carrera.')}
                 </label>
               </div>
 
@@ -1057,10 +1058,10 @@ export default function CareerPathHome() {
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Análise concluída
+                {pick('Análise concluída', 'Analysis completed', 'Análisis completado')}
               </div>
-              <h2 className="text-xl font-bold text-foreground">O teu perfil percebido pela IA</h2>
-              <p className="text-sm text-muted-foreground">Isto é o que os recrutadores vêem quando analisam o teu CV</p>
+              <h2 className="text-xl font-bold text-foreground">{pick('O teu perfil percebido pela IA', 'Your profile as perceived by AI', 'Tu perfil percibido por la IA')}</h2>
+              <p className="text-sm text-muted-foreground">{pick('Isto é o que os recrutadores vêem quando analisam o teu CV', 'This is what recruiters see when they analyse your CV', 'Esto es lo que los reclutadores ven cuando analizan tu CV')}</p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
@@ -1073,18 +1074,18 @@ export default function CareerPathHome() {
               {/* Seniority & Experience */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
-                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">SENIORIDADE</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">{pick('SENIORIDADE', 'SENIORITY', 'SENIORIDAD')}</p>
                   <p className="text-sm font-bold text-foreground">{previewData.seniority}</p>
                 </div>
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
-                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">EXPERIÊNCIA</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">{pick('EXPERIÊNCIA', 'EXPERIENCE', 'EXPERIENCIA')}</p>
                   <p className="text-sm font-bold text-foreground">{previewData.experience}</p>
                 </div>
               </div>
 
               {/* Top Skills */}
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">TOP COMPETÊNCIAS DETETADAS</p>
+                <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">{pick('TOP COMPETÊNCIAS DETETADAS', 'TOP DETECTED SKILLS', 'TOP COMPETENCIAS DETECTADAS')}</p>
                 <div className="flex flex-wrap gap-2">
                   {previewData.skills.map((skill: string, i: number) => (
                     <span key={i} className="text-xs font-medium bg-[#C9A961]/10 text-[#C9A961] px-3 py-1 rounded-full border border-[#C9A961]/20">{skill}</span>
@@ -1095,9 +1096,9 @@ export default function CareerPathHome() {
               {/* Next Role - the hook */}
               {previewData.nextRole && (
                 <div className="p-4 bg-gradient-to-r from-[#C9A961]/5 to-[#C9A961]/10 rounded-xl border border-[#C9A961]/20">
-                  <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">PRÓXIMO PASSO DE CARREIRA MAIS PROVÁVEL</p>
+                  <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">{pick('PRÓXIMO PASSO DE CARREIRA MAIS PROVÁVEL', 'MOST LIKELY NEXT CAREER STEP', 'PRÓXIMO PASO DE CARRERA MÁS PROBABLE')}</p>
                   <p className="text-base font-bold text-foreground">{previewData.nextRole}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Descobre o roadmap completo para lá chegar ↓</p>
+                  <p className="text-xs text-muted-foreground mt-1">{pick('Descobre o roadmap completo para lá chegar ↓', 'Discover the complete roadmap to get there ↓', 'Descubre el roadmap completo para llegar allí ↓')}</p>
                 </div>
               )}
             </div>
@@ -1106,7 +1107,7 @@ export default function CareerPathHome() {
             <div className="relative bg-card border border-border rounded-2xl p-6 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/60 to-white z-10" />
               <div className="filter blur-sm select-none">
-                <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">ROADMAP DE CARREIRA A 5 ANOS</p>
+                <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">{pick('ROADMAP DE CARREIRA A 5 ANOS', '5-YEAR CAREER ROADMAP', 'ROADMAP DE CARRERA A 5 AÑOS')}</p>
                 <div className="space-y-2">
                   <div className="h-4 bg-muted rounded w-3/4" />
                   <div className="h-4 bg-muted rounded w-1/2" />
@@ -1118,7 +1119,7 @@ export default function CareerPathHome() {
               <div className="absolute inset-0 flex items-center justify-center z-20">
                 <div className="text-center">
                   <Lock className="w-6 h-6 text-[#C9A961] mx-auto mb-2" />
-                  <p className="text-sm font-semibold text-foreground">Roadmap completo bloqueado</p>
+                  <p className="text-sm font-semibold text-foreground">{pick('Roadmap completo bloqueado', 'Full roadmap locked', 'Roadmap completo bloqueado')}</p>
                 </div>
               </div>
             </div>
@@ -1134,14 +1135,14 @@ export default function CareerPathHome() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Desbloquear Career Path — {PRICE}€
+                {pick(`Desbloquear Career Path — ${CUR}${PRICE}`, `Unlock Career Path — ${CUR}${PRICE}`, `Desbloquear Career Path — ${CUR}${PRICE}`)}
               </Button>
-              <p className="text-center text-[10px] text-muted-foreground">Roadmap personalizado · Formações recomendadas · Próximos cargos · Estratégia de networking</p>
+              <p className="text-center text-[10px] text-muted-foreground">{pick('Roadmap personalizado · Formações recomendadas · Próximos cargos · Estratégia de networking', 'Personalised roadmap · Recommended training · Next roles · Networking strategy', 'Roadmap personalizado · Formaciones recomendadas · Próximos cargos · Estrategia de networking')}</p>
               <button
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
               >
-                ← Voltar
+                {pick('← Voltar', '← Back', '← Volver')}
               </button>
             </div>
           </div>
@@ -1211,7 +1212,7 @@ export default function CareerPathHome() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
+                  placeholder={pick('seu@email.com', 'your@email.com', 'tu@email.com')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>
@@ -1314,7 +1315,7 @@ export default function CareerPathHome() {
               )}
               <p className="text-sm font-semibold text-foreground">{pollingMsg}</p>
               {!pollingExpired && (
-                <p className="text-xs text-muted-foreground">A aguardar confirmação do pagamento...</p>
+                <p className="text-xs text-muted-foreground">{pick('A aguardar confirmação do pagamento...', 'Waiting for payment confirmation...', 'Esperando confirmación del pago...')}</p>
               )}
               {pollingExpired && (
                 <Button
