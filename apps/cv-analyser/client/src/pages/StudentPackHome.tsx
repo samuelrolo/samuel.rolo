@@ -106,10 +106,10 @@ export default function StudentPackHome() {
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const localizedCountries = getLocalizedCountries(lang);
   const [selectedCountry, setSelectedCountry] = useState(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState("");
-  const countryData = localizedCountries.find(c => c.country === selectedCountry);
+  const countries = getLocalizedCountries(lang);
+  const countryData = countries.find(c => c.country === selectedCountry);
 
   useEffect(() => {
     setSelectedCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -637,7 +637,7 @@ export default function StudentPackHome() {
               <label className="block text-sm font-semibold text-slate-700"><Globe className="w-4 h-4 inline mr-1 text-emerald-600" /> {pick("País", "Country", "País")} <span className="text-slate-400 font-normal text-xs">({pick("para dados salariais", "for salary data", "para datos salariales")})</span></label>
               <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
                 <option value="">{pick("Selecciona o teu país...", "Select your country...", "Selecciona tu país...")}</option>
-                {localizedCountries.map(c => (<option key={c.code} value={c.country}>{c.label}</option>))}
+                {countries.map(c => (<option key={c.code} value={c.country}>{c.label}</option>))}
               </select>
               {countryData && countryData.regions.length > 1 && (
                 <select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
