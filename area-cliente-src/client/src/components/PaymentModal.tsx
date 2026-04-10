@@ -9,7 +9,7 @@
  * Backend: share2inspire-beckend.lm.r.appspot.com
  */
 import { useState, useEffect, useCallback } from 'react';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, type Lang } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import {
@@ -39,6 +39,12 @@ const planDurations: Record<PeriodKey, number> = {
 
 function formatPrice(price: number) {
   return price.toFixed(2).replace('.', ',') + ' €';
+}
+
+function pick(lang: Lang, pt: string, en: string, es: string): string {
+  if (lang === 'pt') return pt;
+  if (lang === 'es') return es;
+  return en;
 }
 
 /** Extract the period from a plan string like "essential_monthly" or just "monthly" */
@@ -128,7 +134,7 @@ type Props = {
 };
 
 export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { user, profile, refreshProfile } = useAuth();
   const [step, setStep] = useState<Step>('select');
   const [name, setName] = useState('');
@@ -204,12 +210,12 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Este código atingiu o limite de utilizações.'); return; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(pick(lang, 'Este código ainda não está ativo.', 'This code is not active yet.', 'Este código aún no está activo.')); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick(lang, 'Este código já expirou.', 'This code has already expired.', 'Este código ya ha expirado.')); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick(lang, 'Este código atingiu o limite de utilizações.', 'This code has reached its usage limit.', 'Este código ha alcanzado el límite de usos.')); return; }
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('subscription')) {
-          setDiscountError('Este código não é aplicável a subscrições.');
+          setDiscountError(pick(lang, 'Este código não é aplicável a subscrições.', 'This code does not apply to subscriptions.', 'Este código no es aplicable a suscripciones.'));
           return;
         }
         setDiscountPercent(coupon.discount_percent);
@@ -234,10 +240,10 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
       const rows = await vRes.json();
       if (Array.isArray(rows) && rows.length > 0) {
         const v = rows[0];
-        if (!v.is_active) { setDiscountError('Este código já foi utilizado'); return; }
-        if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já não tem utilizações disponíveis'); return; }
+        if (!v.is_active) { setDiscountError(pick(lang, 'Este código já foi utilizado', 'This code has already been used', 'Este código ya ha sido utilizado')); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError(pick(lang, 'Este código já não tem utilizações disponíveis', 'This code no longer has available uses', 'Este código ya no tiene usos disponibles')); return; }
         if (v.voucher_type !== 'subscription' && !v.includes_subscription) {
-          setDiscountError('Este código não é válido para subscrições');
+          setDiscountError(pick(lang, 'Este código não é válido para subscrições', 'This code is not valid for subscriptions', 'Este código no es válido para suscripciones'));
           return;
         }
         // Mark voucher as used
@@ -255,9 +261,9 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
         setStep('success');
         return;
       }
-      setDiscountError('Código inválido ou expirado');
+      setDiscountError(pick(lang, 'Código inválido ou expirado', 'Invalid or expired code', 'Código inválido o caducado'));
     } catch {
-      setDiscountError('Erro ao validar código');
+      setDiscountError(pick(lang, 'Erro ao validar código', 'Error validating code', 'Error al validar el código'));
     } finally {
       setDiscountLoading(false);
     }
@@ -265,7 +271,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
 
   // ── Stripe Checkout ──────────────────────────────────────
   async function handleStripe() {
-    if (!email) { setError('Introduz o teu email'); return; }
+    if (!email) { setError(pick(lang, 'Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
     setStep('processing');
     setError('');
     trackFbq('AddPaymentInfo');
@@ -287,7 +293,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
         }),
       });
       const data = await res.json();
-      if (!data.success || !data.url) throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+      if (!data.success || !data.url) throw new Error(data.error || pick(lang, 'Erro ao criar sessão de pagamento', 'Error creating payment session', 'Error al crear la sesión de pago'));
       sessionStorage.setItem('s2iSubOrderId', oid);
       sessionStorage.setItem('s2iSubPlan', planStr);
       sessionStorage.setItem('s2iSubEmail', email);
@@ -357,7 +363,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="email@exemplo.com"
+                  placeholder={pick(lang, 'email@exemplo.com', 'email@example.com', 'email@ejemplo.com')}
                   className="w-full px-3 py-2.5 text-sm border border-[#e5e5e5] rounded bg-white text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#C9A961]/40"
                 />
               </div>
@@ -367,7 +373,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 {discountApplied && discountPercent > 0 ? (
                   <div className="flex items-center gap-2 text-green-600 text-xs bg-green-50 border border-green-200 rounded px-3 py-2">
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span>Cupão <strong>{discountCode.toUpperCase()}</strong> aplicado — {discountPercent}% desconto</span>
+                    <span>{pick(lang, 'Cupão', 'Coupon', 'Cupón')} <strong>{discountCode.toUpperCase()}</strong> {pick(lang, 'aplicado', 'applied', 'aplicado')} — {discountPercent}% {pick(lang, 'desconto', 'discount', 'descuento')}</span>
                     <button
                       onClick={() => { setDiscountApplied(false); setDiscountValid(false); setDiscountPercent(0); setDiscountCode(''); }}
                       className="ml-auto text-[#aaa] hover:text-red-400 transition-colors"
@@ -378,7 +384,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 ) : (
                   <div>
                     <p className="text-[10px] text-[#aaa] uppercase tracking-wider mb-2 flex items-center gap-1">
-                      <Tag className="w-3 h-3" /> Código de desconto
+                      <Tag className="w-3 h-3" /> {pick(lang, 'Código de desconto', 'Discount code', 'Código de descuento')}
                     </p>
                     <div className="flex gap-2">
                       <input
@@ -386,7 +392,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                         value={discountCode}
                         onChange={e => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); }}
                         onKeyDown={e => e.key === 'Enter' && handleDiscountValidate()}
-                        placeholder="CÓDIGO"
+                        placeholder={pick(lang, 'CÓDIGO', 'CODE', 'CÓDIGO')}
                         className="flex-1 px-3 py-2 text-xs border border-[#e5e5e5] rounded bg-white text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#C9A961]/40 uppercase"
                       />
                       <button
@@ -394,7 +400,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                         disabled={discountLoading || !discountCode.trim() || discountValid}
                         className="px-4 py-2 text-xs font-medium bg-[#1a1a1a] text-white rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
                       >
-                        {discountLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : discountValid ? <Check className="w-3 h-3 text-green-400" /> : 'Aplicar'}
+                        {discountLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : discountValid ? <Check className="w-3 h-3 text-green-400" /> : pick(lang, 'Aplicar', 'Apply', 'Aplicar')}
                       </button>
                     </div>
                     {discountError && (
@@ -427,10 +433,10 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
               {/* Trust signals */}
               <div className="text-center space-y-1 pt-1">
                 <p className="text-[10px] text-[#aaa] font-light flex items-center justify-center gap-1">
-                  <span>✓</span> Pagamento seguro via Stripe
+                  <span>✓</span> {pick(lang, 'Pagamento seguro via Stripe', 'Secure payment via Stripe', 'Pago seguro vía Stripe')}
                 </p>
                 <p className="text-[10px] text-[#aaa] font-light flex items-center justify-center gap-1">
-                  <span>✓</span> Renovação automática · Cancela quando quiseres
+                  <span>✓</span> {pick(lang, 'Renovação automática · Cancela quando quiseres', 'Automatic renewal · Cancel whenever you want', 'Renovación automática · Cancela cuando quieras')}
                 </p>
               </div>
             </div>
@@ -473,7 +479,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 <AlertCircle className="w-7 h-7 text-red-400" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">Erro no pagamento</p>
+                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">{pick(lang, 'Erro no pagamento', 'Payment error', 'Error en el pago')}</p>
                 <p className="text-xs text-red-400/80 font-light leading-relaxed max-w-xs mx-auto">
                   {error || t('pay.errorGeneric')}
                 </p>
@@ -482,7 +488,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 onClick={() => { setStep('select'); setError(''); }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#ddd] text-[#555] text-sm font-light rounded hover:border-[#C9A961]/30 hover:text-[#1a1a1a] transition-all duration-300"
               >
-                Tentar novamente
+                {pick(lang, 'Tentar novamente', 'Try again', 'Intentar de nuevo')}
               </button>
             </div>
           )}
