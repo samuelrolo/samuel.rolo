@@ -552,6 +552,14 @@
     {
       "source": "/es/pages/services",
       "destination": "/es/pages/services"
+    },
+    {
+      "source": "/en/share2inspire",
+      "destination": "/pages/share2inspire.html"
+    },
+    {
+      "source": "/es/share2inspire",
+      "destination": "/pages/share2inspire.html"
     }
   ]
 }
