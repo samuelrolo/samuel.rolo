@@ -160,10 +160,10 @@ export default function CareerIntelligenceHome() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
-  const localizedCountries = getLocalizedCountries(lang);
   const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [region, setRegion] = useState<string>('');
-  const countryData = localizedCountries.find(c => c.country === country);
+  const countries = getLocalizedCountries(lang);
+  const countryData = countries.find(c => c.country === country);
 
   useEffect(() => {
     setCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -983,18 +983,18 @@ export default function CareerIntelligenceHome() {
               {/* País e Região */}
               <div className="space-y-3">
                 <p className="text-sm font-medium">{pick('4. País e região', '4. Country and region', '4. País y región')} <span className="text-red-500">*</span></p>
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <select
                     value={country}
                     onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
                     <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
-                    {localizedCountries.map(c => (
+                    {countries.map(c => (
                       <option key={c.code} value={c.country}>{c.label}</option>
                     ))}
                   </select>
-                  {countryData && countryData.regions.length > 1 && (
+                  {countryData && countryData.regions.length > 0 && (
                     <select
                       value={region}
                       onChange={(e) => setRegion(e.target.value)}
