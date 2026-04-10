@@ -12,7 +12,7 @@ import { trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { useCurrency } from "@/hooks/useCurrency";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { countries } from "./countries";
+import { getLocalizedCountries } from "@/data/countries";
 import S2IFooterEN from "@/components/S2IFooterEN";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../../lib/webviewPayment';
@@ -59,7 +59,8 @@ export default function StudentPackHomeEN() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
-  const countryData = countries.find(c => c.country === selectedCountry);
+  const localizedCountries = getLocalizedCountries('en');
+  const countryData = localizedCountries.find(c => c.country === selectedCountry);
   const [step, setStep] = useState<'hero' | 'upload' | 'payment' | 'analyzing' | 'done'>('hero');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal'>('stripe');
@@ -347,8 +348,8 @@ export default function StudentPackHomeEN() {
             <div><label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> Email</label><input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" /></div>
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-700"><Globe className="w-4 h-4 inline mr-1 text-emerald-600" /> Country</label>
-              <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700"><option value="">Select your country...</option>{countries.map(c => <option key={c.code} value={c.country}>{c.country}</option>)}</select>
-              {countryData && countryData.regions.length > 1 && (<select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700"><option value="">Select region (optional)...</option>{countryData.regions.map(r => <option key={r} value={r}>{r}</option>)}</select>)}
+              <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700"><option value="">Select your country...</option>{localizedCountries.map(c => <option key={c.code} value={c.country}>{c.label}</option>)}</select>
+              {countryData && countryData.regions.length > 1 && (<select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700"><option value="">Select region (optional)...</option>{countryData.regions.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select>)}
             </div>
             <label className="flex items-start gap-3 cursor-pointer"><input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" /><span className="text-xs text-slate-500">I accept the <a href="/en/pages/privacy-policy" target="_blank" className="text-emerald-600 underline">Privacy Policy</a> and <a href="/termos-condicoes" target="_blank" className="text-emerald-600 underline">Terms & Conditions</a>.</span></label>
             {error && <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>}
