@@ -14,7 +14,11 @@ import { Menu, X, User, LogOut, Globe, CreditCard, Home, Users } from 'lucide-re
 
 /* Helper: cycle to the next language */
 const LANGS: Lang[] = ['pt', 'en', 'es'];
-const LANG_LABELS: Record<Lang, string> = { pt: 'Português', en: 'English', es: 'Español' };
+const LANG_LABELS: Record<Lang, string> = {
+  pt: 'Português',
+  en: pick('Inglês', 'English', 'Inglés'),
+  es: pick('Espanhol', 'Spanish', 'Español'),
+};
 const LANG_SHORT: Record<Lang, string> = { pt: 'PT', en: 'EN', es: 'ES' };
 
 /* Helper: pick a value based on the current language */
@@ -79,25 +83,25 @@ export default function Header() {
             href="/cv-analyser"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
           >
-            CV Analyser
+            {pick(lang, 'CV Analyser', 'CV Analyser', 'CV Analyser')}
           </a>
           <a
             href="/career-path"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
           >
-            Career Path
+            {pick(lang, 'Career Path', 'Career Path', 'Career Path')}
           </a>
           <a
             href="/career-intelligence"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
           >
-            Career Intelligence
+            {pick(lang, 'Career Intelligence', 'Career Intelligence', 'Career Intelligence')}
           </a>
           <a
             href="/linkedin-roaster"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] xl:text-[12px] font-light tracking-wide transition-all duration-300 text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]"
           >
-            LinkedIn Roaster
+            {pick(lang, 'LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}
           </a>
           <a
             href="/estudante"
@@ -225,10 +229,10 @@ export default function Header() {
             <a href="https://share2inspire.pt" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
               {pick(lang, 'Início', 'Home', 'Inicio')}
             </a>
-            <a href="/cv-analyser" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">CV Analyser</a>
-            <a href="/career-path" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">Career Path</a>
-            <a href="/career-intelligence" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">Career Intelligence</a>
-            <a href="/linkedin-roaster" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">LinkedIn Roaster</a>
+            <a href="/cv-analyser" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">{pick(lang, 'CV Analyser', 'CV Analyser', 'CV Analyser')}</a>
+            <a href="/career-path" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">{pick(lang, 'Career Path', 'Career Path', 'Career Path')}</a>
+            <a href="/career-intelligence" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">{pick(lang, 'Career Intelligence', 'Career Intelligence', 'Career Intelligence')}</a>
+            <a href="/linkedin-roaster" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">{pick(lang, 'LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}</a>
             <a href="/estudante" className="px-3 py-2 text-sm text-[#555] hover:bg-[#f0f0ef] rounded-md transition-all">
               {pick(lang, 'Pack Estudante', 'Student Pack', 'Pack Estudiante')}
             </a>
