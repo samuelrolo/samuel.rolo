@@ -177,7 +177,8 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
 // ════════════════════════════════════════
 export default function LinkedInRoasterResults() {
   const [, setLocation] = useLocation();
-  const isEN = window.location.pathname.includes('/en/');
+  const lang = getLang();
+  const isEN = lang === 'en';
   useEffect(() => { document.title = t('resultados_linkedin_roaster_share2inspire'); }, [isEN]);
 
   // Load from sessionStorage
@@ -188,7 +189,7 @@ export default function LinkedInRoasterResults() {
   const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true';
 
   useEffect(() => {
-    if (!isPaid) { window.location.href = '/linkedin-roaster'; }
+    if (!isPaid) { window.location.href = lang === 'en' ? '/en/linkedin-roaster' : lang === 'es' ? '/es/linkedin-roaster' : '/linkedin-roaster'; }
   }, [isPaid]);
 
   // Extract teaser & analysis
@@ -232,7 +233,7 @@ export default function LinkedInRoasterResults() {
           <button 
             onClick={() => { 
                 clearSensitiveData(); 
-                window.location.href = t('linkedinroaster'); 
+                window.location.href = lang === 'en' ? '/en/linkedin-roaster' : lang === 'es' ? '/es/linkedin-roaster' : '/linkedin-roaster';
             }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-sm font-medium text-orange-700 transition-colors"
           >
