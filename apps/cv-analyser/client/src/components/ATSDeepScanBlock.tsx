@@ -298,7 +298,6 @@ const ATSDeepScanBlock = ({ data, isPaid = false, onUnlock }: ATSDeepScanBlockPr
           </div>
         </div>
       ) : (
-        /* ── FREE TEASER ── */
         <div className="relative">
           {/* Blurred preview content */}
           <div className="p-4 sm:p-6 space-y-4 pointer-events-none select-none" style={{ filter: 'blur(4px)', opacity: 0.4 }}>
@@ -327,8 +326,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, onUnlock }: ATSDeepScanBlockPr
             <Lock className="w-8 h-8 text-[#C9A961] mb-3" />
             <p className="text-sm font-semibold text-foreground mb-1">{t('ats_deep_scan')}</p>
             <p className="text-xs text-muted-foreground text-center max-w-xs mb-4 px-4">
-              {t('desbloqueia_a_anlise_completa_de')
-              }
+              {t('desbloqueia_a_anlise_completa_de')}
             </p>
             <ul className="text-xs text-muted-foreground space-y-1.5 mb-4">
               <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#C9A961]" /> {pick(`${data.keywords.length} keywords analisadas`, `${data.keywords.length} keywords analysed`, `${data.keywords.length} palabras clave analizadas`)}</li>
