@@ -412,7 +412,7 @@ export default function CareerIntelligenceResults() {
   };
 
   // ─── Payment handlers ───
-  const CI_PRICE = lang === 'en' ? 49 : 49;
+  const CI_PRICE = getLang() === 'en' ? 49 : 49;
   const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `$${CI_PRICE}`, `${CI_PRICE}€`);
 
   const openPaymentModal = () => {
@@ -1115,8 +1115,9 @@ export default function CareerIntelligenceResults() {
                 );
               };
 
-              const generateCertImage = () => {
-                const canvas = document.createElement('canvas');
+          const generateCertImage = () => {
+            const lang = getLang();
+            const canvas = document.createElement('canvas');
                 canvas.width = 1200;
                 canvas.height = 630;
                 const ctx = canvas.getContext('2d')!;
