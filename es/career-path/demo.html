@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Path — Informe Completo | Demo</title>
+<link rel="canonical" href="https://www.share2inspire.pt/es/career-path/demo" />
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+--gold: #B8973A;
+--gold-light: #D4AF55;
+--gold-pale: #F5EDD0;
+--green: #2E7D52;
+--green-light: #E8F5EE;
+--orange: #C4530A;
+--orange-light: #FEF0E6;
+--red: #B91C1C;
+--red-light: #FEE2E2;
+--gray-50: #FAFAFA;
+--gray-100: #F4F4F5;
+--gray-200: #E4E4E7;
+--gray-300: #D1D1D6;
+--gray-400: #A0A0AB;
+--gray-600: #52525B;
+--gray-700: #3F3F46;
+--gray-800: #27272A;
+--gray-900: #18181B;
+--white: #FFFFFF;
+--radius: 12px;
+--shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: 'DM Sans', sans-serif;
+background: var(--gray-50);
+color: var(--gray-800);
+font-size: 14px;
+line-height: 1.6;
+}
+.topnav {
+background: var(--white);
+border-bottom: 1px solid var(--gray-200);
+padding: 12px 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 10;
+}
+.topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
+.topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+.topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+.topnav-brand svg { color: var(--gold); }
+.topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+.report-header { margin-bottom: 24px; }
+.report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+.report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+.card {
+background: var(--white);
+border: 1px solid var(--gray-200);
+border-radius: var(--radius);
+padding: 24px;
+margin-bottom: 16px;
+box-shadow: var(--shadow);
+}
+.section-label {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.section-label.orange { color: var(--orange); }
+.section-label.gold { color: var(--gold); }
+.section-label.green { color: var(--green); }
+.section-label.gray { color: var(--gray-600); }
+.ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+.ats-score-big span { font-size: 18px; color: var(--gray-400); }
+.badge {
+display: inline-block;
+padding: 3px 10px;
+border-radius: 99px;
+font-size: 12px;
+font-weight: 600;
+}
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-orange { background: var(--orange-light); color: var(--orange); }
+.badge-gray { background: var(--gray-100); color: var(--gray-600); }
+.ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+.warn-item {
+display: flex; gap: 8px; align-items: flex-start;
+background: var(--orange-light);
+border-left: 3px solid var(--orange);
+border-radius: 6px;
+padding: 10px 12px;
+font-size: 13px;
+color: var(--orange);
+margin-bottom: 8px;
+}
+.warn-item svg { flex-shrink: 0; margin-top: 2px; }
+.ats-compat-grid {
+display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+}
+.ats-compat-row {
+display: flex; justify-content: space-between; align-items: center;
+padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
+border: 1px solid var(--gray-200);
+}
+.ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
+.ats-compat-row .boa { color: var(--green); font-weight: 600; }
+.ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
+.howto-list { list-style: none; margin-top: 12px; }
+.howto-list li {
+display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
+padding: 5px 0;
+}
+.howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
+.issue-item { margin-bottom: 20px; }
+.issue-num {
+display: inline-flex; align-items: center; justify-content: center;
+width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+}
+.issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+.issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+.issue-section-label {
+font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+}
+.issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+.code-block {
+background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
+padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
+color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+}
+.suggestion-block {
+background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+line-height: 1.6;
+}
+hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+.quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.quadrant-cell {
+border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+}
+.quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
+.quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
+.donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+.donut-container svg { transform: rotate(-90deg); }
+.donut-val {
+position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+font-size: 22px; font-weight: 700; color: var(--gray-900);
+}
+.benchmark-tag { font-size: 11px; color: var(--gray-400); }
+.benchmark-tag span { color: var(--green); font-weight: 600; }
+.factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+.factor-sub { font-size: 11px; color: var(--gray-400); }
+.factor-bar-wrap { flex: 1; position: relative; }
+.factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+.factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+.factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+.tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.tag {
+padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
+color: var(--gold); font-size: 12px; font-weight: 600;
+border: 1px solid #E2C96A;
+}
+.profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
+.profile-line strong { color: var(--gray-900); }
+.attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
+.attention-list li {
+counter-increment: attn; display: flex; gap: 10px;
+font-size: 13px; color: var(--gray-600); padding: 6px 0;
+border-bottom: 1px solid var(--gray-100);
+}
+.attention-list li::before {
+content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
+width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
+color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+.message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+.salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
+.salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.salary-cell .amount.highlight { color: var(--gold); }
+.salary-cell .period { font-size: 10px; color: var(--gray-400); }
+.benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
+.benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+.salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+.market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
+.market-stat { text-align: center; }
+.market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+.market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+.market-stat .val.accent { color: var(--gold); }
+.bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+.market-items { margin-top: 12px; }
+.market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+.market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+.risk-bar-wrap { margin: 16px 0; }
+.risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+.risk-bar-bg { height: 12px; background: var(--gray-100); border-radius: 99px; overflow: hidden; border: 1px solid var(--gray-200); }
+.risk-bar-fill { height: 100%; border-radius: 99px; }
+.risk-desc { font-size: 13px; color: var(--gray-600); margin-top: 12px; }
+.matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.matrix-cell { border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; }
+.matrix-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; }
+.matrix-list { list-style: none; }
+.matrix-list li { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 8px; }
+.matrix-list li::before { content: '•'; color: var(--gold); font-weight: 700; }
+.action-item { margin-bottom: 16px; }
+.action-title { font-weight: 600; color: var(--gray-900); font-size: 14px; margin-bottom: 4px; }
+.action-desc { font-size: 13px; color: var(--gray-600); }
+.timeline-list { list-style: none; position: relative; padding-left: 20px; }
+.timeline-list::before { content: ''; position: absolute; left: 4px; top: 8px; bottom: 8px; width: 2px; background: var(--gray-200); }
+.timeline-item { position: relative; margin-bottom: 16px; }
+.timeline-dot { position: absolute; left: -16px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); border: 2px solid var(--white); }
+.timeline-title { font-weight: 600; color: var(--gray-800); font-size: 13px; }
+.timeline-desc { font-size: 12px; color: var(--gray-500); }
+.linkedin-card { background: #F0F5FF; border: 1px solid #D9E2F5; border-radius: 10px; padding: 20px; }
+.linkedin-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.linkedin-header img { width: 40px; height: 40px; border-radius: 50%; }
+.linkedin-author { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+.linkedin-author span { font-weight: 400; color: var(--gray-500); font-size: 12px; display: block; }
+.linkedin-content { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+.cta-card { background: var(--green-light); border: 1px solid var(--green); border-radius: 10px; padding: 24px; text-align: center; }
+.cta-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--green); margin-bottom: 8px; }
+.cta-desc { font-size: 13px; color: var(--gray-700); margin-bottom: 16px; }
+.cta-button { display: inline-block; background: var(--green); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="topnav">
+<div class="topnav-left">
+<a href="/es/career-path">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+Volver
+</a>
+</div>
+<div class="topnav-brand">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+<span>share2inspire.pt</span>
+</div>
+<div class="topnav-right">
+Demo de Informe
+</div>
+</div>
+<div class="page">
+<div class="report-header">
+<p>Análisis de Carrera</p>
+<h1>Informe Completo</h1>
+</div>
+
+<div class="card">
+<div class="section-label green">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+Resumen de Carrera
+</div>
+<div class="ats-score-row">
+<div class="ats-score-big">8.2<span>/10</span></div>
+<div>
+<div class="badge badge-green">Alto Potencial</div>
+</div>
+</div>
+<p class="ats-desc">Tu perfil como <strong>Senior Product Manager</strong> muestra una base sólida con un potencial de crecimiento significativo. Este informe identifica las rutas de carrera más prometedoras y las acciones clave para acelerar tu progresión.</p>
+<div class="warn-item">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+<div><strong>Oportunidad Crítica:</strong> La transición a un rol de <strong>Director de Producto</strong> es factible en 18-24 meses, pero requiere un enfoque estratégico en el desarrollo de liderazgo y visión de producto.</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label orange">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+Puntos Clave para tu Desarrollo
+</div>
+<p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 áreas de enfoque para impulsar tu carrera.</p>
+
+<div class="issue-item">
+<p><span class="issue-num">1</span><span class="issue-title">Desarrollo de Liderazgo Estratégico</span></p>
+<p class="issue-sub">Para pasar de la gestión de productos a la dirección, es crucial demostrar liderazgo que inspire y una visión estratégica que guíe a toda la organización.</p>
+<div class="issue-section-label">Explicación</div>
+<p class="issue-text">Actualmente, tu experiencia se centra en la ejecución táctica. Para un rol de Director, necesitas demostrar la capacidad de definir la visión a largo plazo del producto, alinearla con los objetivos de negocio y liderar equipos multifuncionales hacia esa visión.</p>
+<div class="issue-section-label">Sugerencia de Acción</div>
+<div class="suggestion-block">
+Lidera una iniciativa estratégica interdepartamental. Propón y dirige un proyecto que resuelva un problema de negocio complejo y que requiera la colaboración de equipos de ingeniería, marketing y ventas.
+</div>
+</div>
+
+<hr class="issue-divider">
+
+<div class="issue-item">
+<p><span class="issue-num">2</span><span class="issue-title">Brecha de Competencias en IA y Machine Learning</span></p>
+<p class="issue-sub">La falta de experiencia práctica en productos basados en IA/ML es una barrera para roles de liderazgo en empresas tecnológicas de vanguardia.</p>
+<div class="issue-section-label">Explicación</div>
+<p class="issue-text">El mercado valora cada vez más a los líderes de producto que entienden cómo la IA puede crear ventajas competitivas. No tener esta competencia limita tu acceso a las oportunidades más innovadoras y mejor remuneradas.</p>
+<div class="issue-section-label">Sugerencia de Acción</div>
+<div class="suggestion-block">
+Completa una certificación en "AI for Product Managers" y aplica los conceptos en un proyecto piloto dentro de tu empresa actual. Busca mentoría de un líder de producto con experiencia en IA.
+</div>
+</div>
+
+<hr class="issue-divider">
+
+<div class="issue-item">
+<p><span class="issue-num">3</span><span class="issue-title">Visibilidad Externa y Marca Personal</span></p>
+<p class="issue-sub">Tu perfil profesional tiene baja visibilidad fuera de tu red de contactos inmediata, lo que limita las oportunidades entrantes.</p>
+<div class="issue-section-label">Explicación</div>
+<p class="issue-text">Los reclutadores y líderes de la industria buscan expertos con una marca personal sólida. No participar activamente en la comunidad (charlas, artículos, etc.) te hace invisible para oportunidades de alto nivel.</p>
+<div class="issue-section-label">Sugerencia de Acción</div>
+<div class="suggestion-block">
+Escribe y publica 3 artículos en LinkedIn o Medium sobre los desafíos y tendencias en la gestión de productos de tu sector. Participa como ponente en un meetup o conferencia local.
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label gold">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/></svg>
+Análisis de Competencias
+</div>
+<div class="quadrant-grid">
+<div class="quadrant-cell">
+<div class="quadrant-label">Gestión de Producto</div>
+<div class="quadrant-sub">→ Ejecución y táctica</div>
+<div class="donut-container">
+<svg width="80" height="80" viewBox="0 0 80 80">
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="37.7" stroke-linecap="round"/>
+</svg>
+<div class="donut-val">80</div>
+</div>
+<div class="benchmark-tag">Benchmark: 75 <span>(+5)</span></div>
+</div>
+<div class="quadrant-cell">
+<div class="quadrant-label">Liderazgo</div>
+<div class="quadrant-sub">→ Visión y estrategia</div>
+<div class="donut-container">
+<svg width="80" height="80" viewBox="0 0 80 80">
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="113.1" stroke-linecap="round"/>
+</svg>
+<div class="donut-val">40</div>
+</div>
+<div class="benchmark-tag">Benchmark: 70 <span style="color:var(--red)">(-30)</span></div>
+</div>
+<div class="quadrant-cell">
+<div class="quadrant-label">Conocimiento Técnico</div>
+<div class="quadrant-sub">→ IA, datos, arquitectura</div>
+<div class="donut-container">
+<svg width="80" height="80" viewBox="0 0 80 80">
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="131.95" stroke-linecap="round"/>
+</svg>
+<div class="donut-val">30</div>
+</div>
+<div class="benchmark-tag">Benchmark: 60 <span style="color:var(--red)">(-30)</span></div>
+</div>
+<div class="quadrant-cell">
+<div class="quadrant-label">Comunicación</div>
+<div class="quadrant-sub">→ Influencia y stakeholders</div>
+<div class="donut-container">
+<svg width="80" height="80" viewBox="0 0 80 80">
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+<circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="56.55" stroke-linecap="round"/>
+</svg>
+<div class="donut-val">70</div>
+</div>
+<div class="benchmark-tag">Benchmark: 70 <span>(0)</span></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label gold">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+Hoja de Ruta Profesional
+</div>
+
+<div class="market-stats">
+<div class="market-stat"><div class="val accent">18-24m</div><div class="sub">Próximo Rol</div></div>
+<div class="market-stat"><div class="val">3-5a</div><div class="sub">Medio Plazo</div></div>
+<div class="market-stat"><div class="val">5+ a</div><div class="sub">Largo Plazo</div></div>
+</div>
+
+<p style="font-size:13px;color:var(--gray-600);margin-bottom:12px;">→ Tu trayectoria ideal te posiciona para un rol de <strong>Director de Producto</strong> en los próximos 2 años.</p>
+
+<div class="timeline-list" style="padding-left: 20px; margin-top: 24px;">
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Ahora: Senior Product Manager</div>
+<div class="timeline-desc">Consolidar experiencia en ejecución y gestión de stakeholders.</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Próximos 6-12 meses: Líder de Iniciativa Estratégica</div>
+<div class="timeline-desc">Liderar un proyecto de alto impacto para desarrollar visión de negocio.</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Próximos 12-18 meses: Mentor y Formador</div>
+<div class="timeline-desc">Formarse en IA/ML y empezar a mentorizar a otros PMs.</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot" style="background: var(--green);"></div>
+<div class="timeline-title">Meta (18-24 meses): Director de Producto</div>
+<div class="timeline-desc">Aplicar a roles de dirección con un porfolio de liderazgo y visión estratégica.</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label green">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+Plan de Formación
+</div>
+<p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Competencias a desarrollar para alcanzar tus objetivos.</p>
+
+<div class="action-item">
+<div class="action-title">1. Certificación "AI for Product Managers"</div>
+<p class="action-desc"><strong>Objetivo:</strong> Cerrar la brecha en IA/ML. <strong>Plazo:</strong> 3 meses. <strong>Recursos:</strong> Cursos de Reforge, Coursera, o institutos especializados.</p>
+</div>
+<div class="action-item">
+<div class="action-title">2. Programa de Liderazgo Ejecutivo</div>
+<p class="action-desc"><strong>Objetivo:</strong> Desarrollar habilidades de liderazgo estratégico y gestión de equipos. <strong>Plazo:</strong> 6-9 meses. <strong>Recursos:</strong> Programas internos de la empresa, o cursos externos (ej. INSEAD, LBS).</p>
+</div>
+<div class="action-item">
+<div class="action-title">3. Taller de Oratoria y Comunicación de Influencia</div>
+<p class="action-desc"><strong>Objetivo:</strong> Mejorar la capacidad de presentar ideas complejas y construir una marca personal. <strong>Plazo:</strong> 2 meses. <strong>Recursos:</strong> Toastmasters, coaches de comunicación.</p>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label gold">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v2m0 4h.01M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
+Proyección Salarial
+</div>
+<p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Estimación para roles de <strong>Director de Producto</strong> en el mercado tecnológico español.</p>
+
+<div class="salary-grid">
+<div class="salary-cell">
+<div class="label">Percentil 25</div>
+<div class="amount">€75.000</div>
+<div class="period">/año (bruto)</div>
+</div>
+<div class="salary-cell">
+<div class="label">Mediana</div>
+<div class="amount highlight">€95.000</div>
+<div class="period">/año (bruto)</div>
+</div>
+<div class="salary-cell">
+<div class="label">Percentil 75</div>
+<div class="amount">€120.000</div>
+<div class="period">/año (bruto)</div>
+</div>
+<div class="salary-cell">
+<div class="label">Top (Perfiles Top)</div>
+<div class="amount">€150.000+</div>
+<div class="period">/año (bruto)</div>
+</div>
+</div>
+
+<p style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:10px;">Beneficios típicos para Directores en la industria:</p>
+<div class="benefits-grid">
+<div class="benefit-item">Bonus anual por objetivos (15-25%)</div>
+<div class="benefit-item">Seguro médico y de vida completo</div>
+<div class="benefit-item">Opciones sobre acciones (Stock Options / RSUs)</div>
+<div class="benefit-item">Presupuesto para formación y desarrollo</div>
+<div class="benefit-item">Flexibilidad horaria y trabajo remoto</div>
+<div class="benefit-item">Coche de empresa o ayuda para transporte</div>
+</div>
+<p class="salary-source">Fuente: Estimación de mercado para el rol y la antigüedad detectados en el mercado español.</p>
+</div>
+
+<div class="card">
+<div class="section-label gray">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg>
+Estrategia de Networking
+</div>
+
+<p style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:10px;">Contactos clave a desarrollar en los próximos 6 meses:</p>
+<div class="tags-row">
+<span class="tag">Directores de Producto</span>
+<span class="tag">VPs de Producto/Ingeniería</span>
+<span class="tag">Fundadores de Startups</span>
+<span class="tag">Reclutadores especializados</span>
+<span class="tag">Expertos en IA/ML</span>
+</div>
+
+<p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">Plan de acción para networking:</p>
+<ul class="attention-list">
+<li>Asistir a 2 eventos de producto (ej. Product Tank, T3chfest).</li>
+<li>Identificar y contactar a 5 líderes de producto en LinkedIn para una "charla de café" virtual.</li>
+<li>Participar activamente en 3 comunidades online de producto (ej. Slack, Discord).</li>
+<li>Colaborar en un proyecto open-source o un side-project para ganar visibilidad.</li>
+<li>Solicitar ser presentado a contactos clave a través de tu red actual.</li>
+</ul>
+</div>
+
+<div class="card">
+<div class="section-label green">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+Plan de Acción 30 Días
+</div>
+<p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Pasos concretos para empezar a transformar tu carrera ahora.</p>
+<div class="timeline-list" style="padding-left: 20px;">
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Semana 1: Investigación y Planificación</div>
+<p class="timeline-desc">Inscribirse en el curso de IA. Identificar 3 posibles proyectos estratégicos internos.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Semana 2: Primeros Contactos y Borrador</div>
+<p class="timeline-desc">Contactar a 2 líderes de producto. Escribir el borrador del primer artículo para LinkedIn.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Semana 3: Propuesta y Publicación</div>
+<p class="timeline-desc">Presentar la propuesta de proyecto estratégico a tu manager. Publicar el primer artículo.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-title">Semana 4: Feedback y Ajustes</div>
+<p class="timeline-desc">Recoger feedback sobre el artículo y el proyecto. Ajustar el plan para los próximos 90 días.</p>
+</div>
+</div>
+</div>
+
+<div class="card linkedin-card">
+<div class="linkedin-header">
+<img src="https://i.pravatar.cc/40?u=demo" alt="Author">
+<div>
+<div class="linkedin-author">Juan Pérez <span>• 1º</span></div>
+<span style="font-size:11px;color:var(--gray-500);">Director de Producto en Acme Corp</span>
+</div>
+</div>
+<div class="linkedin-content">
+<p>¡Emocionado de compartir mi plan de desarrollo para los próximos 12 meses! Gracias al análisis de <strong>share2inspire.pt</strong>, tengo una hoja de ruta clara para mi transición a un rol de liderazgo de producto. 🚀</p>
+<p>Mi foco estará en 3 áreas: <strong>liderazgo estratégico</strong>, <strong>productos con IA</strong>, y <strong>construir mi marca personal</strong>. El objetivo es claro: estar preparado para un rol de Director de Producto en 18 meses.</p>
+<p>¿Algún consejo de la comunidad? ¿Qué recursos o libros han sido clave en vuestro camino hacia el liderazgo de producto?</p>
+<p>#ProductManagement #CareerPath #Leadership #AI #PersonalBranding</p>
+</div>
+</div>
+
+<div class="card cta-card">
+<div class="cta-title">¿Quieres un análisis como este?</div>
+<p class="cta-desc">Nuestro servicio de <strong>Career Intelligence</strong> te da una visión 360° del mercado laboral para tu perfil, identificando tendencias, salarios y las empresas que más contratan.</p>
+<a href="/es/career-intelligence" class="cta-button">Saber Más de Career Intelligence</a>
+</div>
+
+</div>
+</body>
+</html>

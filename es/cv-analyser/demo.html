@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Analyser — Informe Completo | Demo</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://www.share2inspire.pt/es/cv-analyser/demo">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #B8973A;
+    --gold-light: #D4AF55;
+    --gold-pale: #F5EDD0;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --orange: #C4530A;
+    --orange-light: #FEF0E6;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F5;
+    --gray-200: #E4E4E7;
+    --gray-300: #D1D1D6;
+    --gray-400: #A0A0AB;
+    --gray-600: #52525B;
+    --gray-700: #3F3F46;
+    --gray-800: #27272A;
+    --gray-900: #18181B;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Top nav */
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
+  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .topnav-brand svg { color: var(--gold); }
+  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+  /* Layout */
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+  .report-header { margin-bottom: 24px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label.orange { color: var(--orange); }
+  .section-label.gold { color: var(--gold); }
+  .section-label.green { color: var(--green); }
+  .section-label.gray { color: var(--gray-600); }
+
+  /* ATS Score */
+  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+
+  .warn-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: var(--orange-light);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+  .warn-item svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* ATS Compat grid */
+  .ats-compat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+  }
+  .ats-compat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+  .ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
+  .ats-compat-row .boa { color: var(--green); font-weight: 600; }
+  .ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
+
+  .howto-list { list-style: none; margin-top: 12px; }
+  .howto-list li {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
+    padding: 5px 0;
+  }
+  .howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  /* Critical issues */
+  .issue-item { margin-bottom: 20px; }
+  .issue-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+
+  .issue-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+  }
+  .issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+
+  .code-block {
+    background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
+    color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+  }
+
+  .suggestion-block {
+    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+    line-height: 1.6;
+  }
+
+  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+
+  /* Quadrant scores */
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quadrant-cell {
+    border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+  }
+  .quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
+  .quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
+
+  .donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+  .donut-container svg { transform: rotate(-90deg); }
+  .donut-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 22px; font-weight: 700; color: var(--gray-900);
+  }
+  .benchmark-tag { font-size: 11px; color: var(--gray-400); }
+  .benchmark-tag span { color: var(--green); font-weight: 600; }
+
+  /* Factor bars */
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+  .factor-sub { font-size: 11px; color: var(--gray-400); }
+  .factor-bar-wrap { flex: 1; position: relative; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+
+  /* Recruiter perception */
+  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tag {
+    padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
+    color: var(--gold); font-size: 12px; font-weight: 600;
+    border: 1px solid #E2C96A;
+  }
+  .profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
+  .profile-line strong { color: var(--gray-900); }
+
+  .attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
+  .attention-list li {
+    counter-increment: attn; display: flex; gap: 10px;
+    font-size: 13px; color: var(--gray-600); padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .attention-list li::before {
+    content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
+    color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* Salary */
+  .salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
+  .salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+  .salary-cell .amount.highlight { color: var(--gold); }
+  .salary-cell .period { font-size: 10px; color: var(--gray-400); }
+
+  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
+  .benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+
+  /* Market position */
+  .market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
+  .market-stat { text-align: center; }
+  .market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+  .market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+  .market-stat .val.accent { color: var(--gold); }
+
+  .bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+
+  .market-items { margin-top: 12px; }
+  .market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* AI Risk */
+  .risk-bar-wrap { margin: 16px 0; }
+  .risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); padding: 0 4px; margin-bottom: 4px; }
+  .risk-bar-bg { height: 10px; background: linear-gradient(to right, var(--green-light), var(--orange-light), var(--red-light)); border-radius: 99px; position: relative; }
+  .risk-indicator { position: absolute; top: 50%; transform: translateY(-50%); width: 2px; height: 14px; background: var(--gray-700); border-radius: 99px; }
+
+  .risk-items { margin-top: 12px; }
+  .risk-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .risk-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* Priority Matrix */
+  .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .matrix-cell { background: var(--white); padding: 16px; }
+  .matrix-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 10px; }
+  .matrix-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .matrix-item::before { content: '•'; color: var(--gold); font-weight: 700; }
+
+  /* Action Plan */
+  .plan-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .plan-col .label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+  .plan-item { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; font-size: 13px; color: var(--gray-600); margin-bottom: 8px; }
+
+  /* LinkedIn */
+  .linkedin-card { background: var(--white); border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif; }
+  .linkedin-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .linkedin-pfp { width: 48px; height: 48px; border-radius: 50%; background: #D1D5DB; }
+  .linkedin-user { font-weight: 600; color: #171717; }
+  .linkedin-sub { font-size: 13px; color: #6B7280; }
+  .linkedin-body { font-size: 14px; color: #171717; line-height: 1.5; margin-bottom: 12px; }
+  .linkedin-body .hashtag { color: #0A66C2; font-weight: 500; }
+  .linkedin-footer { font-size: 13px; color: #6B7280; }
+
+  /* CTA */
+  .cta-card { background: var(--gray-800); color: var(--white); text-align: center; }
+  .cta-card h2 { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 8px; }
+  .cta-card p { color: var(--gray-300); margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto; }
+  .cta-btn { display: inline-block; background: var(--gold); color: var(--gray-900); text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-left">
+    <a href="/es/cv-analyser">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Volver a CV Analyser
+    </a>
+  </div>
+  <div class="topnav-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1l9.5 6.5v11L12 23l-9.5-5.5v-11L12 1z"/><path d="M12 23v-8.5l-9.5-5.5"/><path d="M21.5 7.5L12 14.5l9.5 5.5"/><path d="M2.5 7.5L12 14.5"/></svg>
+    share2inspire
+  </div>
+  <div class="topnav-right">
+    DEMO
+  </div>
+</div>
+
+<div class="page">
+  <div class="report-header">
+    <p>Informe de Análisis de CV</p>
+    <h1>Informe Completo</h1>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4l2 2"/></svg>
+      Puntuación ATS
+    </div>
+    <div class="ats-score-row">
+      <div class="ats-score-big">92<span>/100</span></div>
+      <div class="badge badge-green">Excelente</div>
+    </div>
+    <p class="ats-desc">Este CV tiene una excelente compatibilidad con los ATS modernos y es muy probable que pase la selección inicial.</p>
+    <div style="background:#F0FBF4;border-radius:8px;padding:12px 14px;border-left:3px solid var(--green);display:flex;align-items:center;gap:12px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <p style="font-size:13px;color:var(--gray-700);margin:0;"><strong>¡Felicidades!</strong> Su CV está bien optimizado. No se requieren acciones urgentes.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+      Compatibilidad ATS
+    </div>
+    <div class="ats-compat-grid">
+      <div class="ats-compat-row"><span>Greenhouse</span><span class="boa">Buena</span></div>
+      <div class="ats-compat-row"><span>Lever</span><span class="excelente">Excelente</span></div>
+      <div class="ats-compat-row"><span>Workday</span><span class="excelente">Excelente</span></div>
+      <div class="ats-compat-row"><span>SAP SuccessFactors</span><span class="boa">Buena</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;"><strong>Cómo mejorar:</strong></p>
+    <ul class="howto-list">
+      <li>Utiliza un formato limpio de una sola columna.</li>
+      <li>Incluye una mezcla de habilidades duras y blandas.</li>
+      <li>Usa encabezados de sección estándar (p. ej., "Experiencia").</li>
+      <li>Optimiza con palabras clave encontradas en la descripción del trabajo.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background:var(--orange-light);border-color:var(--orange);">
+    <div style="background:#FFF0F0;border-radius:8px;padding:12px 14px;border-left:3px solid var(--red);">
+      <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Resumen del Análisis Profundo</div>
+      <p style="font-size:13px;color:var(--gray-700);margin:0;">Tu CV tiene una <strong>baja compatibilidad con los sistemas ATS</strong>. Con una <strong>probabilidad de rechazo del 77%</strong>, la mayoría de las solicitudes online serán filtradas automáticamente. Es urgente reestructurar el formato y añadir las palabras clave que faltan.</p>
+    </div>
+  </div>
+
+  <!-- ─── Live Match ─── -->
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Análisis en Vivo
+      <span style="font-size:11px;font-weight:700;background:#DCFCE7;color:var(--green);padding:2px 8px;border-radius:99px;margin-left:6px;">En tiempo real</span>
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-bottom:14px;">Pega la descripción de la oferta y comprueba al instante la compatibilidad ATS</p>
+    <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--gray-500);line-height:1.6;
+      -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+      height: 150px; overflow: hidden;
+    ">
+      Gestión de Stakeholders: Servir como el principal punto de contacto para todos los problemas y escalaciones del proceso; colaborar con los principales stakeholders en RR.HH., Finanzas, TI y centros regionales de GBS para garantizar la alineación y el apoyo a la adopción global del modelo de proceso estandarizado de la GPO. Esto incluye la capacidad de influir sin autoridad directa.<br>
+      Comunicación Intercultural: Capacidad para navegar por las diferencias culturales y adaptar los estilos de comunicación para liderar y colaborar eficazmente con equipos globales y proveedores de varios países.<br>
+      Liderazgo de Equipo: Proporcionar liderazgo, coaching y dirección al equipo de ejecución del proceso; impulsar el rendimiento, la responsabilidad y la excelencia en la entrega de proyectos.
+      <div style="text-align:right;font-size:11px;color:var(--gray-400);margin-top:6px;">583 palabras</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div style="text-align:center;padding:16px 8px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200);"><div style="font-size:32px;font-weight:700;color:var(--orange);">42</div><div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">General</div></div>
+      <div style="text-align:center;padding:16px 8px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200);"><div style="font-size:32px;font-weight:700;color:var(--red);">13</div><div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">Palabras Clave</div></div>
+      <div style="text-align:center;padding:16px 8px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200);"><div style="font-size:32px;font-weight:700;color:var(--green);">86</div><div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">Formato</div></div>
+    </div>
+    <div style="text-align:center;margin-bottom:10px;">
+      <span style="font-size:12px;color:var(--green);font-weight:600;">&#10003; 3 encontradas</span>
+      <span style="font-size:12px;color:var(--orange);font-weight:600;margin:0 12px;">&#9651; 2 parciales</span>
+      <span style="font-size:12px;color:var(--red);font-weight:600;">&#10007; 25 ausentes</span>
+    </div>
+    <p style="font-size:12px;color:var(--gray-500);text-align:center;">Tu CV coincide con 3 de 30 palabras clave de la oferta de empleo (2 parciales, 25 ausentes). Compatibilidad moderada — recomendamos ajustes.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Problemas Críticos Detectados
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 problemas específicos que están perjudicando tu CV</p>
+
+    <div class="issue-item">
+      <p><span class="issue-num">1</span><span class="issue-title">Discrepancia Crítica de Fechas</span></p>
+      <p class="issue-sub">El puesto actual, 'Executive District Sales Manager', aparece con una fecha de inicio en el futuro (enero de 2025).</p>
+      <div class="issue-section-label">Explicación Completa</div>
+      <p class="issue-text">Este error plantea inmediatamente serias dudas sobre la precisión y la atención al detalle, socavando gravemente la credibilidad del candidato. Sugiere o bien un error tipográfico significativo o una incomprensión fundamental de cómo presentar el empleo actual, haciendo que el candidato parezca actualmente desempleado o que tergiversa su puesto.</p>
+      <div class="issue-section-label">Ejemplo de Corrección</div>
+      <div class="code-block">
+        <strong>Antes:</strong> 'Executive District Sales Manager Enero 2025 - Actualidad'<br>
+        <strong>Después:</strong> 'Executive District Sales Manager Abril 2019 - Actualidad'
+      </div>
+      <div class="issue-section-label">Sugerencia de Reescritura</div>
+      <div class="suggestion-block">
+        Executive District Sales Manager | AstraZeneca | Boston, Massachusetts | Abril 2019 – Actualidad
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">2</span><span class="issue-title">Ausencia de Logros Cuantificables</span></p>
+      <p class="issue-sub">El CV carece de métricas, números o resultados cuantificables específicos para demostrar el impacto o el éxito en puestos anteriores.</p>
+      <div class="issue-section-label">Explicación Completa</div>
+      <p class="issue-text">Para un ejecutivo de ventas senior con más de 35 años de experiencia, un CV sin métricas es un fallo crítico. No proporciona evidencia de crecimiento de ventas, expansión de cuota de mercado, rendimiento del equipo o generación de ingresos, lo que hace imposible que un reclutador evalúe el valor y la contribución real del candidato.</p>
+      <div class="issue-section-label">Ejemplo de Corrección</div>
+      <div class="code-block">
+        <strong>Antes:</strong> (Sin descripciones para ningún puesto)<br>
+        <strong>Después:</strong> 'Lideré al equipo para superar consistentemente los objetivos de ventas mediante una planificación y ejecución innovadoras.'
+      </div>
+      <div class="issue-section-label">Sugerencia de Reescritura</div>
+      <div class="suggestion-block">
+        Impulsé iniciativas de ventas regionales, superando consistentemente los objetivos anuales en un promedio del 15% ($X millones) en múltiples líneas de productos. Aumenté la cuota de mercado en un Y% en cuentas clave en el territorio de Boston.
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">3</span><span class="issue-title">Resumen Genérico y Experiencia sin Detallar</span></p>
+      <p class="issue-sub">El resumen se centra en 'nuestro equipo' en lugar de en las contribuciones individuales, y la sección de experiencia solo proporciona cargos y fechas sin ninguna descripción del puesto.</p>
+      <div class="issue-section-label">Explicación Completa</div>
+      <p class="issue-text">El resumen de un ejecutivo senior debe ser una presentación potente y concisa que destaque su propuesta de valor única y sus logros clave. El resumen actual es genérico y carece de impacto. Además, enumerar más de 35 años de experiencia solo con cargos y fechas es inaceptable; no transmite responsabilidades, impacto estratégico ni capacidades de liderazgo.</p>
+      <div class="issue-section-label">Ejemplo de Corrección</div>
+      <div class="code-block">
+        <strong>Antes:</strong> 'Liderando con una visión estratégica en AstraZeneca, nuestro equipo supera consistentemente los objetivos de ventas...'<br>
+        <strong>Después:</strong> 'Executive District Sales Manager altamente cualificado con más de 35 años en ventas farmacéuticas, impulsando consistentemente el crecimiento de la cuota de mercado y superando objetivos de ventas multimillonarios.'
+      </div>
+      <div class="issue-section-label">Sugerencia de Reescritura</div>
+      <div class="suggestion-block">
+        Executive District Sales Manager altamente cualificado con más de 35 años de liderazgo progresivo en ventas farmacéuticas, especializado en penetración estratégica de mercado y desarrollo de equipos de alto rendimiento. Entregué consistentemente un crecimiento de ventas de dos dígitos y lancé con éxito múltiples productos de gran éxito.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/></svg>
+      Análisis de Cuadrantes
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <div class="quadrant-grid">
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Contenido</div>
+        <div class="quadrant-sub">→ Calidad y relevancia del contenido</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="169.7" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">10</div>
+        </div>
+        <div class="benchmark-tag">Referencia: 75 <span style="color:var(--red)">(-65)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Experiencia</div>
+        <div class="quadrant-sub">→ Experiencia profesional</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="150.8" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">20</div>
+        </div>
+        <div class="benchmark-tag">Referencia: 80 <span style="color:var(--red)">(-60)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Estructura</div>
+        <div class="quadrant-sub">→ Formato y legibilidad</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="132" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">30</div>
+        </div>
+        <div class="benchmark-tag">Referencia: 85 <span style="color:var(--red)">(-55)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Impacto</div>
+        <div class="quadrant-sub">→ Logros y resultados</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="179.1" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">5</div>
+        </div>
+        <div class="benchmark-tag">Referencia: 90 <span style="color:var(--red)">(-85)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Estimación Salarial
+    </div>
+    <div class="salary-grid">
+      <div class="salary-cell">
+        <div class="label">Percentil 25</div>
+        <div class="amount">€85K</div>
+        <div class="period">/año</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Mediana</div>
+        <div class="amount">€110K</div>
+        <div class="period">/año</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Su Estimación</div>
+        <div class="amount highlight">€115K</div>
+        <div class="period">/año</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Percentil 75</div>
+        <div class="amount">€140K</div>
+        <div class="period">/año</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;"><strong>Beneficios y Compensaciones Típicos:</strong></p>
+    <div class="benefits-grid">
+      <div class="benefit-item">Bonus de rendimiento</div>
+      <div class="benefit-item">Seguro de salud completo</div>
+      <div class="benefit-item">Plan de jubilación 401(k)</div>
+      <div class="benefit-item">Opciones sobre acciones</div>
+      <div class="benefit-item">Coche de empresa</div>
+      <div class="benefit-item">Horario de trabajo flexible</div>
+    </div>
+    <p class="salary-source">Fuente: Datos de mercado de Share2Inspire para roles similares en Boston, MA.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      Posición en el Mercado
+    </div>
+    <div class="market-stats">
+      <div class="market-stat" style="flex:1;">
+        <div class="val accent">Top 15%</div>
+        <div class="sub">Posición del Candidato</div>
+      </div>
+      <div class="market-stat" style="flex:1;">
+        <div class="val">1,240</div>
+        <div class="sub">Candidatos Similares</div>
+      </div>
+      <div class="market-stat" style="flex:1;">
+        <div class="val">8.2%</div>
+        <div class="sub">Tasa de Contratación</div>
+      </div>
+    </div>
+    <div class="bell-curve-wrap">
+      <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
+        <path d="M0,100 C50,100 50,10 100,10 C150,10 150,100 200,100 C250,100 250,10 300,10" fill="none" stroke="var(--gray-200)" stroke-width="2"/>
+        <path d="M0,100 C50,100 50,20 150,20 C250,20 250,100 300,100" fill="var(--gold-pale)" stroke="var(--gold)" stroke-width="1" />
+      </svg>
+      <div style="position:absolute;top:0;left:75%;transform:translateX(-50%);text-align:center;">
+        <div style="font-size:12px;font-weight:600;color:var(--gray-800);">Usted</div>
+        <div style="width:2px;height:8px;background:var(--gray-800);margin:2px auto 0;"></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;"><strong>Observaciones Clave:</strong></p>
+    <div class="market-items">
+      <div class="market-item">Su perfil se encuentra en el 15% superior de los candidatos en el mercado.</li>
+      <div class="market-item">La demanda de gerentes de ventas de distrito es alta, pero la competencia es fuerte.</li>
+      <div class="market-item">La experiencia en la industria farmacéutica es una ventaja significativa.</li>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4l2 2"/></svg>
+      Riesgo de Reemplazo por IA
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-labels">
+        <span>Bajo</span><span>Medio</span><span>Alto</span>
+      </div>
+      <div class="risk-bar-bg">
+        <div class="risk-indicator" style="left: 70%;"></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;"><strong>Análisis de Riesgo:</strong></p>
+    <div class="risk-items">
+      <div class="risk-item">Las tareas administrativas y de informes (alto riesgo) son fácilmente automatizables.</li>
+      <div class="risk-item">La gestión de relaciones con clientes (riesgo medio) se ve aumentada por la IA, no reemplazada.</li>
+      <div class="risk-item">El liderazgo estratégico y el desarrollo de equipos (bajo riesgo) siguen siendo fundamentalmente humanos.</li>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      Matriz de Prioridades
+    </div>
+    <div class="matrix-grid">
+      <div class="matrix-cell" style="background:var(--green-light);">
+        <div class="matrix-label">Alto Impacto, Bajo Esfuerzo</div>
+        <div class="matrix-item">Corregir errores de fechas</div>
+        <div class="matrix-item">Añadir logros cuantificables</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-label">Alto Impacto, Alto Esfuerzo</div>
+        <div class="matrix-item">Reescribir el resumen ejecutivo</div>
+        <div class="matrix-item">Detallar la experiencia laboral</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-label">Bajo Impacto, Bajo Esfuerzo</div>
+        <div class="matrix-item">Actualizar la sección de habilidades</div>
+        <div class="matrix-item">Ajustar el formato del CV</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-label">Bajo Impacto, Alto Esfuerzo</div>
+        <div class="matrix-item">Obtener una nueva certificación</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Acciones de Mejora
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Pasos recomendados para mejorar drásticamente su CV</p>
+    <div class="plan-grid">
+      <div class="plan-col">
+        <div class="label">Revisión de Contenido</div>
+        <div class="plan-item">Reescribir el resumen para destacar los logros individuales.</div>
+        <div class="plan-item">Añadir 3-5 puntos con métricas para cada puesto.</div>
+      </div>
+      <div class="plan-col">
+        <div class="label">Formato y Estructura</div>
+        <div class="plan-item">Adoptar un formato de una sola columna compatible con ATS.</div>
+        <div class="plan-item">Asegurar que los encabezados de sección sean estándar.</div>
+      </div>
+      <div class="plan-col">
+        <div class="label">Optimización de Palabras Clave</div>
+        <div class="plan-item">Identificar las 10 palabras clave principales de las descripciones de trabajo objetivo.</div>
+        <div class="plan-item">Integrar estas palabras clave de forma natural en el CV.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      Plan de Acción de 30 Días
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Semana 1: Revisión del CV</div>
+          <p class="timeline-desc">Implementar todas las correcciones de contenido y formato sugeridas.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Semana 2: Búsqueda de Empleo Dirigida</div>
+          <p class="timeline-desc">Identificar 20 empresas objetivo y empezar a contactar con reclutadores.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Semana 3: Networking</div>
+          <p class="timeline-desc">Asistir a 2 eventos de la industria y realizar 5 cafés informativos.</p>
+        </div>
+      </div>
+      <div class="timeline-item" style="border-left-color:transparent;">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Semana 4: Preparación para Entrevistas</div>
+          <p class="timeline-desc">Realizar entrevistas de práctica centradas en logros cuantificables.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      Vista Previa de Publicación en LinkedIn
+    </div>
+    <div class="linkedin-card">
+      <div class="linkedin-header">
+        <div class="linkedin-pfp"></div>
+        <div>
+          <div class="linkedin-user">Johnathan Doe</div>
+          <div class="linkedin-sub">Executive District Sales Manager | 35+ años en Ventas Farmacéuticas</div>
+        </div>
+      </div>
+      <div class="linkedin-body">
+        ¡Emocionado de compartir que estoy abierto a nuevas oportunidades! Busco un rol de liderazgo senior en ventas farmacéuticas donde pueda aprovechar mis 35+ años de experiencia impulsando el crecimiento del mercado y liderando equipos de alto rendimiento. Recientemente, superé los objetivos de ventas en un 15% y aumenté la cuota de mercado en un 5% en un territorio competitivo. ¡Conectemos!
+        <br><br>
+        <span class="hashtag">#AbiertoAlTrabajo</span> <span class="hashtag">#VentasFarmacéuticas</span> <span class="hashtag">#LiderazgoEnVentas</span>
+      </div>
+      <div class="linkedin-footer">
+        2 Me gusta • 1 comentario
+      </div>
+    </div>
+  </div>
+
+  <div class="card cta-card">
+    <h2>¿Listo para su próximo paso profesional?</h2>
+    <p>Nuestro análisis de trayectoria profesional puede iluminar su camino, identificando roles futuros, brechas de habilidades y una hoja de ruta personalizada para el éxito.</p>
+    <a href="/es/career-path" class="cta-btn">Descubra su Trayectoria Profesional</a>
+  </div>
+
+</div>
+
+</body>
+</html>

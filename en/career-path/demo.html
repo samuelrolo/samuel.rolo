@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Path — Full Report | Demo</title>
+<link rel="canonical" href="https://www.share2inspire.pt/en/career-path/demo">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #B8973A;
+    --gold-light: #D4AF55;
+    --gold-pale: #F5EDD0;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --orange: #C4530A;
+    --orange-light: #FEF0E6;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F5;
+    --gray-200: #E4E4E7;
+    --gray-300: #D1D1D6;
+    --gray-400: #A0A0AB;
+    --gray-600: #52525B;
+    --gray-700: #3F3F46;
+    --gray-800: #27272A;
+    --gray-900: #18181B;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-400); font-size: 13px; }
+  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .topnav-brand svg { color: var(--gold); }
+  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+  .report-header { margin-bottom: 24px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label.orange { color: var(--orange); }
+  .section-label.gold { color: var(--gold); }
+  .section-label.green { color: var(--green); }
+  .section-label.gray { color: var(--gray-600); }
+  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+  .issue-item { margin-bottom: 20px; }
+  .issue-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+  .issue-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+  }
+  .suggestion-block {
+    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+    line-height: 1.6;
+  }
+  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .factor-name { width: 120px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+  .factor-bar-wrap { flex: 1; position: relative; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+  .timeline-item { position: relative; padding-left: 24px; padding-bottom: 24px; border-left: 2px solid var(--gray-200); }
+  .timeline-item:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+  .timeline-dot { position: absolute; left: -7px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--white); }
+  .timeline-date { font-size: 12px; font-weight: 600; color: var(--gold); margin-bottom: 2px; }
+  .timeline-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .timeline-desc { font-size: 13px; color: var(--gray-600); }
+  .todo-list { list-style: none; margin-top: 12px; }
+  .todo-list li {
+    display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--gray-700);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .todo-list li input { width: 16px; height: 16px; accent-color: var(--green); }
+  .linkedin-card {
+    background: #fff; border-radius: 8px; border: 1px solid var(--gray-200);
+    font-size: 13px; color: var(--gray-800);
+  }
+  .linkedin-header { padding: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--gray-200); }
+  .linkedin-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gray-200); }
+  .linkedin-user { font-weight: 600; }
+  .linkedin-sub { font-size: 11px; color: var(--gray-500); }
+  .linkedin-body { padding: 12px; line-height: 1.6; }
+  .linkedin-footer { padding: 12px; border-top: 1px solid var(--gray-200); font-size: 12px; color: var(--gray-500); }
+  .cta-card {
+    background: var(--green-light);
+    border: 1px solid var(--green);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+  }
+  .cta-card h3 { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--green); margin-bottom: 8px; }
+  .cta-card p { color: var(--gray-700); margin-bottom: 16px; font-size: 13px; }
+  .cta-btn {
+    display: inline-block; background: var(--green); color: white; text-decoration: none;
+    padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-left">
+    <a href="/en/career-path">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      Back
+    </a>
+  </div>
+  <div class="topnav-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    share2inspire
+  </div>
+  <div class="topnav-right">
+    Demo Report
+  </div>
+</div>
+
+<div class="page">
+  <div class="report-header">
+    <p>For John Doe</p>
+    <h1>Career Path — Full Report</h1>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Career Trajectory Score
+    </div>
+    <div class="ats-score-row">
+      <div class="ats-score-big">82<span>/100</span></div>
+      <span class="badge badge-green">Strong Trajectory</span>
+    </div>
+    <p class="ats-desc">Your career profile shows a strong upward trajectory with significant potential for growth. This score reflects your solid experience, clear progression, and alignment with high-demand skills. Focus on strategic development to unlock senior roles.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6m3-3h-6"/></svg>
+        Suggested Next Roles
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Based on your profile, here are 3 high-potential next steps.</p>
+    
+    <div class="issue-item">
+      <p><span class="issue-num" style="background:var(--green);">1</span><span class="issue-title">Senior Product Manager</span></p>
+      <p class="issue-sub">Leverage your 8+ years in product to lead larger, more strategic initiatives. Focus on mentoring junior PMs and driving portfolio-level strategy.</p>
+      <div class="suggestion-block">
+        <strong>Key Focus:</strong> Develop deep expertise in market analysis and user research. Take a leading role in defining product vision and roadmap for a core business area.
+      </div>
+    </div>
+    <hr class="issue-divider">
+    <div class="issue-item">
+      <p><span class="issue-num" style="background:var(--green);">2</span><span class="issue-title">Director of Product</span></p>
+      <p class="issue-sub">Transition from individual product ownership to managing a team of product managers. This role requires strong leadership and people management skills.</p>
+      <div class="suggestion-block">
+        <strong>Key Focus:</strong> Build and scale a high-performing product team. Champion a culture of innovation and data-driven decision-making across the organization.
+      </div>
+    </div>
+    <hr class="issue-divider">
+    <div class="issue-item">
+      <p><span class="issue-num" style="background:var(--green);">3</span><span class="issue-title">Growth Strategy Lead</span></p>
+      <p class="issue-sub">Utilize your analytical skills to identify and develop new growth opportunities. This is a cross-functional role that works closely with marketing, sales, and data teams.</p>
+      <div class="suggestion-block">
+        <strong>Key Focus:</strong> Master experimentation frameworks (A/B testing, etc.) and market entry strategies. Drive user acquisition and revenue growth through innovative projects.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+        Skills Gap Analysis (for Senior PM Role)
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Strategic Planning</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 90%;"></div></div></div>
+      <div class="factor-score">90</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">User Research</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 75%;"></div></div></div>
+      <div class="factor-score">75</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Data Analysis</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 60%; background:var(--orange);"></div></div></div>
+      <div class="factor-score" style="color:var(--orange);">60</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Team Leadership</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 85%;"></div></div></div>
+      <div class="factor-score">85</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Stakeholder Mgt.</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 95%;"></div></div></div>
+      <div class="factor-score">95</div>
+    </div>
+    <p style="font-size:12px;color:var(--gray-500);text-align:center;margin-top:16px;">Your skills are a strong match, but improving your <strong>Data Analysis</strong> capabilities is critical for the next level.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5v14"/></svg>
+        Projected Career Timeline
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Next 1-2 Years</div>
+        <div class="timeline-title">Senior Product Manager</div>
+        <p class="timeline-desc">Deepen your expertise and take ownership of a major product line. Focus on delivering measurable business impact and mentoring junior team members.</p>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Years 2-4</div>
+        <div class="timeline-title">Director of Product</div>
+        <p class="timeline-desc">Transition into a leadership role. Build and manage a product team, set the strategic direction for a product group, and influence company-wide strategy.</p>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Years 5+</div>
+        <div class="timeline-title">VP of Product / CPO</div>
+        <p class="timeline-desc">Lead the entire product organization. Drive the long-term vision and business strategy for the company's full product portfolio.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Recommended Training Plan
+    </div>
+    <ul class="todo-list">
+        <li><input type="checkbox" id="c1" checked> <strong>Advanced SQL for Data Analysis:</strong> Master complex queries and data manipulation.</li>
+        <li><input type="checkbox" id="c2"> <strong>Product Leadership Certification:</strong> Formalize your leadership and strategy skills.</li>
+        <li><input type="checkbox" id="c3"> <strong>Workshop on Public Speaking:</strong> Improve your ability to present to executive audiences.</li>
+        <li><input type="checkbox" id="c4"> <strong>AI & Machine Learning for PMs:</strong> Understand how to leverage AI in your products.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Strategic Networking Plan
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Connect with these key individuals and groups to accelerate your career growth.</p>
+    <div class="issue-item" style="margin-bottom:12px;">
+      <p><span class="issue-num" style="background:var(--gold);">1</span><span class="issue-title">Industry Mentors</span></p>
+      <p class="issue-sub">Seek out 2-3 VPs of Product at established tech companies. Their guidance will be invaluable for navigating the path to executive leadership.</p>
+    </div>
+    <div class="issue-item" style="margin-bottom:12px;">
+      <p><span class="issue-num" style="background:var(--gold);">2</span><span class="issue-title">Peer Group</span></p>
+      <p class="issue-sub">Join a curated community of fellow Product Directors. Sharing challenges and solutions with peers is a powerful growth tool.</p>
+    </div>
+    <div class="issue-item" style="margin-bottom:12px;">
+      <p><span class="issue-num" style="background:var(--gold);">3</span><span class="issue-title">Industry Events</span></p>
+      <p class="issue-sub">Attend at least two major product conferences per year (e.g., Mind the Product, SaaStr). Focus on building relationships, not just attending talks.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+        Your 30-Day Action Plan
+    </div>
+    <ul class="todo-list">
+        <li><input type="checkbox" id="p1"> Update your LinkedIn profile to highlight strategic achievements.</li>
+        <li><input type="checkbox" id="p2"> Enroll in the "Advanced SQL for Data Analysis" course.</li>
+        <li><input type="checkbox" id="p3"> Schedule informational interviews with 3 Product Directors.</li>
+        <li><input type="checkbox" id="p4"> Identify a key project where you can apply data analysis skills.</li>
+        <li><input type="checkbox" id="p5"> Draft a 1-year career development plan with your manager.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        Share Your Ambition
+    </div>
+    <div class="linkedin-card">
+        <div class="linkedin-header">
+            <div class="linkedin-avatar"></div>
+            <div>
+                <div class="linkedin-user">John Doe</div>
+                <div class="linkedin-sub">Product Manager | 1d ago</div>
+            </div>
+        </div>
+        <div class="linkedin-body">
+            Just received my Career Path analysis from share2inspire.pt and I'm feeling incredibly motivated! The report provided a clear, actionable roadmap for my journey towards a Product Director role.
+            <br><br>
+            The skills gap analysis was particularly insightful, highlighting the need to deepen my data analysis capabilities. Time to get to work on that 30-day action plan!
+            <br><br>
+            #CareerGrowth #ProductManagement #CareerPlanning #ProfessionalDevelopment
+        </div>
+        <div class="linkedin-footer">
+            12 Likes • 3 Comments
+        </div>
+    </div>
+  </div>
+
+  <div class="cta-card">
+    <h3>Analyse your CV for ATS</h3>
+    <p>Is your CV ready for the market? Find out how it scores against Applicant Tracking Systems and get critical feedback instantly.</p>
+    <a href="/en/cv-analyser" class="cta-btn">Try CV Analyser</a>
+  </div>
+
+</div>
+
+</body>
+</html>

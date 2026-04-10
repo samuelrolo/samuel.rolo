@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Path — Relatório Completo | Demo</title>
+<link rel="canonical" href="https://www.share2inspire.pt/career-path/demo" />
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #B8973A;
+    --gold-light: #D4AF55;
+    --gold-pale: #F5EDD0;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --orange: #C4530A;
+    --orange-light: #FEF0E6;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F5;
+    --gray-200: #E4E4E7;
+    --gray-300: #D1D1D6;
+    --gray-400: #A0A0AB;
+    --gray-600: #52525B;
+    --gray-700: #3F3F46;
+    --gray-800: #27272A;
+    --gray-900: #18181B;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
+  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .topnav-brand svg { color: var(--gold); }
+  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+  .report-header { margin-bottom: 24px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label.orange { color: var(--orange); }
+  .section-label.gold { color: var(--gold); }
+  .section-label.green { color: var(--green); }
+  .section-label.gray { color: var(--gray-600); }
+
+  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+
+  .warn-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: var(--orange-light);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+  .warn-item svg { flex-shrink: 0; margin-top: 2px; }
+
+  .ats-compat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+  }
+  .ats-compat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+  .ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
+  .ats-compat-row .boa { color: var(--green); font-weight: 600; }
+  .ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
+
+  .howto-list { list-style: none; margin-top: 12px; }
+  .howto-list li {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
+    padding: 5px 0;
+  }
+  .howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  .issue-item { margin-bottom: 20px; }
+  .issue-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+
+  .issue-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+  }
+  .issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+
+  .code-block {
+    background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
+    color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+  }
+
+  .suggestion-block {
+    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+    line-height: 1.6;
+  }
+
+  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quadrant-cell {
+    border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+  }
+  .quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
+  .quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
+
+  .donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+  .donut-container svg { transform: rotate(-90deg); }
+  .donut-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 22px; font-weight: 700; color: var(--gray-900);
+  }
+  .benchmark-tag { font-size: 11px; color: var(--gray-400); }
+  .benchmark-tag span { color: var(--green); font-weight: 600; }
+
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+  .factor-sub { font-size: 11px; color: var(--gray-400); }
+  .factor-bar-wrap { flex: 1; position: relative; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+
+  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tag {
+    padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
+    color: var(--gold); font-size: 12px; font-weight: 600;
+    border: 1px solid #E2C96A;
+  }
+  .profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
+  .profile-line strong { color: var(--gray-900); }
+
+  .attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
+  .attention-list li {
+    counter-increment: attn; display: flex; gap: 10px;
+    font-size: 13px; color: var(--gray-600); padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .attention-list li::before {
+    content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
+    color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  .salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
+  .salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+  .salary-cell .amount.highlight { color: var(--gold); }
+  .salary-cell .period { font-size: 10px; color: var(--gray-400); }
+
+  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
+  .benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+
+  .market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
+  .market-stat { text-align: center; }
+  .market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+  .market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+  .market-stat .val.accent { color: var(--gold); }
+
+  .bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+
+  .market-items { margin-top: 12px; }
+  .market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  .risk-bar-wrap { margin: 16px 0; }
+  .risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .risk-bar { height: 10px; background: linear-gradient(to right, var(--green), var(--gold), var(--orange), var(--red)); border-radius: 99px; position: relative; }
+  .risk-indicator { position: absolute; top: -4px; width: 18px; height: 18px; background: var(--white); border: 3px solid var(--gray-800); border-radius: 50%; transform: translateX(-50%); }
+
+  .matrix-grid { display: grid; grid-template-columns: 20px 1fr 1fr; grid-template-rows: 20px 1fr 1fr; gap: 4px; font-size: 11px; }
+  .matrix-label { display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--gray-500); }
+  .matrix-label.y-axis { writing-mode: vertical-rl; transform: rotate(180deg); }
+  .matrix-cell { border-radius: 8px; padding: 12px; }
+  .matrix-cell .title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .matrix-cell ul { list-style: none; padding-left: 0; }
+  .matrix-cell ul li { position: relative; padding-left: 14px; margin-bottom: 4px; }
+  .matrix-cell ul li::before { content: '•'; position: absolute; left: 0; }
+
+  .plan-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .plan-card { border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px; }
+  .plan-card .week { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .plan-card .title { font-weight: 600; color: var(--gray-800); margin-bottom: 10px; }
+  .plan-card ul { list-style: none; padding-left: 0; }
+  .plan-card ul li { display: flex; gap: 6px; font-size: 12px; color: var(--gray-600); margin-bottom: 6px; }
+  .plan-card ul li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  .linkedin-card { background: #F0F5FF; border: 1px solid #D9E2F5; border-radius: 10px; padding: 20px; }
+  .linkedin-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .linkedin-header img { width: 40px; height: 40px; border-radius: 50%; }
+  .linkedin-author { font-weight: 600; color: #0D66C2; }
+  .linkedin-author span { display: block; font-size: 12px; color: var(--gray-500); font-weight: 400; }
+  .linkedin-text { font-size: 13px; color: var(--gray-800); line-height: 1.6; }
+
+  .cta-card { text-align: center; }
+  .cta-card h2 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--gray-900); margin-bottom: 8px; }
+  .cta-card p { color: var(--gray-500); margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto; }
+  .cta-btn {
+    display: inline-block; background: var(--gold);
+    color: var(--white); text-decoration: none; font-weight: 600;
+    padding: 12px 24px; border-radius: 8px; transition: background .2s;
+  }
+  .cta-btn:hover { background: var(--gold-light); }
+
+  @media (max-width: 600px) {
+    .page { padding: 24px 16px 60px; }
+    .topnav { padding: 12px 16px; }
+    .report-header h1 { font-size: 20px; }
+    .card { padding: 20px; }
+    .quadrant-grid { grid-template-columns: 1fr; }
+    .salary-grid { grid-template-columns: 1fr 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .market-stats { gap: 16px; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-left">
+    <a href="/career-path">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Voltar
+    </a>
+  </div>
+  <div class="topnav-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    share2inspire.pt
+  </div>
+  <div class="topnav-right">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v6h6v-2h-4z"/></svg>
+    DEMO
+  </div>
+</div>
+
+<div class="page">
+  <div class="report-header">
+    <p>Relatório de Análise de Carreira</p>
+    <h1>Career Path — Relatório Completo</h1>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Alinhamento de Carreira
+    </div>
+    <div class="ats-score-row">
+      <div class="ats-score-big">82<span>/100</span></div>
+      <span class="badge badge-green">Forte</span>
+    </div>
+    <p class="ats-desc">O seu perfil demonstra um forte alinhamento com a trajetória de carreira de Gestor de Produto, com base nas suas competências e experiência. O potencial de sucesso nesta área é elevado.</p>
+    <div class="warn-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <div>
+        <strong>Oportunidade de Melhoria:</strong> A sua experiência em liderança de equipas multifuncionais pode ser mais destacada para se alinhar com as funções de gestão de produto de nível sénior.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Pontos Críticos de Desenvolvimento
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 áreas a focar para acelerar a sua transição de carreira.</p>
+
+    <div class="issue-item">
+      <p><span class="issue-num">1</span><span class="issue-title">Falta de Experiência em Metodologias Ágeis</span></p>
+      <p class="issue-sub">O seu perfil não menciona experiência direta com Scrum, Kanban ou outras metodologias ágeis, que são cruciais na gestão de produtos digitais.</p>
+      <div class="issue-section-label">Explicação</div>
+      <p class="issue-text">A maioria das empresas de tecnologia opera em ambientes ágeis. A ausência desta competência pode ser um obstáculo significativo, sugerindo uma lacuna no conhecimento de processos modernos de desenvolvimento de software.</p>
+      <div class="issue-section-label">Sugestão de Desenvolvimento</div>
+      <div class="suggestion-block">
+        Obtenha uma certificação em Scrum (e.g., Certified ScrumMaster®) e participe em projetos que utilizem estas metodologias para ganhar experiência prática.
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">2</span><span class="issue-title">Competências Analíticas de Dados Pouco Evidentes</span></p>
+      <p class="issue-sub">Não há menção de ferramentas de análise de dados (SQL, Python, Power BI) ou de como utilizou dados para tomar decisões.</p>
+      <div class="issue-section-label">Explicação</div>
+      <p class="issue-text">Gestores de Produto dependem de dados para compreender o comportamento do utilizador e tomar decisões informadas. A falta de competências analíticas pode ser vista como uma fraqueza crítica.</p>
+      <div class="issue-section-label">Sugestão de Desenvolvimento</div>
+      <div class="suggestion-block">
+        Complete cursos online em SQL e análise de dados. Comece a incorporar métricas e KPIs nos seus projetos atuais para demonstrar uma mentalidade orientada a dados.
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">3</span><span class="issue-title">Networking Insuficiente na Área de Produto</span></p>
+      <p class="issue-sub">A sua rede de contactos parece focada na sua indústria atual, com poucas ligações a profissionais da área de gestão de produto.</p>
+      <div class="issue-section-label">Explicação</div>
+      <p class="issue-text">Uma rede de contactos forte na área de destino é essencial para encontrar oportunidades, obter referências e aprender com especialistas. A transição de carreira depende muito de quem conhece.</p>
+      <div class="issue-section-label">Sugestão de Desenvolvimento</div>
+      <div class="suggestion-block">
+        Participe em meetups de produto, conecte-se com Gestores de Produto no LinkedIn e agende conversas informais para aprender sobre a área e construir a sua rede.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/></svg>
+      Análise de Competências
+    </div>
+    <div class="quadrant-grid">
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Liderança</div>
+        <div class="quadrant-sub">→ Capacidade de liderar equipas</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="37.7" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">80</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 75 <span>(+5)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Comunicação</div>
+        <div class="quadrant-sub">→ Comunicação com stakeholders</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="28.27" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">85</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 80 <span>(+5)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Técnica</div>
+        <div class="quadrant-sub">→ Conhecimento técnico relevante</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--orange)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="113.1" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">40</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 65 <span style="color:var(--red)">(-25)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Estratégia</div>
+        <div class="quadrant-sub">→ Visão estratégica de produto</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="188.5" stroke-dashoffset="56.55" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">70</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 70 <span>(Na média)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Funções Sugeridas
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Product Manager<div class="factor-sub">Alinhamento</div></div>
+      <div class="factor-bar-wrap">
+        <div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 85%;"></div></div>
+      </div>
+      <div class="factor-score">85</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Product Owner<div class="factor-sub">Alinhamento</div></div>
+      <div class="factor-bar-wrap">
+        <div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 75%;"></div></div>
+      </div>
+      <div class="factor-score">75</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Project Manager<div class="factor-sub">Alinhamento</div></div>
+      <div class="factor-bar-wrap">
+        <div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 60%;"></div></div>
+      </div>
+      <div class="factor-score">60</div>
+    </div>
+    <div class="factor-row">
+      <div class="factor-name">Business Analyst<div class="factor-sub">Alinhamento</div></div>
+      <div class="factor-bar-wrap">
+        <div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 55%;"></div></div>
+      </div>
+      <div class="factor-score">55</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Projeção Salarial
+    </div>
+    <div class="salary-grid">
+      <div class="salary-cell">
+        <div class="label">Entrada</div>
+        <div class="amount">45k €</div>
+        <div class="period">Anual</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Mercado</div>
+        <div class="amount highlight">65k €</div>
+        <div class="period">Anual</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Sénior</div>
+        <div class="amount">85k €</div>
+        <div class="period">Anual</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Potencial</div>
+        <div class="amount">110k €</div>
+        <div class="period">Anual</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px;">A sua experiência em liderança e comunicação coloca-o numa posição favorável para negociar um salário acima da média de mercado para uma função de Gestor de Produto. O desenvolvimento de competências técnicas e analíticas pode aumentar significativamente o seu potencial salarial a longo prazo.</p>
+    <div class="salary-source">*Estimativas baseadas em dados de mercado para Lisboa, Portugal.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 16.1A5 5 0 015.9 20M2 12.05A9 9 0 019.95 20M2 8a13 13 0 0113 13M12 2a10 10 0 0110 10"/></svg>
+      Risco de Automação
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-labels">
+        <span>Baixo</span>
+        <span>Moderado</span>
+        <span>Elevado</span>
+      </div>
+      <div class="risk-bar">
+        <div class="risk-indicator" style="left: 25%;"></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-600);margin-top:16px;">O risco de automação para a função de Gestor de Produto é <strong>baixo (25%)</strong>. As competências de pensamento crítico, estratégia e comunicação são difíceis de automatizar. No entanto, tarefas repetitivas de análise de dados podem ser assistidas por IA, tornando as competências analíticas avançadas ainda mais valiosas.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Matriz de Prioridades
+    </div>
+    <div class="matrix-grid">
+      <div class="matrix-label y-axis">Impacto</div>
+      <div class="matrix-label"></div>
+      <div class="matrix-label"></div>
+      <div style="writing-mode: vertical-rl; transform: rotate(180deg); grid-row: 2 / 4; text-align: center; font-weight: 600; color: var(--gray-500);">Alto</div>
+      <div class="matrix-cell" style="background: #FFFBEB; border: 1px solid #FDE68A;">
+        <div class="title" style="color: #B45309;">Fazer Agora</div>
+        <ul>
+          <li>Certificação Scrum</li>
+          <li>Curso de SQL</li>
+        </ul>
+      </div>
+      <div class="matrix-cell" style="background: #EFF6FF; border: 1px solid #BFDBFE;">
+        <div class="title" style="color: #1E40AF;">Agendar</div>
+        <ul>
+          <li>Projeto com métricas</li>
+          <li>Networking</li>
+        </ul>
+      </div>
+      <div style="writing-mode: vertical-rl; transform: rotate(180deg); grid-row: 4 / 6; text-align: center; font-weight: 600; color: var(--gray-500);">Baixo</div>
+      <div class="matrix-cell" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+        <div class="title" style="color: var(--gray-500);">Considerar</div>
+        <ul>
+          <li>Curso de Python</li>
+        </ul>
+      </div>
+      <div class="matrix-cell" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+        <div class="title" style="color: var(--gray-500);">Evitar</div>
+        <ul>
+          <li>Formação genérica</li>
+        </ul>
+      </div>
+      <div class="matrix-label"></div>
+      <div class="matrix-label">Baixo</div>
+      <div class="matrix-label">Alto</div>
+      <div class="matrix-label" style="grid-column: 2 / 4;">Esforço</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      Plano de Ação (30 Dias)
+    </div>
+    <div class="plan-grid">
+      <div class="plan-card">
+        <div class="week">Semana 1</div>
+        <div class="title">Pesquisa e Formação</div>
+        <ul>
+          <li>Inscrever-se no curso de SQL.</li>
+          <li>Iniciar certificação Scrum.</li>
+          <li>Identificar 5 empresas-alvo.</li>
+        </ul>
+      </div>
+      <div class="plan-card">
+        <div class="week">Semanas 2-3</div>
+        <div class="title">Networking e Aplicação</div>
+        <ul>
+          <li>Conectar-se com 10 PMs no LinkedIn.</li>
+          <li>Agendar 2 conversas informais.</li>
+          <li>Adaptar CV com novas competências.</li>
+        </ul>
+      </div>
+      <div class="plan-card">
+        <div class="week">Semana 4</div>
+        <div class="title">Candidatura e Otimização</div>
+        <ul>
+          <li>Candidatar-se a 3 vagas de PM.</li>
+          <li>Publicar sobre a transição no LinkedIn.</li>
+          <li>Analisar feedback e ajustar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card linkedin-card">
+    <div class="linkedin-header">
+      <img src="https://i.pravatar.cc/40?u=demo" alt="User avatar">
+      <div>
+        <div class="linkedin-author">O seu nome<span style="font-weight:400"> • 1º</span></div>
+        <span style="font-size:12px;color:var(--gray-500);">A iniciar uma nova jornada profissional!</span>
+      </div>
+    </div>
+    <p class="linkedin-text">Estou entusiasmado por partilhar que estou a fazer a transição para a área de Gestão de Produto! Após uma análise aprofundada com a ajuda da @share2inspire, identifiquei as minhas forças em liderança e comunicação e estou agora a focar-me no desenvolvimento de competências em metodologias ágeis e análise de dados.<br><br>Estou ansioso por aplicar a minha experiência para criar produtos que os clientes adoram. Se tiver dicas ou conhecer oportunidades, adoraria conectar-me! #CareerTransition #ProductManagement #Growth</p>
+  </div>
+
+  <div class="card cta-card">
+    <div class="section-label gray" style="justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 12H16c-.7 2-2 4-4 4.5V22h-2v-5.5c-2-.5-3.3-2.5-4-4.5H2.5"/><path d="M16 12a4 4 0 11-8 0c0-2 2-3.5 4-3.5s4 1.5 4 3.5z"/></svg>
+      Explore Outras Análises
+    </div>
+    <h2>Pronto para o Mercado de Trabalho?</h2>
+    <p>A nossa análise de CV, baseada em IA, identifica os pontos fracos do seu currículo e mostra como corrigi-los para passar nos sistemas de recrutamento (ATS).</p>
+    <a href="/cv-analyser" class="cta-btn">Analisar o meu CV</a>
+  </div>
+
+</div>
+
+</body>
+</html>
