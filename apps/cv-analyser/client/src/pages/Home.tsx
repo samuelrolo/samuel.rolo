@@ -1117,11 +1117,11 @@ export default function Home() {
       {/* Bundle Banner — Value-focused, no explicit price */}
       <a href="/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
-          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Mais popular</span>
+          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">{pick("Mais popular", "Most popular", "Más popular")}</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — Diagnóstico CV + Roadmap de Carreira num só passo
+            <strong className="text-[#C9A961]">{pick("Bundle", "Bundle", "Bundle")}</strong> — Diagnóstico CV + Roadmap de Carreira num só passo
           </span>
-          <span className="text-xs bg-[#C9A961] text-white px-3 py-1 rounded-full font-semibold shrink-0">Descobrir →</span>
+          <span className="text-xs bg-[#C9A961] text-white px-3 py-1 rounded-full font-semibold shrink-0">{pick("Descobrir →", "Discover →", "Descubrir →")}</span>
         </div>
       </a>
 
@@ -1227,7 +1227,7 @@ export default function Home() {
           <div className="hidden md:block">
             {/* Value bullets */}
             <div className="space-y-2 text-sm text-muted-foreground mb-6">
-              <p className="font-semibold text-foreground text-base">Depois da análise vais ver:</p>
+              <p className="font-semibold text-foreground text-base">{pick("Depois da análise vais ver:", "After the analysis you will see:", "Después del análisis verás:")}</p>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Score de compatibilidade ATS</div>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> ATS Deep Scan + Análise de Keywords</div>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Live Match — compara CV vs vaga</div>
@@ -1334,7 +1334,7 @@ export default function Home() {
             <div className="space-y-2 animate-in slide-in-from-top-2 duration-200 p-4 rounded-lg bg-muted/30 border border-border">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">Cola o URL do teu perfil LinkedIn para extrairmos os dados automaticamente.</p>
-                <span className="text-[10px] bg-[#C9A961]/20 text-[#C9A961] px-2 py-0.5 rounded-full font-semibold shrink-0 ml-2">PREMIUM</span>
+                <span className="text-[10px] bg-[#C9A961]/20 text-[#C9A961] px-2 py-0.5 rounded-full font-semibold shrink-0 ml-2">{pick("PREMIUM", "PREMIUM", "PREMIUM")}</span>
               </div>
               <input
                 type="url"
@@ -1343,7 +1343,7 @@ export default function Home() {
                 placeholder="https://linkedin.com/in/o-teu-perfil"
                 className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
               />
-              <p className="text-xs text-muted-foreground/70">Analisamos o teu perfil público do LinkedIn como se fosse um CV. <span className="text-[#C9A961]">Requer pacote pago.</span></p>
+              <p className="text-xs text-muted-foreground/70">Analisamos o teu perfil público do LinkedIn como se fosse um CV. <span className="text-[#C9A961]">{pick("Requer pacote pago.", "Requires paid package.", "Requiere paquete de pago.")}</span></p>
             </div>
           )}
 
@@ -1664,13 +1664,13 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
                   <svg className="w-6 h-6 text-[#C9A961]" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 </div>
-                <h3 className="text-lg font-bold text-white">Análise LinkedIn é Premium</h3>
+                <h3 className="text-lg font-bold text-white">{pick("Análise LinkedIn é Premium", "LinkedIn Analysis is Premium", "El análisis de LinkedIn es Premium")}</h3>
                 <p className="text-sm text-white/70">A análise via LinkedIn requer um pacote pago. Obtém um relatório completo com score ATS, estimativa salarial e recomendações personalizadas.</p>
               </div>
 
               {/* Discount code input */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/80">Já tens um código de desconto?</p>
+                <p className="text-xs font-medium text-white/80">{pick("Já tens um código de desconto?", "Already have a discount code?", "¿Ya tienes un código de descuento?")}</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -1827,7 +1827,7 @@ export default function Home() {
                     <tr className="bg-muted/50">
                       <th className="text-left p-3 font-semibold text-foreground text-xs">{pick('Funcionalidade', 'Feature', 'Funcionalidad')}</th>
                       <th className="p-3 text-center">
-                        <span className="text-xs font-bold text-[#C9A961]">CV Analyser</span>
+                        <span className="text-xs font-bold text-[#C9A961]">{pick("CV Analyser", "CV Analyser", "CV Analyser")}</span>
                       </th>
                       <th className="p-3 text-xs font-medium text-muted-foreground text-center">Resumeworded</th>
                       <th className="p-3 text-xs font-medium text-muted-foreground text-center">Kickresume</th>
@@ -1877,7 +1877,7 @@ export default function Home() {
               <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto">
                 <Target className="w-5 h-5 text-[#C9A961]" />
               </div>
-              <p className="text-sm font-medium text-foreground">Powered by AI</p>
+              <p className="text-sm font-medium text-foreground">{pick("Powered by AI", "Powered by AI", "Powered by AI")}</p>
               <p className="text-xs text-muted-foreground">{pick('Análise com Google Gemini', 'Analysis with Google Gemini', 'Análisis con Google Gemini')}</p>
             </div>
             <div className="text-center space-y-2">
@@ -1911,7 +1911,7 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <FileSearch className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">ATS Deep Scan</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick("ATS Deep Scan", "ATS Deep Scan", "ATS Deep Scan")}</h3>
               <p className="text-sm text-muted-foreground">
                 {pick('Análise profunda com 3 scores: ATS Global, Keywords e Formato', 'Deep analysis with 3 scores: Global ATS, Keywords and Format', 'Análisis profundo con 3 scores: ATS Global, Keywords y Formato')}
               </p>
@@ -1929,7 +1929,7 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <Crosshair className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Live Match</h3>
+              <h3 className="text-lg font-semibold text-foreground">{pick("Live Match", "Live Match", "Live Match")}</h3>
               <p className="text-sm text-muted-foreground">
                 {pick('Cola a descrição da vaga e vê a compatibilidade em tempo real', 'Paste the job description and see the compatibility in real time', 'Pega la descripción del puesto y ve la compatibilidad en tiempo real')}
               </p>
@@ -2029,8 +2029,8 @@ export default function Home() {
                 <Award className="w-6 h-6 text-[#C9A961]" />
               </div>
               <div className="text-left">
-                <h2 className="text-xl font-bold text-foreground">Pacotes de Análise Completa</h2>
-                <p className="text-sm text-muted-foreground">Desde €9,99 por análise</p>
+                <h2 className="text-xl font-bold text-foreground">{pick("Pacotes de Análise Completa", "Full Analysis Packages", "Paquetes de Análisis Completo")}</h2>
+                <p className="text-sm text-muted-foreground">{pick("Desde €9,99 por análise", "From €9.99 per analysis", "Desde 9,99€ por análisis")}</p>
               </div>
             </div>
             {pricingOpen ? (
