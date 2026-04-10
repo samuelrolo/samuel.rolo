@@ -12,7 +12,7 @@ import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
-import { getDefaultCountryByLanguage, getLocalizedCountries } from "@/data/countries";
+import { getDefaultCountryByLanguage, getCountries, getRegions } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { redirectToCheckout } from '../lib/webviewPayment';
@@ -162,8 +162,8 @@ export default function CareerIntelligenceHome() {
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [region, setRegion] = useState<string>('');
-  const countries = getLocalizedCountries(lang);
-  const countryData = countries.find(c => c.country === country);
+  const countries = getCountries(lang);
+  const regionOptions = getRegions(country, lang);
 
   useEffect(() => {
     setCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -991,17 +991,17 @@ export default function CareerIntelligenceHome() {
                   >
                     <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
                     {countries.map(c => (
-                      <option key={c.code} value={c.country}>{c.label}</option>
+                      <option key={c.code} value={c.value}>{c.label}</option>
                     ))}
                   </select>
-                  {countryData && countryData.regions.length > 0 && (
+                  {regionOptions.length > 1 && (
                     <select
                       value={region}
                       onChange={(e) => setRegion(e.target.value)}
                       className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                     >
                       <option value="">{pick('Selecciona a região (opcional)...', 'Select the region (optional)...', 'Selecciona la región (opcional)...')}</option>
-                      {countryData.regions.map(r => (
+                      {regionOptions.map(r => (
                         <option key={r.value} value={r.value}>{r.label}</option>
                       ))}
                     </select>
@@ -1014,7 +1014,7 @@ export default function CareerIntelligenceHome() {
                 <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
                 <input
                   type="email"
-                  placeholder="o-teu@email.com"
+                  placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
