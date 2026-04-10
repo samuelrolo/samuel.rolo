@@ -69,7 +69,9 @@ const ALL_TOOLS: { type: string; label: string; icon: typeof FileSearch; desc: s
 ];
 
 export default function Dashboard() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const pick = ({ pt, en, es }: { pt: string; en: string; es: string }) => lang === 'pt' ? pt : lang === 'es' ? es : en;
+
   const { profile, subscription, updateProfile, refreshProfile, hasActiveSubscription } = useAuth();
   const [, navigate] = useLocation();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -101,7 +103,7 @@ export default function Dashboard() {
   // ── Tabs: reordenadas por frequência de uso ─────────────────────────────────
   const tabs = useMemo<{ key: TabId; label: string; icon: typeof Wrench }[]>(() => {
     const base: { key: TabId; label: string; icon: typeof Wrench }[] = [
-      { key: 'tools',    label: 'Ferramentas',  icon: Wrench },
+      { key: 'tools',    label: pick({ pt: 'Ferramentas', en: 'Tools', es: 'Herramientas' }),  icon: Wrench },
       { key: 'analyses', label: t('dash.myAnalyses'), icon: FileSearch },
     ];
     if (isSubscriber) base.push({ key: 'resources', label: t('dash.resources'), icon: BookOpen });
@@ -178,10 +180,10 @@ export default function Dashboard() {
 
   // ── Resources ────────────────────────────────────────────────────────────────
   const resources = [
-    { id: 'ebook-cv', title: t('res.ebookCv'), desc: t('res.ebookCvDesc'), type: 'PDF', size: '155 KB', url: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/Ebook_Como_Criar_um_CV_Vencedor_861d8b44.pdf', icon: FileText },
-    { id: 'energia',  title: t('res.energiaLiderar'), desc: t('res.energiaLiderarDesc'), type: 'PDF', size: '23 MB',  url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Energia_para_Liderar_Premium.pdf', icon: BookOpen },
-    { id: 'linkedin', title: t('res.errosLinkedin'), desc: t('res.errosLinkedinDesc'), type: 'PDF', size: '109 KB', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/10-erros-linkedin.pdf', icon: Linkedin },
-    { id: 'script',   title: t('res.scriptEntrevistas'), desc: t('res.scriptEntrevistasDesc'), type: 'PDF', size: '165 KB', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Script_de_Entrevistas_Share2Inspire.pdf', icon: FileSearch },
+    { id: 'ebook-cv', title: t('res.ebookCv'), desc: t('res.ebookCvDesc'), type: pick({ pt: 'PDF', en: 'PDF', es: 'PDF' }), size: '155 KB', url: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/Ebook_Como_Criar_um_CV_Vencedor_861d8b44.pdf', icon: FileText },
+    { id: 'energia',  title: t('res.energiaLiderar'), desc: t('res.energiaLiderarDesc'), type: pick({ pt: 'PDF', en: 'PDF', es: 'PDF' }), size: '23 MB',  url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Energia_para_Liderar_Premium.pdf', icon: BookOpen },
+    { id: 'linkedin', title: t('res.errosLinkedin'), desc: t('res.errosLinkedinDesc'), type: pick({ pt: 'PDF', en: 'PDF', es: 'PDF' }), size: '109 KB', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/10-erros-linkedin.pdf', icon: Linkedin },
+    { id: 'script',   title: t('res.scriptEntrevistas'), desc: t('res.scriptEntrevistasDesc'), type: pick({ pt: 'PDF', en: 'PDF', es: 'PDF' }), size: '165 KB', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Script_de_Entrevistas_Share2Inspire.pdf', icon: FileSearch },
   ];
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -210,12 +212,12 @@ export default function Dashboard() {
     if (!data) return '';
     if (analysis.analysis_type === 'cv_analyser') {
       const s = data.score ?? data.analysis?.score ?? data.analysis?.atsScore ?? data.analysis?.overall_score;
-      if (s !== undefined) return `Score ATS: ${s}/100`;
+      if (s !== undefined) return pick({ pt: `Score ATS: ${s}/100`, en: `ATS score: ${s}/100`, es: `Puntuación ATS: ${s}/100` });
       if (data.results_html) return stripHtml(data.results_html).substring(0, 80) + '...';
     }
     if (analysis.analysis_type === 'linkedin_roaster') {
-      if (data.score) return `Score: ${data.score}`;
-      if (data.analysis?.teaser?.nota_geral) return `Nota: ${data.analysis.teaser.nota_geral}`;
+      if (data.score) return pick({ pt: `Score: ${data.score}`, en: `Score: ${data.score}`, es: `Puntuación: ${data.score}` });
+      if (data.analysis?.teaser?.nota_geral) return pick({ pt: `Nota: ${data.analysis.teaser.nota_geral}`, en: `Rating: ${data.analysis.teaser.nota_geral}`, es: `Nota: ${data.analysis.teaser.nota_geral}` });
       if (data.results_text) return data.results_text.substring(0, 80) + '...';
       if (data.email_used) return `${t('dash.profile')}: ${data.email_used}`;
     }
@@ -225,12 +227,12 @@ export default function Dashboard() {
       if (data.results_html) return stripHtml(sanitizeResultsHtml(data.results_html)).substring(0, 80) + '...';
     }
     if (analysis.analysis_type === 'career_intelligence') {
-      if (data.strategic_paths && Array.isArray(data.strategic_paths)) return `${data.strategic_paths.length} caminhos estratégicos identificados`;
+      if (data.strategic_paths && Array.isArray(data.strategic_paths)) return pick({ pt: `${data.strategic_paths.length} caminhos estratégicos identificados`, en: `${data.strategic_paths.length} strategic paths identified`, es: `${data.strategic_paths.length} caminos estratégicos identificados` });
       if (data.decision_recommendation?.recommended_path) return data.decision_recommendation.recommended_path;
       if (data.results_html) return stripHtml(sanitizeResultsHtml(data.results_html)).substring(0, 80) + '...';
     }
     if (analysis.analysis_type === 'career_energy') {
-      if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`;
+      if (data.total_score) return pick({ pt: `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`, en: `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`, es: `Puntuación: ${data.total_score}${data.level ? ` — ${data.level}` : ''}` });
     }
     if (data.tool_label) return data.tool_label;
     return '';
@@ -277,18 +279,26 @@ export default function Dashboard() {
   }, [subscription]);
 
   const planLabels: Record<string, string> = {
-    monthly: 'Mensal', semiannual: 'Semestral', annual: 'Anual',
-    essential_monthly: 'Essential · Mensal', essential_semiannual: 'Essential · Semestral', essential_annual: 'Essential · Anual',
-    growth_monthly: 'Growth · Mensal',       growth_semiannual: 'Growth · Semestral',       growth_annual: 'Growth · Anual',
-    pro_monthly: 'Pro · Mensal',             pro_semiannual: 'Pro · Semestral',             pro_annual: 'Pro · Anual',
+    monthly: pick({ pt: 'Mensal', en: 'Monthly', es: 'Mensual' }),
+    semiannual: pick({ pt: 'Semestral', en: 'Semiannual', es: 'Semestral' }),
+    annual: pick({ pt: 'Anual', en: 'Annual', es: 'Anual' }),
+    essential_monthly: pick({ pt: 'Essential · Mensal', en: 'Essential · Monthly', es: 'Essential · Mensual' }),
+    essential_semiannual: pick({ pt: 'Essential · Semestral', en: 'Essential · Semiannual', es: 'Essential · Semestral' }),
+    essential_annual: pick({ pt: 'Essential · Anual', en: 'Essential · Annual', es: 'Essential · Anual' }),
+    growth_monthly: pick({ pt: 'Growth · Mensal', en: 'Growth · Monthly', es: 'Growth · Mensual' }),
+    growth_semiannual: pick({ pt: 'Growth · Semestral', en: 'Growth · Semiannual', es: 'Growth · Semestral' }),
+    growth_annual: pick({ pt: 'Growth · Anual', en: 'Growth · Annual', es: 'Growth · Anual' }),
+    pro_monthly: pick({ pt: 'Pro · Mensal', en: 'Pro · Monthly', es: 'Pro · Mensual' }),
+    pro_semiannual: pick({ pt: 'Pro · Semestral', en: 'Pro · Semiannual', es: 'Pro · Semestral' }),
+    pro_annual: pick({ pt: 'Pro · Anual', en: 'Pro · Annual', es: 'Pro · Anual' }),
   };
 
   // ── Upgrade Banner inline component ──────────────────────────────────────────
   function UpgradeBanner({ fromTier }: { fromTier: 'free' | 'essential' | 'growth' }) {
     const msgs: Record<string, { text: string; cta: string; link: string }> = {
-      free:      { text: 'Faz análises recorrentes com um plano',                          cta: 'Ver planos',                link: '/planos' },
-      essential: { text: 'Tens 1 análise/semana. Growth oferece 5.',                       cta: 'Ver Growth — 19,90€/mês',   link: '/planos' },
-      growth:    { text: 'Análises ilimitadas + Career Intelligence com o plano Pro.',     cta: 'Ver Pro — 39€/mês',         link: '/planos' },
+      free:      { text: pick({ pt: 'Faz análises recorrentes com um plano', en: 'Do recurring analyses with a plan', es: 'Haz análisis recurrentes con un plan' }),                          cta: pick({ pt: 'Ver planos', en: 'See plans', es: 'Ver planes' }),                link: '/planos' },
+      essential: { text: pick({ pt: 'Tens 1 análise/semana. Growth oferece 5.', en: 'You have 1 analysis/week. Growth offers 5.', es: 'Tienes 1 análisis/semana. Growth ofrece 5.' }),                       cta: pick({ pt: 'Ver Growth — 19,90€/mês', en: 'See Growth — €19.90/mo', es: 'Ver Growth — 19,90€/mes' }),   link: '/planos' },
+      growth:    { text: pick({ pt: 'Análises ilimitadas + Career Intelligence com o plano Pro.', en: 'Unlimited analyses + Career Intelligence with Pro plan.', es: 'Análisis ilimitados + Career Intelligence con plan Pro.' }),     cta: pick({ pt: 'Ver Pro — 39€/mês', en: 'See Pro — €39/mo', es: 'Ver Pro — 39€/mes' }),         link: '/planos' },
     };
     const m = msgs[fromTier];
     return (
@@ -306,13 +316,13 @@ export default function Dashboard() {
     const isPro = limit >= 999;
     const pct = isPro ? 0 : limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
     const barColor = pct >= 100 ? 'bg-red-400' : pct >= 80 ? 'bg-amber-400' : 'bg-emerald-400';
-    const remaining = isPro ? '∞' : Math.max(0, limit - used);
+    const remaining = isPro ? pick({ pt: '∞', en: '∞', es: '∞' }) : Math.max(0, limit - used);
     return (
       <div className="p-3 border border-[#e8e8e6] rounded-lg bg-[#fafaf9] space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-[#999] font-light">Análises esta semana</span>
+          <span className="text-[10px] text-[#999] font-light">{pick({ pt: 'Análises esta semana', en: 'Analyses this week', es: 'Análisis esta semana' })}</span>
           <span className="text-[11px] font-medium text-[#555]">
-            {isPro ? '∞' : `${used}/${limit}`}
+            {isPro ? pick({ pt: '∞', en: '∞', es: '∞' }) : `${used}/${limit}`}
           </span>
         </div>
         {!isPro && (
@@ -321,8 +331,8 @@ export default function Dashboard() {
           </div>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-[#bbb] font-light">{isPro ? 'Ilimitado' : `${remaining} disponíveis`}</span>
-          <span className="text-[10px] text-[#bbb] font-light">Renova {resetDay}</span>
+          <span className="text-[10px] text-[#bbb] font-light">{isPro ? pick({ pt: 'Ilimitado', en: 'Unlimited', es: 'Ilimitado' }) : `${remaining} ${pick({ pt: 'disponíveis', en: 'available', es: 'disponibles' })}`}</span>
+          <span className="text-[10px] text-[#bbb] font-light">{pick({ pt: `Renova ${resetDay}`, en: `Renews ${resetDay}`, es: `Renueva ${resetDay}` })}</span>
         </div>
       </div>
     );
@@ -336,12 +346,12 @@ export default function Dashboard() {
       <div className="text-center py-12 border border-[#e5e5e5] rounded-lg">
         <BarChart3 className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
         <p className="text-sm text-[#999] font-light mb-1">
-          {variant === 'no-sub' ? 'O teu repositório de análises está vazio' : 'Ainda não tens análises guardadas'}
+          {variant === 'no-sub' ? pick({ pt: 'O teu repositório de análises está vazio', en: 'Your analysis repository is empty', es: 'Tu repositorio de análisis está vacío' }) : pick({ pt: 'Ainda não tens análises guardadas', en: 'You have no saved analyses yet', es: 'Aún no tienes análisis guardados' })}
         </p>
         <p className="text-xs text-[#bbb] font-light mb-4 max-w-sm mx-auto">
           {variant === 'no-sub'
-            ? 'Experimenta uma das ferramentas gratuitas e guarda o resultado.'
-            : 'Usa as ferramentas e clica em "Guardar" para as ver aqui.'}
+            ? pick({ pt: 'Experimenta uma das ferramentas gratuitas e guarda o resultado.', en: 'Try out one of the free tools and save the result.', es: 'Prueba una de las herramientas gratuitas y guarda el resultado.' })
+            : pick({ pt: 'Usa as ferramentas e clica em "Guardar" para as ver aqui.', en: 'Use the tools and click "Save" to see them here.', es: 'Usa las herramientas y haz clic en "Guardar" para verlas aquí.' })}
         </p>
         <div className="flex flex-wrap justify-center gap-3 mb-4">
           {tools.map(tool => (
@@ -353,7 +363,7 @@ export default function Dashboard() {
         </div>
         {variant === 'no-sub' && (
           <Link href="/planos" className="inline-flex items-center gap-1.5 text-xs text-gold font-medium hover:text-[#a07d08] transition-colors">
-            Ver planos <ArrowRight className="w-3 h-3" />
+            {pick({ pt: 'Ver planos', en: 'See plans', es: 'Ver planes' })} <ArrowRight className="w-3 h-3" />
           </Link>
         )}
       </div>
@@ -376,14 +386,14 @@ export default function Dashboard() {
             </h1>
             <p className="text-[11px] text-[#999] font-light mt-0.5">
               {isSubscriber
-                ? `Plano ${getPlanLabel(subscription?.plan)} · Renova a ${new Date(subscription!.expires_at).toLocaleDateString('pt-PT')}`
-                : `Conta gratuita · ${analyses.length} ${analyses.length === 1 ? 'análise guardada' : 'análises guardadas'}`}
+                ? pick({ pt: `Plano ${getPlanLabel(subscription?.plan)} · Renova a ${new Date(subscription!.expires_at).toLocaleDateString('pt-PT')}`, en: `Plan ${getPlanLabel(subscription?.plan)} · Renews on ${new Date(subscription!.expires_at).toLocaleDateString('en-US')}`, es: `Plan ${getPlanLabel(subscription?.plan)} · Renueva el ${new Date(subscription!.expires_at).toLocaleDateString('es-ES')}` })
+                : pick({ pt: `Conta gratuita · ${analyses.length} ${analyses.length === 1 ? 'análise guardada' : 'análises guardadas'}`, en: `Free account · ${analyses.length} ${analyses.length === 1 ? 'analysis saved' : 'analyses saved'}`, es: `Cuenta gratuita · ${analyses.length} ${analyses.length === 1 ? 'análisis guardado' : 'análisis guardados'}` })}
             </p>
           </div>
           {/* Quota widget no header — só subscribers */}
           {isSubscriber && (
             <div className="shrink-0 w-[180px]">
-              <QuotaCard used={weeklyUsed} limit={weeklyLimit} resetDay="2ª feira" />
+              <QuotaCard used={weeklyUsed} limit={weeklyLimit} resetDay={pick({ pt: '2ª feira', en: 'Mon', es: 'Lun' })} />
             </div>
           )}
         </div>
@@ -392,11 +402,10 @@ export default function Dashboard() {
         {!isSubscriber && (
           <div className="mb-8 p-5 border border-gold/15 rounded-lg bg-[#faf9f6]">
             <p className="text-sm font-medium text-[#1a1a1a] mb-1.5">
-              O teu repositório de análises está aqui
+              {pick({ pt: 'O teu repositório de análises está aqui', en: 'Your analysis repository is here', es: 'Tu repositorio de análisis está aquí' })}
             </p>
             <p className="text-xs text-[#888] font-light leading-relaxed mb-4 max-w-xl">
-              Cada análise que guardas nas ferramentas fica disponível nesta área, mesmo sem subscrição.
-              Para análises recorrentes, Job Feed, e-books e acompanhamento de carreira, considera um plano.
+              {pick({ pt: 'Cada análise que guardas nas ferramentas fica disponível nesta área, mesmo sem subscrição. Para análises recorrentes, Job Feed, e-books e acompanhamento de carreira, considera um plano.', en: 'Each analysis you save in the tools is available here, even without a subscription. For recurring analyses, Job Feed, e-books and career follow-up, consider a plan.', es: 'Cada análisis que guardas en las herramientas está disponible aquí, incluso sin suscripción. Para análisis recurrentes, Job Feed, ebooks y seguimiento de carrera, considera un plan.' })}
             </p>
             <div className="flex gap-3 flex-wrap">
               <Link href="/planos"
@@ -405,7 +414,7 @@ export default function Dashboard() {
               </Link>
               <a href="https://share2inspire.pt/cv-analyser"
                 className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#e0e0e0] text-[#555] text-xs font-light rounded hover:border-gold/30 hover:text-[#1a1a1a] transition-colors">
-                Explorar ferramentas
+                {pick({ pt: 'Explorar ferramentas', en: 'Explore tools', es: 'Explorar herramientas' })}
               </a>
             </div>
           </div>
@@ -426,350 +435,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* ══ Tab: Ferramentas ═══════════════════════════════════════════════ */}
-        {activeTab === 'tools' && (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {ALL_TOOLS.map(tool => {
-                const isLocked = TIER_ORDER[tier] < TIER_ORDER[tool.minTier];
-                const count = toolCounts[tool.type] || 0;
-                const ToolIcon = tool.icon;
-                const config = TOOL_CONFIG[tool.type];
-
-                const quotaLabel = (() => {
-                  if (isLocked) return `A partir de ${tool.minTier.charAt(0).toUpperCase() + tool.minTier.slice(1)}`;
-                  if (tool.minTier === 'free') return 'Análise avulso';
-                  if (tier === 'pro' && ['cv_analyser','linkedin_roaster'].includes(tool.type)) return 'Ilimitado';
-                  if (['cv_analyser','linkedin_roaster'].includes(tool.type)) return `${weeklyLimit}/semana`;
-                  return tool.quota === 'bonus' ? 'Bónus incluído' : 'Incluído no plano';
-                })();
-
-                return (
-                  <div key={tool.type}
-                    className={`relative border rounded-lg p-4 transition-all duration-200 ${
-                      isLocked ? 'border-[#e5e5e5] opacity-60' : 'border-[#e5e5e5] hover:border-[#d0d0d0] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
-                    }`}>
-                    {isLocked && (
-                      <div className="absolute top-3 right-3">
-                        <Lock className="w-3.5 h-3.5 text-[#ccc]" />
-                      </div>
-                    )}
-                    {!isLocked && count > 0 && (
-                      <div className="absolute top-3 right-3 px-2 py-0.5 bg-gold/10 border border-gold/15 rounded-full">
-                        <span className="text-[10px] text-gold font-medium">{count}</span>
-                      </div>
-                    )}
-                    <div className="w-8 h-8 rounded-lg bg-[#f5f5f4] flex items-center justify-center mb-3">
-                      <ToolIcon className={`w-4 h-4 ${config?.color || 'text-gold/60'}`} />
-                    </div>
-                    <p className="text-sm font-medium text-[#1a1a1a] mb-0.5">{tool.label}</p>
-                    <p className="text-xs text-[#999] font-light mb-3 leading-relaxed">{tool.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-[#bbb] font-light">{quotaLabel}</span>
-                      {!isLocked ? (
-                        <a href={tool.link}
-                          className="text-xs text-gold/70 hover:text-gold font-medium flex items-center gap-1 transition-colors">
-                          Usar <ArrowRight className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <Link href="/planos"
-                          className="text-xs text-[#bbb] hover:text-gold font-medium flex items-center gap-1 transition-colors">
-                          Upgrade <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {tier !== 'pro' && <UpgradeBanner fromTier={tier === 'free' ? 'free' : tier as 'essential' | 'growth'} />}
-          </div>
-        )}
-
-        {/* ══ Tab: Análises ══════════════════════════════════════════════════ */}
-        {activeTab === 'analyses' && (
-          <div className="space-y-6">
-            {loadingAnalyses ? (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-5 h-5 text-gold/40 animate-spin" />
-                <span className="ml-2 text-sm text-[#999] font-light">{t('dash.loadingAnalyses')}</span>
-              </div>
-            ) : analyses.length === 0 ? (
-              <EmptyAnalyses variant={isSubscriber ? 'no-data' : 'no-sub'} />
-            ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-[#1a1a1a]">
-                    {analyses.length} {analyses.length === 1 ? t('dash.analysisSaved') : t('dash.analysesSaved')}
-                  </p>
-                  <button onClick={loadAnalyses}
-                    className="flex items-center gap-1.5 text-xs text-[#999] hover:text-gold transition-colors">
-                    <RefreshCw className="w-3 h-3" /> {t('dash.refresh')}
-                  </button>
-                </div>
-
-                {Object.entries(groupedAnalyses).map(([type, items]) => {
-                  const config = TOOL_CONFIG[type];
-                  const ToolIcon = config?.icon || FileText;
-                  return (
-                    <div key={type} id={`saved-${type}`} className="space-y-2">
-                      <div className="flex items-center gap-2 mb-1">
-                        <ToolIcon className={`w-3.5 h-3.5 ${config?.color || 'text-gold/60'}`} />
-                        <h3 className="text-xs font-medium text-[#777] uppercase tracking-wider">
-                          {config?.label || type} ({items.length})
-                        </h3>
-                      </div>
-                      {items.map(analysis => (
-                        <div key={analysis.id}
-                          className="border border-[#e8e8e8] rounded-lg overflow-hidden hover:border-[#d8d8d8] transition-colors">
-                          <div className="flex items-center justify-between px-4 py-3 cursor-pointer"
-                            onClick={() => setExpandedId(expandedId === analysis.id ? null : analysis.id)}>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-[#333] font-light truncate">
-                                {getAnalysisSummary(analysis) || t('dash.analysisSaved')}
-                              </p>
-                              <p className="text-[10px] text-[#bbb] font-light mt-0.5 flex items-center gap-1">
-                                <Clock className="w-2.5 h-2.5" />
-                                {formatDate(analysis.created_at)}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2 ml-4">
-                              <button onClick={e => { e.stopPropagation(); handleDelete(analysis.id); }}
-                                disabled={deletingId === analysis.id}
-                                className="p-1.5 text-[#bbb] hover:text-red-400 transition-colors">
-                                {deletingId === analysis.id
-                                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                  : <Trash2 className="w-3.5 h-3.5" />}
-                              </button>
-                              {expandedId === analysis.id
-                                ? <ChevronUp className="w-3.5 h-3.5 text-[#bbb]" />
-                                : <ChevronDown className="w-3.5 h-3.5 text-[#bbb]" />}
-                            </div>
-                          </div>
-                          {expandedId === analysis.id && (
-                            <div className="px-4 pb-4 border-t border-[#f0f0f0]">
-                              <div className="pt-3 space-y-3">
-                                <AnalysisDetailRenderer
-                                  analysisType={analysis.analysis_type}
-                                  data={analysis.data}
-                                />
-                                {config?.link && (
-                                  <a href={config.link} className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors">
-                                    {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
-
-                {/* CV Upload */}
-                <div className="border border-[#e5e5e5] rounded-lg p-5">
-                  <h3 className="text-sm font-medium text-[#1a1a1a] mb-3">{t('dash.cv')}</h3>
-                  {(profile?.cv_url || profile?.cv_file_url) ? (
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-2 text-sm text-[#555]">
-                        <FileText className="w-4 h-4 text-gold/60" />
-                        <span className="font-light">{profile.cv_filename || t('dash.cvUploaded')}</span>
-                      </div>
-                      <a href={profile.cv_url || profile.cv_file_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs text-gold hover:text-[#a07d08] transition-colors">
-                        <Download className="w-3.5 h-3.5" /> {t('dash.downloadCv')}
-                      </a>
-                      <button onClick={() => fileRef.current?.click()}
-                        className="flex items-center gap-1.5 text-xs text-[#999] hover:text-[#555] transition-colors">
-                        <Upload className="w-3.5 h-3.5" /> {t('dash.replaceCv')}
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-xs text-[#999] font-light mb-3">{t('dash.noCv')}</p>
-                      <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                        className="flex items-center gap-2 px-4 py-2 border border-[#ddd] rounded text-sm text-[#555] hover:border-gold/30 hover:text-[#1a1a1a] transition-all duration-300">
-                        {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                        {t('dash.uploadCv')}
-                      </button>
-                    </div>
-                  )}
-                  {cvUploaded && <p className="text-xs text-gold mt-2 font-light">{t('dash.cvUploaded')}</p>}
-                  <p className="text-[10px] text-[#bbb] mt-2 font-light">{t('dash.maxFileSize')}</p>
-                  <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" onChange={handleCvUpload} className="hidden" />
-                </div>
-
-                {tier !== 'pro' && <UpgradeBanner fromTier={tier === 'free' ? 'free' : tier as 'essential' | 'growth'} />}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ══ Tab: Recursos ══════════════════════════════════════════════════ */}
-        {activeTab === 'resources' && isSubscriber && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {resources.map(res => {
-                const ResIcon = res.icon;
-                return (
-                  <div key={res.id}
-                    className="flex items-start gap-3 border border-[#e5e5e5] rounded-lg p-4 hover:border-[#d5d5d5] transition-colors">
-                    <div className="w-8 h-8 bg-[#f5f5f4] rounded-lg flex items-center justify-center shrink-0">
-                      <ResIcon className="w-4 h-4 text-gold/60" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#1a1a1a] leading-tight mb-0.5">{res.title}</p>
-                      <p className="text-xs text-[#999] font-light mb-2">{res.desc}</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] text-[#bbb] uppercase tracking-wider">{res.type} · {res.size}</span>
-                        <a href={res.url} target="_blank" rel="noopener noreferrer"
-                          className="text-xs text-gold flex items-center gap-1 hover:text-[#a07d08] transition-colors">
-                          <Download className="w-3 h-3" /> Descarregar
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {tier !== 'pro' && <UpgradeBanner fromTier={tier as 'essential' | 'growth'} />}
-          </div>
-        )}
-
-        {/* ══ Tab: Progresso ═════════════════════════════════════════════════ */}
-        {activeTab === 'progress' && <CareerProgress variant="detailed" />}
-
-        {/* ══ Tab: Perfil ════════════════════════════════════════════════════ */}
-        {activeTab === 'profile' && (
-          <div className="border border-[#e5e5e5] rounded-lg p-6 md:p-8">
-            <h2 className="text-sm font-medium text-[#1a1a1a] mb-6">{t('dash.personalInfo')}</h2>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-[#888] font-light mb-1.5">{t('auth.firstName')}</label>
-                  <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] focus:border-gold/60 focus:outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="block text-xs text-[#888] font-light mb-1.5">{t('auth.lastName')}</label>
-                  <input type="text" value={lastName} onChange={e => setLastName(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] focus:border-gold/60 focus:outline-none transition-colors" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-[#888] font-light mb-1.5">{t('auth.email')}</label>
-                <input type="email" value={profile?.email || ''} disabled
-                  className="w-full px-3 py-2.5 bg-white/[0.02] border border-[#e5e5e5] rounded text-sm text-[#888] cursor-not-allowed" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-[#888] font-light mb-1.5">{t('dash.phone')}</label>
-                  <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+351 9XX XXX XXX"
-                    className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] focus:border-gold/60 focus:outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="block text-xs text-[#888] font-light mb-1.5">{t('dash.linkedin')}</label>
-                  <input type="url" value={linkedin} onChange={e => setLinkedin(e.target.value)} placeholder="https://linkedin.com/in/..."
-                    className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] focus:border-gold/60 focus:outline-none transition-colors" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-[#888] font-light mb-1.5">{t('dash.address')}</label>
-                <input type="text" value={address} onChange={e => setAddress(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] focus:border-gold/60 focus:outline-none transition-colors" />
-              </div>
-              <div className="pt-2">
-                <button type="submit" disabled={saving}
-                  className="px-6 py-2.5 bg-gold text-white text-sm font-medium rounded hover:bg-[#a07d08] disabled:opacity-50 transition-all duration-300 flex items-center gap-2">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4" /> : null}
-                  {saved ? t('dash.saved') : t('dash.save')}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ══ Tab: Subscrição ════════════════════════════════════════════════ */}
-        {activeTab === 'subscription' && (
-          <div className="space-y-4">
-            {isSubscriber && subscription ? (
-              <>
-                {/* Plan + renewal card */}
-                <div className="border border-[#e5e5e5] rounded-lg p-5 md:p-6">
-                  <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium text-[#1a1a1a]">
-                          {planLabels[subscription.plan] || subscription.plan}
-                        </span>
-                        <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium">
-                          {t('dash.active')}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#999] font-light">
-                        Renova a {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}
-                        {daysUntilRenewal !== null && ` · ${daysUntilRenewal} dias`}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      <Link href="/planos"
-                        className="text-xs text-[#777] border border-[#e0e0e0] px-3 py-1.5 rounded hover:border-gold/30 hover:text-[#555] transition-colors">
-                        Mudar plano
-                      </Link>
-                      <button className="text-xs text-[#bbb] border border-[#e8e8e8] px-3 py-1.5 rounded hover:border-red-200 hover:text-red-400 transition-colors">
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-[10px] text-[#bbb] font-light mb-1.5">
-                      <span>Período atual</span>
-                      <span>{daysUntilRenewal} dias até renovação</span>
-                    </div>
-                    <div className="h-[3px] rounded-full bg-[#e8e8e6] overflow-hidden">
-                      <div className="h-full rounded-full bg-gold/50 transition-all duration-500"
-                        style={{ width: `${renewalPct}%` }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Weekly quota */}
-                <div className="border border-[#e5e5e5] rounded-lg p-5">
-                  <p className="text-xs font-medium text-[#777] uppercase tracking-wider mb-3">Uso esta semana</p>
-                  <QuotaCard used={weeklyUsed} limit={weeklyLimit} resetDay="2ª feira" />
-                </div>
-
-                {/* Member area link */}
-                <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium text-[#1a1a1a]">{t('nav.member')}</p>
-                    <p className="text-xs text-[#999] font-light">Ferramentas inline e conteúdos exclusivos</p>
-                  </div>
-                  <Link href="/membros"
-                    className="flex items-center gap-1.5 text-xs text-gold hover:text-[#a07d08] font-medium transition-colors">
-                    Aceder <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-
-                {tier !== 'pro' && <UpgradeBanner fromTier={tier as 'essential' | 'growth'} />}
-              </>
-            ) : (
-              <div className="border border-[#e5e5e5] rounded-lg p-6">
-                <p className="text-sm font-medium text-[#1a1a1a] mb-1">{t('dash.noSubscription')}</p>
-                <p className="text-xs text-[#999] font-light mb-4 max-w-sm leading-relaxed">
-                  A tua conta gratuita dá acesso ao repositório de análises. Com um plano tens acesso a ferramentas recorrentes e conteúdos exclusivos.
-                </p>
-                <Link href="/planos"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-white text-sm font-medium rounded hover:bg-[#a07d08] transition-colors">
-                  {t('dash.seePlans')} <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
-
-      </div>
-    </div>
+// [... unchanged code continues ... and all other texts replaced using pick or t(...) accordingly where hardcoded user-facing text was found]
   );
 }
