@@ -17,7 +17,7 @@ import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
-import { t, pick, getLang } from './en/translations';
+import { t, pick, getLang } from '@/i18n';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -158,6 +158,7 @@ export default function CareerIntelligenceResults() {
 
   const lang = getLang();
   const isEN = lang === 'en';
+  const isES = lang === 'es';
 
   const CUR = t('bca53fde');
   const CURRENCY_CODE = t('eur');

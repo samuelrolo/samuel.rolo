@@ -1,15 +1,13 @@
 // AnalysisResults.tsx - Relatório PAGO completo
-// Ícones: line/outline dourado em círculos com border dourada (estilo Share2Inspire)
-// Tooltips: explicação de cada factor e benchmark
-// Interpretações: PT-PT detalhadas
-
+// i18n: All strings use t() from centralised translations
 import { useState } from "react";
 import QuadrantCard from "./QuadrantCard";
 import ATSRejectionBlock from "./ATSRejectionBlock";
 import RecruiterPerception from "./RecruiterPerception";
 import DimensionBar from "./DimensionBar";
 import ScoreGauge from "./ScoreGauge";
-import { Info, HelpCircle, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, Target, Layers, BookOpen, Briefcase, AlertTriangle, Euro, Bot } from "lucide-react";
+import { Info, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, Target, AlertTriangle, Euro, Bot } from "lucide-react";
+import { t, getLang } from "@/i18n";
 import type { AnalysisData } from "@/types/analysis";
 
 /** Tooltip component reusable */
@@ -36,7 +34,7 @@ function Tooltip({ label, text }: { label: string; text: string }) {
   );
 }
 
-/** Icon wrapper - Share2Inspire style: outline icon in circle with gold border */
+/** Icon wrapper - Share2Inspire style */
 function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode; size?: string }) {
   return (
     <div className={`${size} rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0`}>
@@ -45,43 +43,42 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
   );
 }
 
-/** Interpretação textual do score */
+/** Score interpretation - i18n */
 function scoreInterpretation(score: number): string {
-  if (score >= 85) return "Excelente — o teu CV está entre os melhores do mercado. Mantém esta qualidade.";
-  if (score >= 70) return "Bom — acima da média do mercado, mas com margem para optimização em áreas específicas.";
-  if (score >= 55) return "Razoável — na média do mercado. Há oportunidades claras de melhoria que podem fazer a diferença.";
-  if (score >= 40) return "Abaixo da média — o teu CV precisa de atenção em várias dimensões para ser competitivo.";
-  return "Crítico — o teu CV necessita de uma revisão profunda para passar filtros de recrutamento.";
+  if (score >= 85) return t('score_excelente');
+  if (score >= 70) return t('score_bom');
+  if (score >= 55) return t('score_razoavel');
+  if (score >= 40) return t('score_abaixo');
+  return t('score_critico');
 }
 
-/** Interpretação do ATS */
+/** ATS interpretation - i18n */
 function atsInterpretation(rate: number): string {
-  if (rate >= 70) return "Risco muito elevado de rejeição automática. O teu CV precisa de reformulação urgente para passar filtros ATS.";
-  if (rate >= 50) return "Risco elevado. Mais de metade dos sistemas ATS podem rejeitar o teu CV antes de um recrutador o ver.";
-  if (rate >= 30) return "Risco moderado. Alguns sistemas poderão filtrar o teu CV. Há melhorias simples que reduzem este risco.";
-  return "Risco baixo. O teu CV tem boa compatibilidade com a maioria dos sistemas de triagem automática.";
+  if (rate >= 70) return t('ats_risco_muito_elevado');
+  if (rate >= 50) return t('ats_risco_elevado');
+  if (rate >= 30) return t('ats_risco_moderado');
+  return t('ats_risco_baixo');
 }
 
-/** Interpretação do percentil */
+/** Percentile interpretation - i18n */
 function percentileInterpretation(percentile: number): string {
-  if (percentile >= 80) return "Estás no quartil superior — o teu CV destaca-se claramente face à maioria dos candidatos.";
-  if (percentile >= 60) return "Estás acima da média — posição competitiva, mas ainda há espaço para subir no ranking.";
-  if (percentile >= 40) return "Estás na zona média — o teu CV não se destaca nem pela positiva nem pela negativa.";
-  if (percentile >= 20) return "Estás abaixo da média — o teu CV precisa de melhorias para ser competitivo no mercado actual.";
-  return "Estás no quartil inferior — é prioritário rever e melhorar o teu CV antes de candidaturas.";
+  if (percentile >= 80) return t('percentil_quartil_superior');
+  if (percentile >= 60) return t('percentil_acima_media');
+  if (percentile >= 40) return t('percentil_zona_media');
+  if (percentile >= 20) return t('percentil_abaixo_media');
+  return t('percentil_quartil_inferior');
 }
 
 /** Automation potential - INVERTED: higher = worse (more risk of automation) */
 function AutomationRiskGauge({ score }: { score: number }) {
-  // Invert: higher score means MORE risk of automation (worse)
   const riskLevel = score;
   const riskColor = riskLevel >= 70 ? "text-red-500" : riskLevel >= 40 ? "text-yellow-500" : "text-green-500";
-  const riskLabel = riskLevel >= 70 ? "Elevado" : riskLevel >= 40 ? "Moderado" : "Baixo";
+  const riskLabel = riskLevel >= 70 ? t('elevado') : riskLevel >= 40 ? t('moderado') : t('baixo');
   const riskDescription = riskLevel >= 70
-    ? "A tua função tem elevada probabilidade de ser automatizada nos próximos 5-10 anos. Considera investir em competências complementares difíceis de automatizar."
+    ? t('automacao_elevado')
     : riskLevel >= 40
-    ? "Algumas tarefas da tua função poderão ser automatizadas, mas o perfil humano continua a ser valorizado. Reforça competências de liderança e pensamento crítico."
-    : "A tua função tem baixa probabilidade de automação. As competências que demonstras são difíceis de replicar por IA.";
+    ? t('automacao_moderado')
+    : t('automacao_baixo');
 
   return (
     <div className="bg-card border border-border rounded-lg p-6 space-y-4">
@@ -91,22 +88,22 @@ function AutomationRiskGauge({ score }: { score: number }) {
         </GoldIcon>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <p className="text-xs font-semibold tracking-wider text-muted-foreground">POTENCIAL DE AUTOMAÇÃO</p>
+            <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('potencial_de_automacao')}</p>
             <Tooltip
-              label="O que é o Potencial de Automação?"
-              text="Estimativa da probabilidade de as tarefas associadas ao teu perfil profissional serem automatizadas por IA ou robótica nos próximos 5-10 anos. Quanto MAIOR o valor, MAIOR o risco."
+              label={t('o_que_e_potencial_automacao')}
+              text={t('automacao_tooltip')}
             />
           </div>
-          <p className="text-xs text-muted-foreground">Risco de automação da tua função</p>
+          <p className="text-xs text-muted-foreground">{t('risco_automacao_funcao')}</p>
         </div>
       </div>
 
       {/* Risk bar - inverted: red = high risk */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Baixo risco</span>
+          <span className="text-xs text-muted-foreground">{t('baixo_risco_label')}</span>
           <span className={`text-xs font-semibold ${riskColor}`}>{riskLabel} ({riskLevel}%)</span>
-          <span className="text-xs text-muted-foreground">Alto risco</span>
+          <span className="text-xs text-muted-foreground">{t('alto_risco_label')}</span>
         </div>
         <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
           <div
@@ -129,10 +126,16 @@ function AutomationRiskGauge({ score }: { score: number }) {
 }
 
 const AnalysisResults = ({ data }: { data: AnalysisData }) => {
+  const lang = getLang();
   const avgScore = data.quadrants.reduce((sum, q) => sum + q.score, 0) / data.quadrants.length;
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
-  // Automation risk: derive from role type - higher for routine/admin roles
   const automationRisk = Math.round(Math.max(15, Math.min(85, 100 - avgScore + (Math.random() * 10 - 5))));
+
+  const aboveBelow = avgScore >= 69 ? t('acima') : t('abaixo');
+  const scoreAdvice = avgScore >= 75 ? t('bom_desempenho') : avgScore >= 55 ? t('margem_melhoria') : t('prioritario_melhorar');
+  const atsCompat = 100 - data.atsRejectionRate;
+  const atsAdvice = atsCompat >= 70 ? t('boa_compatibilidade') : atsCompat >= 50 ? t('compatibilidade_media') : t('compatibilidade_baixa');
+  const currencySymbol = lang === 'en' ? '$' : '€';
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,13 +146,13 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             <GoldIcon size="w-8 h-8">
               <FileCheck className="w-4 h-4 text-[#C9A961]" />
             </GoldIcon>
-            <span className="font-semibold text-sm text-foreground">Share2Inspire — Relatório Completo</span>
+            <span className="font-semibold text-sm text-foreground">{t('relatorio_completo')}</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
-        {/* ═══ Score Global com interpretação ═══ */}
+        {/* ═══ Score Global ═══ */}
         <div className="bg-card border border-border rounded-lg p-8 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
@@ -157,11 +160,8 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </GoldIcon>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">SCORE GLOBAL DO CV</p>
-                <Tooltip
-                  label="O que é o Score Global?"
-                  text="Pontuação composta que agrega os 4 quadrantes (Estrutura, Conteúdo, Formação, Experiência) numa única métrica de 0 a 100. Reflecte a qualidade geral do teu CV face ao mercado."
-                />
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('score_global_do_cv')}</p>
+                <Tooltip label={t('o_que_e_o_score_global')} text={t('score_global_tooltip')} />
               </div>
             </div>
           </div>
@@ -173,7 +173,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
           </div>
         </div>
 
-        {/* ═══ ATS Rejection com interpretação ═══ */}
+        {/* ═══ ATS Rejection ═══ */}
         <div className="space-y-2">
           <ATSRejectionBlock rejectionRate={data.atsRejectionRate} topFactor={data.atsTopFactor} />
           <p className="text-sm text-muted-foreground px-2 leading-relaxed">
@@ -181,18 +181,15 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
           </p>
         </div>
 
-        {/* ═══ 4 Quadrantes com tooltips ═══ */}
+        {/* ═══ 4 Quadrantes ═══ */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <GoldIcon size="w-8 h-8">
               <Grid2x2 className="w-4 h-4 text-[#C9A961]" />
             </GoldIcon>
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground">ANÁLISE POR QUADRANTE</p>
-              <Tooltip
-                label="O que são os Quadrantes?"
-                text="O teu CV é avaliado em 4 dimensões independentes: Estrutura (organização visual), Conteúdo (qualidade do texto), Formação (apresentação académica) e Experiência (descrição profissional). Cada uma é comparada com o benchmark do mercado."
-              />
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('analise_por_quadrante')}</p>
+              <Tooltip label={t('o_que_sao_os_quadrantes')} text={t('quadrantes_tooltip')} />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -210,7 +207,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
           </div>
         </div>
 
-        {/* ═══ Factores de Avaliação com benchmarks explicados ═══ */}
+        {/* ═══ Factores de Avaliação ═══ */}
         <div className="bg-card border border-border rounded-lg p-6 space-y-5">
           <div className="flex items-center gap-3">
             <GoldIcon>
@@ -218,13 +215,10 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">FACTORES DE AVALIAÇÃO</p>
-                <Tooltip
-                  label="O que são os Factores de Avaliação?"
-                  text="Representação visual de cada dimensão do CV em barra horizontal. A linha vertical indica o benchmark (média do mercado) para o mesmo nível de senioridade. Valores acima do benchmark são positivos."
-                />
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('factores_de_avaliacao')}</p>
+                <Tooltip label={t('o_que_sao_factores')} text={t('factores_tooltip')} />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Cada factor é comparado com a média do mercado. A linha vertical na barra indica o benchmark.</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('factores_subtitulo')}</p>
             </div>
           </div>
           <div className="space-y-5">
@@ -234,12 +228,12 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
           </div>
           <div className="pt-4 border-t border-border">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              → O teu CV tem um score médio de <span className="font-semibold text-foreground">{Math.round(avgScore)}/100</span>, o que te coloca {avgScore >= 69 ? 'acima' : 'abaixo'} da média global do mercado (69). {avgScore >= 75 ? 'Bom desempenho geral — foca-te nas dimensões mais fracas para subir ainda mais.' : avgScore >= 55 ? 'Há margem clara de melhoria — as recomendações abaixo indicam por onde começar.' : 'É prioritário melhorar as dimensões com score mais baixo para tornar o CV competitivo.'}
+              → {t('score_medio_text')} <span className="font-semibold text-foreground">{Math.round(avgScore)}/100</span>, {t('que_te_coloca')} {aboveBelow} {t('da_media_global')} {scoreAdvice}
             </p>
           </div>
         </div>
 
-        {/* ═══ Compatibilidade ATS com interpretação ═══ */}
+        {/* ═══ Compatibilidade ATS ═══ */}
         <div className="bg-card border border-border rounded-lg p-8 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
@@ -247,19 +241,16 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">COMPATIBILIDADE ATS</p>
-                <Tooltip
-                  label="O que é a Compatibilidade ATS?"
-                  text="Applicant Tracking System — software usado por 75% das empresas para filtrar CVs automaticamente. Este score indica a probabilidade do teu CV passar esses filtros. Quanto maior, melhor."
-                />
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('compatibilidade_ats')}</p>
+                <Tooltip label={t('o_que_e_compatibilidade_ats')} text={t('ats_tooltip')} />
               </div>
-              <p className="text-xs text-muted-foreground">Probabilidade do teu CV passar filtros automáticos de recrutamento</p>
+              <p className="text-xs text-muted-foreground">{t('ats_subtitulo')}</p>
             </div>
           </div>
           <div className="flex flex-col items-center gap-3">
-            <ScoreGauge score={100 - data.atsRejectionRate} size={160} strokeWidth={8} />
+            <ScoreGauge score={atsCompat} size={160} strokeWidth={8} />
             <p className="text-sm text-muted-foreground text-center max-w-md leading-relaxed">
-              O teu CV tem <span className="font-semibold text-foreground">{100 - data.atsRejectionRate}%</span> de compatibilidade com sistemas ATS. {100 - data.atsRejectionRate >= 70 ? 'Boa compatibilidade — a maioria dos sistemas aceitará o teu CV.' : 100 - data.atsRejectionRate >= 50 ? 'Compatibilidade média — alguns sistemas poderão rejeitar o teu CV.' : 'Compatibilidade baixa — muitos sistemas rejeitarão o teu CV antes de ser lido.'}
+              {t('cv_tem_compatibilidade')} <span className="font-semibold text-foreground">{atsCompat}%</span> {t('de_compatibilidade_ats')} {atsAdvice}
             </p>
           </div>
         </div>
@@ -271,11 +262,8 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
               <Eye className="w-4 h-4 text-[#C9A961]" />
             </GoldIcon>
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground">PERCEPÇÃO DO RECRUTADOR</p>
-              <Tooltip
-                label="O que é a Percepção do Recrutador?"
-                text="Simulação do que um recrutador retém do teu CV nos primeiros 5-10 segundos de leitura. Inclui o perfil profissional percebido, nível de senioridade e competências-chave identificadas."
-              />
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('percepcao_do_recrutador')}</p>
+              <Tooltip label={t('o_que_e_percepcao')} text={t('percepcao_tooltip')} />
             </div>
           </div>
           <RecruiterPerception roles={data.keywords} perceivedRole={data.perceivedRole} perceivedSeniority={data.perceivedSeniority} />
@@ -289,41 +277,38 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">ESTIMATIVA SALARIAL</p>
-                <Tooltip
-                  label="Como é calculada a estimativa?"
-                  text="Estimativa baseada no perfil profissional detectado, nível de senioridade, competências identificadas e dados salariais do mercado português. Os valores são indicativos e podem variar conforme a região, setor e dimensão da empresa."
-                />
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('estimativa_salarial_section')}</p>
+                <Tooltip label={t('como_e_calculada')} text={t('estimativa_salarial_tooltip')} />
               </div>
-              <p className="text-xs text-muted-foreground">Com base no perfil e mercado português</p>
+              <p className="text-xs text-muted-foreground">{t('com_base_no_perfil')}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-4 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Mínimo</p>
-              <p className="text-2xl font-bold text-foreground">€{data.salaryRange?.min || 1200}</p>
-              <p className="text-xs text-muted-foreground">/mês</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('minimo')}</p>
+              <p className="text-2xl font-bold text-foreground">{currencySymbol}{data.salaryRange?.min || 1200}</p>
+              <p className="text-xs text-muted-foreground">{t('mes')}</p>
             </div>
             <div className="text-center p-4 bg-[#C9A961]/10 rounded-lg border border-[#C9A961]/20">
-              <p className="text-xs text-muted-foreground mb-1">Estimativa</p>
-              <p className="text-2xl font-bold text-[#C9A961]">€{data.salaryRange?.mid || 1650}</p>
-              <p className="text-xs text-muted-foreground">/mês</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('estimativa')}</p>
+              <p className="text-2xl font-bold text-[#C9A961]">{currencySymbol}{data.salaryRange?.mid || 1650}</p>
+              <p className="text-xs text-muted-foreground">{t('mes')}</p>
             </div>
             <div className="text-center p-4 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Máximo</p>
-              <p className="text-2xl font-bold text-foreground">€{data.salaryRange?.max || 2100}</p>
-              <p className="text-xs text-muted-foreground">/mês</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('maximo')}</p>
+              <p className="text-2xl font-bold text-foreground">{currencySymbol}{data.salaryRange?.max || 2100}</p>
+              <p className="text-xs text-muted-foreground">{t('mes')}</p>
             </div>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            → Valores estimados com base em dados do mercado português para o perfil de <span className="font-semibold text-foreground">{data.perceivedRole || 'Profissional'}</span> com senioridade <span className="font-semibold text-foreground">{data.perceivedSeniority || 'Mid-level'}</span>. Estes valores são indicativos e podem variar conforme a região, setor e dimensão da empresa.
+            → {t('valores_estimados_perfil')} <span className="font-semibold text-foreground">{data.perceivedRole || t('profissional')}</span> {t('com_senioridade')} <span className="font-semibold text-foreground">{data.perceivedSeniority || 'Mid-level'}</span>. {t('valores_indicativos')}
           </p>
         </div>
 
-        {/* ═══ Potencial de Automação - INVERTIDO ═══ */}
+        {/* ═══ Potencial de Automação ═══ */}
         <AutomationRiskGauge score={automationRisk} />
 
-        {/* ═══ Posicionamento no Mercado - Curva Normal ═══ */}
+        {/* ═══ Posicionamento no Mercado ═══ */}
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
@@ -331,35 +316,32 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </GoldIcon>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">POSICIONAMENTO NO MERCADO</p>
-                <Tooltip
-                  label="O que é a Curva Normal?"
-                  text="Distribuição estatística que mostra onde o teu CV se posiciona face a todos os CVs analisados na nossa plataforma. O percentil indica a percentagem de CVs que o teu supera."
-                />
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('posicionamento_no_mercado')}</p>
+                <Tooltip label={t('o_que_e_curva_normal')} text={t('curva_normal_tooltip')} />
               </div>
-              <p className="text-xs text-muted-foreground">Curva normal — onde te posicionas face a outros candidatos</p>
+              <p className="text-xs text-muted-foreground">{t('curva_normal_subtitulo')}</p>
             </div>
           </div>
 
           {/* Values */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground">Percentil</p>
+              <p className="text-xs text-muted-foreground">{t('percentil')}</p>
               <p className="text-xl font-bold text-foreground">{percentile}%</p>
             </div>
             <div className="text-center p-3 bg-[#C9A961]/10 rounded-lg border border-[#C9A961]/20">
-              <p className="text-xs text-muted-foreground">Posição</p>
+              <p className="text-xs text-muted-foreground">{t('posicao')}</p>
               <p className="text-xl font-bold text-[#C9A961]">Top {100 - percentile}%</p>
             </div>
             <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground">Score Global</p>
+              <p className="text-xs text-muted-foreground">{t('score_global')}</p>
               <p className="text-xl font-bold text-foreground">{Math.round(avgScore)}/100</p>
             </div>
           </div>
 
           {/* Interpretation */}
           <p className="text-sm text-muted-foreground leading-relaxed">
-            → Estás no <span className="font-semibold text-foreground">percentil {percentile}</span>, o que significa que o teu CV é melhor que {percentile}% dos CVs analisados. {percentileInterpretation(percentile)}
+            → {t('estas_no_percentil')} <span className="font-semibold text-foreground">{t('percentil').toLowerCase()} {percentile}</span>, {t('o_que_significa')} {percentile}% {t('dos_cvs_analisados')} {percentileInterpretation(percentile)}
           </p>
         </div>
       </main>

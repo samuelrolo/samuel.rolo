@@ -24,7 +24,7 @@ import { getMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
-import { t, pick, getLang } from './en/translations';
+import { t, pick, getLang } from '@/i18n';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -214,7 +214,7 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 }
 
 /* ─── Normal Curve SVG Component ─── */
-function NormalCurveChart({ percentile, isEN = false }: { percentile: number; isEN?: boolean }) {
+function NormalCurveChart({ percentile }: { percentile: number }) {
   const lang = getLang();
   const width = 400;
   const height = 180;
@@ -267,8 +267,10 @@ function NormalCurveChart({ percentile, isEN = false }: { percentile: number; is
 }
 
 /* ─── Salary Block ─── */
-function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false, CUR = '€' }: { blurred: boolean; salaryDetailed?: any; perceivedSeniority?: string; isEN?: boolean; CUR?: string }) {
+function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, CUR = '€' }: { blurred: boolean; salaryDetailed?: any; perceivedSeniority?: string; CUR?: string }) {
   const lang = getLang();
+  const isEN = lang === 'en';
+  const isES = lang === 'es';
   const sd = salaryDetailed || { percentile25: 1400, median: 1800, percentile75: 2400, topMax: 3200, benefits: [], benefitsNote: '', source: '' };
   return (
     <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
@@ -353,8 +355,10 @@ function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false
 }
 
 /* ─── Automation Risk ─── */
-function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurred: boolean; automationRisk?: any; isEN?: boolean }) {
+function AutomationRiskBlock({ blurred, automationRisk }: { blurred: boolean; automationRisk?: any }) {
   const lang = getLang();
+  const isEN = lang === 'en';
+  const isES = lang === 'es';
   const ar = automationRisk || { percentage: 35, level: t('mdio'), description: t('anlise_detalhada_do_risco_de'), recommendations: [] };
   const barColor = ar.percentage <= 25 ? 'from-green-400 to-green-500' : ar.percentage <= 50 ? 'from-yellow-400 to-orange-400' : 'from-orange-400 to-red-500';
   const levelColor = ar.percentage <= 25 ? 'text-green-600 bg-green-500/10' : ar.percentage <= 50 ? 'text-yellow-600 bg-yellow-500/10' : 'text-red-600 bg-red-500/10';
@@ -1727,11 +1731,11 @@ export default function Results() {
         )}
 
         {/* ═══ ATS Rejection ═══ */}
-        <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} isEN={lang === 'en'} />
+        <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} />
 
         {/* ═══ ATS Deep Scan ═══ */}
         {analysisData.atsDeepScan && (
-          <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={lang === 'en'} onUnlock={() => openPaymentModal()} />
+          <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} onUnlock={() => openPaymentModal()} />
         )}
 
         {/* ═══ LinkedIn Job Scraping Status Banner ═══ */}
@@ -2252,11 +2256,11 @@ export default function Results() {
               />
             </div>
           </div>
-          <RecruiterPerception isPaid={isPaid} roles={analysisData.keywords} perceivedRole={analysisData.perceivedRole} perceivedSeniority={analysisData.perceivedSeniority} deepAnalysis={analysisData.recruiterDeepAnalysis} isEN={lang === 'en'} />
+          <RecruiterPerception isPaid={isPaid} roles={analysisData.keywords} perceivedRole={analysisData.perceivedRole} perceivedSeniority={analysisData.perceivedSeniority} deepAnalysis={analysisData.recruiterDeepAnalysis} />
         </div>
 
         {/* ═══ Salary ═══ */}
-        <SalaryBlock blurred={!isPaid} salaryDetailed={analysisData.salaryDetailed} perceivedSeniority={analysisData.perceivedSeniority} isEN={lang === 'en'} CUR={CUR} />
+        <SalaryBlock blurred={!isPaid} salaryDetailed={analysisData.salaryDetailed} perceivedSeniority={analysisData.perceivedSeniority} CUR={CUR} />
 
         {/* ═══ Normal Curve ═══ */}
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
@@ -2346,13 +2350,13 @@ export default function Results() {
                </div>
             )}
             <div className={!isPaid ? 'select-none' : ''}>
-              <NormalCurveChart percentile={percentile} isEN={lang === 'en'} />
+              <NormalCurveChart percentile={percentile} />
             </div>
           </div>
         </div>
 
         {/* ═══ Potencial de Automação ═══ */}
-        <AutomationRiskBlock blurred={!isPaid} automationRisk={analysisData.automationRisk} isEN={lang === 'en'} />
+        <AutomationRiskBlock blurred={!isPaid} automationRisk={analysisData.automationRisk} />
 
         {/* ═══ Matriz de Oportunidades ═══ */}
         {!isPaid ? (
@@ -2363,25 +2367,25 @@ export default function Results() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <LockedSection
-                 isEN={lang === 'en'}
+                
                  title={t('anlise_detalhada_por_quadrante')}
                 visibleHint={t('breakdown_completo_de_cada_dimenso')}
                 previewItems={lang === 'en' ? ['Visual structure and information hierarchy', 'Alignment between skills and target role', 'Keywords and ATS filter compatibility', 'Market positioning'] : ['Estrutura visual e hierarquia de informação', 'Alinhamento entre competências e função-alvo', 'Keywords e compatibilidade com filtros ATS', 'Posicionamento face ao mercado']}
               />
 <LockedSection
-                 isEN={lang === 'en'}
+                
                  title={t('comparao_com_perfis_top_25')}
                 visibleHint={t('v_como_o_teu_cv')}
                 previewItems={lang === 'en' ? ['Benchmark against best CVs in sector', 'Missing differentiating skills', 'Positioning vs competitors', 'Gap analysis with recommendations'] : ['Benchmark contra os melhores CVs do setor', 'Competências diferenciadoras em falta', 'Posicionamento face a concorrentes', 'Gap analysis com recomendações']}
               />
 <LockedSection
-                 isEN={lang === 'en'}
+                
                  title={t('recomendaes_especficas_15')}
                 visibleHint={t('mais_de_15_microinsights_com')}
                 previewItems={lang === 'en' ? ['Optimised professional summary rewrite', 'Reformulation with impact metrics', 'ATS keyword optimisation', 'Visual formatting suggestions'] : ['Reescrita otimizada do resumo profissional', 'Reformulação com métricas de impacto', 'Otimização de keywords para ATS', 'Sugestões de formatação visual']}
               />
 <LockedSection
-                 isEN={lang === 'en'}
+                
                  title={t('plano_de_aco_30_dias')}
                 visibleHint={t('plano_estruturado_com_35_aces')}
                 previewItems={lang === 'en' ? ['3-5 ordered priority actions', 'Implementation timeline', 'Quick improvements checklist', 'Application strategy'] : ['3-5 acções prioritárias ordenadas', 'Timeline de implementação', 'Checklist de melhorias rápidas', 'Estratégia de candidatura']}
@@ -3879,7 +3883,7 @@ export default function Results() {
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                   <div className="flex gap-2">
-                    {!isEN && (
+                    {lang === 'pt' && (
                       <button
                         onClick={() => setCareerPathPaymentMethod('mbway')}
                         className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'mbway' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}

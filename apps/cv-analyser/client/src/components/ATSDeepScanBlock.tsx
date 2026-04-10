@@ -3,7 +3,7 @@
 // Free: teaser with blurred preview + CTA to unlock
 import { useState } from "react";
 import { Search, CheckCircle, XCircle, AlertTriangle, Shield, FileSearch, Lock, ChevronDown, ChevronUp, Info } from "lucide-react";
-import { t, pick, getLang } from '../pages/en/translations';
+import { t, pick, getLang } from '@/i18n';
 
 interface ATSKeyword {
   keyword: string;
@@ -32,7 +32,7 @@ interface ATSDeepScanData {
 interface ATSDeepScanBlockProps {
   data: ATSDeepScanData;
   isPaid?: boolean;
-  isEN?: boolean;
+  
   onUnlock?: () => void;
 }
 

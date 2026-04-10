@@ -1,6 +1,6 @@
 // RecruiterPerception.tsx - Estilo Share2Inspire
 import { Lock, Eye, Clock, AlertCircle, MessageSquare } from "lucide-react";
-import { t, pick, getLang } from '../pages/en/translations';
+import { t, pick, getLang } from '@/i18n';
 
 interface RecruiterPerceptionProps {
   roles: string[];
@@ -12,10 +12,9 @@ interface RecruiterPerceptionProps {
     frictionPoints?: string[];
     involuntaryMessages?: string[];
   };
-  isEN?: boolean;
 }
 
-const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid = false, deepAnalysis, isEN = false }: RecruiterPerceptionProps) => {
+const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid = false, deepAnalysis }: RecruiterPerceptionProps) => {
   const lang = getLang();
   const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : (t('profissional')));
   const displaySeniority = perceivedSeniority || 'Mid-level';
@@ -25,6 +24,11 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
     "Latest professional experience — role and company",
     "Key skills listed — quick matching with the vacancy",
     "Academic background — validation of base qualifications",
+  ] : lang === 'es' ? [
+    "Nombre y título profesional — primera impresión en 2 segundos",
+    "Última experiencia profesional — cargo y empresa",
+    "Competencias clave listadas — matching rápido con la vacante",
+    "Formación académica — validación de cualificaciones base",
   ] : [
     "Nome e título profissional — primeira impressão em 2 segundos",
     "Última experiência profissional — cargo e empresa",
@@ -36,6 +40,10 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
     "High text density may hinder quick reading",
     "Long sections without bullets or visual highlights",
     "Contact information may not be sufficiently visible",
+  ] : lang === 'es' ? [
+    "Alta densidad de texto puede dificultar la lectura rápida",
+    "Secciones largas sin viñetas o destacados visuales",
+    "La información de contacto puede no ser suficientemente visible",
   ] : [
     "Densidade de texto elevada pode dificultar a leitura rápida",
     "Secções longas sem bullets ou destaques visuais",
@@ -46,6 +54,10 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
     "Professional with consistent trajectory and career progression",
     "Results-oriented profile with diversified experience",
     "Candidate with leadership potential and strategic vision",
+  ] : lang === 'es' ? [
+    "Profesional con trayectoria consistente y progresión de carrera",
+    "Perfil orientado a resultados con experiencia diversificada",
+    "Candidato con potencial de liderazgo y visión estratégica",
   ] : [
     "Profissional com trajectória consistente e progressão de carreira",
     "Perfil orientado para resultados com experiência diversificada",
@@ -80,16 +92,14 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
       {/* Visible insights */}
       <div className="space-y-2 pt-2 border-t border-border">
         <p className="text-sm text-muted-foreground">
-          {isEN
-            ? <>→ Perceived profile: <span className="font-semibold text-foreground">{displayRole}</span> ({displaySeniority})</>
-            : <>→ Perfil percebido como: <span className="font-semibold text-foreground">{displayRole}</span> ({displaySeniority})</>
-          }
+          <>→ {t('perfil_percebido')}: <span className="font-semibold text-foreground">{displayRole}</span> ({displaySeniority})</>
         </p>
         <p className="text-sm text-muted-foreground">
-          {isEN
-            ? <>→ The recruiter identifies <span className="font-semibold text-foreground">{roles.length} key skills</span> in the first 5 seconds</>
-            : <>→ O recrutador identifica <span className="font-semibold text-foreground">{roles.length} competências-chave</span> nos primeiros 5 segundos</>
-          }
+          <>→ {pick(
+              <>O recrutador identifica <span className="font-semibold text-foreground">{roles.length} competências-chave</span> nos primeiros 5 segundos</>,
+              <>The recruiter identifies <span className="font-semibold text-foreground">{roles.length} key skills</span> in the first 5 seconds</>,
+              <>El reclutador identifica <span className="font-semibold text-foreground">{roles.length} competencias clave</span> en los primeros 5 segundos</>
+            )}</>
         </p>
       </div>
 

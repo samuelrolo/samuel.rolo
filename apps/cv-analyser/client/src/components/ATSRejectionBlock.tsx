@@ -1,7 +1,7 @@
 // ATSRejectionBlock.tsx - Estilo Share2Inspire
 import { AlertTriangle, Lock, Info, CheckCircle, ShieldAlert, TrendingDown } from "lucide-react";
 import { useState } from "react";
-import { t, pick, getLang } from '../pages/en/translations';
+import { t, pick, getLang } from '@/i18n';
 
 interface ATSRejectionBlockProps {
   rejectionRate: number;
@@ -10,10 +10,9 @@ interface ATSRejectionBlockProps {
   detailedFactors?: string[];
   atsSystems?: string[];
   quickFixes?: string[];
-  isEN?: boolean;
 }
 
-const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedFactors, atsSystems, quickFixes, isEN = false }: ATSRejectionBlockProps) => {
+const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedFactors, atsSystems, quickFixes }: ATSRejectionBlockProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const lang = getLang();
   const severity = rejectionRate > 60
@@ -191,21 +190,29 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
           <div className="p-4 rounded-lg bg-[#C9A961]/5 border border-[#C9A961]/20">
             <p className="text-sm text-foreground leading-relaxed">
               {rejectionRate <= 20 ? (
-                isEN
-                  ? <>Your CV has <strong>excellent compatibility</strong> with ATS systems. With only {rejectionRate}% probability of automatic rejection, your CV passes through most filters without issues, reaching human recruiters in the vast majority of online applications.</>
-                  : <>O teu CV tem uma <strong>excelente compatibilidade</strong> com sistemas ATS. Com apenas {rejectionRate}% de probabilidade de rejeição automática, o teu CV passa pela maioria dos filtros sem problemas, chegando às mãos de recrutadores humanos na grande maioria das candidaturas online.</>
+                pick(
+                  <>O teu CV tem uma <strong>excelente compatibilidade</strong> com sistemas ATS. Com apenas {rejectionRate}% de probabilidade de rejeição automática, o teu CV passa pela maioria dos filtros sem problemas, chegando às mãos de recrutadores humanos na grande maioria das candidaturas online.</>,
+                  <>Your CV has <strong>excellent compatibility</strong> with ATS systems. With only {rejectionRate}% probability of automatic rejection, your CV passes through most filters without issues, reaching human recruiters in the vast majority of online applications.</>,
+                  <>Tu CV tiene una <strong>excelente compatibilidad</strong> con sistemas ATS. Con solo {rejectionRate}% de probabilidad de rechazo automático, tu CV pasa por la mayoría de los filtros sin problemas, llegando a manos de reclutadores humanos en la gran mayoría de las candidaturas online.</>
+                )
               ) : rejectionRate <= 40 ? (
-                isEN
-                  ? <>Your CV has <strong>good compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, most systems can read your CV correctly. Small optimisations in keywords and structure can significantly reduce this rate.</>
-                  : <>O teu CV tem uma <strong>boa compatibilidade</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, a maioria dos sistemas consegue ler o teu CV correctamente. Pequenas optimizações nas palavras-chave e na estrutura podem reduzir esta taxa significativamente.</>
+                pick(
+                  <>O teu CV tem uma <strong>boa compatibilidade</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, a maioria dos sistemas consegue ler o teu CV correctamente. Pequenas optimizações nas palavras-chave e na estrutura podem reduzir esta taxa significativamente.</>,
+                  <>Your CV has <strong>good compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, most systems can read your CV correctly. Small optimisations in keywords and structure can significantly reduce this rate.</>,
+                  <>Tu CV tiene una <strong>buena compatibilidad</strong> con sistemas ATS. Con {rejectionRate}% de probabilidad de rechazo, la mayoría de los sistemas puede leer tu CV correctamente. Pequeñas optimizaciones en palabras clave y estructura pueden reducir esta tasa significativamente.</>
+                )
               ) : rejectionRate <= 60 ? (
-                isEN
-                  ? <>Your CV has <strong>moderate compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, about half of online applications may be filtered before reaching a recruiter.</>
-                  : <>O teu CV tem uma <strong>compatibilidade moderada</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, cerca de metade das candidaturas online podem ser filtradas antes de chegar a um recrutador.</>
+                pick(
+                  <>O teu CV tem uma <strong>compatibilidade moderada</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, cerca de metade das candidaturas online podem ser filtradas antes de chegar a um recrutador.</>,
+                  <>Your CV has <strong>moderate compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, about half of online applications may be filtered before reaching a recruiter.</>,
+                  <>Tu CV tiene una <strong>compatibilidad moderada</strong> con sistemas ATS. Con {rejectionRate}% de probabilidad de rechazo, aproximadamente la mitad de las candidaturas online pueden ser filtradas antes de llegar a un reclutador.</>
+                )
               ) : (
-                isEN
-                  ? <>Your CV has <strong>low compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, most online applications will be automatically filtered. It is urgent to restructure the format.</>
-                  : <>O teu CV tem uma <strong>compatibilidade baixa</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, a maioria das candidaturas online será filtrada automaticamente. É urgente reformular a estrutura.</>
+                pick(
+                  <>O teu CV tem uma <strong>compatibilidade baixa</strong> com sistemas ATS. Com {rejectionRate}% de probabilidade de rejeição, a maioria das candidaturas online será filtrada automaticamente. É urgente reformular a estrutura.</>,
+                  <>Your CV has <strong>low compatibility</strong> with ATS systems. With {rejectionRate}% probability of rejection, most online applications will be automatically filtered. It is urgent to restructure the format.</>,
+                  <>Tu CV tiene una <strong>compatibilidad baja</strong> con sistemas ATS. Con {rejectionRate}% de probabilidad de rechazo, la mayoría de las candidaturas online será filtrada automáticamente. Es urgente reformular la estructura.</>
+                )
               )}
             </p>
           </div>

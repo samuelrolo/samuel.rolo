@@ -263,7 +263,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
           "offers": [
             {
               "@type": "Offer",
-              "name": isEN ? "Standard" : "Standard",
+              "name": pick("Standard", "Standard", "Standard"),
               "price": "49.99",
               "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",

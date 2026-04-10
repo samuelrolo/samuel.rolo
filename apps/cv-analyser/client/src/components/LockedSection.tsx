@@ -1,15 +1,15 @@
+import { t, pick, getLang } from '@/i18n';
 import { Lock } from "lucide-react";
-import { t } from '../i18n/translations';
 
 interface LockedSectionProps {
   title: string;
   previewItems?: string[];
   children?: React.ReactNode;
-  isEN?: boolean;
+  
   visibleHint?: string;
 }
 
-const LockedSection = ({ title, previewItems, children, isEN = false, visibleHint }: LockedSectionProps) => {
+const LockedSection = ({ title, previewItems, children, visibleHint }: LockedSectionProps) => {
   return (
     <div className="relative rounded-lg border border-border bg-card p-6 overflow-hidden">
       {/* Blur overlay */}

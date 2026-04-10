@@ -267,6 +267,7 @@ export default function CareerPathResults() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const lang = getLang();
   const isEN = lang === 'en';
+  const isES = lang === 'es';
   const [selectedPlan, setSelectedPlan] = useState(getPlans(isEN)[0]);
   const [paymentStep, setPaymentStep] = useState<'select' | 'payment' | 'polling' | 'success'>('select');
   const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'multibanco' | 'paypal' | 'stripe'>(t('mbway'));
@@ -1025,6 +1026,8 @@ export default function CareerPathResults() {
                         <p className="text-sm text-muted-foreground">
                           {isEN
                             ? <>Your profile shows <span className="font-bold text-foreground">{energyScore >= 70 ? 'high' : energyScore >= 50 ? 'moderate' : 'significant'}</span> growth potential{energyScore < 70 ? ', but there is misalignment between current skills and roles with the highest salary progression.' : '.'}</>
+                            : isES
+                            ? <>Tu perfil muestra un potencial de crecimiento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', pero existe desalineación entre competencias actuales y los roles con mayor progresión salarial.' : '.'}</>
                             : <>O teu perfil mostra potencial de crescimento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', mas existe desalinhamento entre competências atuais e as funções com maior progressão salarial.' : '.'}</>
                           }
                         </p>
@@ -1182,6 +1185,8 @@ export default function CareerPathResults() {
                     <p className="text-xs text-muted-foreground text-center">
                       {isEN
                         ? <>If you develop the 3 recommended skills, your score can increase to <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
+                        : isES
+                        ? <>Si desarrollas las 3 competencias recomendadas, tu score puede aumentar a <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
                         : <>Se desenvolveres as 3 competências recomendadas, o teu score pode aumentar para <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
                       }
                     </p>
@@ -1750,6 +1755,9 @@ export default function CareerPathResults() {
               const generatePostText = () => {
                 if (isEN) {
                   return `I just had my career analysed by @share2inspire_'s AI Career Path tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me a clear, data-driven view of my career trajectory, next roles, and what skills to develop.\n\nIf you're thinking about your next career move — I highly recommend it.\n\n\ud83d\udd17 https://share2inspire.pt/en/career-path\n\n#CareerPath #CareerDevelopment #ProfessionalGrowth #Share2Inspire`;
+                }
+                if (isES) {
+                  return `Acabo de tener mi carrera analizada por la herramienta AI Career Path de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio una visión clara y basada en datos sobre mi trayectoria profesional, próximos roles y competencias a desarrollar.\n\nSi estás pensando en tu próximo paso profesional — lo recomiendo.\n\n\ud83d\udd17 https://share2inspire.pt/es/career-path\n\n#CareerPath #DesarrolloProfesional #Carrera #Share2Inspire`;
                 }
                 return `Acabei de ter a minha carreira analisada pelo Career Path da @share2inspire_, com recurso a intelig\u00eancia artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta an\u00e1lise deu-me uma vis\u00e3o clara e baseada em dados sobre a minha traject\u00f3ria de carreira, pr\u00f3ximos cargos e compet\u00eancias a desenvolver.\n\nSe est\u00e1s a pensar no teu pr\u00f3ximo passo de carreira \u2014 recomendo.\n\n\ud83d\udd17 https://share2inspire.pt/career-path\n\n#CareerPath #DesenvolvimentoProfissional #Carreira #Share2Inspire`;
               };
