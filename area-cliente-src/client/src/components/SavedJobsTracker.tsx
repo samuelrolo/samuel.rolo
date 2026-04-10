@@ -267,7 +267,8 @@ export default function SavedJobsTracker({ lang }: Props) {
               <p className="text-[11px] text-gray-400 mb-3 max-w-md">
                 {tt(
                   'Instala a extensão Share2Inspire no Chrome para guardar vagas automaticamente enquanto navegas no LinkedIn, Indeed ou Glassdoor. Os dados aparecem aqui no teu dashboard.',
-                  'Install the Share2Inspire extension on Chrome to automatically save jobs while browsing LinkedIn, Indeed or Glassdoor. Data appears here in your dashboard.'
+                  'Install the Share2Inspire extension on Chrome to automatically save jobs while browsing LinkedIn, Indeed or Glassdoor. Data appears here in your dashboard.',
+                  'Instala la extensión Share2Inspire en Chrome para guardar empleos automáticamente mientras navegas en LinkedIn, Indeed o Glassdoor. Los datos aparecen aquí en tu dashboard.'
                 )}
               </p>
               <div className="flex flex-wrap items-center gap-2">
