@@ -354,7 +354,7 @@ export default function BundleHome() {
       });
 
       clearInterval(msgInterval);
-      setAnalysisMsg("Tudo pronto! A redirecionar...");
+      setAnalysisMsg(pick("Tudo pronto! A redirecionar...", "All done! Redirecting...", "¡Todo listo! Redirigiendo..."));
       setStep('done');
 
       // Save to user_analyses for area-cliente dashboard
