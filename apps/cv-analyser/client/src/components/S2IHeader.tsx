@@ -18,6 +18,10 @@ interface S2IHeaderProps {
 /* ── Nav item definitions per language ── */
 type NavItem = { href: string; label: string; id: string };
 
+function pick(lang: Lang, pt: string, en: string, es: string): string {
+  return lang === 'en' ? en : lang === 'es' ? es : pt;
+}
+
 function getNavItems(lang: Lang): NavItem[] {
   const lp = (ptPath: string) => localePath(ptPath, lang);
   if (lang === 'en') {
@@ -30,7 +34,7 @@ function getNavItems(lang: Lang): NavItem[] {
       { href: lp('/bundle'), label: "Bundle", id: "bundle" },
       { href: lp('/estudante'), label: "Student Pack", id: "estudante" },
       { href: "https://www.share2inspire.pt/en/pages/services", label: "Services", id: "servicos" },
-      { href: "https://www.share2inspire.pt/en/pages/knowledge", label: "Knowledge Hub", id: "knowledge-hub" },
+      { href: "https://www.share2inspire.pt/en/pages/knowledge", label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
       { href: lp('/sobre'), label: "About", id: "sobre" },
       { href: lp('/contactos'), label: "Contact", id: "contactos" },
     ];
@@ -45,7 +49,7 @@ function getNavItems(lang: Lang): NavItem[] {
       { href: lp('/bundle'), label: "Bundle", id: "bundle" },
       { href: lp('/estudante'), label: "Pack Estudiante", id: "estudante" },
       { href: lp('/servicos'), label: "Servicios", id: "servicos" },
-      { href: lp('/conhecimento'), label: "Knowledge Hub", id: "knowledge-hub" },
+      { href: lp('/conhecimento'), label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
       { href: lp('/sobre'), label: "Acerca de", id: "sobre" },
       { href: lp('/contactos'), label: "Contacto", id: "contactos" },
     ];
@@ -60,17 +64,19 @@ function getNavItems(lang: Lang): NavItem[] {
     { href: "/bundle", label: "Bundle", id: "bundle" },
     { href: "/estudante", label: "Pack Estudante", id: "estudante" },
     { href: "/servicos", label: "Serviços", id: "servicos" },
-    { href: "/conhecimento", label: "Knowledge Hub", id: "knowledge-hub" },
+    { href: "/conhecimento", label: pick(lang, "Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
     { href: "/sobre", label: "Sobre", id: "sobre" },
     { href: "/contactos", label: "Contactos", id: "contactos" },
   ];
 }
 
-const langOptions: { code: Lang; label: string }[] = [
-  { code: 'pt', label: 'PT — Português' },
-  { code: 'en', label: 'EN — English' },
-  { code: 'es', label: 'ES — Español' },
-];
+function getLangOptions(lang: Lang): { code: Lang; label: string }[] {
+  return [
+    { code: 'pt', label: pick(lang, 'PT — Português', 'PT — Portuguese', 'PT — Portugués') },
+    { code: 'en', label: pick(lang, 'EN — Inglês', 'EN — English', 'EN — Inglés') },
+    { code: 'es', label: pick(lang, 'ES — Espanhol', 'ES — Spanish', 'ES — Español') },
+  ];
+}
 
 function getHomeUrl(lang: Lang): string {
   if (lang === 'en') return localePath('/', 'en');
@@ -81,6 +87,7 @@ function getHomeUrl(lang: Lang): string {
 export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   const lang = getLang();
   const navItems = getNavItems(lang);
+  const langOptions = getLangOptions(lang);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolledDown, setScrolledDown] = useState(false);
@@ -121,8 +128,11 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   }, []);
 
   const langLabel = lang.toUpperCase();
-  const closeMenuLabel = lang === 'en' ? 'Close menu' : lang === 'es' ? 'Cerrar menú' : 'Fechar menu';
-  const langSectionLabel = lang === 'en' ? 'Language' : lang === 'es' ? 'Idioma' : 'Idioma';
+  const closeMenuLabel = pick(lang, 'Fechar menu', 'Close menu', 'Cerrar menú');
+  const langSectionLabel = pick(lang, 'Idioma', 'Language', 'Idioma');
+  const loginLabel = pick(lang, 'Login', 'Login', 'Login');
+  const menuLabel = pick(lang, 'Menu', 'Menu', 'Menú');
+  const logoAlt = pick(lang, 'Share2Inspire', 'Share2Inspire', 'Share2Inspire');
 
   /* ── Render a language option (shared between desktop dropdown and mobile dropdown) ── */
   function LangOption({ opt, isMobile = false }: { opt: typeof langOptions[0]; isMobile?: boolean }) {
@@ -169,7 +179,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
           <a href={getHomeUrl(lang)} className="shrink-0">
             <img
               src="https://www.share2inspire.pt/images/logo-s.png"
-              alt="Share2Inspire"
+              alt={logoAlt}
               className="h-6 lg:h-8"
               style={{ width: "auto" }}
             />
@@ -197,9 +207,10 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
             <a
               href="/area-cliente/"
               className="s2i-login-btn px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors"
-            >
-              Login
+              >
+              {loginLabel}
             </a>
+
             {/* Desktop Language Dropdown */}
             <div ref={langDropdownRef} className="relative">
               <button
@@ -230,7 +241,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 -mr-2 text-slate-500 hover:text-slate-800"
-              aria-label="Menu"
+              aria-label={menuLabel}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -261,7 +272,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         <div className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <div className="flex items-center justify-between px-4 h-11 border-b border-slate-200/80">
             <a href={getHomeUrl(lang)} className="shrink-0">
-              <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-6" style={{ width: "auto" }} />
+              <img src="https://www.share2inspire.pt/images/logo-s.png" alt={logoAlt} className="h-6" style={{ width: "auto" }} />
             </a>
             <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 text-slate-800" aria-label={closeMenuLabel}>
               <X className="w-5 h-5" />

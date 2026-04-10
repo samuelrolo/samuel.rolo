@@ -11,6 +11,8 @@ interface S2IHeaderENProps {
   esHref?: string;
 }
 
+const pick = (pt: string, en: string, es: string) => en;
+
 const navItems = [
   { href: "https://www.share2inspire.pt/en/pages/home", label: "Home", id: "home" },
   { href: "/en/cv-analyser", label: "CV Analyser", id: "cv-analyser" },
@@ -20,13 +22,18 @@ const navItems = [
   { href: "/en/bundle", label: "Bundle", id: "bundle" },
   { href: "/en/student-pack", label: "Student Pack", id: "student-pack" },
   { href: "https://www.share2inspire.pt/en/pages/services", label: "Services", id: "services" },
-  { href: "https://www.share2inspire.pt/en/pages/knowledge", label: "Knowledge Hub", id: "knowledge-hub" },
+  { href: "https://www.share2inspire.pt/en/pages/knowledge", label: pick("Knowledge Hub", "Knowledge Hub", "Hub de Conocimiento"), id: "knowledge-hub" },
   { href: "https://www.share2inspire.pt/en/pages/about", label: "About", id: "about" },
   { href: "https://www.share2inspire.pt/en/pages/contact", label: "Contact", id: "contact" },
 ];
 
 export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = '/area-cliente/?lang=es' }: S2IHeaderENProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const loginLabel = pick('Login', 'Login', 'Login');
+  const menuLabel = pick('Menu', 'Menu', 'Menú');
+  const closeMenuLabel = pick('Fechar menu', 'Close menu', 'Cerrar menú');
+  const languageLabel = pick('Idioma', 'Language', 'Idioma');
+  const logoAlt = pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire');
   const [scrolledDown, setScrolledDown] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
@@ -71,7 +78,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
           <a href="https://www.share2inspire.pt/en/pages/home" className="shrink-0">
-            <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-6 lg:h-8" style={{ width: "auto" }} />
+            <img src="https://www.share2inspire.pt/images/logo-s.png" alt={logoAlt} className="h-6 lg:h-8" style={{ width: "auto" }} />
           </a>
 
           <nav className="hidden lg:flex items-center gap-1">
@@ -81,7 +88,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
           </nav>
 
           <div className="hidden lg:flex items-center gap-2">
-            <a href="/area-cliente/" className="px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors">Login</a>
+            <a href="/area-cliente/" className="px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors">{loginLabel}</a>
             {/* Desktop Language Dropdown */}
             <div ref={langDropdownRef} className="relative">
               <button
@@ -98,18 +105,18 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
                   {langToggleHref && (
                     <a href={langToggleHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
                       <span className="w-2 h-2 rounded-full bg-slate-300" />
-                      PT — Português
+                      {pick('PT — Português', 'PT — Portuguese', 'PT — Portugués')}
                     </a>
                   )}
                   {/* EN — active */}
                   <span className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C9A961] bg-[#C9A961]/5 cursor-default">
                     <span className="w-2 h-2 rounded-full bg-[#C9A961]" />
-                    EN — English
+                    {pick('EN — Inglês', 'EN — English', 'EN — Inglés')}
                   </span>
                   {/* ES */}
                   <a href={esHref} className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors">
                     <span className="w-2 h-2 rounded-full bg-slate-300" />
-                    ES — Español
+                    {pick('ES — Espanhol', 'ES — Spanish', 'ES — Español')}
                   </a>
                 </div>
               )}
@@ -129,7 +136,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 -mr-2 text-slate-500 hover:text-slate-800"
-              aria-label="Menu"
+              aria-label={menuLabel}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -171,9 +178,9 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
         <div className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <div className="flex items-center justify-between px-4 h-11 border-b border-slate-200/80">
             <a href="https://www.share2inspire.pt/en/pages/home" className="shrink-0">
-              <img src="https://www.share2inspire.pt/images/logo-s.png" alt="Share2Inspire" className="h-6" style={{ width: "auto" }} />
+              <img src="https://www.share2inspire.pt/images/logo-s.png" alt={logoAlt} className="h-6" style={{ width: "auto" }} />
             </a>
-            <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 text-slate-800" aria-label="Close menu">
+            <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 text-slate-800" aria-label={closeMenuLabel}>
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -196,7 +203,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
             <div className="pt-4 mt-4 border-t border-slate-200">
               <div className="flex items-center gap-2 mb-3">
                 <Globe className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">Language</span>
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">{languageLabel}</span>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {langToggleHref && (
@@ -205,7 +212,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
                     onClick={() => setMobileMenuOpen(false)}
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                   >
-                    PT — Português
+                    {pick('PT — Português', 'PT — Portuguese', 'PT — Portugués')}
                   </a>
                 )}
                 <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30 text-sm font-semibold text-[#C9A961] cursor-default">
@@ -226,7 +233,7 @@ export default function S2IHeaderEN({ activePage = '', langToggleHref, esHref = 
                 href="/area-cliente/"
                 className="block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
               >
-                Login
+                {loginLabel}
               </a>
             </div>
           </div>
