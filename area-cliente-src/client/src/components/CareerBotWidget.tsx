@@ -369,7 +369,11 @@ export default function CareerBotWidget() {
         } else if (permErr.name === 'NotFoundError') {
           alert(t('bot.micNotFound'));
         } else {
-          alert(pick({ pt: `Erro ao aceder ao microfone: ${permErr.message || permErr.name}. Verifica as permissões do browser.`, en: `Error accessing microphone: ${permErr.message || permErr.name}. Check browser permissions.`, es: `Error al acceder al micrófono: ${permErr.message || permErr.name}. Verifica los permisos del navegador.` }));
+          alert(pick({
+            pt: `Erro ao aceder ao microfone: ${permErr.message || permErr.name}. Verifica as permissões do browser.`,
+            en: `Error accessing microphone: ${permErr.message || permErr.name}. Check browser permissions.`,
+            es: `Error al acceder al micrófono: ${permErr.message || permErr.name}. Verifica los permisos del navegador.`
+          }));
         }
         return;
       }
@@ -395,7 +399,11 @@ export default function CareerBotWidget() {
       setMockRecording(true);
     } catch (err: any) {
       console.error('Microphone/MediaRecorder error:', err);
-      alert(pick({ pt: `Erro ao iniciar a gravação: ${err.message || 'erro desconhecido'}. Tenta usar o Chrome.`, en: `Error starting recording: ${err.message || 'unknown error'}. Try using Chrome.`, es: `Error al iniciar la grabación: ${err.message || 'error desconocido'}. Intenta usar Chrome.` }));
+      alert(pick({
+        pt: `Erro ao iniciar a gravação: ${err.message || 'erro desconhecido'}. Tenta usar o Chrome.`,
+        en: `Error starting recording: ${err.message || 'unknown error'}. Try using Chrome.`,
+        es: `Error al iniciar la grabación: ${err.message || 'error desconocido'}. Intenta usar Chrome.`
+      }));
     }
   };
 
@@ -683,4 +691,4 @@ Genera SOLO el post.`
           headlines = lines.slice(0, parseInt(hlNum));
         }
         if (headlines.length === 0) {
-          const cleaned = raw.replace(/[{}\[\]"]/g, '').replace(/^headlines\s*:?\
+          const cleaned = raw.replace(/[{}\[\]"]+/g, '').replace(/^headlines\s*:?\
