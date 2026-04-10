@@ -333,10 +333,10 @@ export default function Home() {
   const [linkedInVoucherValidating, setLinkedInVoucherValidating] = useState(false);
   // LinkedIn paywall inline payment
   // Country and region for localised analysis
-  const localizedCountries = getLocalizedCountries(lang);
   const [selectedCountry, setSelectedCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const countryData = localizedCountries.find(c => c.country === selectedCountry);
+  const countries = getLocalizedCountries(lang);
+  const countryData = countries.find(c => c.country === selectedCountry);
 
   useEffect(() => {
     setSelectedCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -1528,7 +1528,7 @@ export default function Home() {
                 disabled={loading}
               >
                 <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
-                {localizedCountries.map(c => (
+                {countries.map(c => (
                   <option key={c.code} value={c.country}>{c.label}</option>
                 ))}
               </select>
