@@ -4100,7 +4100,7 @@ As recomendações de automationRisk DEVEM ser específicas à área profissiona
 
         const companyContext = await enrichWithCompanyData(sanitized, language);
 
-        const userPrompt = (isEN || isES) ? `${cvOutputLanguageInstruction}
+        const userPrompt = isEN ? `${cvOutputLanguageInstruction}
 
 Analyse the following CV and return a JSON EXACTLY with this structure. EACH field must contain analysis SPECIFIC to this CV — cite sections, phrases and concrete data from the CV.
 
@@ -4448,7 +4448,355 @@ CRITICAL RULES:
 
   CORPORATE: Leadership, strategic thinking, digital transformation — ONLY for actual corporate roles
 
-16. ATS KEYWORDS BY FIELD: The keywords detected and recommended MUST be relevant to the professional field. A nurse needs "patient care, clinical assessment, medication administration" — NOT "stakeholder management, ROI, KPIs". A mechanic needs "diagnostics, preventive maintenance, hydraulic systems" — NOT "project management, agile methodology".` : `Analisa o seguinte CV e retorna um JSON EXACTAMENTE com esta estrutura. CADA campo deve conter análise ESPECÍFICA ao CV — cita secções, frases e dados concretos do CV.
+16. ATS KEYWORDS BY FIELD: The keywords detected and recommended MUST be relevant to the professional field. A nurse needs "patient care, clinical assessment, medication administration" — NOT "stakeholder management, ROI, KPIs". A mechanic needs "diagnostics, preventive maintenance, hydraulic systems" — NOT "project management, agile methodology".` : isES ? `${cvOutputLanguageInstruction}
+
+Analiza el siguiente CV y devuelve un JSON EXACTAMENTE con esta estructura. CADA campo debe contener análisis ESPECÍFICO de este CV — cita secciones, frases y datos concretos del CV.
+
+
+
+CV:
+
+${sanitized}
+
+${companyContext}
+
+MERCADO OBJETIVO: ${marketCtx}
+
+MONEDA: ${currency.symbol} (${currency.code})
+
+
+
+DEVUELVE EXACTAMENTE este JSON (sin texto antes ni después):
+
+{
+
+  "atsRejectionRate": <número 0-100, probabilidad de rechazo automático por ATS>,
+
+  "atsTopFactor": "<factor principal que afecta la compatibilidad ATS de ESTE CV específico — cita el problema concreto>",
+
+  "detailedAtsAnalysis": {
+
+    "factors": [
+
+      { "factor": "<nombre del factor>", "status": "pass|warning|fail", "detail": "<explicación ESPECÍFICA — cita secciones/elementos concretos>" }
+
+    ],
+
+    "atsSystems": [
+
+      { "name": "Workday", "compatibility": "Excelente|Buena|Pobre" },
+
+      { "name": "SAP SF", "compatibility": "Excelente|Buena|Pobre" },
+
+      { "name": "Taleo", "compatibility": "Excelente|Buena|Pobre" },
+
+      { "name": "Greenhouse", "compatibility": "Excelente|Buena|Pobre" }
+
+    ],
+
+    "quickFixes": ["<fix concreto 1 referenciando elemento del CV>", "<fix 2>", "<fix 3>"]
+
+  },
+
+  "quadrants": [
+
+    {
+
+      "title": "Estructura",
+
+      "score": <0-100>,
+
+      "benchmark": <benchmark para este nivel de antigüedad>,
+
+      "impactPhrase": "<frase corta y ESPECÍFICA sobre el impacto de la estructura de ESTE CV>",
+
+      "strengths": ["<fortaleza específica>"],
+
+      "weaknesses": ["<debilidad específica>"],
+
+      "detailed_feedback": "<2-3 frases CONCRETAS sobre la estructura — CITA elementos reales del CV>"
+
+    },
+
+    {
+
+      "title": "Contenido",
+
+      "score": <0-100>,
+
+      "benchmark": <benchmark>,
+
+      "impactPhrase": "<frase específica sobre el contenido>",
+
+      "strengths": ["<fortaleza específica>"],
+
+      "weaknesses": ["<debilidad específica>"],
+
+      "detailed_feedback": "<2-3 frases CONCRETAS sobre el contenido>"
+
+    },
+
+    {
+
+      "title": "Formación",
+
+      "score": <0-100>,
+
+      "benchmark": <benchmark>,
+
+      "impactPhrase": "<frase específica>",
+
+      "strengths": ["<fortaleza específica>"],
+
+      "weaknesses": ["<debilidad específica>"],
+
+      "detailed_feedback": "<2-3 frases CONCRETAS>"
+
+    },
+
+    {
+
+      "title": "Experiencia",
+
+      "score": <0-100>,
+
+      "benchmark": <benchmark>,
+
+      "impactPhrase": "<frase específica>",
+
+      "strengths": ["<fortaleza específica>"],
+
+      "weaknesses": ["<debilidad específica>"],
+
+      "detailed_feedback": "<2-3 frases CONCRETAS>"
+
+    }
+
+  ],
+
+  "keywords": ["<keyword 1>", "<keyword 2>", "<keyword 3>", "<keyword 4>", "<keyword 5>"],
+
+  "perceivedRole": "<función que un reclutador percibiría>",
+
+  "perceivedSeniority": "<Junior|Intermedio|Senior|Director|C-Level>",
+
+  "recruiterDeepAnalysis": {
+
+    "firstImpression": "<lo que un reclutador piensa en los primeros 6 segundos>",
+
+    "redFlags": ["<red flag específica>"],
+
+    "greenFlags": ["<green flag específica>"],
+
+    "interviewLikelihood": "<Alta|Media|Baja>",
+
+    "interviewLikelihoodReason": "<por qué — con referencia a elementos concretos del CV>"
+
+  },
+
+  "salaryDetailed": {
+
+    "period": "mensual",
+
+    "currency_code": "${currency.code}",
+
+    "currency_symbol": "${currency.symbol}",
+
+    "percentile25": <entero bruto mensual en ${currency.code}>,
+
+    "median": <entero bruto mensual en ${currency.code}>,
+
+    "percentile75": <entero bruto mensual en ${currency.code}>,
+
+    "topMax": <entero bruto mensual en ${currency.code}>,
+
+    "salary_label": "Rango salarial bruto mensual en ${currency.symbol} para ${marketCtx} — ej: '${currency.symbol}2.200 – ${currency.symbol}3.500/mes bruto'",
+
+    "benefits": ["<beneficio típico 1>", "<beneficio 2>", "<beneficio 3>"],
+
+    "benefitsNote": "<nota sobre beneficios típicos para este perfil en ${marketCtx}>",
+
+    "source": "Estimación basada en datos de mercado para la función y antigüedad detectadas en ${marketCtx}"
+
+  },
+
+  "automationRisk": {
+
+    "percentage": <0-100>,
+
+    "level": "Bajo|Medio|Alto",
+
+    "description": "<análisis ESPECÍFICO del riesgo de automatización para ESTA función/área>",
+
+    "recommendations": ["<recomendación específica 1>", "<recomendación 2>", "<recomendación 3>"]
+
+  },
+
+  "improvementActions": [
+
+    {
+
+      "action": "<acción concreta de mejora>",
+
+      "impact": <1-10>,
+
+      "before": "<texto REAL o paráfrasis del CV>",
+
+      "after": "<sugerencia concreta de cómo debería quedar>"
+
+    },
+
+    {
+
+      "action": "<acción 2>",
+
+      "impact": <1-10>,
+
+      "before": "<antes real>",
+
+      "after": "<después sugerido>"
+
+    },
+
+    {
+
+      "action": "<acción 3>",
+
+      "impact": <1-10>,
+
+      "before": "<antes real>",
+
+      "after": "<después sugerido>"
+
+    }
+
+  ],
+
+  "actionPlan": [
+
+    {
+
+      "week": "Semana 1-2",
+
+      "title": "<título personalizado basado en la prioridad #1>",
+
+      "tasks": ["<tarea específica 1>", "<tarea 2>", "<tarea 3>"]
+
+    },
+
+    {
+
+      "week": "Semana 3",
+
+      "title": "<título personalizado basado en la prioridad #2>",
+
+      "tasks": ["<tarea específica 1>", "<tarea 2>", "<tarea 3>"]
+
+    },
+
+    {
+
+      "week": "Semana 4",
+
+      "title": "<título personalizado basado en la prioridad #3>",
+
+      "tasks": ["<tarea específica 1>", "<tarea 2>", "<tarea 3>"]
+
+    }
+
+  ]
+
+}
+
+
+
+REGLAS CRÍTICAS:
+
+1. CADA campo debe contener análisis ESPECÍFICO de este CV — nunca texto genérico
+
+2. Cita nombres de empresas, funciones, fechas y secciones reales del CV
+
+3. Los benchmarks deben ser realistas para el nivel de antigüedad detectado
+
+4. Las improvementActions deben tener "before" con texto REAL del CV y "after" con sugerencia concreta
+
+5. El actionPlan debe ser personalizado a las prioridades de este CV específico
+
+6. Los salarios deben ser en ${currency.symbol} (${currency.code}) y realistas para ${marketCtx}
+
+7. Devuelve SOLO el JSON, sin texto adicional
+
+8. TODO el texto debe estar en Español
+
+9. CALIBRACIÓN DE PUNTUACIÓN: Empieza desde 50 (media) y aplica penalizaciones/bonificaciones. La mayoría de los CVs deben puntuar 35-65. Solo CVs verdaderamente excepcionales puntúan por encima de 75. Un CV con descripciones genéricas, sin métricas y estructura básica NUNCA debe puntuar por encima de 55.
+
+10. ANÁLISIS ESPECÍFICO POR ÁREA: DEBES detectar el área profesional del contenido del CV y adaptar TODO a esa área. NUNCA apliques plantillas corporate/business a funciones no corporativas.
+
+11. Las puntuaciones de dimensiones DEBEN tener al menos 10 puntos de diferencia entre la más alta y la más baja. Si todas las dimensiones están dentro de 5 puntos entre sí, estás siendo perezoso — reevalúa.
+
+12. La puntuación global es la MEDIA PONDERADA de dimensiones: Estructura 25% + Contenido 30% + Formación 15% + Experiencia 30%. Calcúlala, no la adivines.
+
+13. TABLA DE REFERENCIA SALARIAL (adapta al mercado, antigüedad y área detectados):
+
+  SALUD: Fisioterapeuta (900-2200), Enfermero (1100-2400), Radiólogo/Técnico (1000-2200), Farmacéutico (1200-2800), Médico/General (2500-5500), Dentista (1500-4000), Psicólogo (900-2500), Nutricionista (800-2000), Logopeda (900-1800), Terapeuta Ocupacional (900-1800)
+
+  EDUCACIÓN: Profesor (1200-2800), Profesor Universitario (1800-4500), Formador/Instructor (800-2000), Educador Infantil (800-1200), Profesor de Educación Especial (1200-2500)
+
+  INGENIERÍA: Ingeniero Civil (1200-3500), Ingeniero Mecánico (1200-3200), Ingeniero Eléctrico (1300-3500), Ingeniero Químico (1300-3500), Ingeniero Ambiental (1100-2800)
+
+  TECNOLOGÍA: Ingeniero de Software (1500-4500), Analista de Datos (1200-3000), Diseñador UX/UI (1200-3000), Soporte IT (900-1800), Ingeniero DevOps (1800-4500), Analista de Ciberseguridad (1500-4000)
+
+  OFICIOS E INDUSTRIA: Electricista (900-1800), Fontanero (800-1600), Mecánico (800-1600), Soldador (800-1500), Operador CNC (900-1600), Operario de Fábrica (800-1200), Inspector de Calidad (1000-2000)
+
+  COMERCIO Y HOSTELERÍA: Dependiente (800-1200), Gerente de Tienda (1100-2000), Chef (900-2500), Camarero (800-1100), Recepcionista de Hotel (800-1400), Guía Turístico (800-1500)
+
+  BUSINESS Y CORPORATE: Gerente de RRHH (2000-5000), Director de RRHH (3500-8000), Gerente de Marketing (1800-4000), Director Financiero (2000-5500), Consultor (1500-4500), Gerente de Proyecto (1500-4000)
+
+  LEGAL: Abogado (1200-5000), Paralegal (900-1800), Notario (2000-5000), Asesor Legal (1500-3500)
+
+  CREATIVO: Diseñador Gráfico (900-2200), Arquitecto (1200-3500), Periodista (900-2200), Fotógrafo (700-1800), Editor de Vídeo (800-2000)
+
+  AGRICULTURA Y MEDIO AMBIENTE: Agrónomo (1000-2500), Veterinario (1200-3000), Técnico Ambiental (900-2000)
+
+  SOCIAL Y PÚBLICO: Trabajador Social (1000-2000), Administrador Público (1200-2800), Bombero (1000-1800), Policía (1100-2000)
+
+  Estos son valores MENSUALES BRUTOS en EUR para Portugal. Escala proporcionalmente para otros mercados.
+
+14. BENEFICIOS POR ÁREA (usa SOLO beneficios típicos del área detectada):
+
+  SALUD: Seguro de responsabilidad profesional, formación médica continua, turnos flexibles, seguro de salud, horas extra pagadas, progresión en la carrera clínica
+
+  EDUCACIÓN: Vacaciones escolares, horario reducido, licencia sabática, becas de investigación, apoyo a la formación
+
+  INGENIERÍA: Coche de empresa (senior), formación técnica, equipo de seguridad, bonos de proyecto, colegiación profesional
+
+  TECNOLOGÍA: Trabajo remoto, stock options, presupuesto de formación, horario flexible, seguro de salud, subsidio de equipamiento
+
+  OFICIOS: Horas extra pagadas, equipo de seguridad, subsidio de herramientas, subsidio de transporte, subsidio de comida
+
+  COMERCIO/HOSTELERÍA: Descuentos en tienda, propinas, subsidio de comida, primas de turno, subsidio de transporte
+
+  CORPORATE: Bono de rendimiento, coche de empresa, stock options, seguro de salud privado, plan de pensiones, gimnasio
+
+  LEGAL: Desarrollo profesional, cuotas colegiales, facturación flexible, vía a socio
+
+  CREATIVO: Tiempo para portafolio, subsidio de equipamiento, horario flexible, apoyo a exposiciones/conferencias
+
+15. RIESGO DE AUTOMATIZACIÓN POR ÁREA (adapta recomendaciones a la profesión real):
+
+  SALUD: Enfócate en habilidades de relación con pacientes, técnicas clínicas especializadas, colaboración interdisciplinar, adaptación a telesalud — NO "liderazgo" o "transformación digital" genéricos
+
+  EDUCACIÓN: Enfócate en innovación pedagógica, participación de alumnos, diseño curricular, integración de EdTech — NO estrategia corporativa
+
+  OFICIOS: Enfócate en certificaciones especializadas, resolución de problemas complejos, experiencia en seguridad, transición energética verde — NO liderazgo de IA y automatización
+
+  COMERCIO: Enfócate en experiencia del cliente, visual merchandising, competencias de e-commerce, gestión de inventario — NO liderazgo ejecutivo
+
+  TECNOLOGÍA: Enfócate en frameworks emergentes, arquitectura cloud, competencias IA/ML, diseño de sistemas — apropiado al área
+
+  CORPORATE: Liderazgo, pensamiento estratégico, transformación digital — SOLO para funciones realmente corporativas
+
+16. KEYWORDS ATS POR ÁREA: Las keywords detectadas y recomendadas DEBEN ser relevantes para el área profesional. Un enfermero necesita "cuidados al paciente, evaluación clínica, administración de medicación" — NO "gestión de stakeholders, ROI, KPIs". Un mecánico necesita "diagnóstico, mantenimiento preventivo, sistemas hidráulicos" — NO "gestión de proyectos, metodología agile". Un fisioterapeuta necesita "rehabilitación, terapia manual, evaluación funcional" — NO "transformación organizacional". Un técnico de radiología necesita "imagenología, protección radiológica, tomografía" — NO "gestión de equipos".` : `Analisa o seguinte CV e retorna um JSON EXACTAMENTE com esta estrutura. CADA campo deve conter análise ESPECÍFICA ao CV — cita secções, frases e dados concretos do CV.
 
 
 
@@ -4838,7 +5186,7 @@ REGRAS CRÍTICAS:
 
                   {
 
-                    text: isEN ? 'Understood. I will analyse the CV and return a complete JSON analysis.' : 'Compreendido. Vou analisar o CV e retornar JSON com análise completa.'
+                    text: isEN ? 'Understood. I will analyse the CV and return a complete JSON analysis.' : isES ? 'Entendido. Voy a analizar el CV y devolver un JSON con análisis completo.' : 'Compreendido. Vou analisar o CV e retornar JSON com análise completa.'
 
                   }
 
@@ -6513,7 +6861,7 @@ REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIAS):
 - Integra los empleadores reales, certificaciones e hitos de carrera del profesional en cada sección.
 - Varía la estructura de las frases — evita empezar frases consecutivas con el mismo sujeto.
 PRODUCE UN INFORME "CAREER PATH" COMPLETO EN JSON CON LA SIGUIENTE ESTRUCTURA:
-{ "name": "Nombre EXACTO completo tal como está escrito en el CV — NO inventar ni adivinar", "candidate_name": "Nombre EXACTO completo tal como está escrito en el CV — debe ser igual al campo 'name' arriba", "current_role": "Cargo actual o más reciente tal como está escrito en el CV", "career_path": { "current_positioning": { "seniority_level": "Junior/Mid-level/Senior/Lead/Director/VP/C-Level", "seniority_justification": "Mínimo 4-5 frases. Justifica el nivel de seniority referenciando: total de años de experiencia, ejemplos concretos de complejidad y alcance de los proyectos del CV, tamaño de equipos o presupuestos gestionados, nivel organizacional de los stakeholders involucrados, e impacto de negocio demostrado con ejemplos concretos de su trayectoria real.", "primary_domain": "Área principal de actuación (ej: Human Capital, Digital Transformation, Finance)", "secondary_domains": ["4-6 dominios complementarios específicos a lo que aparece en el CV — no etiquetas genéricas"], "market_value_assessment": "3-4 frases. Evalúa el valor de mercado del profesional en ${marketCtx}, tratándolo por su nombre, referenciando la combinación específica de empleadores, credenciales y competencias. Compara con el posicionamiento típico de mercado para este perfil. Explica qué hace que este perfil esté por encima o por debajo de la media y por qué.", "competitive_advantages": ["5-7 ventajas competitivas — cada una debe ser una afirmación específica ligada al CV, no una etiqueta genérica. Ejemplo: 'Pedigree Big 4 combinado con experiencia en el sector farmacéutico crea un perfil cross-industry raro que la mayoría de los Directores de RRHH no posee'"], "blind_spots": ["3-4 puntos ciegos — cada uno debe ser un ítem de 2 frases: nombra la laguna y explica el riesgo específico que crea para la carrera de esta persona"] }, "cv_linkedin_cross_analysis": { "consistency_score": "Alta/Media/Baja", "gaps_identified": ["Competencias o experiencias visibles en LinkedIn pero ausentes del CV — mínimo 3 ítems específicos"], "cv_strengths_not_on_linkedin": ["Elementos específicos del CV que deberían ser más visibles en LinkedIn — mínimo 3 ítems"], "optimization_suggestions": ["Sugerencias concretas y accionables para alinear ambos perfiles — mínimo 3 ítems"] }, "next_roles": [ { "role_title": "Título del cargo sugerido", "timeline": "Corto plazo (6-12 meses) / Medio plazo (1-3 años) / Largo plazo (3-5 años)", "fit_percentage": 85, "why_this_role": "3-4 frases. Explica específicamente por qué ESTE cargo encaja en ESTA persona: referencia el empleador actual, experiencia anterior, competencias clave del CV, y por qué el momento es adecuado para este cambio ahora.", "what_you_already_have": ["mínimo 6 ítems específicos extraídos directamente del CV — competencias, certificaciones, experiencias, empleadores, proyectos, herramientas. Cada ítem debe ser específico, no genérico."], "what_you_need": ["mínimo 6 ítems específicos — sé granular. Nombra certificaciones, herramientas, frameworks, tipos de experiencia o áreas de conocimiento específicas. Ejemplo: 'Certificación SHRM-SCP' no 'certificación de RRHH'"], "typical_companies": ["5-7 empresas reales y específicas operando en ${country || 'España'}${region ? ` (${region})` : ''} — incluir etiqueta de sector. Ejemplo: 'AstraZeneca (farmacéutica)', 'Deloitte (consultoría)', 'Santander (banca)'"], "salary_range": "Bruto anual en ${currency.symbol} (${currency.code}). Formato: '${currency.symbol}75.000 – ${currency.symbol}110.000/año bruto'. Enteros simples también en salary_min y salary_max.", "salary_min": 75000, "salary_max": 110000 } ], "alternative_companies": { "direct_competitors": ["5-7 competidores directos del empleador actual o más reciente en ${marketCtx}"], "adjacent_industries": ["5-7 empresas en industrias adyacentes que valoran este conjunto de competencias en ${marketCtx}"], "scale_ups_and_tech": ["5-7 empresas tecnológicas, scale-ups o startups maduras relevantes para este perfil en ${marketCtx}"] }, "upskilling_recommendations": { "formations": [ { "name": "Nombre específico del curso/programa", "provider": "Institución real (priorizar instituciones en ${marketCtx} o globales reconocidas)", "duration": "Duración estimada", "cost_estimate": "Estimación de coste en ${currency.symbol}", "why_it_matters": "2-3 frases explicando el ROI exacto de esta formación para el próximo paso de carrera de esta persona" } ], "certifications": [ { "name": "Nombre exacto de la certificación", "issuing_body": "Entidad emisora", "relevance_score": 90, "why_it_matters": "2-3 frases explicando por qué el mercado valora esta certificación para este perfil" } ], "free_courses": [ { "name": "Nombre del curso gratuito", "platform": "Coursera/edX/etc", "url": "URL real o null", "why_it_matters": "2-3 frases" } ] }, "networking_strategy": [ { "action_type": "Tipo de acción (ej: Asistir a conferencias de la industria)", "description": "Descripción detallada de la estrategia", "entities": [ { "name": "Nombre de la organización/evento/comunidad", "type": "Conferencia/Asociación/Comunidad Online", "description": "3-4 frases: qué es, por qué es relevante para este profesional, qué tipo de participación es posible, y cómo involucrarse.", "website": "URL real o null", "location": "Ubicación o Online", "frequency": "Frecuencia" } ] } ], "strategic_paths": [ { "path_name": "Nombre del camino estratégico", "logic": "Mínimo 100 palabras. Explica la lógica de este camino basándote en el historial del CV. ¿Por qué tiene sentido? ¿Qué transiciones requiere? ¿Cuál es el objetivo final?", "timeline_years": "1-3 años", "risk_level": "Bajo/Medio/Alto", "reward_potential": "Bajo/Medio/Alto" } ], "strategic_comparison": [ { "path_name": "Debe coincidir con path_name arriba", "demand_level": "Mínimo 60 palabras. Analiza la demanda del mercado para este camino en ${marketCtx}.", "competitiveness": "Mínimo 60 palabras. Analiza lo competitivo que es este camino y quiénes son los rivales típicos.", "differentiator": "Mínimo 60 palabras. Explica cómo este profesional puede diferenciarse en este camino específico." } ], "tradeoffs": [ { "path_name": "Debe coincidir con path_name arriba", "pros": ["Mínimo 40 palabras cada uno"], "cons": ["Mínimo 40 palabras cada uno"] } ], "action_plan_by_path": [ { "path_name": "Debe coincidir con path_name arriba", "actions": [ { "step": 1, "action": "Acción específica", "timeframe": "Mes 1", "is_critical": true } ] } ], "decision_recommendation": { "recommended_path": "Nombre del camino recomendado", "justification": "Mínimo 120 palabras. Justificación detallada de por qué este es el mejor camino, cruzando las fortalezas del CV con la realidad del mercado en ${marketCtx}.", "when_to_switch": "Mínimo 60 palabras. Indicadores claros de cuándo el profesional debe pivotar a un camino alternativo." }, "five_year_narrative": "Mínimo 100 palabras. Una narrativa inspiradora pero realista de dónde estará el profesional en 5 años si sigue las recomendaciones." } }
+{ "name": "Nombre EXACTO completo tal como está escrito en el CV — NO inventar ni adivinar", "candidate_name": "Nombre EXACTO completo tal como está escrito en el CV — debe ser igual al campo 'name' arriba", "current_role": "Cargo actual o más reciente tal como está escrito en el CV", "career_path": { "current_positioning": { "seniority_level": "Junior/Mid-level/Senior/Lead/Director/VP/C-Level", "seniority_justification": "Mínimo 4-5 frases. Justifica el nivel de seniority referenciando: total de años de experiencia, ejemplos concretos de complejidad y alcance de los proyectos del CV, tamaño de equipos o presupuestos gestionados, nivel organizacional de los stakeholders involucrados, e impacto de negocio demostrado con ejemplos concretos de su trayectoria real.", "primary_domain": "Área principal de actuación (ej: Human Capital, Digital Transformation, Finance)", "secondary_domains": ["4-6 dominios complementarios específicos a lo que aparece en el CV — no etiquetas genéricas"], "market_value_assessment": "3-4 frases. Evalúa el valor de mercado del profesional en ${marketCtx}, tratándolo por su nombre, referenciando la combinación específica de empleadores, credenciales y competencias. Compara con el posicionamiento típico de mercado para este perfil. Explica qué hace que este perfil esté por encima o por debajo de la media y por qué.", "competitive_advantages": ["5-7 ventajas competitivas — cada una debe ser una afirmación específica ligada al CV, no una etiqueta genérica. Ejemplo: 'Pedigree Big 4 combinado con experiencia en el sector farmacéutico crea un perfil cross-industry raro que la mayoría de los Directores de RRHH no posee'"], "blind_spots": ["3-4 puntos ciegos — cada uno debe ser un ítem de 2 frases: nombra la laguna y explica el riesgo específico que crea para la carrera de esta persona"] }, "cv_linkedin_cross_analysis": { "consistency_score": "Alta/Media/Baja", "gaps_identified": ["Competencias o experiencias visibles en LinkedIn pero ausentes del CV — mínimo 3 ítems específicos"], "cv_strengths_not_on_linkedin": ["Elementos específicos del CV que deberían ser más visibles en LinkedIn — mínimo 3 ítems"], "optimization_suggestions": ["Sugerencias concretas y accionables para alinear ambos perfiles — mínimo 3 ítems"] }, "next_roles": [ { "role_title": "Título del cargo sugerido", "timeline": "Corto plazo (6-12 meses) / Medio plazo (1-3 años) / Largo plazo (3-5 años)", "fit_percentage": 85, "why_this_role": "3-4 frases. Explica específicamente por qué ESTE cargo encaja en ESTA persona: referencia el empleador actual, experiencia anterior, competencias clave del CV, y por qué el momento es adecuado para este cambio ahora.", "what_you_already_have": ["mínimo 6 ítems específicos extraídos directamente del CV — competencias, certificaciones, experiencias, empleadores, proyectos, herramientas. Cada ítem debe ser específico, no genérico."], "what_you_need": ["mínimo 6 ítems específicos — sé granular. Nombra certificaciones, herramientas, frameworks, tipos de experiencia o áreas de conocimiento específicas. Ejemplo: 'Certificación SHRM-SCP' no 'certificación de RRHH'"], "typical_companies": ["5-7 empresas reales y específicas operando en ${country || 'España'}${region ? ` (${region})` : ''} — incluir etiqueta de sector. Ejemplo: 'AstraZeneca (farmacéutica)', 'Deloitte (consultoría)', 'Santander (banca)'"], "salary_range": "Bruto anual en ${currency.symbol} (${currency.code}). Formato: '${currency.symbol}75.000 – ${currency.symbol}110.000/año bruto'. Enteros simples también en salary_min y salary_max.", "salary_min": 75000, "salary_max": 110000 } ], "alternative_companies": { "direct_competitors": ["5-7 competidores directos del empleador actual o más reciente en ${marketCtx}"], "adjacent_industries": ["5-7 empresas en industrias adyacentes que valoran este conjunto de competencias en ${marketCtx}"], "scale_ups_and_tech": ["5-7 empresas tecnológicas, scale-ups o startups maduras relevantes para este perfil en ${marketCtx}"] }, "upskilling_recommendations": { "formations": [ { "name": "Nombre específico del curso/programa", "provider": "Institución real (priorizar instituciones en ${marketCtx} o globales reconocidas)", "duration": "Duración estimada", "cost_estimate": "Estimación de coste en ${currency.symbol}", "why_it_matters": "2-3 frases explicando el ROI exacto de esta formación para el próximo paso de carrera de esta persona" } ], "certifications": [ { "name": "Nombre exacto de la certificación", "issuing_body": "Entidad emisora", "relevance_score": 90, "why_it_matters": "2-3 frases explicando por qué el mercado valora esta certificación para este perfil" } ], "free_courses": [ { "name": "Nombre del curso gratuito", "platform": "Coursera/edX/etc", "url": "URL real o null", "why_it_matters": "2-3 frases" } ] }, "networking_strategy": [ { "action_type": "Tipo de acción (ej: Asistir a conferencias de la industria)", "description": "Descripción detallada de la estrategia", "entities": [ { "name": "Nombre de la organización/evento/comunidad", "type": "Conferencia/Asociación/Comunidad Online", "description": "3-4 frases: qué es, por qué es relevante para este profesional, qué tipo de participación es posible, y cómo involucrarse.", "website": "URL real o null", "location": "Ubicación o Online", "frequency": "Frecuencia" } ] } ], "strategic_paths": [ { "path_name": "Nombre del camino estratégico (ej: Crecimiento Corporativo Vertical, Pivot a Advisory & Consultoría, Carrera Emprendedora / Portfolio)", "success_probability": 78, "logic": "Mínimo 100 palabras. Explica por qué este camino tiene sentido estratégico para ESTA persona ahora: referencia su empleador actual, etapa de carrera, competencias más fuertes, timing de mercado y trayectoria personal. Construye el argumento de por qué este camino es coherente con quién es profesionalmente.", "ideal_for": "2-3 frases describiendo la mentalidad profesional, apetito al riesgo y prioridades personales que hacen a alguien adecuado para este camino — luego nota cómo esta persona encaja o diverge de ese ideal", "associated_roles": ["4-6 títulos de cargo específicos que representan este camino, ordenados del más cercano al más lejano"] } ], "strategic_comparison": [ { "path_name": "Debe coincidir con path_name arriba", "success_probability": 78, "estimated_time": "Tiempo para ver resultados significativos", "effort_level": "Medio/Alto/Muy Alto", "risk_level": "Bajo/Medio/Alto", "salary_impact": "Rango o porcentaje específico con contexto (ej: '+20-35% en 2 años si se logra la promoción')", "profile_fit": "Porcentaje entero + justificación de 2 frases referenciando el CV específico" } ], "tradeoffs": [ { "path_name": "Debe coincidir con path_name arriba", "you_gain": "Mínimo 3 frases. Ser específico y personal — qué gana ESTA persona dada su situación actual, relaciones y ambiciones", "you_give_up": "Mínimo 3 frases. Ser honesto y concreto — qué sacrifica o arriesga genuinamente ESTA persona al elegir este camino", "hidden_risk": "2-3 frases sobre un riesgo no obvio específico al perfil y contexto de mercado de esta persona — algo que un buen advisor señalaría y que la mayoría de las personas ignora", "real_scenario": "3-4 frases pintando un cuadro realista de cómo serían los primeros 6 meses en este camino para esta persona — la realidad diaria, no la versión de marketing" } ], "action_plan_by_path": [ { "path_name": "Debe coincidir con path_name arriba", "actions": [ { "step": 1, "action": "Acción específica", "timeframe": "Mes 1", "is_critical": true } ] } ], "decision_recommendation": { "recommended_path": "Nombre del camino recomendado", "justification": "Mínimo 120 palabras. Justificación detallada de por qué este es el mejor camino, cruzando las fortalezas del CV con la realidad del mercado en ${marketCtx}.", "when_to_switch": "Mínimo 60 palabras. Indicadores claros de cuándo el profesional debe pivotar a un camino alternativo." }, "five_year_narrative": "Mínimo 100 palabras. Una narrativa inspiradora pero realista de dónde estará el profesional en 5 años si sigue las recomendaciones." } }
 REGLAS FINALES:
 - OBLIGATORIO: networking_strategy DEBE tener exactamente 3 acciones. Cada acción DEBE tener exactamente 3 entidades. La descripción de cada entidad DEVE tener 3-4 frases.
 - Sé MUY específico y personalizado — nada genérico
@@ -6522,8 +6870,8 @@ REGLAS FINALES:
 - Si no existen datos fiables para ${country || 'España'}, dilo explícitamente en lugar de inventar valores
 - Si no hay datos de LinkedIn, omite la sección cv_linkedin_cross_analysis y céntrate solo en el CV
 - OBLIGATORIO: DEBES generar exactamente 3 strategic_paths
-- OBLIGATORIO: strategic_comparison DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths
-- OBLIGATORIO: tradeoffs DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths
+- OBLIGATORIO: strategic_comparison DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths, cada uno con: path_name, success_probability, estimated_time, effort_level, risk_level, salary_impact, profile_fit
+- OBLIGATORIO: tradeoffs DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths, cada uno con: path_name, you_gain, you_give_up, hidden_risk, real_scenario
 - OBLIGATORIO: action_plan_by_path DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths, cada uno con 3-5 acciones
 - OBLIGATORIO: En action_plan_by_path, define is_critical como true para COMO MÁXIMO 1 acción por camino. Todas las demás acciones DEBEN tener is_critical: false
 - OBLIGATORIO: decision_recommendation DEBE recomendar uno de los 3 strategic_paths con justificación completa

@@ -134,6 +134,129 @@ function ProgressBar({ value, max = 100, color = 'emerald' }: { value: number; m
   );
 }
 
+// ─── Legacy adapter: convert EN/ES two-engine data into unified PT-style structure ───
+function adaptLegacyToUnified(legacy: any): any {
+  const cv = legacy.cv || {};
+  const li = legacy.linkedin || {};
+  const liAnalysis = li.analysis || li;
+  const rawCv = (() => { try { return JSON.parse(sessionStorage.getItem('studentPackCvRaw') || '{}'); } catch { return {}; } })();
+  const cp = rawCv.candidate_profile || {};
+  const overallScore = cv.overallScore || 0;
+  const nivel = overallScore >= 75 ? 'Destacado' : overallScore >= 50 ? 'Competitivo' : 'Em Desenvolvimento';
+  // Build scores_cv from quadrants
+  const scoresCv: Record<string, any> = {};
+  if (Array.isArray(cv.quadrants)) {
+    for (const q of cv.quadrants) {
+      const key = (q.title || '').toLowerCase().replace(/[^a-z]/g, '_');
+      if (key) scoresCv[key] = { valor: q.score || 0, benchmark_estudantes: q.benchmark || 65 };
+    }
+  }
+  // Build scores_linkedin from dimensoes
+  const scoresLinkedin: Record<string, any> = {};
+  if (liAnalysis.dimensoes) {
+    for (const [k, v] of Object.entries(liAnalysis.dimensoes as Record<string, any>)) {
+      scoresLinkedin[k] = { valor: v?.score || 0, analise: v?.analise || '' };
+    }
+  }
+  // Strengths / weaknesses from quadrants
+  const strengths: string[] = [];
+  const weaknesses: string[] = [];
+  if (Array.isArray(cv.quadrants)) {
+    for (const q of cv.quadrants) {
+      if (Array.isArray(q.strengths)) strengths.push(...q.strengths);
+      if (Array.isArray(q.weaknesses)) weaknesses.push(...q.weaknesses);
+    }
+  }
+  // CV problems → marca_pessoal.problemas_criticos_cv
+  const problemasCv = Array.isArray(cv.cvProblems) ? cv.cvProblems.map((p: any) => ({
+    problema: p.title || p.problema || '',
+    descricao: p.description || p.descricao || '',
+    explicacao_completa: p.explanation || p.explicacao_completa || '',
+    exemplo_correcao: p.fix || p.exemplo_correcao || '',
+    reescrita_sugerida: p.rewrite || p.reescrita_sugerida || ''
+  })) : [];
+  // Action plan → plano_90_dias
+  const actions = Array.isArray(cv.actionPlan30Days) ? cv.actionPlan30Days : [];
+  const plano90: any = {};
+  if (actions.length > 0) {
+    const chunk = Math.ceil(actions.length / 4);
+    const phases = [
+      { key: 'semana_1_2', tema: pick('Fundação', 'Foundation', 'Fundación') },
+      { key: 'semana_3_4', tema: pick('Optimização', 'Optimization', 'Optimización') },
+      { key: 'mes_2', tema: pick('Expansão', 'Expansion', 'Expansión') },
+      { key: 'mes_3', tema: pick('Consolidação', 'Consolidation', 'Consolidación') }
+    ];
+    phases.forEach((ph, i) => {
+      const slice = actions.slice(i * chunk, (i + 1) * chunk);
+      if (slice.length > 0) plano90[ph.key] = { tema: ph.tema, acoes: slice.map((a: any) => typeof a === 'string' ? a : a.action || a.acao || JSON.stringify(a)) };
+    });
+  }
+  // LinkedIn headlines from areas_melhoria
+  const headlines: string[] = [];
+  if (Array.isArray(liAnalysis.areas_melhoria)) {
+    for (const am of liAnalysis.areas_melhoria) {
+      if (am.recomendacao) headlines.push(am.recomendacao);
+    }
+  }
+  return {
+    perfil: {
+      nome: cp.name || cp.nome || '',
+      curso: cp.detected_role || cp.area || '',
+      area_alvo: cv.perceivedRole || cp.detected_role || '',
+      resumo_executivo: liAnalysis.sumario_executivo || ''
+    },
+    score_global: {
+      valor: overallScore,
+      nivel,
+      interpretacao: liAnalysis.sumario_executivo || '',
+      vs_mercado_entrada: liAnalysis.benchmarking?.resumo || ''
+    },
+    auditoria_perfil_dual: {
+      coerencia_cv_linkedin: overallScore >= 65 ? 'Alta' : overallScore >= 45 ? 'Média' : 'Baixa',
+      analise_coerencia: liAnalysis.sumario_executivo || '',
+      primeira_impressao_cv: strengths.slice(0, 2).join('. ') || '',
+      primeira_impressao_linkedin: liAnalysis.hook_vendas || liAnalysis.sumario_executivo || '',
+      scores_cv: scoresCv,
+      scores_linkedin: scoresLinkedin
+    },
+    prontidao_mercado: {
+      score_estagio: Math.min(100, Math.round(overallScore * 1.1)),
+      score_primeiro_emprego: Math.min(100, overallScore),
+      analise_prontidao: liAnalysis.recomendacao_prioritaria || '',
+      o_que_ja_tens: strengths.slice(0, 5),
+      o_que_ainda_precisas: weaknesses.slice(0, 5)
+    },
+    capital_academico: {
+      pontos_fortes_academicos: strengths.slice(0, 4),
+      oportunidades_nao_aproveitadas: weaknesses.slice(0, 4)
+    },
+    competencias_transferiveis: {
+      mapa_competencias: (cv.keywords || []).slice(0, 6).map((kw: string) => ({
+        competencia: kw,
+        origem: 'CV',
+        traducao_mercado: kw,
+        evidencia_sugerida: ''
+      })),
+      gaps_criticos: []
+    },
+    estrategia_keywords_unificada: {
+      ats_score: cv.atsRejectionRate != null ? (100 - cv.atsRejectionRate) : 0,
+      seo_linkedin_score: liAnalysis.dimensoes?.visibilidade_seo?.score || 0,
+      keywords_presentes: (cv.keywords || []).map((kw: string) => ({ keyword: kw, onde: 'CV' })),
+      keywords_em_falta: []
+    },
+    marca_pessoal_estudante: {
+      headline_linkedin_sugeridas: headlines.slice(0, 3),
+      resumo_linkedin_sugerido: liAnalysis.resumo_linkedin_sugerido || '',
+      problemas_criticos_cv: problemasCv,
+      acoes_linkedin_prioritarias: Array.isArray(liAnalysis.areas_melhoria) ? liAnalysis.areas_melhoria.map((am: any) => am.diagnostico || am.recomendacao || '').filter(Boolean).slice(0, 5) : []
+    },
+    primeiros_cargos_alvo: [],
+    plano_90_dias: plano90,
+    recomendacao_prioritaria: liAnalysis.recomendacao_prioritaria || ''
+  };
+}
+
 // ════════════════════════════════════════
 // ─── MAIN COMPONENT ───
 // ════════════════════════════════════════
@@ -158,8 +281,11 @@ export default function StudentPackResults() {
   const isPaid = sessionStorage.getItem('studentPackPaid') === 'true';
   useEffect(() => { if (!isPaid) window.location.href = localePath('/estudante'); }, [isPaid]);
 
+  // For legacy EN/ES data, adapt to unified format; otherwise use as-is
+  const unified = useMemo(() => rawData?._legacy ? adaptLegacyToUnified(rawData) : null, [rawData]);
+
   // Extract data from the unified student_pack response, sanitize to prevent {txt,href} objects crashing React
-  const analysis = deepSanitize(rawData?.analysis || rawData?.data || rawData || {});
+  const analysis = deepSanitize(unified || rawData?.analysis || rawData?.data || rawData || {});
   const perfil = analysis?.perfil || {};
   const scoreGlobal = analysis?.score_global || {};
   const auditoria = analysis?.auditoria_perfil_dual || {};
