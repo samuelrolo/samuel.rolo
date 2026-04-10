@@ -865,7 +865,7 @@ export default function CareerIntelligenceHome() {
         {step === 'upload' && (
           <div className="max-w-xl mx-auto space-y-8 animate-in fade-in">
             <div className="text-center space-y-3">
-              <h2 className="text-2xl font-bold text-foreground">Career Intelligence</h2>
+              <h2 className="text-2xl font-bold text-foreground">{pick("Career Intelligence", "Career Intelligence", "Career Intelligence")}</h2>
               <p className="text-sm text-muted-foreground">{pick('Carrega o teu CV e partilha o teu LinkedIn para a análise completa com recomendação.', 'Upload your CV and share your LinkedIn for the complete analysis with recommendation.', 'Sube tu CV y comparte tu LinkedIn para el análisis completo con recomendación.')}</p>
             </div>
 
@@ -1175,7 +1175,7 @@ export default function CareerIntelligenceHome() {
             <div className="space-y-4">
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Career Intelligence</p>
+                  <p className="text-sm font-semibold text-foreground">{pick("Career Intelligence", "Career Intelligence", "Career Intelligence")}</p>
                   <p className="text-xs text-muted-foreground">{pick('Diagnóstico + Decisão Estratégica', 'Diagnosis + Strategic Decision', 'Diagnóstico + Decisión Estratégica')}</p>
                 </div>
                 <div className="text-right">
