@@ -1670,6 +1670,37 @@ function filterCampaignRecipients() {
     renderRecipientList(profiles);
 }
 
+function renderRecipientList(profiles) {
+    if (!profiles) profiles = buildCRMProfiles();
+    const tbody = document.getElementById('recipientTable');
+    if (!tbody) return;
+    const search = (document.getElementById('recipientSearch')?.value || '').toLowerCase();
+    let filtered = profiles.filter(p => !search || p.email.includes(search) || (p.name || '').toLowerCase().includes(search));
+    // Find last email sent to each recipient
+    const lastEmailMap = {};
+    allEmailHistory.forEach(e => {
+        const key = (e.recipient_email || '').toLowerCase();
+        if (!lastEmailMap[key] || new Date(e.sent_at) > new Date(lastEmailMap[key])) lastEmailMap[key] = e.sent_at;
+    });
+    setText('recipientCount', `${filtered.length} destinat\u00e1rios`);
+    tbody.innerHTML = filtered.slice(0, 200).map(p => {
+        const lastEmail = lastEmailMap[p.email.toLowerCase()];
+        const lastEmailStr = lastEmail ? new Date(lastEmail).toLocaleDateString('pt-PT') : '<span style="color:var(--orange);">Nunca</span>';
+        return `<tr>
+            <td><input type="checkbox" class="recipient-cb" value="${p.email}" checked></td>
+            <td style="font-size:12px;">${p.name || '\u2014'}</td>
+            <td style="font-size:12px;">${p.email}</td>
+            <td>${getStageBadge(p.stage)}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${lastEmailStr}</td>
+        </tr>`;
+    }).join('');
+}
+function filterRecipientList() { renderNurturingSegments(); }
+function toggleAllRecipients(checked) { document.querySelectorAll('.recipient-cb').forEach(cb => cb.checked = checked); }
+function selectOnlyUnsent() {
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+    document.querySelectorAll('.recipient-cb').forEach(cb => { cb.checked = !sentEmails.has(cb.value.toLowerCase()); });
+}
 function loadCampaignTemplate() {
     const tpl = document.getElementById('campaignTemplate')?.value;
     const lang = nurturingLang;
