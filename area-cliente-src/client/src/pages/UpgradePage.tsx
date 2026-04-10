@@ -93,22 +93,22 @@ const testimonials = [
 ];
 
 const previewFeatures = [
-  { icon: FileText, labelPt: 'CV Analyser', labelEn: 'CV Analyser', descPt: 'Análise detalhada do teu CV com score ATS', descEn: 'Detailed CV analysis with ATS score', href: '/cv-analyser', pricePt: '9,99€', priceEn: '€9.99' },
-  { icon: Linkedin, labelPt: 'LinkedIn Roaster', labelEn: 'LinkedIn Roaster', descPt: 'Feedback profundo ao teu perfil LinkedIn', descEn: 'Deep feedback on your LinkedIn profile', href: '/linkedin-roaster', pricePt: '3,99€', priceEn: '€3.99' },
-  { icon: PenTool, labelPt: 'CV Maker', labelEn: 'CV Maker', descPt: 'Cria e edita o teu CV profissional', descEn: 'Create and edit your professional CV', href: '#plans-section', pricePt: null, priceEn: null },
-  { icon: Euro, labelPt: 'Salary Benchmark', labelEn: 'Salary Benchmark', descPt: 'Descobre onde o teu salário se posiciona no mercado', descEn: 'Discover where your salary stands in the market', href: '#salary-section', pricePt: 'Freemium', priceEn: 'Freemium' },
-  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant', href: '#plans-section', pricePt: null, priceEn: null },
-  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources', href: '#plans-section', pricePt: null, priceEn: null },
-  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching', href: '#plans-section', pricePt: null, priceEn: null },
-  { icon: BarChart3, labelPt: 'Career Path', labelEn: 'Career Path', descPt: 'Planeamento estratégico de carreira com IA', descEn: 'AI-powered strategic career planning', href: '/career-path', pricePt: '19,99€', priceEn: '€19.99' },
-  { icon: Compass, labelPt: 'Career Intelligence', labelEn: 'Career Intelligence', descPt: 'Relatório estratégico de mercado e posicionamento', descEn: 'Strategic market positioning report', href: '/career-intelligence', pricePt: '49€', priceEn: '€49' },
-  { icon: Sparkles, labelPt: 'Pack Estudante', labelEn: 'Student Pack', descPt: 'CV + LinkedIn num só relatório cruzado', descEn: 'CV + LinkedIn in one cross report', href: '/pack-estudante', pricePt: '7,99€', priceEn: '€7.99' },
+  { icon: FileText, labelPt: 'CV Analyser', labelEn: 'CV Analyser', descPt: 'Análise detalhada do teu CV com score ATS', descEn: 'Detailed CV analysis with ATS score', descEs: 'Análisis detallado de tu CV con score ATS', href: '/cv-analyser', pricePt: '9,99€', priceEn: '€9.99' },
+  { icon: Linkedin, labelPt: 'LinkedIn Roaster', labelEn: 'LinkedIn Roaster', descPt: 'Feedback profundo ao teu perfil LinkedIn', descEn: 'Deep feedback on your LinkedIn profile', descEs: 'Feedback profundo a tu perfil LinkedIn', href: '/linkedin-roaster', pricePt: '3,99€', priceEn: '€3.99' },
+  { icon: PenTool, labelPt: 'CV Maker', labelEn: 'CV Maker', descPt: 'Cria e edita o teu CV profissional', descEn: 'Create and edit your professional CV', descEs: 'Crea y edita tu CV profesional', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: Euro, labelPt: 'Salary Benchmark', labelEn: 'Salary Benchmark', descPt: 'Descobre onde o teu salário se posiciona no mercado', descEn: 'Discover where your salary stands in the market', descEs: 'Descubre dónde se posiciona tu salario en el mercado', href: '#salary-section', pricePt: 'Freemium', priceEn: 'Freemium' },
+  { icon: Bot, labelPt: 'Career Bot', labelEn: 'Career Bot', descPt: 'Assistente IA de carreira personalizado', descEn: 'Personalised AI career assistant', descEs: 'Asistente IA de carrera personalizado', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: BookOpen, labelPt: 'Conteúdos Premium', labelEn: 'Premium Content', labelEs: 'Contenidos Premium', descPt: 'E-books, templates e recursos exclusivos', descEn: 'E-books, templates and exclusive resources', descEs: 'E-books, templates y recursos exclusivos', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: Briefcase, labelPt: 'Feed de Vagas', labelEn: 'Jobs Feed', labelEs: 'Feed de Empleos', descPt: 'Vagas curadas com match inteligente', descEn: 'Curated jobs with intelligent matching', descEs: 'Empleos curados con match inteligente', href: '#plans-section', pricePt: null, priceEn: null },
+  { icon: BarChart3, labelPt: 'Career Path', labelEn: 'Career Path', descPt: 'Planeamento estratégico de carreira com IA', descEn: 'AI-powered strategic career planning', descEs: 'Planificación estratégica de carrera con IA', href: '/career-path', pricePt: '19,99€', priceEn: '€19.99' },
+  { icon: Compass, labelPt: 'Career Intelligence', labelEn: 'Career Intelligence', descPt: 'Relatório estratégico de mercado e posicionamento', descEn: 'Strategic market positioning report', descEs: 'Informe estratégico de mercado y posicionamiento', href: '/career-intelligence', pricePt: '49€', priceEn: '€49' },
+  { icon: Sparkles, labelPt: 'Pack Estudante', labelEn: 'Student Pack', labelEs: 'Pack Estudiante', descPt: 'CV + LinkedIn num só relatório cruzado', descEn: 'CV + LinkedIn in one cross report', descEs: 'CV + LinkedIn en un solo informe cruzado', href: '/pack-estudante', pricePt: '7,99€', priceEn: '€7.99' },
 ];
 
 /* ─── Mini AnalysisResult viewer (simplified for free users) ─── */
 function AnalysisResultMini({ data, lang }: { data: any; lang: string }) {
   const raw = data?.analysis || data;
-  if (!raw) return <p className="text-xs text-[#999] italic">{lang === 'pt' ? 'Sem dados detalhados' : 'No detailed data'}</p>;
+  if (!raw) return <p className="text-xs text-[#999] italic">{lang === 'pt' ? 'Sem dados detalhados' : lang === 'es' ? 'Sin datos detallados' : 'No detailed data'}</p>;
 
   const normalizeScore = (obj: any): number | undefined => {
     if (!obj) return undefined;
@@ -156,20 +156,20 @@ function AnalysisResultMini({ data, lang }: { data: any; lang: string }) {
             <span className="text-base font-bold text-gold">{nScore}</span>
           </div>
           <div>
-            <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p>
+            <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Pontuação global' : lang === 'es' ? 'Puntuación global' : 'Overall score'}</p>
             <p className="text-sm font-medium text-[#1a1a1a]">{nScore}/100</p>
           </div>
         </div>
       )}
       {nSummary && (
         <div>
-          <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1">{lang === 'pt' ? 'Resumo' : 'Summary'}</h5>
+          <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1">{lang === 'pt' ? 'Resumo' : lang === 'es' ? 'Resumen' : 'Summary'}</h5>
           <p className="text-sm text-[#333] leading-relaxed">{nSummary}</p>
         </div>
       )}
       {nKeywords.length > 0 && (
         <div>
-          <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Competências-chave' : 'Key Skills'}</h5>
+          <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Competências-chave' : lang === 'es' ? 'Competencias clave' : 'Key Skills'}</h5>
           <div className="flex flex-wrap gap-1.5">
             {nKeywords.slice(0, 10).map((kw, i) => (
               <span key={i} className="px-2 py-0.5 bg-gold/5 border border-gold/20 rounded-full text-[10px] text-[#666] font-medium">{kw}</span>
@@ -179,19 +179,19 @@ function AnalysisResultMini({ data, lang }: { data: any; lang: string }) {
       )}
       {nStrengths.length > 0 && (
         <div>
-          <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5>
+          <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Pontos Fortes' : lang === 'es' ? 'Puntos Fuertes' : 'Strengths'}</h5>
           <ul className="space-y-1">{nStrengths.slice(0, 5).map((s, i) => (<li key={i} className="text-xs text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul>
         </div>
       )}
       {nImprovements.length > 0 && (
         <div>
-          <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'A melhorar' : 'To improve'}</h5>
+          <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'A melhorar' : lang === 'es' ? 'A mejorar' : 'To improve'}</h5>
           <ul className="space-y-1">{nImprovements.slice(0, 5).map((s, i) => (<li key={i} className="text-xs text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">!</span><span>{s}</span></li>))}</ul>
         </div>
       )}
       {nRecommendations.length > 0 && (
         <div>
-          <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5>
+          <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Recomendações' : lang === 'es' ? 'Recomendaciones' : 'Recommendations'}</h5>
           <ul className="space-y-1">{nRecommendations.slice(0, 5).map((s, i) => (<li key={i} className="text-xs text-[#333] flex items-start gap-2"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul>
         </div>
       )}
@@ -200,7 +200,7 @@ function AnalysisResultMini({ data, lang }: { data: any; lang: string }) {
           <details className="group">
             <summary className="cursor-pointer text-xs text-gold hover:text-[#b8960c] font-medium flex items-center gap-1 transition-colors">
               <ArrowRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
-              {lang === 'pt' ? 'Ver análise completa' : 'View full analysis'}
+              {lang === 'pt' ? 'Ver análise completa' : lang === 'es' ? 'Ver análisis completo' : 'View full analysis'}
             </summary>
             <div className="mt-3 p-4 bg-white border border-[#e5e5e5] rounded-lg overflow-auto max-h-[500px]">
               <div className="s2i-results-render" dangerouslySetInnerHTML={{ __html: resultsHtml }} />
@@ -239,7 +239,7 @@ export default function UpgradePage() {
       const orderType = sessionStorage.getItem('s2iExtraType');
       const savedSrcId = sessionStorage.getItem('s2iSrcPendingId');
       if (orderId && orderType === 'salary_reality_check' && savedSrcId) {
-        toast.info(lang === 'pt' ? 'A verificar pagamento...' : 'Verifying payment...');
+        toast.info(lang === 'pt' ? 'A verificar pagamento...' : lang === 'es' ? 'Verificando pago...' : 'Verifying payment...');
         window.history.replaceState({}, '', window.location.pathname + '#salary-section');
         const aid = parseInt(savedSrcId, 10);
         // Mark as paid directly then unlock
@@ -252,7 +252,7 @@ export default function UpgradePage() {
           sessionStorage.removeItem('s2iExtraOrderId');
           sessionStorage.removeItem('s2iExtraType');
           sessionStorage.removeItem('s2iSrcPendingId');
-          toast.success(lang === 'pt' ? 'Pagamento confirmado! A desbloquear análise...' : 'Payment confirmed! Unlocking analysis...');
+          toast.success(lang === 'pt' ? 'Pagamento confirmado! A desbloquear análise...' : lang === 'es' ? '¡Pago confirmado! Desbloqueando análisis...' : 'Payment confirmed! Unlocking analysis...');
           srcRef.current?.unlockPremium(aid);
         })();
       } else if (orderId && orderType) {
@@ -267,12 +267,12 @@ export default function UpgradePage() {
               if (data.paid) {
                 sessionStorage.removeItem('s2iExtraOrderId');
                 sessionStorage.removeItem('s2iExtraType');
-                toast.success(lang === 'pt' ? 'Pagamento confirmado!' : 'Payment confirmed!');
+                toast.success(lang === 'pt' ? 'Pagamento confirmado!' : lang === 'es' ? '¡Pago confirmado!' : 'Payment confirmed!');
               } else if (attempts < 5) {
                 attempts++;
                 setTimeout(checkStatus, 2000);
               } else {
-                toast.error(lang === 'pt' ? 'Demorou muito tempo. Atualiza a página e tenta novamente.' : 'Taking too long. Refresh and try again.');
+                toast.error(lang === 'pt' ? 'Demorou muito tempo. Atualiza a página e tenta novamente.' : lang === 'es' ? 'Tardó demasiado. Actualiza la página e inténtalo de nuevo.' : 'Taking too long. Refresh and try again.');
               }
             })
             .catch(e => console.error('Failed to verify payment', e));
@@ -322,7 +322,7 @@ export default function UpgradePage() {
     }
     if (analysis.analysis_type === 'career_intelligence') {
       const paths = data.strategic_paths || data.analysis?.career_path?.strategic_paths;
-      if (paths && Array.isArray(paths)) return `${paths.length} ${lang === 'pt' ? 'caminhos estratégicos' : 'strategic paths'}`;
+      if (paths && Array.isArray(paths)) return `${paths.length} ${lang === 'pt' ? 'caminhos estratégicos' : lang === 'es' ? 'caminos estratégicos' : 'strategic paths'}`;
     }
     if (analysis.analysis_type === 'career_energy') {
       if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`;
@@ -337,10 +337,14 @@ export default function UpgradePage() {
   const firstName = profile?.first_name;
   const greeting = lang === 'pt'
     ? `${firstName ? `Olá, ${firstName}` : 'Olá'} — a tua conta está activa.`
+    : lang === 'es'
+    ? `${firstName ? `Hola, ${firstName}` : 'Hola'} — tu cuenta está activa.`
     : `${firstName ? `Hi, ${firstName}` : 'Hi'} — your account is active.`;
 
   const subGreeting = lang === 'pt'
     ? 'Subscreve para desbloquear todas as ferramentas e acelerar a tua carreira.'
+    : lang === 'es'
+    ? 'Suscríbete para desbloquear todas las herramientas y acelerar tu carrera.'
     : 'Subscribe to unlock all tools and accelerate your career.';
 
   function getSaving(prices: PriceMap): number | null {
@@ -358,14 +362,14 @@ export default function UpgradePage() {
   }
 
   const periodLabels: Record<Period, string> = {
-    monthly: lang === 'pt' ? 'Mensal' : 'Monthly',
-    semiannual: lang === 'pt' ? 'Semestral' : 'Semiannual',
-    annual: lang === 'pt' ? 'Anual' : 'Annual',
+    monthly: lang === 'pt' ? 'Mensal' : lang === 'es' ? 'Mensual' : 'Monthly',
+    semiannual: lang === 'pt' ? 'Semestral' : lang === 'es' ? 'Semestral' : 'Semiannual',
+    annual: lang === 'pt' ? 'Anual' : lang === 'es' ? 'Anual' : 'Annual',
   };
   const periodSuffix: Record<Period, string> = {
-    monthly: lang === 'pt' ? '/mês' : '/month',
-    semiannual: lang === 'pt' ? '/semestre' : '/semester',
-    annual: lang === 'pt' ? '/ano' : '/year',
+    monthly: lang === 'pt' ? '/mês' : lang === 'es' ? '/mes' : '/month',
+    semiannual: lang === 'pt' ? '/semestre' : lang === 'es' ? '/semestre' : '/semester',
+    annual: lang === 'pt' ? '/ano' : lang === 'es' ? '/año' : '/year',
   };
 
   const hasAnalyses = savedAnalyses.length > 0;
@@ -397,7 +401,7 @@ export default function UpgradePage() {
               <div className="flex items-center gap-2">
                 <FileSearch className="w-4 h-4 text-gold" />
                 <h2 className="text-sm font-semibold text-[#1a1a1a]">
-                  {lang === 'pt' ? 'As tuas Análises' : 'Your Analyses'}
+                  {lang === 'pt' ? 'As tuas Análises' : lang === 'es' ? 'Tus Análisis' : 'Your Analyses'}
                 </h2>
                 {hasAnalyses && (
                   <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{savedAnalyses.length}</span>
@@ -412,7 +416,7 @@ export default function UpgradePage() {
                   }}
                   className="flex items-center gap-1 text-[10px] text-[#999] hover:text-gold transition-colors"
                 >
-                  <RefreshCcw className="w-3 h-3" /> {lang === 'pt' ? 'Atualizar' : 'Refresh'}
+                  <RefreshCcw className="w-3 h-3" /> {lang === 'pt' ? 'Atualizar' : lang === 'es' ? 'Actualizar' : 'Refresh'}
                 </button>
               )}
             </div>
@@ -420,7 +424,7 @@ export default function UpgradePage() {
             {loadingSaved ? (
               <div className="py-12 text-center">
                 <Loader2 className="w-5 h-5 animate-spin text-gold mx-auto" />
-                <p className="text-xs text-[#999] mt-2">{lang === 'pt' ? 'A carregar análises...' : 'Loading analyses...'}</p>
+                <p className="text-xs text-[#999] mt-2">{lang === 'pt' ? 'A carregar análises...' : lang === 'es' ? 'Cargando análisis...' : 'Loading analyses...'}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -446,7 +450,7 @@ export default function UpgradePage() {
                       <div className="p-4 bg-gradient-to-r from-[#fafaf9] to-white">
                         <div className="flex items-center gap-1.5 text-[10px] text-gold font-medium uppercase tracking-wider mb-2">
                           <Sparkles className="w-3 h-3" />
-                          {lang === 'pt' ? 'Última análise' : 'Latest analysis'}
+                          {lang === 'pt' ? 'Última análise' : lang === 'es' ? 'Último análisis' : 'Latest analysis'}
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
@@ -454,7 +458,7 @@ export default function UpgradePage() {
                             <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(latest.created_at)}</div>
                           </div>
                           <button onClick={() => setViewingAnalysis(viewingAnalysis?.id === latest.id ? null : latest)} className="flex items-center gap-1 text-[11px] text-gold hover:text-[#b8960c] font-medium transition-colors ml-3">
-                            <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver resultado' : 'View result'}
+                            <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver resultado' : lang === 'es' ? 'Ver resultado' : 'View result'}
                           </button>
                         </div>
                         {/* Inline expanded view for latest */}
@@ -469,7 +473,7 @@ export default function UpgradePage() {
                       {rest.length > 0 && (
                         <>
                           <button onClick={() => setExpandedAnalysisType(isExpanded ? null : type)} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-[#f0f0f0] text-[11px] text-[#888] hover:text-gold hover:bg-[#fafaf9] transition-all">
-                            <span>{isExpanded ? (lang === 'pt' ? 'Ocultar anteriores' : 'Hide older') : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : `Show ${rest.length} more`)}</span>
+                            <span>{isExpanded ? (lang === 'pt' ? 'Ocultar anteriores' : lang === 'es' ? 'Ocultar anteriores' : 'Hide older') : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : lang === 'es' ? `Ver más ${rest.length} análisis` : `Show ${rest.length} more`)}</span>
                             {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                           </button>
                           {isExpanded && (
@@ -482,7 +486,7 @@ export default function UpgradePage() {
                                       <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(sa.created_at)}</div>
                                     </div>
                                     <span className="flex items-center gap-1 text-[10px] text-gold hover:text-[#b8960c] font-medium transition-colors opacity-0 group-hover:opacity-100 ml-3">
-                                      <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver' : 'View'}
+                                      <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver' : lang === 'es' ? 'Ver' : 'View'}
                                     </span>
                                   </div>
                                   {viewingAnalysis?.id === sa.id && (
@@ -507,14 +511,14 @@ export default function UpgradePage() {
                   <Lock className="w-5 h-5 text-gold flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-xs font-medium text-[#1a1a1a]">
-                      {lang === 'pt' ? 'Queres mais análises e ferramentas avançadas?' : 'Want more analyses and advanced tools?'}
+                      {lang === 'pt' ? 'Queres mais análises e ferramentas avançadas?' : lang === 'es' ? '¿Quieres más análisis y herramientas avanzadas?' : 'Want more analyses and advanced tools?'}
                     </p>
                     <p className="text-[10px] text-[#888] mt-0.5">
-                      {lang === 'pt' ? 'Subscreve um plano para aceder a todas as ferramentas sem limites.' : 'Subscribe to a plan to access all tools without limits.'}
+                      {lang === 'pt' ? 'Subscreve um plano para aceder a todas as ferramentas sem limites.' : lang === 'es' ? 'Suscríbete a un plan para acceder a todas las herramientas sin límites.' : 'Subscribe to a plan to access all tools without limits.'}
                     </p>
                   </div>
                   <a href="#plans" className="flex items-center gap-1 text-xs text-gold hover:text-[#b8960c] font-medium transition-colors whitespace-nowrap">
-                    {lang === 'pt' ? 'Ver planos' : 'View plans'} <ArrowRight className="w-3 h-3" />
+                    {lang === 'pt' ? 'Ver planos' : lang === 'es' ? 'Ver planes' : 'View plans'} <ArrowRight className="w-3 h-3" />
                   </a>
                 </div>
               </div>
@@ -541,13 +545,13 @@ export default function UpgradePage() {
                       <Icon className="w-4 h-4 text-gold" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? feat.labelPt : feat.labelEn}</p>
-                      <p className="text-[10px] text-[#999] font-light mt-0.5">{lang === 'pt' ? feat.descPt : feat.descEn}</p>
+                      <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? feat.labelPt : lang === 'es' ? (feat.labelEs || feat.labelPt) : feat.labelEn}</p>
+                      <p className="text-[10px] text-[#999] font-light mt-0.5">{lang === 'pt' ? feat.descPt : lang === 'es' ? (feat.descEs || feat.descPt) : feat.descEn}</p>
                       {price && (
                         <p className="text-[11px] text-gold font-semibold mt-2">{price}</p>
                       )}
                       {!price && (
-                        <p className="text-[10px] text-emerald-600 font-medium mt-2">{lang === 'pt' ? 'Incluído na subscrição' : 'Included in subscription'}</p>
+                        <p className="text-[10px] text-emerald-600 font-medium mt-2">{lang === 'pt' ? 'Incluído na subscrição' : lang === 'es' ? 'Incluido en la suscripción' : 'Included in subscription'}</p>
                       )}
                     </div>
                   </div>
@@ -573,7 +577,7 @@ export default function UpgradePage() {
               sessionStorage.setItem('s2iSrcPendingId', String(analysisId));
               setPaymentProduct({
                 type: 'salary_reality_check',
-                label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : 'Salary Reality Check — Premium Analysis',
+                label: lang === 'pt' ? 'Salary Reality Check — Análise Premium' : lang === 'es' ? 'Salary Reality Check — Análisis Premium' : 'Salary Reality Check — Premium Analysis',
                 price: amount,
                 originalPrice: 2.49,
                 discountLabel: '',
@@ -783,7 +787,7 @@ export default function UpgradePage() {
             href="/planos"
             className="text-xs text-[#999] hover:text-[#555] font-light transition-colors underline underline-offset-2"
           >
-            {lang === 'pt' ? 'Ver comparação completa de planos' : 'View full plan comparison'}
+            {lang === 'pt' ? 'Ver comparação completa de planos' : lang === 'es' ? 'Ver comparación completa de planes' : 'View full plan comparison'}
           </Link>
         </div>
       </div>
