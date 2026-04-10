@@ -895,7 +895,7 @@ export default function BundleHome() {
                 className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]"
               />
               <span className="text-xs text-slate-500">
-                {pick('Li e aceito a', 'I have read and accept the', 'He leído y acepto la')} <a href="/politica-privacidade" target="_blank" className="text-[#C9A961] underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a> {pick('e os', 'and the', 'y los')} <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">{pick('Termos e Condições', 'Terms and Conditions', 'Términos y Condiciones')}</a>.
+                {pick('Li e aceito a', 'I have read and accept the', 'He leído y acepto la')} <a href={localePath('/politica-privacidade')} target="_blank" className="text-[#C9A961] underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a> {pick('e os', 'and the', 'y los')} <a href={localePath('/termos-condicoes')} target="_blank" className="text-[#C9A961] underline">{pick('Termos e Condições', 'Terms and Conditions', 'Términos y Condiciones')}</a>.
               </span>
             </label>
 

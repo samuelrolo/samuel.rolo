@@ -16,14 +16,19 @@ const corsHeaders = {
 
 function wrapTemplate(bodyHtml: string, lang: string = "pt"): string {
   const isEn = lang === "en";
+  const isEs = lang === "es";
   const reviewText = isEn
     ? "How was your experience? Leave us a review"
-    : "Como foi a tua experiência? Deixa-nos uma avaliação";
-  const followText = isEn ? "Follow us" : "Segue-nos";
+    : isEs
+      ? "¿Cómo fue tu experiencia? Déjanos una reseña"
+      : "Como foi a tua experiência? Deixa-nos uma avaliação";
+  const followText = isEn ? "Follow us" : isEs ? "Síguenos" : "Segue-nos";
   const unsubText = isEn
     ? "You received this email because you interacted with Share2Inspire."
-    : "Recebeste este email porque interagiste com o Share2Inspire.";
-  const rightsText = isEn ? "All rights reserved." : "Todos os direitos reservados.";
+    : isEs
+      ? "Recibiste este correo porque interactuaste con Share2Inspire."
+      : "Recebeste este email porque interagiste com o Share2Inspire.";
+  const rightsText = isEn ? "All rights reserved." : isEs ? "Todos los derechos reservados." : "Todos os direitos reservados.";
 
   return `<!DOCTYPE html>
 <html lang="${lang}">
@@ -79,8 +84,9 @@ function wrapTemplate(bodyHtml: string, lang: string = "pt"): string {
 /* ─── Template: Welcome after CV Analysis ─── */
 function cvAnalysisWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
+  const isEs = lang === "es";
   const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
-  const greeting = isEn ? `Hi ${firstName},` : `Olá ${firstName},`;
+  const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
 
   if (isEn) {
     return `
@@ -121,6 +127,47 @@ function cvAnalysisWelcomeBody(name: string, lang: string): string {
 </div>
 
 <p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">If you have any questions, simply reply to this email.<br><strong>The Share2Inspire Team</strong></p>`;
+  }
+
+  if (isEs) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Bienvenido a Share2Inspire!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por utilizar nuestro <strong>CV Analyser</strong>. Tu currículum ha sido analizado y los resultados están listos.</p>
+
+<div style="background:#f8f6f0;border-left:4px solid #C9A961;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">Un paso para empezar:</p>
+  <p style="font-size:14px;color:#555;margin:0;">Descubre lo que le falta a tu CV según lo que los empleadores y los sistemas ATS buscan hoy, con orientación específica sobre qué ajustar antes de postularte.</p>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">¿Quieres ir más lejos? Explora nuestras herramientas de carrera:</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/cv-analyser" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser Pro</a>
+      <span style="font-size:13px;color:#777;"> — Desbloquea el ATS Deep Scan completo, estimación salarial y certificación LinkedIn</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/career-path" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🗺️ Career Path</a>
+      <span style="font-size:13px;color:#777;"> — Obtén una hoja de ruta profesional personalizada con datos del mercado</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/linkedin-roaster" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🔥 LinkedIn Roaster</a>
+      <span style="font-size:13px;color:#777;"> — Feedback brutalmente honesto sobre tu perfil de LinkedIn</span>
+    </td>
+  </tr>
+</table>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/es/cv-analyser" style="display:inline-block;background:linear-gradient(135deg,#C9A961,#e8d5a3);color:#0a1628;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Consulta la puntuación de tu CV</a>
+</div>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Si tienes alguna pregunta, simplemente responde a este correo.<br><strong>El equipo Share2Inspire</strong></p>`;
   }
 
   return `
@@ -166,8 +213,9 @@ function cvAnalysisWelcomeBody(name: string, lang: string): string {
 /* ─── Template: Welcome after Student Pack Purchase ─── */
 function studentPackWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
+  const isEs = lang === "es";
   const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
-  const greeting = isEn ? `Hi ${firstName},` : `Olá ${firstName},`;
+  const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
 
   if (isEn) {
     return `
@@ -191,6 +239,30 @@ function studentPackWelcomeBody(name: string, lang: string): string {
 </div>
 
 <p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">If you have any questions, simply reply to this email.<br><strong>The Share2Inspire Team</strong></p>`;
+  }
+
+  if (isEs) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Tu Student Pack está listo!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por comprar el <strong>Student Pack</strong>. Tu análisis ha sido completado y los resultados ya están disponibles.</p>
+
+<div style="background:#f0fdf4;border-left:4px solid #059669;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">Lo que incluye tu pack:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Un análisis de CV con recomendaciones prácticas de mejora</li>
+    <li>Feedback de perfil LinkedIn para reforzar tu posicionamiento</li>
+    <li>Un punto de partida más claro para tu estrategia de búsqueda de empleo</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Ya puedes consultar tus resultados y seguir explorando las herramientas de Share2Inspire más adecuadas para tu próximo paso profesional.</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/es/student-pack/results" style="display:inline-block;background:linear-gradient(135deg,#059669,#34d399);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver los resultados de mi Student Pack</a>
+</div>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Si tienes alguna pregunta, simplemente responde a este correo.<br><strong>El equipo Share2Inspire</strong></p>`;
   }
 
   return `
@@ -219,8 +291,9 @@ function studentPackWelcomeBody(name: string, lang: string): string {
 /* ─── Template: Welcome after Member Registration ─── */
 function memberWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
+  const isEs = lang === "es";
   const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
-  const greeting = isEn ? `Hi ${firstName},` : `Olá ${firstName},`;
+  const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
 
   if (isEn) {
     return `
@@ -272,6 +345,58 @@ function memberWelcomeBody(name: string, lang: string): string {
 </div>
 
 <p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">If you have any questions, simply reply to this email.<br><strong>The Share2Inspire Team</strong></p>`;
+  }
+
+  if (isEs) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Bienvenido a Share2Inspire!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Tu cuenta ha sido creada con éxito. Ahora tienes acceso al <strong>Área de Miembro Share2Inspire</strong> — tu hub de inteligencia profesional.</p>
+
+<div style="background:#f8f6f0;border-left:4px solid #C9A961;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">Lo que puedes hacer ahora:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Ver y gestionar todos tus análisis de CV</li>
+    <li>Acceder a tu hoja de ruta Career Path</li>
+    <li>Seguir tu progreso profesional</li>
+    <li>Explorar contenido exclusivo para miembros</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Empieza a explorar tus herramientas:</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/area-cliente/dashboard" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📋 Dashboard</a>
+      <span style="font-size:13px;color:#777;"> — Tu visión general de inteligencia profesional</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/cv-analyser" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser</a>
+      <span style="font-size:13px;color:#777;"> — Analiza tu currículum con insights de IA</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/career-path" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🗺️ Career Path</a>
+      <span style="font-size:13px;color:#777;"> — Construye tu hoja de ruta profesional personalizada</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/area-cliente/vagas" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">💼 Ofertas de Empleo</a>
+      <span style="font-size:13px;color:#777;"> — Descubre oportunidades laborales seleccionadas</span>
+    </td>
+  </tr>
+</table>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/es/area-cliente" style="display:inline-block;background:linear-gradient(135deg,#C9A961,#e8d5a3);color:#0a1628;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Acceder al Área de Miembro</a>
+</div>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Si tienes alguna pregunta, simplemente responde a este correo.<br><strong>El equipo Share2Inspire</strong></p>`;
   }
 
   return `
@@ -378,17 +503,23 @@ Deno.serve(async (req: Request) => {
     if (type === "cv_analysis") {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your CV Results Are Ready!"
-        : "Bem-vindo ao Share2Inspire — Os Resultados do Teu CV Estão Prontos!";
+        : language === "es"
+          ? "¡Bienvenido a Share2Inspire — Los Resultados de Tu CV Están Listos!"
+          : "Bem-vindo ao Share2Inspire — Os Resultados do Teu CV Estão Prontos!";
       bodyHtml = cvAnalysisWelcomeBody(name || "", language);
     } else if (type === "student_pack") {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Student Pack Is Ready!"
-        : "Bem-vindo ao Share2Inspire — O Teu Student Pack Está Pronto!";
+        : language === "es"
+          ? "¡Bienvenido a Share2Inspire — Tu Student Pack Está Listo!"
+          : "Bem-vindo ao Share2Inspire — O Teu Student Pack Está Pronto!";
       bodyHtml = studentPackWelcomeBody(name || "", language);
     } else {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
-        : "Bem-vindo ao Share2Inspire — A Tua Conta Está Pronta!";
+        : language === "es"
+          ? "¡Bienvenido a Share2Inspire — Tu Cuenta Está Lista!"
+          : "Bem-vindo ao Share2Inspire — A Tua Conta Está Pronta!";
       bodyHtml = memberWelcomeBody(name || "", language);
     }
 

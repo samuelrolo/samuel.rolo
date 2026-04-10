@@ -845,7 +845,7 @@ export default function Results() {
             } else {
               console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
               setJobScrapeStatus('done');
-              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`));
+              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa Live Match para una comparación detallada`));
             }
           } else {
             console.warn('[JOB_SCRAPE] Scraping failed:', scrapeData.error);
@@ -1309,7 +1309,7 @@ export default function Results() {
         // Partial discount — apply it
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code);
-        setDiscountSuccess(pick(`Desconto de ${coupon.discount_percent}% aplicado!`, `${coupon.discount_percent}% discount applied!`, `Desconto de ${coupon.discount_percent}% aplicado!`));
+        setDiscountSuccess(pick(`Desconto de ${coupon.discount_percent}% aplicado!`, `${coupon.discount_percent}% discount applied!`, `¡Descuento de ${coupon.discount_percent}% aplicado!`));
         setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2000);
         return;
       }
@@ -1346,13 +1346,13 @@ export default function Results() {
       );
 
       if (updateResponse.ok) {
-        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.`, `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`));
+        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.`, `¡Código válido! Análisis desbloqueado. Quedan ${remaining - 1} análisis.`));
         unlockFullReport();
         updateAnalysisPayment(selectedPlan.price, 'voucher', code);
         
         if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
           sessionStorage.setItem('careerPathIncluded', 'true');
-          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.`, `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`));
+          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.`, `¡Código válido! Análisis + Career Path desbloqueados. Quedan ${remaining - 1} análisis.`));
         }
         
         setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
@@ -1820,7 +1820,7 @@ export default function Results() {
                     <p className="text-xs font-semibold text-red-500 mb-2">{t('palavraschave_em_falta')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       <span className="px-2 py-1 rounded-full text-xs bg-red-500/10 text-red-500 border border-red-500/20">
-                        {pick(`${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`, `${analysisData.jobMatch.keywordGaps.length} keywords identified`, `${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`)}
+                        {pick(`${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`, `${analysisData.jobMatch.keywordGaps.length} keywords identified`, `${analysisData.jobMatch.keywordGaps.length} palabras clave identificadas`)}
                       </span>
                     </div>
                   </div>
@@ -1830,7 +1830,7 @@ export default function Results() {
                     <p className="text-xs font-semibold text-green-600 mb-2">{t('palavraschave_encontradas')}</p>
                     <div className="flex flex-wrap gap-1.5">
                       <span className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-600 border border-green-500/20">
-                        {pick(`${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`, `${analysisData.jobMatch.matchedKeywords.length} keywords matched`, `${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`)}
+                        {pick(`${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`, `${analysisData.jobMatch.matchedKeywords.length} keywords matched`, `${analysisData.jobMatch.matchedKeywords.length} palabras clave encontradas`)}
                       </span>
                     </div>
                   </div>
@@ -1898,7 +1898,7 @@ export default function Results() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
-                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems.length} specific issues that are hurting your CV`, `${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`)}</p>
+                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems.length} specific issues that are hurting your CV`, `${analysisData.cvProblems.length} problemas específicos que están perjudicando tu CV`)}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -2182,7 +2182,7 @@ export default function Results() {
           <div className="pt-4 border-t border-border">
             <div className="relative">
               <p className="text-sm text-muted-foreground mb-2">
-                {pick(`→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`, `→ Your CV is ${avgScore >= 70 ? 'above' : 'below'} the global market average (${Math.round(avgScore)} vs 69)`, `→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`)}
+                {pick(`→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`, `→ Your CV is ${avgScore >= 70 ? 'above' : 'below'} the global market average (${Math.round(avgScore)} vs 69)`, `→ Tu CV está ${avgScore >= 70 ? 'por encima' : 'por debajo'} del promedio global del mercado (${Math.round(avgScore)} vs 69)`)}
               </p>
               {!isPaid && (
                 <div className="relative">
@@ -2750,7 +2750,7 @@ export default function Results() {
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5]/10 text-[#0077B5] text-xs font-semibold hover:bg-[#0077B5]/20 transition-colors border border-[#0077B5]/20"
                           >
                             <Linkedin className="w-3.5 h-3.5" />
-                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Procurar "${role.role_title}" no LinkedIn`)}
+                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Buscar "${role.role_title}" en LinkedIn`)}
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </div>
@@ -3351,7 +3351,7 @@ export default function Results() {
                     size="sm"
                     className="text-muted-foreground hover:text-foreground text-xs"
                   >
-                    {pick(`Ou apenas o Relatório CV — ${CUR}${P.cv}`, `Or just the CV Report — ${CUR}${P.cv}`, `Ou apenas o Relatório CV — ${CUR}${P.cv}`)}
+                    {pick(`Ou apenas o Relatório CV — ${CUR}${P.cv}`, `Or just the CV Report — ${CUR}${P.cv}`, `O solo el Informe CV — ${CUR}${P.cv}`)}
                   </Button>
                   <Button
                     onClick={() => setShowDiscountModal(true)}
@@ -3475,7 +3475,7 @@ export default function Results() {
                 {appliedCoupon ? (
                   lang === 'en' ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
                 ) : (
-                  pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar para Pagamento — ${CUR}${selectedPlan.price}`)
+                  pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar al Pago — ${CUR}${selectedPlan.price}`)
                 )}
               </Button>
             </div>
@@ -3739,7 +3739,7 @@ export default function Results() {
                       <div className="mt-4 p-4 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg">
                         <p className="text-xs text-muted-foreground mb-1">{t('o_teu_cdigo_para_futuras')}</p>
                         <p className="text-xl font-mono font-bold text-[#C9A961]">{storedVoucherCode}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise(s)`, `${storedVoucherRemaining} analysis(es) remaining`, `Restam ${storedVoucherRemaining} análise(s)`)}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise(s)`, `${storedVoucherRemaining} analysis(es) remaining`, `Quedan ${storedVoucherRemaining} análisis`)}</p>
                       </div>
                     )}
                   </>
@@ -3917,7 +3917,7 @@ export default function Results() {
                 >
                   {careerPathIsUpgrade
                     ? (t('pagar_1499_e_gerar_career'))
-                    : (pick(`Pagar ${CUR}${P.career} e Gerar Career Path`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} e Gerar Career Path`))
+                    : (pick(`Pagar ${CUR}${P.career} e Gerar Career Path`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} y Generar Career Path`))
                   }
                 </Button>
               </>

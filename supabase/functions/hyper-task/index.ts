@@ -8945,6 +8945,8 @@ REGLAS FINALES:
 
           const isEN = lead.domain && lead.domain.includes('/en');
 
+          const isES = lead.domain && lead.domain.includes('/es');
+
           const firstName = (lead.user_name || '').split(' ')[0] || 'there';
 
           const score = lead.score || 75;
@@ -8952,6 +8954,8 @@ REGLAS FINALES:
           const subjectPT = `${firstName}, o teu CV tem ${score}/100 — vê o relatório completo`;
 
           const subjectEN = `${firstName}, your CV scored ${score}/100 — see the full report`;
+
+          const subjectES = `${firstName}, tu CV obtuvo ${score}/100 — mira el informe completo`;
 
           const htmlPT = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
 
@@ -9017,9 +9021,41 @@ REGLAS FINALES:
 
           </div>`;
 
-          const subject = isEN ? subjectEN : subjectPT;
+          const htmlES = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
 
-          const html = isEN ? htmlEN : htmlPT;
+            <img src="https://www.share2inspire.pt/img/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:20px">
+
+            <h2 style="color:#333">Hola ${firstName} 👋</h2>
+
+            <p>Realizaste el análisis gratuito de tu CV y obtuviste <strong>${score}/100</strong>.</p>
+
+            <p>El informe completo incluye:</p>
+
+            <ul>
+
+              <li>✅ Análisis detallado de cada sección del CV</li>
+
+              <li>✅ Sugerencias de reescritura listas para usar</li>
+
+              <li>✅ Puntuación ATS y compatibilidad</li>
+
+              <li>✅ Comparación con tu área profesional</li>
+
+            </ul>
+
+            <p style="margin:25px 0"><a href="https://www.share2inspire.pt/es/cv-analyser" style="background:#c8a45a;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;display:inline-block">Ver Informe Completo — 4,99€</a></p>
+
+            <p style="color:#888;font-size:13px">Pago único. Sin suscripción. Resultado en 30 segundos.</p>
+
+            <hr style="border:none;border-top:1px solid #eee;margin:30px 0">
+
+            <p style="color:#999;font-size:12px">Share2Inspire · <a href="https://www.share2inspire.pt/es" style="color:#c8a45a">share2inspire.pt</a></p>
+
+          </div>`;
+
+          const subject = isEN ? subjectEN : isES ? subjectES : subjectPT;
+
+          const html = isEN ? htmlEN : isES ? htmlES : htmlPT;
 
           try {
 
@@ -9143,11 +9179,15 @@ REGLAS FINALES:
 
           const isEN = lead.domain && lead.domain.includes('/en');
 
+          const isES = lead.domain && lead.domain.includes('/es');
+
           const firstName = (lead.user_name || '').split(' ')[0] || 'there';
 
           const subjectPT = `${firstName}, ainda podes melhorar o teu CV — oferta especial`;
 
           const subjectEN = `${firstName}, you can still improve your CV — special offer`;
+
+          const subjectES = `${firstName}, aún puedes mejorar tu CV — oferta especial`;
 
           const htmlPT = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
 
@@ -9225,9 +9265,47 @@ REGLAS FINALES:
 
           </div>`;
 
-          const subject = isEN ? subjectEN : subjectPT;
+          const htmlES = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
 
-          const html = isEN ? htmlEN : htmlPT;
+            <img src="https://www.share2inspire.pt/img/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:20px">
+
+            <h2 style="color:#333">Hola ${firstName} 👋</h2>
+
+            <p>Hace una semana realizaste el análisis gratuito de tu CV. ¿Ya tuviste oportunidad de mejorar los puntos identificados?</p>
+
+            <p>Con el <strong>informe completo</strong>, recibes:</p>
+
+            <ul>
+
+              <li>📋 Reescrituras profesionales listas para copiar</li>
+
+              <li>🎯 Análisis ATS detallado</li>
+
+              <li>📊 Comparación con profesionales de tu área</li>
+
+            </ul>
+
+            <p>Y si quieres ir más lejos, el <strong>Career Path</strong> te muestra los 3 mejores roles para tu perfil, con hoja de ruta y salario estimado.</p>
+
+            <p style="margin:25px 0">
+
+              <a href="https://www.share2inspire.pt/es/cv-analyser" style="background:#c8a45a;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;display:inline-block">Informe CV — 4,99€</a>
+
+              &nbsp;&nbsp;
+
+              <a href="https://www.share2inspire.pt/es/career-path" style="background:#333;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;display:inline-block">Career Path — 10€</a>
+
+            </p>
+
+            <hr style="border:none;border-top:1px solid #eee;margin:30px 0">
+
+            <p style="color:#999;font-size:12px">Share2Inspire · <a href="https://www.share2inspire.pt/es" style="color:#c8a45a">share2inspire.pt</a></p>
+
+          </div>`;
+
+          const subject = isEN ? subjectEN : isES ? subjectES : subjectPT;
+
+          const html = isEN ? htmlEN : isES ? htmlES : htmlPT;
 
           try {
 
@@ -9347,11 +9425,15 @@ REGLAS FINALES:
 
           const isEN = lead.domain && lead.domain.includes('/en');
 
-          const firstName = (lead.user_name || '').split(' ')[0] || (isEN ? 'there' : 'profissional');
+          const isES = lead.domain && lead.domain.includes('/es');
+
+          const firstName = (lead.user_name || '').split(' ')[0] || (isEN ? 'there' : isES ? 'profesional' : 'profissional');
 
           const subjectPT = `${firstName}, descobre o teu Career Path com 50% de desconto`;
 
           const subjectEN = `${firstName}, discover your Career Path with 50% off`;
+
+          const subjectES = `${firstName}, descubre tu Career Path con 50% de descuento`;
 
           const htmlPT = `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
 
@@ -9461,9 +9543,63 @@ REGLAS FINALES:
 
 </div>`;
 
-          const subject = isEN ? subjectEN : subjectPT;
+          const htmlES = `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
 
-          const html = isEN ? htmlEN : htmlPT;
+<div style="background:linear-gradient(135deg,#0a1628 0%,#162a4a 100%);padding:28px 32px;border-radius:12px 12px 0 0;text-align:center">
+
+  <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" height="40" style="height:40px;margin-bottom:8px">
+
+  <div style="font-size:10px;color:#C9A961;letter-spacing:3px;text-transform:uppercase;font-weight:600">Career Intelligence Platform</div>
+
+</div>
+
+<div style="height:3px;background:linear-gradient(90deg,#C9A961,#e8d5a3,#C9A961)"></div>
+
+<div style="background:#fff;padding:32px">
+
+  <h2 style="color:#1a1a2e;font-size:22px;margin-bottom:16px">Hola ${firstName},</h2>
+
+  <p style="color:#555;font-size:15px;line-height:1.7">Ya tienes tu análisis de CV completo. Ahora es momento de dar el siguiente paso: descubrir los <strong>3 mejores roles</strong> para tu perfil con <strong style="color:#C9A961">Career Path</strong>.</p>
+
+  <p style="color:#555;font-size:15px;line-height:1.7">Lo que recibirás:</p>
+
+  <ul style="color:#555;font-size:14px;line-height:2">
+
+    <li>3 caminos de carrera personalizados para tu perfil</li>
+
+    <li>Hoja de ruta detallada con competencias a desarrollar</li>
+
+    <li>Estimación salarial para cada rol</li>
+
+    <li>Empresas que están contratando en tu área</li>
+
+  </ul>
+
+  <div style="background:#f8f6f0;border-left:4px solid #C9A961;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0">
+
+    <p style="margin:0;font-size:15px;color:#333"><strong>Oferta exclusiva:</strong> Usa el código <strong style="color:#C9A961;font-size:18px">CVPATH50</strong> y obtén <strong>50% de descuento</strong> en Career Path.</p>
+
+  </div>
+
+  <p style="text-align:center;margin:28px 0"><a href="https://www.share2inspire.pt/es/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px">Descubrir mi Career Path</a></p>
+
+  <p style="color:#888;font-size:13px;text-align:center">Pago único. Resultado en 60 segundos.</p>
+
+</div>
+
+<div style="background:#0a1628;padding:20px 32px;border-radius:0 0 12px 12px;text-align:center">
+
+  <p style="margin:0 0 8px;font-size:11px;color:rgba(255,255,255,0.4)">Recibiste este correo porque utilizaste Share2Inspire.</p>
+
+  <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.3)">&copy; 2026 Share2Inspire. Todos los derechos reservados.</p>
+
+</div>
+
+</div>`;
+
+          const subject = isEN ? subjectEN : isES ? subjectES : subjectPT;
+
+          const html = isEN ? htmlEN : isES ? htmlES : htmlPT;
 
           try {
 
@@ -9581,11 +9717,15 @@ REGLAS FINALES:
 
           const isEN = lead.domain && lead.domain.includes('/en');
 
-          const firstName = (lead.user_name || '').split(' ')[0] || (isEN ? 'there' : 'profissional');
+          const isES = lead.domain && lead.domain.includes('/es');
+
+          const firstName = (lead.user_name || '').split(' ')[0] || (isEN ? 'there' : isES ? 'profesional' : 'profissional');
 
           const subjectPT = `${firstName}, 1 mês grátis de subscrição Pro — exclusivo para ti`;
 
           const subjectEN = `${firstName}, 1 free month of Pro subscription — exclusive for you`;
+
+          const subjectES = `${firstName}, 1 mes gratis de suscripción Pro — exclusivo para ti`;
 
           const htmlPT = `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
 
@@ -9719,9 +9859,75 @@ REGLAS FINALES:
 
 </div>`;
 
-          const subject = isEN ? subjectEN : subjectPT;
+          const htmlES = `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
 
-          const html = isEN ? htmlEN : htmlPT;
+<div style="background:linear-gradient(135deg,#0a1628 0%,#162a4a 100%);padding:28px 32px;border-radius:12px 12px 0 0;text-align:center">
+
+  <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" height="40" style="height:40px;margin-bottom:8px">
+
+  <div style="font-size:10px;color:#C9A961;letter-spacing:3px;text-transform:uppercase;font-weight:600">Career Intelligence Platform</div>
+
+</div>
+
+<div style="height:3px;background:linear-gradient(90deg,#C9A961,#e8d5a3,#C9A961)"></div>
+
+<div style="background:#fff;padding:32px">
+
+  <h2 style="color:#1a1a2e;font-size:22px;margin-bottom:16px">Hola ${firstName},</h2>
+
+  <p style="color:#555;font-size:15px;line-height:1.7">¡Felicidades por tu Career Path! Ahora que ya sabes cuáles son los mejores roles para tu perfil, queremos ofrecerte acceso completo a la plataforma.</p>
+
+  <p style="color:#555;font-size:15px;line-height:1.7">Con la <strong style="color:#C9A961">suscripción Pro</strong>, tienes acceso a:</p>
+
+  <ul style="color:#555;font-size:14px;line-height:2">
+
+    <li>Análisis ilimitados de CV</li>
+
+    <li>Career Path y Career Intelligence incluidos</li>
+
+    <li>LinkedIn Roaster ilimitado</li>
+
+    <li>Acceso prioritario a nuevas funcionalidades</li>
+
+    <li>75% de descuento en todos los servicios individuales</li>
+
+  </ul>
+
+  <div style="background:linear-gradient(135deg,#0a1628,#162a4a);border-radius:12px;padding:24px;margin:24px 0;text-align:center">
+
+    <p style="margin:0 0 8px;font-size:13px;color:#C9A961;text-transform:uppercase;letter-spacing:2px;font-weight:600">Oferta exclusiva</p>
+
+    <p style="margin:0 0 4px;font-size:28px;color:#fff;font-weight:700">1 Mes GRATIS</p>
+
+    <p style="margin:0 0 16px;font-size:14px;color:rgba(255,255,255,0.7)">Suscripción Pro — sin compromiso</p>
+
+    <p style="margin:0;font-size:15px;color:#fff">Código: <strong style="color:#C9A961;font-size:20px;letter-spacing:2px">PATHPRO</strong></p>
+
+  </div>
+
+  <p style="text-align:center;margin:28px 0">
+
+    <a href="https://www.share2inspire.pt/es/area-cliente" style="display:inline-block;background:#C9A961;color:#0a1628;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px">Registrarse y activar Pro gratis</a>
+
+  </p>
+
+  <p style="color:#888;font-size:13px;text-align:center">Regístrate en el área de cliente y usa el código <strong>PATHPRO</strong> al suscribirte.</p>
+
+</div>
+
+<div style="background:#0a1628;padding:20px 32px;border-radius:0 0 12px 12px;text-align:center">
+
+  <p style="margin:0 0 8px;font-size:11px;color:rgba(255,255,255,0.4)">Recibiste este correo porque utilizaste Share2Inspire.</p>
+
+  <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.3)">&copy; 2026 Share2Inspire. Todos los derechos reservados.</p>
+
+</div>
+
+</div>`;
+
+          const subject = isEN ? subjectEN : isES ? subjectES : subjectPT;
+
+          const html = isEN ? htmlEN : isES ? htmlES : htmlPT;
 
           try {
 
@@ -10079,13 +10285,15 @@ REGLAS FINALES:
 
       const isPT = language === 'pt' || language === 'PT';
 
+      const isESMI = language === 'es';
+
       if (!audio_base64) {
 
         return jsonResponse({
 
           success: false,
 
-          error: isPT ? 'Áudio em base64 é obrigatório' : 'Base64 audio is required'
+          error: isPT ? 'Áudio em base64 é obrigatório' : isESMI ? 'El audio en base64 es obligatorio' : 'Base64 audio is required'
 
         }, 400);
 
@@ -10111,7 +10319,11 @@ REGLAS FINALES:
 
                 ? `\n\nDADOS DA EMPRESA-ALVO (verificados):\nEmpresa: ${miCompanyDetails.name}\n${miCompanyDetails.industry ? `Indústria: ${miCompanyDetails.industry}\n` : ''}${miCompanyDetails.employee_count ? `Dimensão: ${miCompanyDetails.employee_count.toLocaleString()} funcionários\n` : ''}${miCompanyDetails.specialties?.length ? `Especialidades: ${miCompanyDetails.specialties.join(', ')}\n` : ''}${miCompanyDetails.description ? `Descrição: ${miCompanyDetails.description.substring(0, 300)}\n` : ''}\nUSA estes dados para fazer perguntas contextuais sobre a empresa (ex: "Porque queres trabalhar nesta empresa de ${miCompanyDetails.industry}?", "Como a tua experiência se alinha com as especialidades da empresa em ${miCompanyDetails.specialties?.[0] || 'esta área'}?"). A improved_answer também deve referenciar dados reais da empresa.`
 
-                : `\n\nTARGET COMPANY DATA (verified):\nCompany: ${miCompanyDetails.name}\n${miCompanyDetails.industry ? `Industry: ${miCompanyDetails.industry}\n` : ''}${miCompanyDetails.employee_count ? `Size: ${miCompanyDetails.employee_count.toLocaleString()} employees\n` : ''}${miCompanyDetails.specialties?.length ? `Specialties: ${miCompanyDetails.specialties.join(', ')}\n` : ''}${miCompanyDetails.description ? `Description: ${miCompanyDetails.description.substring(0, 300)}\n` : ''}\nUSE this data to ask contextual questions about the company (e.g., "Why do you want to work at this ${miCompanyDetails.industry} company?", "How does your experience align with the company's focus on ${miCompanyDetails.specialties?.[0] || 'this area'}?"). The improved_answer should also reference real company data.`;
+                : isESMI
+
+                  ? `\n\nDATOS DE LA EMPRESA OBJETIVO (verificados):\nEmpresa: ${miCompanyDetails.name}\n${miCompanyDetails.industry ? `Industria: ${miCompanyDetails.industry}\n` : ''}${miCompanyDetails.employee_count ? `Tamaño: ${miCompanyDetails.employee_count.toLocaleString()} empleados\n` : ''}${miCompanyDetails.specialties?.length ? `Especialidades: ${miCompanyDetails.specialties.join(', ')}\n` : ''}${miCompanyDetails.description ? `Descripción: ${miCompanyDetails.description.substring(0, 300)}\n` : ''}\nUSA estos datos para hacer preguntas contextuales sobre la empresa (ej: "¿Por qué quieres trabajar en esta empresa de ${miCompanyDetails.industry}?", "¿Cómo tu experiencia se alinea con las especialidades de la empresa en ${miCompanyDetails.specialties?.[0] || 'esta área'}?"). La improved_answer también debe referenciar datos reales de la empresa.`
+
+                  : `\n\nTARGET COMPANY DATA (verified):\nCompany: ${miCompanyDetails.name}\n${miCompanyDetails.industry ? `Industry: ${miCompanyDetails.industry}\n` : ''}${miCompanyDetails.employee_count ? `Size: ${miCompanyDetails.employee_count.toLocaleString()} employees\n` : ''}${miCompanyDetails.specialties?.length ? `Specialties: ${miCompanyDetails.specialties.join(', ')}\n` : ''}${miCompanyDetails.description ? `Description: ${miCompanyDetails.description.substring(0, 300)}\n` : ''}\nUSE this data to ask contextual questions about the company (e.g., "Why do you want to work at this ${miCompanyDetails.industry} company?", "How does your experience align with the company's focus on ${miCompanyDetails.specialties?.[0] || 'this area'}?"). The improved_answer should also reference real company data.`;
 
               console.log(`✅ Gemini: Mock interview enriched for ${miCompanyDetails.name}`);
 
@@ -10211,6 +10423,46 @@ ${interviewCvText ? interviewCvText.substring(0, 3000) : 'Not provided.'}
 
 Target Role: ${target_role || 'Not specified'}${targetCompanyMI ? `\nTarget Company: ${targetCompanyMI}` : ''}`;
 
+        const systemPromptES = isESMI ? `Eres un Senior Executive Recruiter en Share2Inspire, conduciendo una entrevista simulada.
+
+A continuación tienes el CV del candidato y el cargo al que se postula. La última pregunta que le hiciste fue: "${current_question || 'Cuéntame un poco sobre ti y tu experiencia.'}".
+
+Vas a escuchar el audio con la respuesta del candidato. Analiza el audio DIRECTAMENTE y evalúa:
+
+1. Contenido: ¿Respondió a la pregunta? ¿Usó el método STAR (Situación, Tarea, Acción, Resultado) si era aplicable? ¿Fue vago o específico?
+
+2. Entrega y Tono: ¿Estaba nervioso? ¿Hizo muchas pausas ("mmm", "ehh")? ¿El tono de voz transmitía confianza?
+
+3. Duración: Las respuestas ideales de entrevista duran entre 1 y 2 minutos. ¿Fue demasiado larga o demasiado corta?
+
+${miCompanyContext}
+
+DEVUELVE SOLO UN JSON VÁLIDO CON LA SIGUIENTE ESTRUCTURA:
+
+{
+
+  "transcription_summary": "Lo que entendiste de su respuesta (un resumen de lo dicho)",
+
+  "duration_feedback": "Feedback sobre el tiempo de respuesta (corto, largo, ideal)",
+
+  "delivery_and_tone": "Feedback brutalmente honesto sobre la voz, hesitaciones y confianza",
+
+  "content_critique": "Crítica al contenido (faltó el método STAR? Faltaron métricas? Si hay datos de la empresa objetivo, evalúa si el candidato demostró conocimiento de la empresa)",
+
+  "improved_answer": "Cómo un candidato de primer nivel habría respondido a esta misma pregunta (escribe el guión ideal en 1ª persona, referenciando datos reales de la empresa si están disponibles)",
+
+  "next_question": "La siguiente pregunta de entrevista a hacer, basada en la respuesta que acaba de dar u otro punto interesante de su CV (si hay datos de la empresa, haz preguntas contextuales sobre la empresa)"
+
+}
+
+CV del Candidato:
+
+${interviewCvText ? interviewCvText.substring(0, 3000) : 'No proporcionado.'}
+
+Cargo Objetivo: ${target_role || 'No especificado'}${targetCompanyMI ? `\nEmpresa Objetivo: ${targetCompanyMI}` : ''}` : null;
+
+        const finalPrompt = isESMI && systemPromptES ? systemPromptES : systemPrompt;
+
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
 
         const miResponse = await fetch(geminiUrl, {
@@ -10235,7 +10487,7 @@ Target Role: ${target_role || 'Not specified'}${targetCompanyMI ? `\nTarget Comp
 
                   {
 
-                    text: systemPrompt
+                    text: finalPrompt
 
                   },
 
@@ -10301,7 +10553,7 @@ Target Role: ${target_role || 'Not specified'}${targetCompanyMI ? `\nTarget Comp
 
           success: false,
 
-          error: isPT ? 'Erro ao analisar o áudio da entrevista' : 'Error analyzing interview audio',
+          error: isPT ? 'Erro ao analisar o áudio da entrevista' : isESMI ? 'Error al analizar el audio de la entrevista' : 'Error analyzing interview audio',
 
           message: error.message
 
