@@ -434,10 +434,10 @@ function setFunnelPeriod(days, btn) {
 async function loadAllData() {
     try {
         const [analyses, vouchers, contacts, newsletter, jobSearch, careerEnergy, linkedinRoaster] = await Promise.all([
-            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,teaser_score,seniority_level,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at,user_id&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
             supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
-            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc.nullslast&limit=2000'),
+            supaFetch('newsletter_subscribers', 'select=*&order=updated_at.desc.nullslast&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('linkedin_roaster_analyses', 'select=*&order=created_at.desc&limit=5000')
@@ -506,6 +506,38 @@ async function loadUsersData() {
         allUserProfiles = Array.isArray(profiles)     ? profiles     : [];
         allSubscriptions = Array.isArray(subscriptions) ? subscriptions : [];
         allUserAnalyses = Array.isArray(userAnalyses) ? userAnalyses : [];
+
+        // Fallback: if admin_auth_users is empty (permission denied), derive users from cv_analysis
+        if (allAuthUsers.length === 0 && allAnalyses.length > 0) {
+            const userMap = {};
+            [...allAnalyses, ...allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster' }))].forEach(a => {
+                const email = (a.user_email || '').trim().toLowerCase();
+                if (!email || email.includes('anonymous') || email.includes('@share2inspire') || !email.includes('@')) return;
+                if (!userMap[email]) {
+                    userMap[email] = {
+                        id: a.user_id || email,
+                        email: email,
+                        raw_user_meta_data: {},
+                        created_at: a.created_at,
+                        last_sign_in_at: a.created_at,
+                        email_confirmed_at: a.created_at,
+                        _derived_name: a.user_name || '',
+                        _derived_phone: a.user_phone || '',
+                        _derived_linkedin: a.linkedin_url || '',
+                        _analyses: []
+                    };
+                }
+                const u = userMap[email];
+                u._analyses.push(a);
+                if (new Date(a.created_at) < new Date(u.created_at)) u.created_at = a.created_at;
+                if (new Date(a.created_at) > new Date(u.last_sign_in_at)) u.last_sign_in_at = a.created_at;
+                if (!u._derived_name && a.user_name) u._derived_name = a.user_name;
+                if (!u._derived_phone && a.user_phone) u._derived_phone = a.user_phone;
+                if (!u._derived_linkedin && a.linkedin_url) u._derived_linkedin = a.linkedin_url;
+            });
+            allAuthUsers = Object.values(userMap);
+            console.log(`Derived ${allAuthUsers.length} users from cv_analysis data`);
+        }
     } catch (e) {
         console.error('Erro ao carregar dados de utilizadores:', e);
     }
@@ -902,7 +934,7 @@ function updateCharts() {
     // Score Distribution
     const scoreBuckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
     data.forEach(a => {
-        const s = a.score || a.teaser_score || 0;
+        const s = a.score || 0;
         if (s <= 0) return;
         const normalized = a._source === 'linkedin_roaster' ? s * 10 : s;
         if (normalized <= 20) scoreBuckets['0-20']++;
@@ -1156,11 +1188,13 @@ function renderAutoEmailsMonitoring() {
 
 function buildCRMProfiles() {
     const profileMap = {};
-    allAnalyses.forEach(a => {
-        const email = isAnonymous(a) ? null : a.user_email.toLowerCase().trim();
+    // Include both cv_analysis and linkedin_roaster data
+    const allData = [...allAnalyses, ...allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster', analysis_type: 'linkedin_roaster' }))];
+    allData.forEach(a => {
+        const email = isAnonymous(a) ? null : (a.user_email || '').toLowerCase().trim();
         if (!email) return;
         if (!profileMap[email]) {
-            profileMap[email] = { email, name: a.user_name || '', professional_area: a.professional_area || '', seniority: a.seniority_level || '', analyses: [], purchases: [], totalSpent: 0, lastInteraction: a.created_at, firstInteraction: a.created_at };
+            profileMap[email] = { email, name: a.user_name || '', professional_area: a.professional_area || '', seniority: '', analyses: [], purchases: [], totalSpent: 0, lastInteraction: a.created_at, firstInteraction: a.created_at };
         }
         const p = profileMap[email];
         p.analyses.push(a);
@@ -1168,9 +1202,8 @@ function buildCRMProfiles() {
         if (new Date(a.created_at) < new Date(p.firstInteraction)) p.firstInteraction = a.created_at;
         if (!p.name && a.user_name) p.name = a.user_name;
         if (!p.professional_area && a.professional_area) p.professional_area = a.professional_area;
-        if (!p.seniority && a.seniority_level) p.seniority = a.seniority_level;
         const type = getAnalysisType(a);
-        if (type === 'paid' || type === 'voucher') { p.purchases.push(a); p.totalSpent += (a.payment_amount || 0); }
+        if (type === 'paid' || type === 'voucher') { p.purchases.push(a); p.totalSpent += (parseFloat(a.payment_amount) || 0); }
     });
     const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
     return Object.values(profileMap).map(p => {
@@ -1350,7 +1383,7 @@ function renderAnalyses() {
         const aType = getAnalysisType(a);
         const dt = new Date(a.created_at);
         const date = dt.toLocaleDateString('pt-PT') + ' ' + dt.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
-        const rawScore = a.score || a.teaser_score || 0;
+        const rawScore = a.score || 0;
         const score = rawScore > 0 ? `<span style="font-weight:600;color:${rawScore >= 70 ? 'var(--green)' : rawScore >= 40 ? 'var(--orange)' : 'var(--red)'};">${rawScore}</span>` : '—';
         const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
         const rating = a.user_rating ? `<span style="color:var(--gold);">${'★'.repeat(a.user_rating)}${'☆'.repeat(5 - a.user_rating)}</span>` : '—';
@@ -1380,7 +1413,7 @@ function exportAnalysesCSV() {
     const rows = [['Data','Nome','Email','Score','Tipo','Produto','Valor','Origem']];
     data.forEach(a => {
         const productName = isStudentPack(a) ? 'Student Pack' : a._source === 'linkedin_roaster' ? 'LinkedIn Roaster' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser';
-        rows.push([a.created_at?.slice(0,10), a.user_name||'', a.user_email||'', a.score||a.teaser_score||'', getAnalysisType(a), productName, a.payment_amount||0, getPaymentOrigin(a)]);
+        rows.push([a.created_at?.slice(0,10), a.user_name||'', a.user_email||'', a.score||'', getAnalysisType(a), productName, a.payment_amount||0, getPaymentOrigin(a)]);
     });
     downloadCSV(rows, 'analises.csv');
 }
@@ -2664,24 +2697,40 @@ function copyCouponCode(code) {
 function getMergedUsers() {
     return allAuthUsers.map(au => {
         const profile = allUserProfiles.find(p => p.id === au.id || p.user_id === au.id || p.email === au.email);
-        const subs = allSubscriptions.filter(s => s.user_id === au.id);
+        const subs = allSubscriptions.filter(s => s.user_id === au.id || s.user_email === au.email);
         const activeSub = subs.find(s => s.status === 'active' && (!s.expires_at || new Date(s.expires_at) > new Date()));
-        const analyses = allUserAnalyses.filter(a => a.user_id === au.id);
+        // Use user_analyses if available, otherwise derive from cv_analysis + linkedin_roaster
+        let analyses = allUserAnalyses.filter(a => a.user_id === au.id);
+        if (analyses.length === 0 && au._analyses) {
+            analyses = au._analyses;
+        } else if (analyses.length === 0) {
+            // Try matching by email from allAnalyses
+            const email = au.email?.toLowerCase();
+            if (email) {
+                const cvMatches = allAnalyses.filter(a => (a.user_email || '').toLowerCase() === email);
+                const lrMatches = allLinkedinRoaster.filter(a => (a.user_email || '').toLowerCase() === email).map(a => ({ ...a, analysis_type: 'linkedin_roaster' }));
+                analyses = [...cvMatches, ...lrMatches];
+            }
+        }
         const meta = au.raw_user_meta_data || {};
+        const derivedName = au._derived_name || '';
+        const nameParts = derivedName.split(' ');
+        const firstName = profile?.first_name || meta.first_name || nameParts[0] || '';
+        const lastName = profile?.last_name || meta.last_name || nameParts.slice(1).join(' ') || '';
         return {
             id: au.id, email: au.email,
-            first_name: profile?.first_name || meta.first_name || '',
-            last_name: profile?.last_name || meta.last_name || '',
-            phone: profile?.phone || '', linkedin_url: profile?.linkedin_url || '',
+            first_name: firstName,
+            last_name: lastName,
+            phone: profile?.phone || au._derived_phone || '', linkedin_url: profile?.linkedin_url || au._derived_linkedin || '',
             cv_filename: profile?.cv_filename || '', address: profile?.address || '',
             email_confirmed: au.email_confirmed_at ? true : (meta.email_verified || false),
             created_at: au.created_at, last_sign_in_at: au.last_sign_in_at,
             active_sub: activeSub || null, all_subs: subs, analyses,
             analyses_count: analyses.length,
-            cv_analyser_count: analyses.filter(a => a.analysis_type === 'cv_analyser').length,
+            cv_analyser_count: analyses.filter(a => isCvAnalyser(a)).length,
             career_path_count: analyses.filter(a => a.analysis_type === 'career_path').length,
             career_intelligence_count: analyses.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full' || a.analysis_type === 'career_intelligence').length,
-            linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster').length,
+            linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster' || a._source === 'linkedin_roaster').length,
             profile_complete: !!(profile && profile.first_name && profile.last_name && profile.phone)
         };
     });
@@ -2692,7 +2741,11 @@ function renderUsers() {
     const totalUsers = users.length;
     const activeSubs = users.filter(u => u.active_sub).length;
     const totalSavedAnalyses = users.reduce((s, u) => s + u.analyses_count, 0);
-    const subRevenue = allSubscriptions.reduce((s, sub) => s + (parseFloat(sub.price_eur) || 0), 0);
+    // Compute subscription revenue from subscriptions table, or fallback to paid analyses
+    let subRevenue = allSubscriptions.reduce((s, sub) => s + (parseFloat(sub.price_eur) || 0), 0);
+    if (subRevenue === 0 && allAnalyses.length > 0) {
+        subRevenue = allAnalyses.filter(a => a.payment_status === 'paid' && a.payment_amount > 0).reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    }
     const profilesComplete = users.filter(u => u.profile_complete).length;
     const lastReg = users.length > 0 ? new Date(users[0].created_at).toLocaleDateString('pt-PT') : '—';
     setText('usersKpiTotal', totalUsers);

@@ -526,7 +526,8 @@ Deno.serve(async (req: Request) => {
     const htmlContent = wrapTemplate(bodyHtml, language);
 
     if (supabaseUrl && supabaseKey) {
-      const dedupUrl = `${supabaseUrl}/rest/v1/welcome_emails_log?select=id,email&type=eq.${encodeURIComponent(type)}&email=eq.${encodeURIComponent(normalizedEmail)}&status=eq.sent&limit=1`;
+      // Dedup check: look for any welcome email sent to this address+type in the last 24 hours
+      const dedupUrl = `${supabaseUrl}/rest/v1/welcome_emails_log?select=id,email,created_at&type=eq.${encodeURIComponent(type)}&email=eq.${encodeURIComponent(normalizedEmail)}&status=in.(sent,pending)&created_at=gte.${new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()}&limit=1`;
       const dedupRes = await fetch(dedupUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -538,7 +539,7 @@ Deno.serve(async (req: Request) => {
       if (dedupRes.ok) {
         const existing = await dedupRes.json();
         if (Array.isArray(existing) && existing.length > 0) {
-          console.log(`Skipping duplicate welcome email (${type}) for ${normalizedEmail}`);
+          console.log(`Skipping duplicate welcome email (${type}) for ${normalizedEmail} — already sent/pending in last 24h`);
           return new Response(
             JSON.stringify({ success: true, skipped: true, reason: "duplicate_welcome_email" }),
             { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -546,6 +547,29 @@ Deno.serve(async (req: Request) => {
         }
       } else {
         console.warn("Welcome email dedup check failed:", dedupRes.status, await dedupRes.text());
+      }
+
+      // Pre-send: insert a "pending" log entry to prevent race conditions
+      try {
+        await fetch(`${supabaseUrl}/rest/v1/welcome_emails_log`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": supabaseKey,
+            "Authorization": `Bearer ${supabaseKey}`,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            email: normalizedEmail,
+            name: name || null,
+            type,
+            lang: language,
+            status: "pending",
+            brevo_message_id: null,
+          }),
+        });
+      } catch (lockErr) {
+        console.warn("Failed to insert pending lock:", lockErr);
       }
     }
 
@@ -581,9 +605,10 @@ Deno.serve(async (req: Request) => {
     // Log to welcome_emails_log + email_history (fire-and-forget)
     try {
       if (supabaseUrl && supabaseKey) {
-        // Log to welcome_emails_log (dashboard monitoring)
-        await fetch(`${supabaseUrl}/rest/v1/welcome_emails_log`, {
-          method: "POST",
+        // Update the pending log entry to "sent" (or insert if pending entry failed)
+        const updateUrl = `${supabaseUrl}/rest/v1/welcome_emails_log?email=eq.${encodeURIComponent(normalizedEmail)}&type=eq.${encodeURIComponent(type)}&status=eq.pending`;
+        const updateRes = await fetch(updateUrl, {
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             "apikey": supabaseKey,
@@ -591,14 +616,31 @@ Deno.serve(async (req: Request) => {
             "Prefer": "return=minimal",
           },
           body: JSON.stringify({
-            email: normalizedEmail,
-            name: name || null,
-            type,
-            lang: language,
             status: "sent",
             brevo_message_id: brevoData.messageId || null,
           }),
         });
+        // If no pending record was found to update, insert a new "sent" record
+        if (!updateRes.ok || updateRes.status === 204) {
+          // Check if any rows were actually updated by trying a count
+          await fetch(`${supabaseUrl}/rest/v1/welcome_emails_log`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": supabaseKey,
+              "Authorization": `Bearer ${supabaseKey}`,
+              "Prefer": "return=minimal",
+            },
+            body: JSON.stringify({
+              email: normalizedEmail,
+              name: name || null,
+              type,
+              lang: language,
+              status: "sent",
+              brevo_message_id: brevoData.messageId || null,
+            }),
+          }).catch(() => {});
+        }
 
         // Log to email_history (general history)
         await fetch(`${supabaseUrl}/rest/v1/email_history`, {
