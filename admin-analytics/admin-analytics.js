@@ -434,7 +434,7 @@ function setFunnelPeriod(days, btn) {
 async function loadAllData() {
     try {
         const [analyses, vouchers, contacts, newsletter, jobSearch, careerEnergy, linkedinRoaster] = await Promise.all([
-            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,teaser_score,seniority_level,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
             supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
             supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc.nullslast&limit=2000'),
