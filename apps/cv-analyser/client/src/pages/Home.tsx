@@ -1460,9 +1460,9 @@ export default function Home() {
                     className="w-full py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white text-sm font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {voucherPaymentStatus === 'polling' ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Aguardar confirmação MB Way...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> {pick('Aguardar confirmação MB Way...', 'Awaiting MB Way confirmation...', 'Esperando confirmación MB Way...')}</>
                     ) : voucherPaymentLoading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> A processar...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> {pick('A processar...', 'Processing...', 'Procesando...')}</>
                     ) : (
                       <>{pick('Comprar Voucher', 'Buy Voucher', 'Comprar Voucher')} — {pricingPlans[voucherSelectedPlan].price}€</>
                     )}
