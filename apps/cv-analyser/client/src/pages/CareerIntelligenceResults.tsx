@@ -189,7 +189,7 @@ export default function CareerIntelligenceResults() {
   // Payment modal
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(t('mbway'));
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(t('mbway') as 'mbway' | 'stripe' | 'paypal');
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [pollingMsg, setPollingMsg] = useState('');
@@ -418,7 +418,7 @@ export default function CareerIntelligenceResults() {
   const openPaymentModal = () => {
     setPaymentStep('payment');
     setPaymentError(null);
-    setPaymentMethod(t('mbway'));
+    setPaymentMethod(t('mbway') as 'mbway' | 'stripe' | 'paypal');
     setShowPaymentModal(true);
   };
 
@@ -944,29 +944,29 @@ export default function CareerIntelligenceResults() {
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('tradeoffs_por_caminho')}</p>
                 </div>
                 <div className="space-y-4">
-                  {careerData.tradeoffs.map((t: any, i: number) => (
+                  {careerData.tradeoffs.map((tradeoff: any, i: number) => (
                     <div key={i} className="border border-border rounded-xl p-3 space-y-3">
                       <p className="text-sm font-semibold text-foreground flex items-center gap-2">
                         <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{i + 1}</span>
-                        {t.path_name}
+                        {tradeoff.path_name}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="p-2 bg-green-500/5 rounded-lg border border-green-500/10">
                           <p className="text-[10px] font-semibold text-green-600 mb-1">{t('ganhas')}</p>
-                          <p className="text-xs text-muted-foreground">{t.you_gain}</p>
+                          <p className="text-xs text-muted-foreground">{tradeoff.you_gain}</p>
                         </div>
                         <div className="p-2 bg-red-500/5 rounded-lg border border-red-500/10">
                           <p className="text-[10px] font-semibold text-red-500 mb-1">{t('abdicas')}</p>
-                          <p className="text-xs text-muted-foreground">{t.you_give_up}</p>
+                          <p className="text-xs text-muted-foreground">{tradeoff.you_give_up}</p>
                         </div>
                       </div>
                       <div className="p-2 bg-amber-500/5 rounded-lg border border-amber-500/10">
                         <p className="text-[10px] font-semibold text-amber-600 mb-1">{t('risco_oculto')}</p>
-                        <p className="text-xs text-muted-foreground">{t.hidden_risk}</p>
+                        <p className="text-xs text-muted-foreground">{tradeoff.hidden_risk}</p>
                       </div>
                       <div className="p-2 bg-muted/20 rounded-lg">
                         <p className="text-[10px] font-semibold text-muted-foreground mb-1">{t('cenrio_real')}</p>
-                        <p className="text-xs text-muted-foreground">{t.real_scenario}</p>
+                        <p className="text-xs text-muted-foreground">{tradeoff.real_scenario}</p>
                       </div>
                     </div>
                   ))}
