@@ -53,9 +53,139 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="assets/s2i-modern.css">
+    <style>
+        /* Estilos para a página */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: #BF9A33;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        .content-section {
+            padding: 40px 0;
+        }
+
+        .content-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .content-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .content-section ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .content-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-header {
+            background-color: #BF9A33;
+            color: #fff;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-footer .btn-primary {
+            background-color: #BF9A33;
+            border-color: #BF9A33;
+        }
+
+        .modal-footer .btn-primary:hover {
+            background-color: #a88629;
+            border-color: #a88629;
+        }
+
+        /* Estilos globais para botões primários */
+        .btn-primary {
+            background-color: #212529 !important;
+            border-color: #212529 !important;
+            color: #fff !important;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #BF9A33 !important;
+            border-color: #BF9A33 !important;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
+        }
+
+        .btn-primary:focus {
+            background-color: #BF9A33 !important;
+            border-color: #BF9A33 !important;
+            box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
+        }
+
+        /* Media queries para otimização mobile */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 80px 0 40px;
+                margin-bottom: 30px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 30px 0;
+            }
+        }
     </style>
 <noscript>
 </noscript>
