@@ -11,7 +11,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
-import { t, pick, getLang } from './en/translations';
+import { t, pick, getLang, localePath } from '@/i18n';
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -178,8 +178,7 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
 export default function LinkedInRoasterResults() {
   const [, setLocation] = useLocation();
   const lang = getLang();
-  const isEN = lang === 'en';
-  useEffect(() => { document.title = t('resultados_linkedin_roaster_share2inspire'); }, [isEN]);
+  useEffect(() => { document.title = t('resultados_linkedin_roaster_share2inspire'); }, [lang]);
 
   // Load from sessionStorage
   const rawData = useMemo(() => {
@@ -189,7 +188,7 @@ export default function LinkedInRoasterResults() {
   const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true';
 
   useEffect(() => {
-    if (!isPaid) { window.location.href = lang === 'en' ? '/en/linkedin-roaster' : lang === 'es' ? '/es/linkedin-roaster' : '/linkedin-roaster'; }
+    if (!isPaid) { window.location.href = localePath('/linkedin-roaster'); }
   }, [isPaid]);
 
   // Extract teaser & analysis
@@ -233,7 +232,7 @@ export default function LinkedInRoasterResults() {
           <button 
             onClick={() => { 
                 clearSensitiveData(); 
-                window.location.href = lang === 'en' ? '/en/linkedin-roaster' : lang === 'es' ? '/es/linkedin-roaster' : '/linkedin-roaster';
+                window.location.href = localePath('/linkedin-roaster');
             }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-sm font-medium text-orange-700 transition-colors"
           >
@@ -252,7 +251,7 @@ export default function LinkedInRoasterResults() {
             <Linkedin className="w-12 h-12 mx-auto mb-4 text-slate-300" />
             <h2 className="text-xl font-bold text-slate-700 mb-2">{pick('Sem dados de análise', 'No analysis data', 'Sin datos de análisis')}</h2>
             <p className="text-slate-500 mb-6">{pick('A análise não retornou resultados. Isto pode acontecer se o perfil for privado.', 'The analysis returned no results. This may happen if the profile is private.', 'El análisis no devolvió resultados. Esto puede ocurrir si el perfil es privado.')}</p>
-            <a href="/linkedin-roaster" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+            <a href={localePath('/linkedin-roaster')} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
               <Flame className="w-5 h-5" /> {pick('Tentar novamente', 'Try again', 'Intentar de nuevo')}
             </a>
           </div>
@@ -560,10 +559,10 @@ export default function LinkedInRoasterResults() {
                 </div>
                 <p className="text-base md:text-lg font-medium text-slate-800 leading-relaxed mb-6">{recomendacaoPrioritaria}</p>
                 <div className="flex flex-wrap gap-3">
-                  <a href="/cv-analyser" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
+                  <a href={localePath('/cv-analyser')} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
                     {pick('Analisar o meu CV', 'Analyse my CV', 'Analizar mi CV')} <ArrowRight className="w-4 h-4" />
                   </a>
-                  <a href="/career-path" className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#C9A961] text-[#B8963E] text-sm font-semibold rounded-xl hover:bg-[#C9A961]/10 transition-colors">
+                  <a href={localePath('/career-path')} className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#C9A961] text-[#B8963E] text-sm font-semibold rounded-xl hover:bg-[#C9A961]/10 transition-colors">
                     {pick('Criar Career Path', 'Create Career Path', 'Crear Career Path')} <ArrowRight className="w-4 h-4" />
                   </a>
                 </div>
@@ -577,7 +576,7 @@ export default function LinkedInRoasterResults() {
                 <p className="text-sm font-bold text-slate-800">{pick('Queres CV + LinkedIn juntos?', 'Want CV + LinkedIn together?', '¿Quieres CV + LinkedIn juntos?')}</p>
               </div>
               <p className="text-xs text-slate-500 mb-4">{pick('O Pack Estudante combina análise CV + LinkedIn num só relatório cruzado por apenas 7,99€.', 'The Student Pack combines CV + LinkedIn analysis in a single cross-checked report for only €7.99.', 'El Pack Estudiante combina análisis de CV + LinkedIn en un único informe cruzado por solo 7,99€.')}</p>
-              <a href="/estudante" className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
+              <a href={localePath('/estudante')} className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
                 {pick('Ver Pack Estudante — Poupar 43%', 'View Student Pack — Save 43%', 'Ver Pack Estudiante — Ahorrar 43%')} <ArrowRight className="w-4 h-4" />
               </a>
             </div>
