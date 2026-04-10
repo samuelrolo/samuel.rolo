@@ -133,6 +133,7 @@ export default function LiveMatchPanel({
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   const isPT = lang === 'pt';
+  const isES = lang === 'es';
   const hasAccess = isMemberArea || isPaid;
 
   const [urlWarning, setUrlWarning] = useState(false);
@@ -249,7 +250,7 @@ export default function LiveMatchPanel({
       {isAnalysing && (
         <div className="flex items-center justify-center gap-2 py-6">
           <div className="w-4 h-4 border-2 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
-          <span className="text-[11px] text-[#888]">{isPT ? 'A analisar...' : 'Analysing...'}</span>
+          <span className="text-[11px] text-[#888]">{isPT ? 'A analisar...' : isES ? 'Analizando...' : 'Analysing...'}</span>
         </div>
       )}
 
