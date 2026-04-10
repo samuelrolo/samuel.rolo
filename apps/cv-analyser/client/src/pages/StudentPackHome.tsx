@@ -215,52 +215,61 @@ export default function StudentPackHome() {
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       if (isPT) {
-        // ─── PT: single unified engine ───
+        // ─── PT: two-engine approach (same as EN/ES) ───
         setAnalysisMsg(pick("A analisar o teu CV com IA...", "Analysing your CV with AI...", "Analizando tu CV con IA..."));
-        let responseData: any = null;
+        // Engine 1: CV extraction
+        let cvResponseDataPT: any = null;
         for (let attempt = 0; attempt <= 2; attempt++) {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 180000);
+          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const requestBody: any = { mode: 'student_pack', language: 'pt', country: currentCountry, region: currentRegion, linkedin_url: currentLinkedinUrl };
-            if (useServerExtraction && base64Content) { requestBody.file = base64Content; requestBody.filename = file?.name || 'cv.pdf'; }
-            else { requestBody.cv_text = cvText.substring(0, 8000); }
-            setTimeout(() => setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn...")), 5000);
-            setTimeout(() => setAnalysisMsg(pick("A construir o teu plano de entrada no mercado...", "Building your market entry plan...", "Construyendo tu plan de entrada al mercado...")), 12000);
-            setTimeout(() => setAnalysisMsg(pick("A preparar recomendações personalizadas...", "Preparing personalised recommendations...", "Preparando recomendaciones personalizadas...")), 20000);
-            const response = await fetch(SUPABASE_EDGE_URL_PT, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody), signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (response.ok) { responseData = await response.json(); if (responseData.success) break; }
+            const body: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
+            if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
+            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+            clearTimeout(tid);
+            if (res.ok) { cvResponseDataPT = await res.json(); if (cvResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-          } catch (fetchError: any) { clearTimeout(timeoutId); if (attempt < 2 && fetchError.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw fetchError; }
+          } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
-        if (!responseData?.success) throw new Error(responseData?.error || pick('Erro na análise. Tenta novamente.', 'Analysis error. Please try again.', 'Error en el análisis. Inténtalo de nuevo.'));
-        setAnalysisMsg(pick("A finalizar o teu relatório...", "Finalising your report...", "Finalizando tu informe..."));
-        sessionStorage.setItem('studentPackAnalysis', JSON.stringify(responseData));
+        if (!cvResponseDataPT?.success) throw new Error(pick('Erro na análise do CV. Tenta novamente.', 'Error analysing CV. Please try again.', 'Error al analizar el CV. Inténtalo de nuevo.'));
+        setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
+        // Engine 2: LinkedIn roast
+        let linkedinResponseDataPT: any = null;
+        for (let attempt = 0; attempt <= 2; attempt++) {
+          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+          try {
+            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            clearTimeout(tid);
+            if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
+            if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+          } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
+        }
+        const cvAnalysisSourcePT = cvResponseDataPT.analysis || cvResponseDataPT;
+        const cvAnalysisResultPT = transformGeminiResponse(cvAnalysisSourcePT, 'pt');
+        sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResultPT));
+        sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSourcePT));
+        sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseDataPT || {}));
         sessionStorage.setItem('studentPackEmail', currentEmail);
         sessionStorage.setItem('studentPackCountry', currentCountry);
         sessionStorage.setItem('studentPackRegion', currentRegion);
         sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
         sessionStorage.setItem('studentPackPaid', 'true');
-        sessionStorage.removeItem('studentPackCvText');
+        sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
-        sessionStorage.setItem('paymentEmail', currentEmail);
-        sessionStorage.setItem('analysisCountry', currentCountry);
-        sessionStorage.setItem('analysisRegion', currentRegion);
+        sessionStorage.setItem('analysisLang', 'pt');
         try {
-          const perfil = responseData?.analysis?.perfil || {};
-          fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: responseData?.analysis?.score_global?.valor || 0, professional_area: perfil.area_alvo || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(responseData), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-${Date.now()}`, domain: 'share2inspire.pt', user_name: perfil.nome || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
+          const cp = cvAnalysisSourcePT?.candidate_profile || {};
+          fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResultPT.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSourcePT), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-PT-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
         } catch (_) {}
-        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim().toLowerCase(), name: responseData?.analysis?.perfil?.nome || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
-        trackPurchase('student_pack', finalPrice, `STUDPACK-${Date.now()}`);
+        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
+        trackPurchase('student_pack', finalPrice, `STUDPACK-PT-${Date.now()}`);
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
-        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-${Date.now()}` });
+        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-PT-${Date.now()}` });
         const elapsed = Date.now() - startTime;
         if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
         clearInterval(msgInterval);
         setAnalysisMsg(pick("Tudo pronto! A redirecionar...", "All done! Redirecting...", "¡Todo listo! Redirigiendo..."));
         setStep('done');
-        try { saveToUserAnalyses('student_pack', { score: responseData?.analysis?.score_global?.valor || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
+        try { saveToUserAnalyses('student_pack', { score: cvAnalysisResultPT.overallScore || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
         setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 1500);
       } else {
         // ─── EN/ES: two separate engines ───
@@ -291,7 +300,7 @@ export default function StudentPackHome() {
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
         const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
-        const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, (langCode === 'es' ? 'en' : langCode) as 'pt' | 'en');
+        const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, langCode as 'pt' | 'en' | 'es');
         sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
         sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSource));
         sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseData || {}));

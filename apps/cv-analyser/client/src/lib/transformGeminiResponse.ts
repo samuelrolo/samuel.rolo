@@ -45,17 +45,24 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
 
     // ─── 2. QUADRANTS — prefer Gemini-provided quadrants ─────────────────
     const titleMapping: Record<string, string> = {
-      'structure': t('estrutura'),
-      'estrutura': t('estrutura'),
-      'content': t('contedo'),
-      'conteúdo': t('contedo'),
-      'conteudo': t('contedo'),
-      'education': t('formao'),
-      'formação': t('formao'),
-      'formacao': t('formao'),
-      'experience': t('experincia'),
-      'experiência': t('experincia'),
-      'experiencia': t('experincia'),
+      // English keys
+      'structure': t('estrutura', lang),
+      'content': t('contedo', lang),
+      'education': t('formao', lang),
+      'experience': t('experincia', lang),
+      // Portuguese keys
+      'estrutura': t('estrutura', lang),
+      'conteúdo': t('contedo', lang),
+      'conteudo': t('contedo', lang),
+      'formação': t('formao', lang),
+      'formacao': t('formao', lang),
+      'experiência': t('experincia', lang),
+      // Spanish keys
+      'contenido': t('contedo', lang),
+      'formación': t('formao', lang),
+      'formacion': t('formao', lang),
+      'experiencia': t('experincia', lang),
+      'estructura': t('estrutura', lang),
     };
 
     if (Array.isArray(analysis.quadrants) && analysis.quadrants.length >= 3) {
@@ -203,7 +210,11 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       keywords = src.slice(0, 4).map((s: string) => s.split(/[.,;:]/)[0].substring(0, 40));
     }
     if (keywords.length === 0) {
-      keywords = ['Perfil Profissional', 'Competências Técnicas', 'Experiência', 'Formação'];
+      keywords = isES
+        ? ['Perfil Profesional', 'Competencias Técnicas', 'Experiencia', 'Formación']
+        : isEN
+        ? ['Professional Profile', 'Technical Skills', 'Experience', 'Education']
+        : ['Perfil Profissional', 'Competências Técnicas', 'Experiência', 'Formação'];
     }
 
     // ─── 4. ATS TOP FACTOR ──────────────────────────────────────────────

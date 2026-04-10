@@ -7542,7 +7542,134 @@ REGRAS CRÍTICAS:
 
         analysisText = analysisText.trim();
 
-        const careerPath = JSON.parse(analysisText);
+        let careerPath = JSON.parse(analysisText);
+
+        // ─── SECOND PASS: if development_plan or long_term_vision is missing, generate them ───
+        const cpInner = careerPath.career_path || careerPath;
+        const needsSecondPass = !cpInner.development_plan || !cpInner.long_term_vision;
+
+        if (needsSecondPass) {
+          console.warn('⚠️ Career Path missing development_plan or long_term_vision — running second pass');
+          try {
+            const existingRoles = (cpInner.next_roles || []).slice(0, 2).map((r: any) => r.role_title).join(', ');
+            const secondPassPrompt = isEN
+              ? `You are an elite Career Advisor. Based on this CV, generate ONLY the missing sections of a Career Path report in JSON.
+
+CV:
+${sanitized.substring(0, 3000)}
+
+Already generated: current_positioning and next_roles (${existingRoles || 'see CV'}).
+
+Generate ONLY this JSON (no other text):
+{
+  "development_plan": {
+    "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Média|Baixa", "url": null}],
+    "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Média|Baixa"}],
+    "visibility_exercises": [{"activity": "...", "platform": "...", "frequency": "...", "expected_impact": "...", "concrete_first_step": "..."}],
+    "networking_strategy": [{"action": "...", "target": "...", "entities": [{"name": "...", "type": "community|event|association|conference", "description": "...", "website": null, "location": "...", "frequency": "..."}]}],
+    "free_courses": [{"name": "...", "platform": "...", "provider": "...", "duration": "...", "relevance": "...", "search_url": "..."}]
+  },
+  "immediate_actions": [{"priority": 1, "action": "...", "timeframe": "...", "expected_outcome": "..."}],
+  "long_term_vision": {
+    "five_year_narrative": "5-7 sentences addressing the professional by name with a specific, inspiring 5-year vision.",
+    "key_milestones": [{"year": "Year 1", "milestone": "..."}]
+  }
+}
+Rules: min 4 formations, 3 certifications, 3 free_courses, 4 visibility_exercises, 3 networking actions. All localized for ${marketCtx}. Return ONLY the JSON.`
+              : isES
+              ? `Eres un Career Advisor de élite. Basándote en este CV, genera SOLO las secciones faltantes del informe Career Path en JSON.
+
+CV:
+${sanitized.substring(0, 3000)}
+
+Ya generado: current_positioning y next_roles (${existingRoles || 'ver CV'}).
+
+Genera SOLO este JSON (sin otro texto):
+{
+  "development_plan": {
+    "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Media|Baja", "url": null}],
+    "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Media|Baja"}],
+    "visibility_exercises": [{"activity": "...", "platform": "...", "frequency": "...", "expected_impact": "...", "concrete_first_step": "..."}],
+    "networking_strategy": [{"action": "...", "target": "...", "entities": [{"name": "...", "type": "community|event|association|conference", "description": "...", "website": null, "location": "...", "frequency": "..."}]}],
+    "free_courses": [{"name": "...", "platform": "...", "provider": "...", "duration": "...", "relevance": "...", "search_url": "..."}]
+  },
+  "immediate_actions": [{"priority": 1, "action": "...", "timeframe": "...", "expected_outcome": "..."}],
+  "long_term_vision": {
+    "five_year_narrative": "5-7 frases dirigiéndose al profesional por su nombre con una visión específica e inspiradora a 5 años.",
+    "key_milestones": [{"year": "Año 1", "milestone": "..."}]
+  }
+}
+Reglas: mín. 4 formaciones, 3 certificaciones, 3 cursos gratuitos, 4 ejercicios de visibilidad, 3 acciones de networking. Todo localizado para ${marketCtx}. Devuelve SOLO el JSON.`
+              : `És um Career Advisor de elite. Com base neste CV, gera APENAS as secções em falta do relatório Career Path em JSON.
+
+CV:
+${sanitized.substring(0, 3000)}
+
+Já gerado: current_positioning e next_roles (${existingRoles || 'ver CV'}).
+
+Gera APENAS este JSON (sem outro texto):
+{
+  "development_plan": {
+    "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Média|Baixa", "url": null}],
+    "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Média|Baixa"}],
+    "visibility_exercises": [{"activity": "...", "platform": "...", "frequency": "...", "expected_impact": "...", "concrete_first_step": "..."}],
+    "networking_strategy": [{"action": "...", "target": "...", "entities": [{"name": "...", "type": "community|event|association|conference", "description": "...", "website": null, "location": "...", "frequency": "..."}]}],
+    "free_courses": [{"name": "...", "platform": "...", "provider": "...", "duration": "...", "relevance": "...", "search_url": "..."}]
+  },
+  "immediate_actions": [{"priority": 1, "action": "...", "timeframe": "...", "expected_outcome": "..."}],
+  "long_term_vision": {
+    "five_year_narrative": "5-7 frases dirigindo-se ao profissional pelo nome com uma visão específica e inspiradora a 5 anos.",
+    "key_milestones": [{"year": "Ano 1", "milestone": "..."}]
+  }
+}
+Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercícios de visibilidade, 3 acções de networking. Tudo localizado para ${marketCtx}. Retorna APENAS o JSON.`;
+
+            const sp2Response = await fetch(geminiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: secondPassPrompt }] }],
+                generationConfig: { temperature: 0.4, topK: 40, topP: 0.95, maxOutputTokens: 32768 }
+              })
+            });
+            if (sp2Response.ok) {
+              const sp2Data = await sp2Response.json();
+              let sp2Text = sp2Data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              sp2Text = sp2Text.replace(/```json\n?/g, '').replace(/```\n?/g, '').replace(/^[^{]*/, '').trim();
+              // Repair sp2 JSON if needed
+              let sp2Braces = 0, sp2Brackets = 0, sp2InStr = false, sp2Esc = false;
+              for (const ch of sp2Text) {
+                if (sp2Esc) { sp2Esc = false; continue; }
+                if (ch === '\\') { sp2Esc = true; continue; }
+                if (ch === '"') { sp2InStr = !sp2InStr; continue; }
+                if (sp2InStr) continue;
+                if (ch === '{') sp2Braces++; if (ch === '}') sp2Braces--;
+                if (ch === '[') sp2Brackets++; if (ch === ']') sp2Brackets--;
+              }
+              if (sp2Braces > 0 || sp2Brackets > 0) {
+                sp2Text = sp2Text.replace(/,\s*"[^"]*"?\s*:?\s*"?[^"{}\[\]]*$/, '');
+                for(let i = 0; i < sp2Brackets; i++) sp2Text += ']';
+                for(let i = 0; i < sp2Braces; i++) sp2Text += '}';
+              } else {
+                sp2Text = sp2Text.replace(/[^}]*$/, '');
+              }
+              try {
+                const sp2Parsed = JSON.parse(sp2Text);
+                // Merge second pass into careerPath
+                if (careerPath.career_path) {
+                  careerPath.career_path = { ...careerPath.career_path, ...sp2Parsed };
+                } else {
+                  careerPath = { ...careerPath, ...sp2Parsed };
+                }
+                console.log('✅ Career Path second pass merged successfully');
+              } catch (sp2Err) {
+                console.warn('⚠️ Second pass JSON parse failed:', sp2Err);
+              }
+            }
+          } catch (sp2Err) {
+            console.warn('⚠️ Second pass request failed:', sp2Err);
+          }
+        }
 
         console.log('✅ Career Path gerado com sucesso');
 

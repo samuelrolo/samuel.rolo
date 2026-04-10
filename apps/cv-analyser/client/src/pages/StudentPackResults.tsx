@@ -176,20 +176,39 @@ function adaptLegacyToUnified(legacy: any): any {
     reescrita_sugerida: p.rewrite || p.reescrita_sugerida || ''
   })) : [];
   // Action plan → plano_90_dias
-  const actions = Array.isArray(cv.actionPlan30Days) ? cv.actionPlan30Days : [];
+  // actionPlan30Days can be: string[] or {week, title, actions:[]}[]
+  const rawActions = Array.isArray(cv.actionPlan30Days) ? cv.actionPlan30Days : [];
   const plano90: any = {};
-  if (actions.length > 0) {
-    const chunk = Math.ceil(actions.length / 4);
-    const phases = [
-      { key: 'semana_1_2', tema: pick('Fundação', 'Foundation', 'Fundación') },
-      { key: 'semana_3_4', tema: pick('Optimização', 'Optimization', 'Optimización') },
-      { key: 'mes_2', tema: pick('Expansão', 'Expansion', 'Expansión') },
-      { key: 'mes_3', tema: pick('Consolidação', 'Consolidation', 'Consolidación') }
-    ];
-    phases.forEach((ph, i) => {
-      const slice = actions.slice(i * chunk, (i + 1) * chunk);
-      if (slice.length > 0) plano90[ph.key] = { tema: ph.tema, acoes: slice.map((a: any) => typeof a === 'string' ? a : a.action || a.acao || JSON.stringify(a)) };
-    });
+  if (rawActions.length > 0) {
+    // Check if items are structured objects with week/title/actions
+    const isStructured = rawActions.length > 0 && typeof rawActions[0] === 'object' && rawActions[0] !== null && (rawActions[0].actions || rawActions[0].week);
+    if (isStructured) {
+      // Map each structured item directly to a phase
+      const phaseKeys = ['semana_1_2', 'semana_3_4', 'mes_2', 'mes_3'];
+      rawActions.slice(0, 4).forEach((item: any, i: number) => {
+        const key = phaseKeys[i];
+        const tema = item.title || item.tema || pick('Fase ' + (i + 1), 'Phase ' + (i + 1), 'Fase ' + (i + 1));
+        const acoes: string[] = Array.isArray(item.actions) ? item.actions.map((a: any) => typeof a === 'string' ? a : a.action || a.acao || JSON.stringify(a))
+          : Array.isArray(item.tasks) ? item.tasks.map((a: any) => typeof a === 'string' ? a : a.action || a.acao || JSON.stringify(a))
+          : typeof item.action === 'string' ? [item.action]
+          : typeof item.acao === 'string' ? [item.acao]
+          : [];
+        if (acoes.length > 0) plano90[key] = { tema, acoes };
+      });
+    } else {
+      // Flat string array: chunk into 4 phases
+      const chunk = Math.ceil(rawActions.length / 4);
+      const phases = [
+        { key: 'semana_1_2', tema: pick('Fundação', 'Foundation', 'Fundación') },
+        { key: 'semana_3_4', tema: pick('Optimização', 'Optimization', 'Optimización') },
+        { key: 'mes_2', tema: pick('Expansão', 'Expansion', 'Expansión') },
+        { key: 'mes_3', tema: pick('Consolidação', 'Consolidation', 'Consolidación') }
+      ];
+      phases.forEach((ph, i) => {
+        const slice = rawActions.slice(i * chunk, (i + 1) * chunk);
+        if (slice.length > 0) plano90[ph.key] = { tema: ph.tema, acoes: slice.map((a: any) => typeof a === 'string' ? a : a.action || a.acao || JSON.stringify(a)) };
+      });
+    }
   }
   // LinkedIn headlines from areas_melhoria
   const headlines: string[] = [];
@@ -231,12 +250,17 @@ function adaptLegacyToUnified(legacy: any): any {
       oportunidades_nao_aproveitadas: weaknesses.slice(0, 4)
     },
     competencias_transferiveis: {
-      mapa_competencias: (cv.keywords || []).slice(0, 6).map((kw: string) => ({
-        competencia: kw,
-        origem: 'CV',
-        traducao_mercado: kw,
-        evidencia_sugerida: ''
-      })),
+      mapa_competencias: (cv.keywords || []).slice(0, 6).map((kw: string, idx: number) => {
+        // Try to find evidence from quadrant strengths or weaknesses
+        const allStrengths = strengths.concat(weaknesses);
+        const relevantEvidence = allStrengths.find((s: string) => s.toLowerCase().includes(kw.toLowerCase().substring(0, 6))) || allStrengths[idx] || '';
+        return {
+          competencia: kw,
+          origem: pick('CV', 'CV', 'CV'),
+          traducao_mercado: kw,
+          evidencia_sugerida: relevantEvidence ? relevantEvidence.substring(0, 120) : pick('Identificada no CV', 'Identified in CV', 'Identificada en el CV')
+        };
+      }),
       gaps_criticos: []
     },
     estrategia_keywords_unificada: {
