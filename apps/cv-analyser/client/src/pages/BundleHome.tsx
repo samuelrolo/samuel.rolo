@@ -105,10 +105,10 @@ export default function BundleHome() {
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const localizedCountries = getLocalizedCountries(lang);
   const [selectedCountry, setSelectedCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState("");
-  const countryData = localizedCountries.find(c => c.country === selectedCountry);
+  const countries = getLocalizedCountries(lang);
+  const countryData = countries.find(c => c.country === selectedCountry);
 
   useEffect(() => {
     setSelectedCountry((current) => current || getDefaultCountryByLanguage(lang));
@@ -867,7 +867,7 @@ export default function BundleHome() {
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
                 >
                   <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
-                  {localizedCountries.map(c => (
+                  {countries.map(c => (
                     <option key={c.code} value={c.country}>{c.label}</option>
                   ))}
                 </select>
