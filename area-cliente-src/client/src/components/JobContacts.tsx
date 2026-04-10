@@ -47,19 +47,21 @@ type SortDir = 'asc' | 'desc';
 // ─── Role & Relationship presets ────────────────────────────────────────────
 const ROLE_OPTIONS_PT = ['Recrutador', 'Hiring Manager', 'RH', 'Referência', 'Head of Department', 'CEO/Fundador', 'Outro'];
 const ROLE_OPTIONS_EN = ['Recruiter', 'Hiring Manager', 'HR', 'Referral', 'Head of Department', 'CEO/Founder', 'Other'];
+const ROLE_OPTIONS_ES = ['Reclutador', 'Hiring Manager', 'RRHH', 'Referencia', 'Head of Department', 'CEO/Fundador', 'Otro'];
 
 const RELATIONSHIP_OPTIONS_PT = ['Contacto direto', 'Referência', 'Recrutador externo', 'LinkedIn', 'Evento/Conferência', 'Outro'];
 const RELATIONSHIP_OPTIONS_EN = ['Direct contact', 'Referral', 'External recruiter', 'LinkedIn', 'Event/Conference', 'Other'];
+const RELATIONSHIP_OPTIONS_ES = ['Contacto directo', 'Referencia', 'Reclutador externo', 'LinkedIn', 'Evento/Conferencia', 'Otro'];
 
 // ─── Follow-up status config ────────────────────────────────────────────────
-const FOLLOWUP_CONFIG: Record<FollowUpStatus, { labelPt: string; labelEn: string; color: string; bgColor: string; borderColor: string; icon: typeof Clock }> = {
-  pending: { labelPt: 'Pendente', labelEn: 'Pending', color: 'text-amber-700', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: Clock },
-  done:    { labelPt: 'Feito',    labelEn: 'Done',    color: 'text-emerald-700', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200', icon: CheckCircle },
-  skipped: { labelPt: 'Ignorado', labelEn: 'Skipped', color: 'text-gray-500', bgColor: 'bg-gray-50', borderColor: 'border-gray-200', icon: X },
+const FOLLOWUP_CONFIG: Record<FollowUpStatus, { labelPt: string; labelEn: string; labelEs: string; color: string; bgColor: string; borderColor: string; icon: typeof Clock }> = {
+  pending: { labelPt: 'Pendente', labelEn: 'Pending', labelEs: 'Pendiente', color: 'text-amber-700', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', icon: Clock },
+  done:    { labelPt: 'Feito',    labelEn: 'Done',    labelEs: 'Hecho',     color: 'text-emerald-700', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200', icon: CheckCircle },
+  skipped: { labelPt: 'Ignorado', labelEn: 'Skipped', labelEs: 'Omitido',   color: 'text-gray-500', bgColor: 'bg-gray-50', borderColor: 'border-gray-200', icon: X },
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
-type Props = { lang: 'pt' | 'en' };
+type Props = { lang: 'pt' | 'en' | 'es' };
 
 export default function JobContacts({ lang }: Props) {
   const { user } = useAuth();
@@ -81,8 +83,8 @@ export default function JobContacts({ lang }: Props) {
   });
 
   const tt = (pt: string, en: string, es?: string) => lang === 'pt' ? pt : lang === 'es' ? (es ?? en) : en;
-  const roleOptions = lang === 'pt' ? ROLE_OPTIONS_PT : ROLE_OPTIONS_EN;
-  const relationshipOptions = lang === 'pt' ? RELATIONSHIP_OPTIONS_PT : RELATIONSHIP_OPTIONS_EN;
+  const roleOptions = lang === 'pt' ? ROLE_OPTIONS_PT : lang === 'es' ? ROLE_OPTIONS_ES : ROLE_OPTIONS_EN;
+  const relationshipOptions = lang === 'pt' ? RELATIONSHIP_OPTIONS_PT : lang === 'es' ? RELATIONSHIP_OPTIONS_ES : RELATIONSHIP_OPTIONS_EN;
 
   // ─── Fetch contacts ─────────────────────────────────────────────────────
   const fetchContacts = useCallback(async () => {
@@ -541,7 +543,7 @@ export default function JobContacts({ lang }: Props) {
                           onChange={e => updateContact(contact.id, { follow_up_status: e.target.value as FollowUpStatus })}
                           className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${fuCfg.bgColor} ${fuCfg.color} ${fuCfg.borderColor} cursor-pointer focus:outline-none mt-0.5`}>
                           {(['pending', 'done', 'skipped'] as FollowUpStatus[]).map(s => (
-                            <option key={s} value={s}>{lang === 'pt' ? FOLLOWUP_CONFIG[s].labelPt : FOLLOWUP_CONFIG[s].labelEn}</option>
+                            <option key={s} value={s}>{lang === 'pt' ? FOLLOWUP_CONFIG[s].labelPt : lang === 'es' ? FOLLOWUP_CONFIG[s].labelEs : FOLLOWUP_CONFIG[s].labelEn}</option>
                           ))}
                         </select>
                       </div>
