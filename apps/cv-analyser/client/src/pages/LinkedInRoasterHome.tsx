@@ -26,14 +26,10 @@ export default function LinkedInRoasterHome() {
   const priceDisplay = isPT ? `${PRICE}€` : `€${PRICE}`;
 
   /* ─── i18n data ─── */
-  const testimonials = isPT ? [
-    { name: "Miguel Santos", role: "Founder @ TechStartup", text: "Recebi o roast e ri-me tanto que quase chorei. Mas depois apliquei tudo — e em 2 semanas recebi 3x mais mensagens de recrutadores.", rating: 5 },
-    { name: "Ana Rodrigues", role: "Marketing Manager", text: "O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.", rating: 5 },
-    { name: "Pedro Oliveira", role: "Engenheiro DevOps", text: "Descobri que o meu perfil parecia um CV dos anos 2000. 15 minutos de mudanças depois do roast e já tinha um perfil que gera leads.", rating: 5 },
-  ] : [
-    { name: "James Mitchell", role: "Founder @ TechStartup", text: "I got the roast and laughed so hard I nearly cried. But then I applied everything — and within 2 weeks I got 3x more recruiter messages.", rating: 5 },
-    { name: "Sarah Thompson", role: "Marketing Manager", text: "My headline was just 'Marketing Manager' and I thought that was enough. The Roaster showed me why nobody was finding me. Brutal but necessary.", rating: 5 },
-    { name: "David Chen", role: "DevOps Engineer", text: "Discovered my profile looked like a CV from 2005. 15 minutes of changes after the roast and I had a profile that generates leads.", rating: 5 },
+  const testimonials = [
+    { name: pick("Miguel Santos", "James Mitchell", "Miguel Santos"), role: pick("Founder @ TechStartup", "Founder @ TechStartup", "Founder @ TechStartup"), text: pick("Recebi o roast e ri-me tanto que quase chorei. Mas depois apliquei tudo — e em 2 semanas recebi 3x mais mensagens de recrutadores.", "I got the roast and laughed so hard I nearly cried. But then I applied everything — and within 2 weeks I got 3x more recruiter messages.", "Recibí el roast y me reí tanto que casi lloré. Pero luego apliqué todo — y en 2 semanas recibí 3x más mensajes de reclutadores."), rating: 5 },
+    { name: pick("Ana Rodrigues", "Sarah Thompson", "Ana Rodrigues"), role: "Marketing Manager", text: pick("O meu headline era 'Marketing Manager' e achava que bastava. O Roaster mostrou-me porque é que ninguém me encontrava. Brutal mas necessário.", "My headline was just 'Marketing Manager' and I thought that was enough. The Roaster showed me why nobody was finding me. Brutal but necessary.", "Mi headline era 'Marketing Manager' y pensaba que bastaba. El Roaster me mostró por qué nadie me encontraba. Brutal pero necesario."), rating: 5 },
+    { name: pick("Pedro Oliveira", "David Chen", "Pedro Oliveira"), role: pick("Engenheiro DevOps", "DevOps Engineer", "Ingeniero DevOps"), text: pick("Descobri que o meu perfil parecia um CV dos anos 2000. 15 minutos de mudanças depois do roast e já tinha um perfil que gera leads.", "Discovered my profile looked like a CV from 2005. 15 minutes of changes after the roast and I had a profile that generates leads.", "Descubrí que mi perfil parecía un CV de los años 2000. 15 minutos de cambios después del roast y ya tenía un perfil que genera leads."), rating: 5 },
   ];
 
   const roastHeadlines = [
@@ -51,30 +47,14 @@ export default function LinkedInRoasterHome() {
     { icon: Target, label: pick("Headline Killer", "Killer Headline", "Headline Killer"), desc: pick("Headline optimizado que gera cliques", "Optimised headline that drives clicks", "Headline optimizado que genera clics") },
   ];
 
-  const whatYouGet = isPT ? [
-    "Análise do Headline — o teu cartão de visita digital",
-    "Review da foto e banner — primeira impressão conta",
-    "Scan do About/Resumo — copy que vende ou que afasta",
-    "Experiência profissional — como a apresentas importa",
-    "Skills & Endorsements — relevância vs ruído",
-    "Headline killer pronto a usar",
-    "Plano de acção com 5 quick-fixes prioritários",
-  ] : lang === 'es' ? [
-    "Análisis del Headline — tu tarjeta de visita digital",
-    "Review de foto y banner — la primera impresión cuenta",
-    "Scan del About/Resumen — copy que vende o que aleja",
-    "Experiencia profesional — cómo la presentas importa",
-    "Skills & Endorsements — relevancia vs ruido",
-    "Headline killer listo para usar",
-    "Plan de acción con 5 quick-fixes prioritarios",
-  ] : [
-    "Headline Analysis — your digital business card",
-    "Photo & Banner review — first impressions matter",
-    "About/Summary scan — copy that sells vs repels",
-    "Work experience — presentation matters more than content",
-    "Skills & Endorsements — relevance vs noise",
-    "Killer headline ready to use",
-    "Action plan with 5 priority quick-fixes",
+  const whatYouGet = [
+    pick("Análise do Headline — o teu cartão de visita digital", "Headline Analysis — your digital business card", "Análisis del Headline — tu tarjeta de visita digital"),
+    pick("Review da foto e banner — primeira impressão conta", "Photo & Banner review — first impressions matter", "Review de foto y banner — la primera impresión cuenta"),
+    pick("Scan do About/Resumo — copy que vende ou que afasta", "About/Summary scan — copy that sells vs repels", "Scan del About/Resumen — copy que vende o que aleja"),
+    pick("Experiência profissional — como a apresentas importa", "Work experience — presentation matters more than content", "Experiencia profesional — cómo la presentas importa"),
+    pick("Skills & Endorsements — relevância vs ruído", "Skills & Endorsements — relevance vs noise", "Skills & Endorsements — relevancia vs ruido"),
+    pick("Headline killer pronto a usar", "Killer headline ready to use", "Headline killer listo para usar"),
+    pick("Plano de acção com 5 quick-fixes prioritários", "Action plan with 5 priority quick-fixes", "Plan de acción con 5 quick-fixes prioritarios"),
   ];
 
   useEffect(() => {
@@ -155,11 +135,13 @@ export default function LinkedInRoasterHome() {
     setLoading(true);
     const startTime = Date.now();
 
-    const messages = isPT
-      ? ["A analisar o teu perfil LinkedIn...", "A comparar com top performers do setor...", "A avaliar headline, about e experiência...", "A verificar SEO e keywords...", "A preparar o teu relatório personalizado..."]
-      : lang === 'es'
-      ? ["Analizando tu perfil LinkedIn...", "Comparando con top performers del sector...", "Evaluando headline, about y experiencia...", "Verificando SEO y keywords...", "Preparando tu informe personalizado..."]
-      : ["Analysing your LinkedIn profile...", "Comparing with top performers...", "Evaluating headline, about & experience...", "Checking SEO & keywords...", "Preparing your personalised report..."];
+    const messages = [
+      pick("A analisar o teu perfil LinkedIn...", "Analysing your LinkedIn profile...", "Analizando tu perfil LinkedIn..."),
+      pick("A comparar com top performers do setor...", "Comparing with top performers...", "Comparando con top performers del sector..."),
+      pick("A avaliar headline, about e experiência...", "Evaluating headline, about & experience...", "Evaluando headline, about y experiencia..."),
+      pick("A verificar SEO e keywords...", "Checking SEO & keywords...", "Verificando SEO y keywords..."),
+      pick("A preparar o teu relatório personalizado...", "Preparing your personalised report...", "Preparando tu informe personalizado..."),
+    ];
     let msgIdx = 0;
     setLoadingMsg(messages[0]);
     const msgInterval = setInterval(() => { msgIdx = (msgIdx + 1) % messages.length; setLoadingMsg(messages[msgIdx]); }, 3000);
