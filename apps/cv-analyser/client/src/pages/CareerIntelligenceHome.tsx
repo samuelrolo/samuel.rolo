@@ -2,7 +2,7 @@
 // Upload de CV + URL LinkedIn → Pagamento → Análise completa com decisão estratégica
 // Inclui tudo do Career Path + comparação, trade-offs, recomendação final
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, Lock, ChevronDown, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, ArrowRight, Shield, Check, Eye, Scale, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,7 +19,7 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
-import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -143,6 +143,7 @@ export default function CareerIntelligenceHome() {
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const profileCvAutofillRef = useRef(false);
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const isValidLinkedinUrl = (url: string) => {
@@ -207,9 +208,18 @@ export default function CareerIntelligenceHome() {
       if (!active || !profile) return;
       if (profile.cvUrl && profile.cvFilename) {
         setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+        if (!profileCvAutofillRef.current) {
+          try {
+            const restoredFile = await downloadAuthenticatedProfileCv(profile);
+            if (!active || profileCvAutofillRef.current) return;
+            setFile((current) => current || restoredFile);
+          } catch {
+            // keep manual upload available if auto-restore fails
+          }
+        }
       }
-      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
       if (profile.email) setEmail((current) => current || profile.email);
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
     })();
     return () => { active = false; };
   }, []);
@@ -232,6 +242,7 @@ export default function CareerIntelligenceHome() {
   const FINAL_PRICE_DISPLAY = isPT ? FINAL_PRICE.toFixed(2).replace('.', ',') : FINAL_PRICE.toFixed(2);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    profileCvAutofillRef.current = true;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -907,6 +918,7 @@ export default function CareerIntelligenceHome() {
                         const res = await fetch(savedCvInfo.url);
                         const blob = await res.blob();
                         const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        profileCvAutofillRef.current = true;
                         setFile(f);
                         setError(null);
                       } catch {

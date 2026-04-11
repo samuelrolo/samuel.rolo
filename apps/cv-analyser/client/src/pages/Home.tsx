@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check, Menu, X, Search, FileSearch, Crosshair } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
@@ -21,7 +21,7 @@ import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
-import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -252,6 +252,7 @@ export default function Home() {
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const profileCvAutofillRef = useRef(false);
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -265,6 +266,15 @@ export default function Home() {
       if (!active || !profile) return;
       if (profile.cvUrl && profile.cvFilename) {
         setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+        if (!profileCvAutofillRef.current) {
+          try {
+            const restoredFile = await downloadAuthenticatedProfileCv(profile);
+            if (!active || profileCvAutofillRef.current) return;
+            setFile((current) => current || restoredFile);
+          } catch {
+            // keep manual upload available if auto-restore fails
+          }
+        }
       }
       if (profile.email) setAnalysisEmail((current) => current || profile.email);
       if (profile.linkedinUrl) setLinkedInUrl((current) => current || profile.linkedinUrl);
@@ -413,6 +423,7 @@ export default function Home() {
   const [liPaywallError, setLiPaywallError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    profileCvAutofillRef.current = true;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/png', 'image/jpeg'];
@@ -1212,6 +1223,7 @@ export default function Home() {
                     if (!res.ok) throw new Error('Download failed');
                     const blob = await res.blob();
                     const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                    profileCvAutofillRef.current = true;
                     setFile(f);
                   } catch { setError(pick('Não foi possível carregar o CV guardado.', 'It was not possible to load the saved CV.', 'No fue posible cargar el CV guardado.')); }
                 }}
@@ -1296,6 +1308,7 @@ export default function Home() {
                         if (!res.ok) throw new Error('Download failed');
                         const blob = await res.blob();
                         const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        profileCvAutofillRef.current = true;
                         setFile(f);
                       } catch { setError(pick('Não foi possível carregar o CV guardado.', 'It was not possible to load the saved CV.', 'No fue posible cargar el CV guardado.')); }
                     }}

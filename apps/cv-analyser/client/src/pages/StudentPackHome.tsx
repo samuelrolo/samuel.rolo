@@ -1,7 +1,7 @@
 // Pack Estudante / Student Pack — CV Analyser + LinkedIn Roaster | Share2Inspire
 // Unified i18n component (PT/EN/ES) — uses pick() for all UI text
 // PT: single unified engine (student-pack edge fn), EN/ES: two separate engines (hyper-task)
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Sparkles, Check, ArrowRight, BarChart3, Zap, Globe, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -100,6 +100,7 @@ export default function StudentPackHome() {
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % headlines.length), 4000); return () => clearInterval(t); }, []);
 
   const [file, setFile] = useState<File | null>(null);
+  const profileCvAutofillRef = useRef(false);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
@@ -121,9 +122,18 @@ export default function StudentPackHome() {
       if (!active || !profile) return;
       if (profile.cvUrl && profile.cvFilename) {
         setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+        if (!profileCvAutofillRef.current) {
+          try {
+            const restoredFile = await downloadAuthenticatedProfileCv(profile);
+            if (!active || profileCvAutofillRef.current) return;
+            setFile((current) => current || restoredFile);
+          } catch {
+            // keep manual upload available if auto-restore fails
+          }
+        }
       }
-      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
       if (profile.email) setEmail((current) => current || profile.email);
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
     })();
     return () => { active = false; };
   }, []);
@@ -610,7 +620,7 @@ export default function StudentPackHome() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2"><FileText className="w-4 h-4 inline mr-1" /> {pick("Currículo (PDF ou DOCX)", "CV (PDF or DOCX)", "Currículum (PDF o DOCX)")}</label>
               <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-emerald-500 bg-white'}`}>
-                <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) setFile(e.target.files[0]); }} />
+                <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) { profileCvAutofillRef.current = true; setFile(e.target.files[0]); } }} />
                 {file ? (<div className="flex items-center gap-2 text-green-700"><CheckCircle2 className="w-5 h-5" /><span className="text-sm font-medium">{file.name}</span></div>) : (<div className="text-center"><Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" /><p className="text-sm text-slate-500">{pick("Clica ou arrasta o teu CV", "Click or drag your CV", "Haz clic o arrastra tu CV")}</p></div>)}
               </label>
               {!file && savedCvInfo && (
@@ -624,6 +634,7 @@ export default function StudentPackHome() {
                         cvUrl: savedCvInfo.url,
                         cvFilename: savedCvInfo.filename,
                       });
+                      profileCvAutofillRef.current = true;
                       setFile(f);
                       setError(null);
                     } catch {

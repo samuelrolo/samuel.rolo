@@ -1,7 +1,7 @@
 // Bundle — CV Analyser + Career Path | Share2Inspire
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
 // Preço PT: €29,00
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -90,6 +90,7 @@ export default function BundleHome() {
 
   // Upload state
   const [file, setFile] = useState<File | null>(null);
+  const profileCvAutofillRef = useRef(false);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
@@ -137,9 +138,20 @@ export default function BundleHome() {
     (async () => {
       const profile = await getAuthenticatedProfilePrefill();
       if (!active || !profile) return;
-      if (profile.cvUrl && profile.cvFilename) setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
-      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
+      if (profile.cvUrl && profile.cvFilename) {
+        setSavedCvInfo({ filename: profile.cvFilename, url: profile.cvUrl });
+        if (!profileCvAutofillRef.current) {
+          try {
+            const restoredFile = await downloadAuthenticatedProfileCv(profile);
+            if (!active || profileCvAutofillRef.current) return;
+            setFile((current) => current || restoredFile);
+          } catch {
+            // keep manual upload available if auto-restore fails
+          }
+        }
+      }
       if (profile.email) setEmail((current) => current || profile.email);
+      if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
     })();
     return () => { active = false; };
   }, []);
@@ -811,7 +823,7 @@ export default function BundleHome() {
                   type="file"
                   accept=".pdf,.docx"
                   className="hidden"
-                  onChange={(e) => { if (e.target.files?.[0]) setFile(e.target.files[0]); }}
+                  onChange={(e) => { if (e.target.files?.[0]) { profileCvAutofillRef.current = true; setFile(e.target.files[0]); } }}
                 />
                 {file ? (
                   <div className="flex items-center gap-2 text-green-700">
@@ -838,6 +850,7 @@ export default function BundleHome() {
                       cvUrl: savedCvInfo.url,
                       cvFilename: savedCvInfo.filename,
                     });
+                    profileCvAutofillRef.current = true;
                     setFile(restoredFile);
                     setError(null);
                   } catch {
