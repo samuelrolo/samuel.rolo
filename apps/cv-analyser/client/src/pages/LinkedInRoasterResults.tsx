@@ -83,7 +83,7 @@ const deepSanitize = (obj: any): any => {
 };
 
 const dimensionLabels: Record<string, string> = {
-  headline_sumario: pick('Headline & About', 'Headline & About', 'Headline & About'),
+  headline_sumario: pick('Headline & Sobre', 'Headline & About', 'Headline y Acerca de'),
   experiencia_conteudo: pick('Experiência', 'Experience', 'Experiencia'),
   formacao_certificacoes: pick('Formação', 'Education', 'Formación'),
   rede_alcance: pick('Rede & Alcance', 'Network & Reach', 'Red y Alcance'),
@@ -335,7 +335,7 @@ export default function LinkedInRoasterResults() {
             {/* ═══ SECÇÃO 5 — BENCHMARKING ═══ */}
             {benchmarking?.setor && (
               <Section title={pick('Benchmarking', 'Benchmarking', 'Benchmarking')} subtitle={pick(`Comparação com profissionais de ${benchmarking.setor}`, `Comparison with professionals in ${benchmarking.setor}`, `Comparación con profesionales de ${benchmarking.setor}`)} icon={TrendingUp} defaultOpen={true}
-                badge={<span className={`text-sm font-bold ${scoreColor(benchmarking.percentil_estimado || 0, 100)}`}>Top {100 - (benchmarking.percentil_estimado || 50)}%</span>}>
+                badge={<span className={`text-sm font-bold ${scoreColor(benchmarking.percentil_estimado || 0, 100)}`}>{pick(`Top ${100 - (benchmarking.percentil_estimado || 50)}%`, `Top ${100 - (benchmarking.percentil_estimado || 50)}%`, `Top ${100 - (benchmarking.percentil_estimado || 50)}%`)}</span>}>
                 <div className="space-y-4">
                   {/* Percentile bar */}
                   <div className="bg-slate-50 rounded-xl p-5 border border-slate-200">
@@ -356,7 +356,7 @@ export default function LinkedInRoasterResults() {
                     {/* Gaps */}
                     {Array.isArray(benchmarking.gaps_vs_top) && benchmarking.gaps_vs_top.length > 0 && (
                       <div className="bg-red-50/50 border border-red-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-red-700 text-sm mb-3 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> {pick('Gaps vs Top Performers', 'Gaps vs Top Performers', 'Brechas vs Top Performers')}</h4>
+                        <h4 className="font-semibold text-red-700 text-sm mb-3 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> {pick('Gaps vs Perfis Top', 'Gaps vs Top Performers', 'Brechas vs Perfiles Top')}</h4>
                         <ul className="space-y-2">
                           {benchmarking.gaps_vs_top.map((g: Gap, i: number) => (
                             <li key={i} className="text-sm text-slate-700">

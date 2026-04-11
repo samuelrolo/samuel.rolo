@@ -7753,6 +7753,14 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
         const roastCompanyContext = await enrichWithCompanyData(cvText, language);
 
+        const roastOutputLanguageInstruction = getLanguageOutputInstruction(language);
+
+        const roastJsonRepairInstruction = isEN
+          ? 'Preserve the existing English content exactly. Do not translate or rewrite the analysis beyond fixing JSON syntax.'
+          : isES
+            ? 'Conserva exactamente el contenido existente en español. No traduzcas ni reescribas el análisis más allá de corregir la sintaxis JSON.'
+            : 'Preserva exatamente o conteúdo existente em Português de Portugal. Não traduzas nem reescrevas a análise além de corrigir a sintaxe JSON.';
+
         const roastPromptPT = `Atuas como Consultor Sénior de Personal Branding e Estratégia de LinkedIn, com mais de 15 anos de experiência em recrutamento executivo e otimização de perfis para profissionais de topo. O teu tom é PROFISSIONAL, CONSTRUTIVO e DETALHADO — como uma auditoria séria feita por um especialista que quer genuinamente ajudar o profissional a melhorar.
 
 
@@ -8860,7 +8868,7 @@ REGLAS FINALES:
 - NUNCA hagas comentarios genéricos que podrían aplicarse a cualquier perfil. Cada frase debe ser específica de este profesional.`;
 
 
-        const roastPrompt = isEN ? roastPromptEN : isES ? roastPromptES : roastPromptPT;
+        const roastPrompt = `${roastOutputLanguageInstruction}\n\n${isEN ? roastPromptEN : isES ? roastPromptES : roastPromptPT}`;
 
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
 
@@ -9072,7 +9080,7 @@ REGLAS FINALES:
 
                         {
 
-                          text: 'Fix this broken JSON and return ONLY valid JSON. Do not add any text before or after the JSON:\n\n' + roastText.substring(0, 10000)
+                          text: `${roastJsonRepairInstruction} Fix this broken JSON and return ONLY valid JSON. Do not add any text before or after the JSON:\n\n${roastText.substring(0, 10000)}`
 
                         }
 

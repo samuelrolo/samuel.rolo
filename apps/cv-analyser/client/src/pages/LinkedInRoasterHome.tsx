@@ -105,6 +105,12 @@ export default function LinkedInRoasterHome() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
   const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
+  const privacyPolicyPath = pick('/politica-privacidade/', '/en/politica-privacidade/', '/es/politica-privacidade/');
+  const paymentModalTitle = pick(
+    `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`,
+    `Pay €${appliedCoupon ? finalPriceStr : PRICE}`,
+    `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`
+  );
 
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -480,9 +486,9 @@ export default function LinkedInRoasterHome() {
               <label className="flex items-start gap-2 cursor-pointer pt-1">
                 <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
                 <span className="text-xs text-slate-500">{pick(
-                  <>Aceito os <a href="/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">termos e condições</a>. O perfil é analisado de forma confidencial.</>,
-                  <>I accept the <a href="/en/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">terms and conditions</a>. The profile is analysed confidentially.</>,
-                  <>Acepto los <a href="/es/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">términos y condiciones</a>. El perfil se analiza de forma confidencial.</>
+                  <>Aceito a <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidade</a> e os termos e condições. O perfil é analisado de forma confidencial.</>,
+                  <>I accept the <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Privacy Policy</a> and the terms and conditions. The profile is analysed confidentially.</>,
+                  <>Acepto la <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidad</a> y los términos y condiciones. El perfil se analiza de forma confidencial.</>
                 )}</span>
               </label>
 
@@ -617,7 +623,7 @@ export default function LinkedInRoasterHome() {
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onClick={() => { if (!paymentLoading) setShowPaymentModal(false); }}>
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">{pick(`Pagar ${PRICE}€`, `Pay €${appliedCoupon ? finalPriceStr : PRICE}`, `Pagar ${PRICE}€`)}</h3>
+              <h3 className="text-lg font-bold text-slate-900">{paymentModalTitle}</h3>
               <button onClick={() => setShowPaymentModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label={pick("Fechar", "Close", "Cerrar")}><X className="w-5 h-5" /></button>
             </div>
 
