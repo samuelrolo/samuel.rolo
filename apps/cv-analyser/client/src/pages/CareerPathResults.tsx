@@ -19,6 +19,7 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n/translations';
+import { localePath } from '@/i18n/useTranslation';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -125,13 +126,12 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 
 /* ─── Networking Entity Expandable Card ─── */
 function NetworkingEntityCard({ entity }: { entity: any }) {
-  const lang = getLang();
   const [expanded, setExpanded] = useState(false);
-  const typeLabels: Record<string, { en: string; pt: string; es: string; icon: string }> = {
-    community: { en: 'Community', pt: 'Comunidade', es: 'Comunidad', icon: '👥' },
-    event: { en: 'Event', pt: 'Evento', es: 'Evento', icon: '📅' },
-    association: { en: 'Association', pt: 'Associação', es: 'Asociación', icon: '🏛️' },
-    conference: { en: 'Conference', pt: 'Conferência', es: 'Conferencia', icon: '🎤' },
+  const typeLabels: Record<string, { label: string; icon: string }> = {
+    community: { label: pick('Comunidade', 'Community', 'Comunidad'), icon: '👥' },
+    event: { label: pick('Evento', 'Event', 'Evento'), icon: '📅' },
+    association: { label: pick('Associação', 'Association', 'Asociación'), icon: '🏛️' },
+    conference: { label: pick('Conferência', 'Conference', 'Conferencia'), icon: '🎤' },
   };
   const typeInfo = typeLabels[entity.type] || typeLabels.community;
   return (
@@ -144,7 +144,7 @@ function NetworkingEntityCard({ entity }: { entity: any }) {
           <span className="text-sm shrink-0">{typeInfo.icon}</span>
           <span className="text-xs font-semibold text-foreground truncate">{entity.name}</span>
           <span className="text-[9px] bg-[#C9A961]/15 text-[#C9A961] px-1.5 py-0.5 rounded shrink-0 font-medium">
-            {typeInfo[lang] || typeInfo.pt}
+            {typeInfo.label}
           </span>
         </div>
         {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />}
@@ -208,7 +208,7 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
   return [
     {
       id: 'career_path',
-      name: 'Career Path',
+      name: pick('Career Path', 'Career Path', 'Career Path'),
       price: p.cp,
       priceNum: parseFloat(p.cp.replace(',', '.')),
       badge: null,
@@ -306,6 +306,22 @@ export default function CareerPathResults() {
     // Remove duplicate symbols again after conversion
     cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
     return cleaned;
+  };
+
+  const translateConsistencyLabel = (value?: string) => {
+    const normalized = (value || '').trim().toLowerCase();
+    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
+    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
+    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
+    return value || '';
+  };
+
+  const translatePriorityLabel = (value?: string) => {
+    const normalized = (value || '').trim().toLowerCase();
+    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
+    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
+    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
+    return value || '';
   };
 
   const PLANS = getPlans(isEN, CUR, P);
@@ -842,20 +858,20 @@ export default function CareerPathResults() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setLocation('/')}
+              onClick={() => setLocation(localePath('/'))}
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
-            <a href="/" className="flex items-center" aria-label="Share2Inspire">
-              <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
+            <a href={localePath('/')} className="flex items-center" aria-label={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')}>
+              <img src="/logo-transparent.png" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
                 <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C9A961]" />
               </GoldIcon>
-              <span className="text-sm sm:text-base font-semibold text-foreground">Career Path</span>
+              <span className="text-sm sm:text-base font-semibold text-foreground">{pick('Career Path', 'Career Path', 'Career Path')}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -1034,12 +1050,11 @@ export default function CareerPathResults() {
                       </div>
                       <div className="text-center max-w-sm">
                         <p className="text-sm text-muted-foreground">
-                          {isEN
-                            ? <>Your profile shows <span className="font-bold text-foreground">{energyScore >= 70 ? 'high' : energyScore >= 50 ? 'moderate' : 'significant'}</span> growth potential{energyScore < 70 ? ', but there is misalignment between current skills and roles with the highest salary progression.' : '.'}</>
-                            : isES
-                            ? <>Tu perfil muestra un potencial de crecimiento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', pero existe desalineación entre competencias actuales y los roles con mayor progresión salarial.' : '.'}</>
-                            : <>O teu perfil mostra potencial de crescimento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', mas existe desalinhamento entre competências atuais e as funções com maior progressão salarial.' : '.'}</>
-                          }
+                          {pick(
+                            <>O teu perfil mostra potencial de crescimento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', mas existe desalinhamento entre competências atuais e as funções com maior progressão salarial.' : '.'}</>,
+                            <>Your profile shows <span className="font-bold text-foreground">{energyScore >= 70 ? 'high' : energyScore >= 50 ? 'moderate' : 'significant'}</span> growth potential{energyScore < 70 ? ', but there is misalignment between current skills and roles with the highest salary progression.' : '.'}</>,
+                            <>Tu perfil muestra un potencial de crecimiento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', pero existe desalineación entre competencias actuales y los roles con mayor progresión salarial.' : '.'}</>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -1049,8 +1064,8 @@ export default function CareerPathResults() {
                       <p className="text-xs font-semibold tracking-wider text-center text-muted-foreground">{t('caminhos_de_carreira_mais_compatveis')}</p>
                       <div className="space-y-2">
                         {[
-                          { path: cvAnalysis.perceivedRole ? `${cvAnalysis.perceivedRole} Lead` : pick('Transformação Digital Lead', 'Digital Transformation Lead', 'Líder de Transformación Digital'), fit: Math.min(energyScore + 15, 95) },
-                          { path: cvAnalysis.keywords?.[0] ? pick(`Especialista em ${cvAnalysis.keywords[0]}`, `${cvAnalysis.keywords[0]} Specialist`, `Especialista en ${cvAnalysis.keywords[0]}`) : 'People Analytics', fit: Math.min(energyScore + 8, 90) },
+                          { path: cvAnalysis.perceivedRole ? pick(`Líder de ${cvAnalysis.perceivedRole}`, `${cvAnalysis.perceivedRole} Lead`, `Líder de ${cvAnalysis.perceivedRole}`) : pick('Transformação Digital Lead', 'Digital Transformation Lead', 'Líder de Transformación Digital'), fit: Math.min(energyScore + 15, 95) },
+                          { path: cvAnalysis.keywords?.[0] ? pick(`Especialista em ${cvAnalysis.keywords[0]}`, `${cvAnalysis.keywords[0]} Specialist`, `Especialista en ${cvAnalysis.keywords[0]}`) : pick('People Analytics', 'People Analytics', 'People Analytics'), fit: Math.min(energyScore + 8, 90) },
                           { path: pick('Consultor Estratégico', 'Strategic Advisor', 'Asesor Estratégico'), fit: Math.min(energyScore + 2, 85) },
                         ].map((item, i) => (
                           <div key={i} className="flex items-center justify-between p-3 bg-card rounded-xl border border-border">
@@ -1193,12 +1208,11 @@ export default function CareerPathResults() {
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground text-center">
-                      {isEN
-                        ? <>If you develop the 3 recommended skills, your score can increase to <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
-                        : isES
-                        ? <>Si desarrollas las 3 competencias recomendadas, tu score puede aumentar a <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
-                        : <>Se desenvolveres as 3 competências recomendadas, o teu score pode aumentar para <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
-                      }
+                      {pick(
+                        <>Se desenvolveres as 3 competências recomendadas, o teu score pode aumentar para <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>,
+                        <>If you develop the 3 recommended skills, your score can increase to <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>,
+                        <>Si desarrollas las 3 competencias recomendadas, tu score puede aumentar a <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -1294,7 +1308,7 @@ export default function CareerPathResults() {
               <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">CV vs LINKEDIN</p>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{pick('CV vs LinkedIn', 'CV vs LinkedIn', 'CV vs LinkedIn')}</p>
                   <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                     (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'High')
                       ? 'bg-green-500/10 text-green-600'
@@ -1302,7 +1316,7 @@ export default function CareerPathResults() {
                       ? 'bg-amber-500/10 text-amber-600'
                       : 'bg-red-500/10 text-red-600'
                   }`}>
-                    {t('consistncia')}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}
+                    {t('consistncia')}: {translateConsistencyLabel(careerPathData.cv_linkedin_cross_analysis.consistency_score)}
                   </span>
                 </div>
                 {careerPathData.cv_linkedin_cross_analysis.optimization_suggestions?.map((s: string, i: number) => (
@@ -1335,7 +1349,7 @@ export default function CareerPathResults() {
                           )}
                           {role.fit_percentage && (
                             <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                              {role.fit_percentage}% fit
+                              {role.fit_percentage}% {pick('compatibilidade', 'fit', 'encaje')}
                             </span>
                           )}
                         </div>
@@ -1404,7 +1418,7 @@ export default function CareerPathResults() {
                           f.priority === 'Alta' ? 'bg-red-500/10 text-red-500 border border-red-500/20'
                           : f.priority === 'Média' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
                           : 'bg-green-500/10 text-green-600 border border-green-500/20'
-                        }`}>{f.priority}</span>
+                        }`}>{translatePriorityLabel(f.priority)}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{f.provider} · {f.duration} · {f.cost}</p>
                       <p className="text-xs text-muted-foreground mt-1">{f.relevance}</p>
@@ -1666,7 +1680,7 @@ export default function CareerPathResults() {
                 </div>
               </div>
                 <a
-                  href={getLang() === 'en' ? '/en/cv-analyser' : getLang() === 'es' ? '/es/cv-analyser' : '/cv-analyser'}
+                  href={localePath('/cv-analyser')}
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
                 >
 
@@ -1728,7 +1742,7 @@ export default function CareerPathResults() {
               {!isLoggedIn ? (
                 <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
                   <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
+                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href={localePath('/area-cliente/auth')} className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
                 </div>
               ) : savedToAccount ? (
                 <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
@@ -1757,19 +1771,24 @@ export default function CareerPathResults() {
             {/* ═══ Share Career Path Result on LinkedIn ═══ */}
             {(() => {
               const score = careerPathData?.career_potential_score?.overall_score || 70;
-              const label = score >= 80 ? 'Excellent' : score >= 65 ? 'Strong' : score >= 50 ? 'Promising' : 'Developing';
+              const label = score >= 80
+                ? pick('Excelente', 'Excellent', 'Excelente')
+                : score >= 65
+                  ? pick('Forte', 'Strong', 'Sólido')
+                  : score >= 50
+                    ? pick('Promissor', 'Promising', 'Prometedor')
+                    : pick('Em desenvolvimento', 'Developing', 'En desarrollo');
               const topPct = Math.max(5, 100 - score);
               const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
               const topRole = careerPathData?.career_progression?.progression_stages?.[0]?.role_title || (t('career_path'));
 
               const generatePostText = () => {
-                if (isEN) {
-                  return `I just had my career analysed by @share2inspire_'s AI Career Path tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me a clear, data-driven view of my career trajectory, next roles, and what skills to develop.\n\nIf you're thinking about your next career move — I highly recommend it.\n\n\ud83d\udd17 https://share2inspire.pt/en/career-path\n\n#CareerPath #CareerDevelopment #ProfessionalGrowth #Share2Inspire`;
-                }
-                if (isES) {
-                  return `Acabo de tener mi carrera analizada por la herramienta AI Career Path de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio una visión clara y basada en datos sobre mi trayectoria profesional, próximos roles y competencias a desarrollar.\n\nSi estás pensando en tu próximo paso profesional — lo recomiendo.\n\n\ud83d\udd17 https://share2inspire.pt/es/career-path\n\n#CareerPath #DesarrolloProfesional #Carrera #Share2Inspire`;
-                }
-                return `Acabei de ter a minha carreira analisada pelo Career Path da @share2inspire_, com recurso a intelig\u00eancia artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta an\u00e1lise deu-me uma vis\u00e3o clara e baseada em dados sobre a minha traject\u00f3ria de carreira, pr\u00f3ximos cargos e compet\u00eancias a desenvolver.\n\nSe est\u00e1s a pensar no teu pr\u00f3ximo passo de carreira \u2014 recomendo.\n\n\ud83d\udd17 https://share2inspire.pt/career-path\n\n#CareerPath #DesenvolvimentoProfissional #Carreira #Share2Inspire`;
+                const shareUrl = pick('https://share2inspire.pt/career-path', 'https://share2inspire.pt/en/career-path', 'https://share2inspire.pt/es/career-path');
+                return pick(
+                  `Acabei de ter a minha carreira analisada pelo Career Path da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me uma visão clara e baseada em dados sobre a minha trajectória de carreira, próximos cargos e competências a desenvolver.\n\nSe estás a pensar no teu próximo passo de carreira — recomendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesenvolvimentoProfissional #Carreira #Share2Inspire`,
+                  `I just had my career analysed by @share2inspire_'s AI Career Path tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me a clear, data-driven view of my career trajectory, next roles, and what skills to develop.\n\nIf you're thinking about your next career move — I highly recommend it.\n\n🔗 ${shareUrl}\n\n#CareerPath #CareerDevelopment #ProfessionalGrowth #Share2Inspire`,
+                  `Acabo de tener mi carrera analizada por la herramienta AI Career Path de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio una visión clara y basada en datos sobre mi trayectoria profesional, próximos roles y competencias a desarrollar.\n\nSi estás pensando en tu próximo paso profesional — lo recomiendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesarrolloProfesional #Carrera #Share2Inspire`
+                );
               };
 
               const generateCertImage = () => {
@@ -1801,7 +1820,7 @@ export default function CareerPathResults() {
                 ctx.fillStyle = '#C9A961';
                 ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
                 ctx.letterSpacing = '4px';
-                ctx.fillText('CAREER PATH', 90, 100);
+                ctx.fillText(pick('CAREER PATH', 'CAREER PATH', 'CAREER PATH'), 90, 100);
                 ctx.letterSpacing = '0px';
 
                 // Role
@@ -1834,7 +1853,7 @@ export default function CareerPathResults() {
                 ctx.letterSpacing = '0px';
                 ctx.fillStyle = '#1A1A1A';
                 ctx.font = '700 48px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(`Top ${topPct}%`, 400, 280);
+                ctx.fillText(pick(`Top ${topPct}%`, `Top ${topPct}%`, `Top ${topPct}%`), 400, 280);
                 ctx.fillStyle = '#666666';
                 ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
                 ctx.fillText(t('dos_profissionais_analisados'), 400, 308);
@@ -1890,10 +1909,10 @@ export default function CareerPathResults() {
                 ctx.fillRect(90, 570, 1020, 1);
                 ctx.fillStyle = '#C9A961';
                 ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText('Share2Inspire', 90, 600);
+                ctx.fillText(pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire'), 90, 600);
                 ctx.fillStyle = '#888888';
                 ctx.font = '400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(`Career Path \u2022 ${today}`, 230, 600);
+                 ctx.fillText(pick(`Career Path • ${today}`, `Career Path • ${today}`, `Career Path • ${today}`), 230, 600);
                 ctx.textAlign = 'right';
                 ctx.fillText('https://share2inspire.pt', 1110, 600);
                 ctx.textAlign = 'left';
@@ -2094,7 +2113,7 @@ export default function CareerPathResults() {
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Email</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
                 <input
                   type="email"
                   value={email}
@@ -2128,7 +2147,7 @@ export default function CareerPathResults() {
                             : 'border-border text-muted-foreground hover:border-[#0070BA]/50'
                         }`}
                       >
-                        PayPal
+                        {pick('PayPal', 'PayPal', 'PayPal')}
                       </button>
                     </>
                   ) : (
@@ -2143,7 +2162,7 @@ export default function CareerPathResults() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
+                          {method === 'mbway' ? pick('MB WAY', 'MB WAY', 'MB WAY') : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : pick('PayPal', 'PayPal', 'PayPal')}
                         </button>
                       ))}
                     </>
@@ -2159,7 +2178,7 @@ export default function CareerPathResults() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
+                    placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                 </div>

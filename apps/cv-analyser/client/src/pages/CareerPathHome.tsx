@@ -90,7 +90,7 @@ export default function CareerPathHome() {
   const isPT = lang === 'pt';
   const testimonials = buildTestimonials(pick);
   const careerPathHeadlines = buildCareerPathHeadlines(pick);
-  const careerPathExampleHref = lang === 'en' ? '/en/career-path/example/' : '/career-path/example/';
+  const careerPathExampleHref = localePath('/career-path/example/');
   useEffect(() => { document.title = pick("Career Path — Roadmap de Carreira com IA | Share2Inspire", "Career Path — AI Career Roadmap | Share2Inspire", "Career Path — Roadmap de Carrera con IA | Share2Inspire"); }, [pick]);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
@@ -234,7 +234,7 @@ export default function CareerPathHome() {
           localStorage.setItem('careerPathPaid', 'true');
           localStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
           if (email) localStorage.setItem('cpPaymentEmail', email);
-          setTimeout(() => { setLocation('/results'); }, 400);
+          setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
         }
         return;
       }
@@ -262,7 +262,7 @@ export default function CareerPathHome() {
         localStorage.setItem('careerPathPaid', 'true');
         localStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
         if (v.email) localStorage.setItem('cpPaymentEmail', v.email);
-        setTimeout(() => { setLocation('/results'); }, 400);
+        setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
         return;
       }
 
@@ -551,7 +551,7 @@ export default function CareerPathHome() {
           clearInterval(interval);
           setShowPaymentModal(false);
           localStorage.setItem('careerPathPaid', 'true');
-          setTimeout(() => { setLocation('/results'); }, 400);
+          setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
           return;
         }
 
@@ -598,7 +598,7 @@ export default function CareerPathHome() {
       if (data.paid) {
         setShowPaymentModal(false);
         localStorage.setItem('careerPathPaid', 'true');
-        setTimeout(() => { setLocation('/results'); }, 400);
+        setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
       } else {
         setPollingExpired(true);
         setPollingMsg(pick('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.', 'Payment not yet confirmed. Wait a few seconds and try again.', 'Pago aún no confirmado. Espera unos segundos e inténtalo de nuevo.'));
@@ -613,7 +613,7 @@ export default function CareerPathHome() {
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
     localStorage.setItem('careerPathPaid', 'true');
-    setTimeout(() => { setLocation('/results'); }, 400);
+    setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
   };
 
   return (
@@ -797,7 +797,7 @@ export default function CareerPathHome() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-2 flex-1">{pick('Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.', 'Everything in Career Path + strategic comparison, trade-offs and final recommendation.', 'Todo del Career Path + comparación estratégica, trade-offs y recomendación final.')}</p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-lg font-bold text-purple-600">€49</span>
+                      <span className="text-lg font-bold text-purple-600">{pick('€49', '€49', '49€')}</span>
                         <a
                           href={localePath('/career-intelligence')}
 
@@ -835,7 +835,7 @@ export default function CareerPathHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">{pick('Começa pelo diagnóstico. A decisão vem depois.', 'Start with the diagnosis. The decision comes later.', 'Empieza por el diagnóstico. La decisión viene después.')}</h2>
-              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">({pick('desconto de membro', 'member discount', 'descuento de miembro')} {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
+              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">({pick('desconto de membro', 'member discount', 'descuento de miembro')} {pick(memberTier === 'pro' ? 'Pro' : 'Growth', memberTier === 'pro' ? 'Pro' : 'Growth', memberTier === 'pro' ? 'Pro' : 'Growth')})</span>}</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
@@ -885,7 +885,7 @@ export default function CareerPathHome() {
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <Linkedin className="w-4 h-4 text-[#0077B5]" />
-                  2. LinkedIn <span className="text-red-500">*</span>
+                  {pick('2. LinkedIn', '2. LinkedIn', '2. LinkedIn')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Linkedin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -990,7 +990,7 @@ export default function CareerPathHome() {
                 />
                 <label htmlFor="cp-terms" className="text-sm text-muted-foreground cursor-pointer">
                   {pick('Concordo com a', 'I agree with the', 'Acepto la')}{" "}
-                  <a href="/politica-privacidade/" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
+                  <a href={localePath('/politica-privacidade/')} target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
                     {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
                   </a>{" "}
                   {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para análisis de carrera.')}
@@ -1196,7 +1196,7 @@ export default function CareerPathHome() {
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">{pick("Email", "Email", "Email")}</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
                 <input
                   type="email"
                   value={email}
@@ -1222,7 +1222,7 @@ export default function CareerPathHome() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
+                          {method === 'mbway' ? pick('MB WAY', 'MB WAY', 'MB WAY') : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : pick('PayPal', 'PayPal', 'PayPal')}
                         </button>
                       ))}
                     </div>
@@ -1282,7 +1282,7 @@ export default function CareerPathHome() {
                       localStorage.setItem('careerPathPaid', 'true');
                       localStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
                       if (email) localStorage.setItem('cpPaymentEmail', email);
-                      setLocation('/results');
+                      setLocation(localePath('/career-path/results'));
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >
@@ -1342,7 +1342,7 @@ export default function CareerPathHome() {
           <p className="text-base font-bold text-slate-800 mb-2">{pick('Queres acesso regular ao Career Path?', 'Want regular access to Career Path?', '¿Quieres acceso regular al Career Path?')}</p>
           <p className="text-sm text-slate-500 mb-4 leading-relaxed">{pick('Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.', 'With a Growth or Pro plan, get Career Path included monthly + weekly CV Analyser, exclusive content and much more.', 'Con un plan Growth o Pro, tienes Career Path incluido mensualmente + CV Analyser semanal, contenidos exclusivos y mucho más.')}</p>
           <a
-            href="https://www.share2inspire.pt/area-cliente/planos"
+            href={localePath('/area-cliente/planos')}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
           >
             {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}

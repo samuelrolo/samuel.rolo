@@ -25,6 +25,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
+import { localePath } from '@/i18n/useTranslation';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -3357,7 +3358,7 @@ export default function Results() {
             {!isLoggedIn ? (
               <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
                 <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
+                <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href={localePath('/area-cliente/auth')} className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
               </div>
             ) : savedToAccount ? (
               <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
