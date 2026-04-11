@@ -1768,51 +1768,6 @@ return null;
                     </button>
                     {expandedTool === tool.key && (
                       <div className="border-t border-[#e5e5e5] p-5 bg-[#fafaf9]">
-                        {/* Previous analyses mini-cards for analysis-based tools */}
-                        {['cv', 'linkedin', 'careerPath', 'careerIntelligence'].includes(tool.action || '') && (() => {
-                          const typeMap: Record<string, string> = { cv: 'cv_analyser', linkedin: 'linkedin_roaster', careerPath: 'career_path', careerIntelligence: 'career_intelligence' };
-                          const type = typeMap[tool.action || ''];
-                          const items = groupedAnalyses[type] || [];
-                          if (items.length === 0) return null;
-                          return (
-                            <div className="mb-6">
-                              <h4 className="text-[10px] font-semibold text-[#999] uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                                <Clock className="w-3 h-3" />
-                                {t('member.tools.previousAnalyses')}
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {items.slice(0, 4).map((item) => (
-                                  <button
-                                    key={item.id}
-                                    onClick={() => setViewingAnalysis(item)}
-                                    className="flex items-center justify-between p-2.5 bg-white border border-[#e5e5e5] rounded-lg hover:border-gold/30 hover:shadow-sm transition-all group text-left"
-                                  >
-                                    <div className="min-w-0 flex-1">
-                                      <p className="text-[11px] font-medium text-[#1a1a1a] truncate mb-0.5">
-                                        {getAnalysisSummary(item) || t('member.lib.latestAnalysis')}
-                                      </p>
-                                      <p className="text-[9px] text-[#999] flex items-center gap-1">
-                                        <CalendarClock className="w-2.5 h-2.5" />
-                                        {formatDate(item.created_at)}
-                                      </p>
-                                    </div>
-                                    <ArrowRight className="w-3 h-3 text-[#ccc] group-hover:text-gold transition-colors ml-2 shrink-0" />
-                                  </button>
-                                ))}
-                              </div>
-                              {items.length > 4 && (
-                                <button 
-                                  onClick={() => setActiveTab('analyses')}
-                                  className="mt-2 text-[10px] text-gold hover:underline font-medium"
-                                >
-                                  {t('member.lib.showMorePlural').replace('{count}', String(items.length - 4))}
-                                </button>
-                              )}
-                              <div className="mt-6 border-t border-[#e5e5e5] pt-6"></div>
-                            </div>
-                          );
-                        })()}
-
                         {renderInlinePanel(tool)}
                         {analysisError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{analysisError}</span></div>)}
                         {analysisResult && (
