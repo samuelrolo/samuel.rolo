@@ -1189,11 +1189,11 @@ export default function Home() {
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <Upload className="w-5 h-5" />
-                  Analisar Meu CV Agora
+                  {pick('Analisar o Meu CV Agora', 'Analyse My CV Now', 'Analizar Mi CV Ahora')}
                 </span>
               )}
             </label>
-            <p className="text-[11px] text-muted-foreground text-center">PDF, DOCX ou Imagem • Grátis • Dados eliminados após análise</p>
+            <p className="text-[11px] text-muted-foreground text-center">{pick('PDF, DOCX ou Imagem • Grátis • Dados eliminados após análise', 'PDF, DOCX or Image • Free • Data deleted after analysis', 'PDF, DOCX o Imagen • Gratis • Datos eliminados tras el análisis')}</p>
             {!file && savedCvInfo && (
               <button
                 type="button"
@@ -1218,7 +1218,7 @@ export default function Home() {
                 className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
               >
                 <FileCheck className="w-3.5 h-3.5 inline mr-1" />
-                Usar CV guardado: {savedCvInfo.filename}
+                {pick('Usar CV guardado: ', 'Use saved CV: ', 'Usar CV guardado: ')}{savedCvInfo.filename}
               </button>
             )}
           </div>
@@ -1228,10 +1228,10 @@ export default function Home() {
             {/* Value bullets */}
             <div className="space-y-2 text-sm text-muted-foreground mb-6">
               <p className="font-semibold text-foreground text-base">{pick("Depois da análise vais ver:", "After the analysis you will see:", "Después del análisis verás:")}</p>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Score de compatibilidade ATS</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> ATS Deep Scan + Análise de Keywords</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Live Match — compara CV vs vaga</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Problemas críticos que bloqueiam entrevistas</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> {pick('Score de compatibilidade ATS', 'ATS compatibility score', 'Puntuación de compatibilidad ATS')}</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> {pick('ATS Deep Scan + Análise de Keywords', 'ATS Deep Scan + Keyword Analysis', 'ATS Deep Scan + Análisis de Palabras Clave')}</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> {pick('Live Match — compara CV vs vaga', 'Live Match — compare CV vs job', 'Live Match — compara CV vs vacante')}</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> {pick('Problemas críticos que bloqueiam entrevistas', 'Critical issues blocking interviews', 'Problemas críticos que bloquean entrevistas')}</div>
             </div>
             {/* Upload Area */}
             <div className="space-y-4">
@@ -1268,10 +1268,10 @@ export default function Home() {
                       <Upload className="w-12 h-12 mx-auto text-muted-foreground" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">
-                          Arrasta o teu CV ou clica para escolher
+                          {pick('Arrasta o teu CV ou clica para escolher', 'Drag your CV or click to choose', 'Arrastra tu CV o haz clic para elegir')}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          PDF, DOCX ou Imagem (máx. 5MB)
+                          {pick('PDF, DOCX ou Imagem (máx. 5MB)', 'PDF, DOCX or Image (max. 5MB)', 'PDF, DOCX o Imagen (máx. 5MB)')}
                         </p>
                       </div>
                     </>
@@ -1302,14 +1302,14 @@ export default function Home() {
                     className="text-xs text-[#C9A961] hover:underline font-medium"
                   >
                     <FileCheck className="w-3.5 h-3.5 inline mr-1" />
-                    Usar CV guardado: {savedCvInfo.filename}
+                    {pick('Usar CV guardado: ', 'Use saved CV: ', 'Usar CV guardado: ')}{savedCvInfo.filename}
                   </button>
                 </div>
               )}
             </div>
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5 mt-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Análise automática. O ficheiro é eliminado após o processamento.
+              {pick('Análise automática. O ficheiro é eliminado após o processamento.', 'Automatic analysis. The file is deleted after processing.', 'Análisis automático. El archivo se elimina tras el procesamiento.')}
             </p>
           </div>
 
@@ -1328,22 +1328,22 @@ export default function Home() {
               className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-border hover:border-[#C9A961]/50 bg-muted/20 hover:bg-muted/40 transition-all text-sm text-muted-foreground hover:text-foreground"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              Usar perfil LinkedIn
+              {pick('Usar perfil LinkedIn', 'Use LinkedIn profile', 'Usar perfil de LinkedIn')}
             </button>
             {showLinkedIn && (
             <div className="space-y-2 animate-in slide-in-from-top-2 duration-200 p-4 rounded-lg bg-muted/30 border border-border">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Cola o URL do teu perfil LinkedIn para extrairmos os dados automaticamente.</p>
+                <p className="text-xs text-muted-foreground">{pick('Cola o URL do teu perfil LinkedIn para extrairmos os dados automaticamente.', 'Paste your LinkedIn profile URL so we can extract the data automatically.', 'Pega la URL de tu perfil de LinkedIn para extraer los datos automáticamente.')}</p>
                 <span className="text-[10px] bg-[#C9A961]/20 text-[#C9A961] px-2 py-0.5 rounded-full font-semibold shrink-0 ml-2">{pick("PREMIUM", "PREMIUM", "PREMIUM")}</span>
               </div>
               <input
                 type="url"
                 value={linkedInUrl}
                 onChange={(e) => setLinkedInUrl(e.target.value)}
-                placeholder="https://linkedin.com/in/o-teu-perfil"
+                placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                 className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
               />
-              <p className="text-xs text-muted-foreground/70">Analisamos o teu perfil público do LinkedIn como se fosse um CV. <span className="text-[#C9A961]">{pick("Requer pacote pago.", "Requires paid package.", "Requiere paquete de pago.")}</span></p>
+              <p className="text-xs text-muted-foreground/70">{pick('Analisamos o teu perfil público do LinkedIn como se fosse um CV.', 'We analyse your public LinkedIn profile as if it were a CV.', 'Analizamos tu perfil público de LinkedIn como si fuera un CV.')} <span className="text-[#C9A961]">{pick("Requer pacote pago.", "Requires paid package.", "Requiere paquete de pago.")}</span></p>
             </div>
           )}
 
@@ -1401,7 +1401,7 @@ export default function Home() {
                   type="email"
                   value={emailForLink}
                   onChange={(e) => setEmailForLink(e.target.value)}
-                  placeholder="o.teu@email.com"
+                  placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                   className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                 />
                 <button
@@ -1441,13 +1441,13 @@ export default function Home() {
                 <div className="text-center space-y-2">
                   <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
                   <p className="text-sm font-semibold text-foreground">{pick('Pagamento confirmado!', 'Payment confirmed!', '¡Pago confirmado!')}</p>
-                  <p className="text-xs text-muted-foreground">O teu código de voucher:</p>
+                  <p className="text-xs text-muted-foreground">{pick('O teu código de voucher:', 'Your voucher code:', 'Tu código de voucher:')}</p>
                   <p className="text-lg font-bold text-[#C9A961] bg-[#C9A961]/10 rounded-lg py-2 px-4 inline-block tracking-wider">{voucherCode}</p>
-                  <p className="text-xs text-muted-foreground">Enviámos o código para <strong>{voucherEmail}</strong>. Usa-o na página de resultados após fazeres upload do teu CV.</p>
+                  <p className="text-xs text-muted-foreground">{pick('Enviámos o código para ', 'We sent the code to ', 'Enviamos el código a ')}<strong>{voucherEmail}</strong>{pick('. Usa-o na página de resultados após fazeres upload do teu CV.', '. Use it on the results page after uploading your CV.', '. Úsalo en la página de resultados después de subir tu CV.')}</p>
                 </div>
               ) : (
                 <>
-                  <p className="text-xs text-muted-foreground">Compra agora e recebe um código por email. Depois, faz upload do CV no computador e insere o código para desbloquear a análise completa.</p>
+                  <p className="text-xs text-muted-foreground">{pick('Compra agora e recebe um código por email. Depois, faz upload do CV no computador e insere o código para desbloquear a análise completa.', 'Buy now and receive a code by email. Then upload your CV on your computer and enter the code to unlock the full analysis.', 'Compra ahora y recibe un código por email. Después, sube tu CV en el ordenador e introduce el código para desbloquear el análisis completo.')}</p>
                   
                   {/* Plan Selection */}
                   <div className="grid grid-cols-3 gap-2">
@@ -1463,7 +1463,7 @@ export default function Home() {
                         }`}
                       >
                         <p className="font-semibold">{plan.price}€</p>
-                        <p className="text-[10px] text-muted-foreground">{plan.analyses} análise{plan.analyses > 1 ? 's' : ''}</p>
+                        <p className="text-[10px] text-muted-foreground">{pick(`${plan.analyses} análise${plan.analyses > 1 ? 's' : ''}`, `${plan.analyses} analysis${plan.analyses > 1 ? 'es' : ''}`, `${plan.analyses} análisis`)}</p>
                       </button>
                     ))}
                   </div>
@@ -1474,7 +1474,7 @@ export default function Home() {
                       type="email"
                       value={voucherEmail}
                       onChange={(e) => setVoucherEmail(e.target.value)}
-                      placeholder="o.teu@email.com"
+                      placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                       className="px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                     />
                     <input
@@ -1536,7 +1536,7 @@ export default function Home() {
               <div className="space-y-2 pl-2 animate-in slide-in-from-top-2 duration-200">
                 <label htmlFor="job-input" className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                   <Link className="w-3.5 h-3.5" />
-                  Link do anúncio e/ou nome da função
+                  {pick('Link do anúncio e/ou nome da função', 'Job posting link and/or role name', 'Enlace de la oferta y/o nombre del puesto')}
                 </label>
                 <textarea
                   id="job-input"
@@ -1597,7 +1597,7 @@ export default function Home() {
               type="email"
               value={analysisEmail}
               onChange={(e) => { setAnalysisEmail(e.target.value); setAnalysisEmailError(null); }}
-              placeholder="o.teu@email.com"
+              placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
               className={`w-full px-3 py-2.5 rounded-lg border ${analysisEmailError ? 'border-red-500 ring-2 ring-red-500/30' : 'border-border'} bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]`}
               disabled={loading}
             />
@@ -1665,7 +1665,7 @@ export default function Home() {
                   <svg className="w-6 h-6 text-[#C9A961]" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 </div>
                 <h3 className="text-lg font-bold text-white">{pick("Análise LinkedIn é Premium", "LinkedIn Analysis is Premium", "El análisis de LinkedIn es Premium")}</h3>
-                <p className="text-sm text-white/70">A análise via LinkedIn requer um pacote pago. Obtém um relatório completo com score ATS, estimativa salarial e recomendações personalizadas.</p>
+                <p className="text-sm text-white/70">{pick('A análise via LinkedIn requer um pacote pago. Obtém um relatório completo com score ATS, estimativa salarial e recomendações personalizadas.', 'LinkedIn analysis requires a paid package. Get a full report with ATS score, salary estimate, and personalised recommendations.', 'El análisis por LinkedIn requiere un paquete de pago. Obtén un informe completo con puntuación ATS, estimación salarial y recomendaciones personalizadas.')}</p>
               </div>
 
               {/* Discount code input */}
@@ -1683,7 +1683,7 @@ export default function Home() {
                     type="button"
                     onClick={async () => {
                       if (!linkedInVoucherCode.trim()) {
-                        setLinkedInVoucherError('Introduz um código.');
+                        setLinkedInVoucherError(pick('Introduz um código.', 'Enter a code.', 'Introduce un código.'));
                         return;
                       }
                       const valid = await validateVoucherForLinkedIn(linkedInVoucherCode.trim());
@@ -1695,7 +1695,7 @@ export default function Home() {
                     className="px-4 py-2 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white text-sm font-semibold transition-colors disabled:opacity-50 flex items-center gap-1.5"
                   >
                     {linkedInVoucherValidating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                    Validar
+                    {pick('Validar', 'Validate', 'Validar')}
                   </button>
                 </div>
                 {linkedInVoucherError && (
@@ -1706,7 +1706,7 @@ export default function Home() {
               {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-white/20" />
-                <span className="text-xs text-white/50">ou compra agora</span>
+                <span className="text-xs text-white/50">{pick('ou compra agora', 'or buy now', 'o compra ahora')}</span>
                 <div className="flex-1 h-px bg-white/20" />
               </div>
 
@@ -1753,7 +1753,7 @@ export default function Home() {
                     type="email"
                     value={liPaywallEmail}
                     onChange={(e) => setLiPaywallEmail(e.target.value)}
-                    placeholder="o.teu@email.com"
+                    placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                     className="w-full px-3 py-2.5 rounded-lg border border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
                   />
                   <input
@@ -1775,7 +1775,7 @@ export default function Home() {
                     className="w-full py-3 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white text-sm font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {liPaywallStatus === 'polling' ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Confirma no telemóvel (MB Way)...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> {pick('Confirma no telemóvel (MB Way)...', 'Confirm on your phone (MB Way)...', 'Confirma en tu móvil (MB Way)...')}</>
                     ) : liPaywallLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> {pick('A processar...', 'Processing...', 'Procesando...')}</>
                     ) : (

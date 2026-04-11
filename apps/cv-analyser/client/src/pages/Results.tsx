@@ -2356,7 +2356,7 @@ export default function Results() {
             </div>
             <div className="text-center p-3 bg-[#C9A961]/10 rounded-lg border border-[#C9A961]/20">
               <p className="text-xs text-muted-foreground">{t('posio')}</p>
-              <p className="text-xl font-bold text-[#C9A961]">Top {100 - percentile}%</p>
+              <p className="text-xl font-bold text-[#C9A961]">{pick(`Top ${100 - percentile}%`, `Top ${100 - percentile}%`, `Top ${100 - percentile}%`)}</p>
             </div>
             <div className="text-center p-3 bg-muted/30 rounded-lg">
               <p className="text-xs text-muted-foreground">{t('score_global')}</p>

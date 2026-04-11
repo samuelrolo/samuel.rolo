@@ -638,10 +638,10 @@ export default function StudentPackHome() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> {pick("Perfil LinkedIn", "LinkedIn Profile", "Perfil de LinkedIn")}</label>
-              <input type="url" placeholder="https://linkedin.com/in/o-teu-perfil" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
+              <input type="url" placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')} value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> Email</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> {pick('E-mail', 'Email', 'Correo electrónico')}</label>
               <input type="email" placeholder={pick("o-teu@email.com", "your@email.com", "tu@email.com")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
             </div>
             <div className="space-y-2">
@@ -748,9 +748,9 @@ export default function StudentPackHome() {
               </div>
               {paymentMethod === 'mbway' && isPT && (
                 <div className="space-y-3">
-                  <input type="tel" placeholder="Número de telemóvel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" />
+                  <input type="tel" placeholder={pick('Número de telemóvel', 'Phone number', 'Número de teléfono')} value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" />
                   <Button onClick={handleMBWayPayment} disabled={paymentLoading} className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl">
-                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${finalPriceStr}€ com MB WAY`}
+                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : pick(`Pagar ${finalPriceStr}€ com MB WAY`, `Pay ${finalPriceStr}€ with MB WAY`, `Pagar ${finalPriceStr}€ con MB WAY`)}
                   </Button>
                 </div>
               )}

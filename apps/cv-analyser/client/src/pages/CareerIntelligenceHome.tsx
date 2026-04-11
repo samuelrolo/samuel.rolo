@@ -1001,7 +1001,7 @@ export default function CareerIntelligenceHome() {
 
               {/* Email */}
               <div className="space-y-2">
-                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <p className="text-sm font-medium">{pick('5. E-mail', '5. Email', '5. Correo electrónico')} <span className="text-red-500">*</span></p>
                 <input
                   type="email"
                   placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}

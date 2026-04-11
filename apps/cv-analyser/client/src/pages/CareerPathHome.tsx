@@ -891,7 +891,7 @@ export default function CareerPathHome() {
                   <Linkedin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <input
                     type="url"
-                    placeholder="https://linkedin.com/in/o-teu-perfil"
+                    placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                     disabled={loading}
@@ -968,7 +968,7 @@ export default function CareerPathHome() {
 
               {/* Email */}
               <div className="space-y-2">
-                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <p className="text-sm font-medium">{pick('5. E-mail', '5. Email', '5. Correo electrónico')} <span className="text-red-500">*</span></p>
                 <input
                   type="email"
                     placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
