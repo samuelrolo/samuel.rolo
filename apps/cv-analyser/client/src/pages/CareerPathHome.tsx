@@ -28,8 +28,8 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const getPageLang = () => window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
-const getPageBasePath = () => getPageLang() === 'es' ? '/es' : '';
+const getPageLang = () => window.location.pathname.startsWith('/en/') ? 'en' : window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
+const getPageBasePath = () => getPageLang() === 'en' ? '/en' : getPageLang() === 'es' ? '/es' : '';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();

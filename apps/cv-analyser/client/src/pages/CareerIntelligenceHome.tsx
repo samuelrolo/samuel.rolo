@@ -50,8 +50,8 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
 }
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const getPageLang = () => window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
-const getPageBasePath = () => getPageLang() === 'es' ? '/es' : '';
+const getPageLang = () => window.location.pathname.startsWith('/en/') ? 'en' : window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
+const getPageBasePath = () => getPageLang() === 'en' ? '/en' : getPageLang() === 'es' ? '/es' : '';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();

@@ -452,7 +452,7 @@ export default function Results() {
     const pPT = !pEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));
     if (pEN) return 'stripe';
     if (pPT) return 'mbway';
-    return sessionStorage.getItem('analysisLang') === 'en' ? 'stripe' : 'mbway';
+    return sessionStorage.getItem('analysisLang') === 'pt' ? 'mbway' : 'stripe';
   });
   const isEN = lang === 'en';
 
@@ -566,7 +566,7 @@ export default function Results() {
     const pPT = !pEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));
     if (pEN) return 'stripe';
     if (pPT) return 'mbway';
-    return sessionStorage.getItem('analysisLang') === 'en' ? 'stripe' : 'mbway';
+    return sessionStorage.getItem('analysisLang') === 'pt' ? 'mbway' : 'stripe';
   });
   const [careerPathPollingMsg, setCareerPathPollingMsg] = useState('');
   const [cvText, setCvText] = useState('');
@@ -1351,13 +1351,13 @@ export default function Results() {
       );
 
       if (updateResponse.ok) {
-        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.`, `¡Código válido! Análisis desbloqueado. Quedan ${remaining - 1} análisis.`));
+        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise${remaining - 1 === 1 ? '' : 's'}.`, `Valid code! Analysis unlocked. ${remaining - 1} ${remaining - 1 === 1 ? 'use' : 'uses'} remaining.`, `¡Código válido! Análisis desbloqueado. Quedan ${remaining - 1} análisis.`));
         unlockFullReport();
         updateAnalysisPayment(selectedPlan.price, 'voucher', code);
         
         if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
           sessionStorage.setItem('careerPathIncluded', 'true');
-          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.`, `¡Código válido! Análisis + Career Path desbloqueados. Quedan ${remaining - 1} análisis.`));
+          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise${remaining - 1 === 1 ? '' : 's'}.`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} ${remaining - 1 === 1 ? 'use' : 'uses'} remaining.`, `¡Código válido! Análisis + Career Path desbloqueados. Quedan ${remaining - 1} análisis.`));
         }
         
         setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
@@ -2608,7 +2608,7 @@ export default function Results() {
                           <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">#{i + 1}</span>
                           <span className="text-sm font-semibold text-foreground">{action.action}</span>
                         </div>
-                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{lang === 'en' ? (action.impact === 'Alto' ? 'High' : action.impact === 'Médio' ? 'Medium' : action.impact === 'Baixo' ? 'Low' : action.impact) : action.impact} {t('pontos')}</span>
+                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{pick(action.impact === 'Alto' ? 'Alto' : action.impact === 'Médio' ? 'Médio' : action.impact === 'Baixo' ? 'Baixo' : action.impact, action.impact === 'Alto' ? 'High' : action.impact === 'Médio' ? 'Medium' : action.impact === 'Baixo' ? 'Low' : action.impact, action.impact === 'Alto' ? 'Alto' : action.impact === 'Médio' ? 'Medio' : action.impact === 'Baixo' ? 'Bajo' : action.impact)} {t('pontos')}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                         <div className="p-3">
@@ -3595,7 +3595,7 @@ export default function Results() {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">{t('mtodo_de_pagamento')}</label>
                 <div className={`grid gap-3 ${t('gridcols2')}`}>
-                  {lang === 'en' ? (
+                  {lang !== 'pt' ? (
                     <>
                       <button
                         onClick={() => setPaymentMethod('stripe')}
@@ -3851,7 +3851,7 @@ export default function Results() {
                       <div className="mt-4 p-4 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg">
                         <p className="text-xs text-muted-foreground mb-1">{t('o_teu_cdigo_para_futuras')}</p>
                         <p className="text-xl font-mono font-bold text-[#C9A961]">{storedVoucherCode}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise(s)`, `${storedVoucherRemaining} analysis(es) remaining`, `Quedan ${storedVoucherRemaining} análisis`)}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise${storedVoucherRemaining === 1 ? '' : 's'}`, `${storedVoucherRemaining} ${storedVoucherRemaining === 1 ? 'analysis' : 'analyses'} remaining`, `Quedan ${storedVoucherRemaining} análisis`)}</p>
                       </div>
                     )}
                   </>

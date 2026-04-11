@@ -571,7 +571,7 @@ export default function Home() {
       sessionStorage.setItem('cvAnalysis', JSON.stringify(analysisResult));
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', file.name);
-      sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisLang', lang);
       // Store extracted CV text for Live Match feature
       if (cvText && cvText.length > 0) {
         sessionStorage.setItem('cvText', cvText.substring(0, 15000));
@@ -593,7 +593,7 @@ export default function Home() {
       const welcomeEmail = sessionStorage.getItem('paymentEmail') || analysisEmail;
       const cpWelcome = analysisSource?.candidate_profile || analysisSource?.analysis?.candidate_profile || {};
       const welcomeName = cpWelcome.detected_name || '';
-      if (welcomeEmail) sendWelcomeEmail(welcomeEmail, welcomeName, 'pt');
+      if (welcomeEmail) sendWelcomeEmail(welcomeEmail, welcomeName, lang);
 
       // Persist CV to Supabase Storage for future sessions
       persistCvToStorage(base64Content, file.name);
@@ -828,7 +828,7 @@ export default function Home() {
       sessionStorage.setItem('cvAnalysis', JSON.stringify(analysisResult));
       sessionStorage.setItem('cvFile', '');
       sessionStorage.setItem('cvFilename', 'linkedin-profile');
-      sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisLang', lang);
       // Store scraped text for Live Match (LinkedIn flow)
       if (scrapeData?.cv_text) {
         sessionStorage.setItem('cvText', scrapeData.cv_text.substring(0, 15000));
@@ -848,7 +848,7 @@ export default function Home() {
 
       // Fire-and-forget: send welcome email (LinkedIn flow)
       const liEmail = sessionStorage.getItem('paymentEmail') || '';
-      if (liEmail) sendWelcomeEmail(liEmail, '', 'pt');
+      if (liEmail) sendWelcomeEmail(liEmail, '', lang);
 
       const elapsed = Date.now() - startTime;
       const remaining = 2800 - elapsed;
@@ -918,7 +918,7 @@ export default function Home() {
           console.error('[PAYMENT] Polling error:', pollErr);
         }
       }
-      if (!paid) throw new Error('Tempo de pagamento expirado. Tenta novamente.');
+      if (!paid) throw new Error(pick('Tempo de pagamento expirado. Tenta novamente.', 'Payment window expired. Please try again.', 'El tiempo de pago expiró. Inténtalo de nuevo.'));
       // Create voucher with error handling
       const code = `S2I-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       const voucherPayload = {
@@ -960,7 +960,7 @@ export default function Home() {
         });
         if (!retryRes.ok) {
           console.error('[PAYMENT] Voucher INSERT retry failed:', retryRes.status);
-          throw new Error('Pagamento confirmado mas erro ao criar voucher. Contacta suporte com ref: ' + orderId);
+          throw new Error(pick('Pagamento confirmado, mas houve um erro ao criar o voucher. Contacta o suporte com a referência: ', 'Payment confirmed, but there was an error creating the voucher. Contact support with reference: ', 'Pago confirmado, pero hubo un error al crear el voucher. Contacta con soporte con la referencia: ') + orderId);
         }
       }
       const voucherData = await voucherRes.json();
@@ -1037,7 +1037,7 @@ export default function Home() {
           console.error('[PAYMENT] Polling error:', pollErr);
         }
       }
-      if (!paid) throw new Error('Tempo de pagamento expirado. Tenta novamente.');
+      if (!paid) throw new Error(pick('Tempo de pagamento expirado. Tenta novamente.', 'Payment window expired. Please try again.', 'El tiempo de pago expiró. Inténtalo de nuevo.'));
       // Create voucher with error handling
       const code = `S2I-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       const voucherPayload = {
@@ -1079,7 +1079,7 @@ export default function Home() {
         });
         if (!retryRes.ok) {
           console.error('[PAYMENT] Voucher INSERT retry failed:', retryRes.status);
-          throw new Error('Pagamento confirmado mas erro ao criar voucher. Contacta suporte com ref: ' + orderId);
+          throw new Error(pick('Pagamento confirmado, mas houve um erro ao criar o voucher. Contacta o suporte com a referência: ', 'Payment confirmed, but there was an error creating the voucher. Contact support with reference: ', 'Pago confirmado, pero hubo un error al crear el voucher. Contacta con soporte con la referencia: ') + orderId);
         }
       }
       const voucherData = await voucherRes.json();
@@ -1115,11 +1115,11 @@ export default function Home() {
       <S2IHeader activePage="cv-analyser" />
 
       {/* Bundle Banner — Value-focused, no explicit price */}
-      <a href="/bundle" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
+      <a href={localePath('/bundle')} className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">{pick("Mais popular", "Most popular", "Más popular")}</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">{pick("Bundle", "Bundle", "Bundle")}</strong> — Diagnóstico CV + Roadmap de Carreira num só passo
+            <strong className="text-[#C9A961]">{pick("Bundle", "Bundle", "Bundle")}</strong> — {pick('Diagnóstico CV + Roadmap de Carreira num só passo', 'CV diagnosis + career roadmap in a single step', 'Diagnóstico de CV + hoja de ruta profesional en un solo paso')}
           </span>
           <span className="text-xs bg-[#C9A961] text-white px-3 py-1 rounded-full font-semibold shrink-0">{pick("Descobrir →", "Discover →", "Descubrir →")}</span>
         </div>
@@ -1153,7 +1153,7 @@ export default function Home() {
           </div>
 
           <a
-            href="/cv-analyser/demo/"
+            href={localePath('/cv-analyser/demo/')}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-all text-sm font-medium text-[#C9A961] hover:scale-105"
@@ -1725,7 +1725,7 @@ export default function Home() {
                         className="p-3 rounded-lg border border-white/20 bg-white/5 hover:border-[#C9A961]/50 hover:bg-[#C9A961]/10 transition-all text-center"
                       >
                         <p className="text-lg font-bold text-[#C9A961]">{plan.price}€</p>
-                        <p className="text-xs text-white/60">{plan.analyses} análise{plan.analyses > 1 ? 's' : ''}</p>
+                        <p className="text-xs text-white/60">{pick(`${plan.analyses} análise${plan.analyses > 1 ? 's' : ''}`, `${plan.analyses} analysis${plan.analyses > 1 ? 'es' : ''}`, `${plan.analyses} análisis`)}</p>
                         <p className="text-[10px] text-white/40 mt-0.5">{plan.perUnit}€/un.</p>
                       </button>
                     ))}
@@ -1782,7 +1782,7 @@ export default function Home() {
                       <>{pick('Comprar e Analisar', 'Buy and Analyse', 'Comprar y Analizar')} — {pricingPlans[liPaywallPlan].price}€</>
                     )}
                   </button>
-                  <p className="text-[10px] text-white/40 text-center">{pick('Pagamento seguro via MB Way. A análise inicia automaticamente.', 'Secure payment via Stripe/PayPal. Analysis starts automatically.', 'Pago seguro. El análisis comienza automáticamente.')}</p>
+                  <p className="text-[10px] text-white/40 text-center">{pick('Pagamento seguro via MB WAY. A análise inicia automaticamente.', 'Secure payment via MB WAY. Analysis starts automatically.', 'Pago seguro vía MB WAY. El análisis comienza automáticamente.')}</p>
                 </div>
               )}
 
