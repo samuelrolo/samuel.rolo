@@ -3666,7 +3666,7 @@ export default function Results() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="912345678"
+                    placeholder={pick('912345678', '912345678', '912345678')}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                 </div>

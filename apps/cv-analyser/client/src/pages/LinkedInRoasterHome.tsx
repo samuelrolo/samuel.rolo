@@ -649,7 +649,7 @@ export default function LinkedInRoasterHome() {
                 {paymentMethod === 'mbway' && isPT && (
                   <div>
                     <label className="text-sm font-medium text-slate-700 mb-1 block">{pick("Número de telemóvel", "Phone number", "Número de teléfono")}</label>
-                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="912 345 678" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={pick('912 345 678', '912 345 678', '912 345 678')} className="w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                 )}
 

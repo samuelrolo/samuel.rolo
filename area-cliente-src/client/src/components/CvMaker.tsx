@@ -704,7 +704,7 @@ export default function CvMaker({ lang, onLangChange, supabaseUrl, supabaseAnonK
                 <div><label className={labelClass}>{pick('Empresa', 'Company', 'Empresa')}</label><input className={inputClass} value={exp.company || ''} onChange={e => updateExperience(i, 'company', e.target.value)} /></div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-2">
-                <div><label className={labelClass}>{pick('Período', 'Period', 'Periodo')}</label><input className={inputClass} value={exp.period || exp.date_period || ''} onChange={e => updateExperience(i, 'period', e.target.value)} placeholder="Jan 2020 - Present" /></div>
+                <div><label className={labelClass}>{pick('Período', 'Period', 'Periodo')}</label><input className={inputClass} value={exp.period || exp.date_period || ''} onChange={e => updateExperience(i, 'period', e.target.value)} placeholder={pick('Jan 2020 - Presente', 'Jan 2020 - Present', 'Ene 2020 - Actualidad')} /></div>
                 <div><label className={labelClass}>{pick('Local', 'Location', 'Ubicación')}</label><input className={inputClass} value={exp.location || ''} onChange={e => updateExperience(i, 'location', e.target.value)} /></div>
               </div>
               <label className={labelClass}>{pick('Realizações', 'Achievements', 'Logros')}</label>
@@ -809,7 +809,7 @@ export default function CvMaker({ lang, onLangChange, supabaseUrl, supabaseAnonK
           <div className="flex gap-2 items-end mt-2">
             <div className="flex-1"><label className={labelClass}>{pick('Nome', 'Name', 'Nombre')}</label><input className={inputClass} value={newCert.name} onChange={e => setNewCert(prev => ({ ...prev, name: e.target.value }))} /></div>
             <div className="flex-1"><label className={labelClass}>{pick('Entidade', 'Issuer', 'Entidad')}</label><input className={inputClass} value={newCert.issuer || ''} onChange={e => setNewCert(prev => ({ ...prev, issuer: e.target.value }))} /></div>
-            <div className="w-28"><label className={labelClass}>{pick('Data', 'Date', 'Fecha')}</label><input className={inputClass} value={newCert.date || ''} onChange={e => setNewCert(prev => ({ ...prev, date: e.target.value }))} placeholder="2024" /></div>
+            <div className="w-28"><label className={labelClass}>{pick('Data', 'Date', 'Fecha')}</label><input className={inputClass} value={newCert.date || ''} onChange={e => setNewCert(prev => ({ ...prev, date: e.target.value }))} placeholder={pick('2024', '2024', '2024')} /></div>
             <button onClick={addCertification} className="px-3 py-2 rounded-lg bg-[#BFA14A] text-white text-sm hover:bg-[#8F7A3A] transition-colors mb-[1px]"><Plus className="w-4 h-4" /></button>
           </div>
         </div>

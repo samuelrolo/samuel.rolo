@@ -1236,7 +1236,7 @@ export default function CareerPathHome() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="9XXXXXXXX"
+                        placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
                         className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                       />
                     </div>

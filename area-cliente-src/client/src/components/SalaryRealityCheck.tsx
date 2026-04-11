@@ -160,11 +160,11 @@ export default function SalaryRealityCheck({ userEmail = '', userName = '' }: Sa
         body: JSON.stringify(buildPackage()),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro na análise');
+      if (!res.ok) throw new Error(data.error || pick('Erro na análise', 'Analysis error', 'Error en el análisis'));
       setResult(data);
       setStep(3);
     } catch (e: any) {
-      setError(e.message || 'Erro na análise. Verifica os dados e tenta novamente.');
+      setError(e.message || pick('Erro na análise. Verifica os dados e tenta novamente.', 'Analysis error. Check your data and try again.', 'Error en el análisis. Revisa tus datos e inténtalo de nuevo.'));
     } finally {
       setLoading(false);
     }

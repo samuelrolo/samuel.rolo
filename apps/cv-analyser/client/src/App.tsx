@@ -90,12 +90,12 @@ function usePageTitle() {
         'Share2Inspire — Bundle',
         'Share2Inspire — Bundle',
       ],
-      '/pages/knowledge': [
+      '/knowledge': [
         'Share2Inspire — Knowledge Hub',
         'Share2Inspire — Knowledge Hub',
         'Share2Inspire — Centro de Conocimiento',
       ],
-      '/pages/services': [
+      '/services': [
         'Share2Inspire — Serviços',
         'Share2Inspire — Services',
         'Share2Inspire — Servicios',
@@ -204,10 +204,10 @@ function AppRouter() {
     );
   }
 
-  // EN Knowledge Hub: /en/pages/knowledge
-  if (pathname.startsWith('/en/pages/knowledge')) {
+  // EN Knowledge Hub: /en/knowledge
+  if (pathname.startsWith('/en/knowledge')) {
     return (
-      <Router base="/en/pages/knowledge">
+      <Router base="/en/knowledge">
         <Switch>
           <Route path="/" component={KnowledgeHubPageEN} />
           <Route component={NotFound} />
@@ -216,10 +216,10 @@ function AppRouter() {
     );
   }
 
-  // EN Services Page: /en/pages/services
-  if (pathname.startsWith('/en/pages/services')) {
+  // EN Services Page: /en/services
+  if (pathname.startsWith('/en/services')) {
     return (
-      <Router base="/en/pages/services">
+      <Router base="/en/services">
         <Switch>
           <Route path="/" component={ServicesPageEN} />
           <Route component={NotFound} />
@@ -346,10 +346,10 @@ function AppRouter() {
     );
   }
 
-  // ES Knowledge Hub: /es/pages/knowledge
-  if (pathname.startsWith('/es/pages/knowledge')) {
+  // ES Knowledge Hub: /es/knowledge
+  if (pathname.startsWith('/es/knowledge')) {
     return (
-      <Router base="/es/pages/knowledge">
+      <Router base="/es/knowledge">
         <Switch>
           <Route path="/" component={KnowledgeHubPage} />
           <Route component={NotFound} />
@@ -358,10 +358,10 @@ function AppRouter() {
     );
   }
 
-  // ES Services: /es/pages/services
-  if (pathname.startsWith('/es/pages/services')) {
+  // ES Services: /es/services
+  if (pathname.startsWith('/es/services')) {
     return (
-      <Router base="/es/pages/services">
+      <Router base="/es/services">
         <Switch>
           <Route path="/" component={ServicosPage} />
           <Route component={NotFound} />

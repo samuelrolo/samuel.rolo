@@ -1622,7 +1622,7 @@ export default function Home() {
             <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
               {pick('Concordo com a', 'I agree to the', 'Acepto la')}{' '}
               <a 
-                href="https://www.share2inspire.pt/pages/politica-privacidade" 
+                href={localePath('/politica-privacidade')} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#C9A961] hover:underline"
