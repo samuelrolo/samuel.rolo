@@ -64,7 +64,7 @@ export default function Header() {
         <div className="flex items-center gap-4 shrink-0">
           <Link href="/perfil" className="flex items-center group">
             <img
-              src="/logo-transparent.png"
+              src="/logo-s2i.png"
               alt="Share2Inspire"
               className="h-10 lg:h-11 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300"
             />

@@ -12,7 +12,7 @@ import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText,
    ────────────────────────────────────────────────────────── */
 
 const CDN = {
-  logo: '/logo-transparent.png',
+  logo: '/logo-s2i.png',
 };
 
 function pickCopy(lang: 'pt' | 'en' | 'es', pt: string, en: string, es: string): string {
