@@ -742,7 +742,7 @@ export default function Results() {
               mode: 'career_path',
               cv_text: cvTextForCP,
               linkedin_url: linkedinForCP || undefined,
-              language: t('pt'),
+              language: lang,
               country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
               region: sessionStorage.getItem('analysisRegion') || '',
             })
@@ -808,6 +808,7 @@ export default function Results() {
 
             const requestBody: any = {
               mode: 'cv_extraction',
+              language: lang,
               country,
               region: region || undefined,
               job_description: realJobText.substring(0, 5000)
@@ -934,7 +935,7 @@ export default function Results() {
           name: email.split('@')[0],
           product_type: 'cv_analysis',
           orderId,
-          language: t('pt'),
+          language: lang,
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
@@ -1402,7 +1403,7 @@ export default function Results() {
             name: careerPathEmail.split('@')[0],
             product_type: 'career_path',
             orderId,
-            language: t('pt'),
+            language: lang,
             country: sessionStorage.getItem('analysisCountry') || '',
             region: sessionStorage.getItem('analysisRegion') || '',
             currency: cpCurrencyCode,
@@ -1519,7 +1520,7 @@ export default function Results() {
           mode: 'career_path',
           cv_text: cvData || '',
           linkedin_url: linkedinUrl || undefined,
-          language: t('pt'),
+          language: lang,
           country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
           region: sessionStorage.getItem('analysisRegion') || '',
         })

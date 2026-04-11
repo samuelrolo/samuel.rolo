@@ -358,7 +358,11 @@ export default function CareerPathResults() {
   };
   const fmtDiscountedPrice = (price: string) => {
     const discounted = getDiscountedPriceNum(price);
-    return lang === 'en' ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
+    return pick(
+      discounted.toFixed(2).replace('.', ','),
+      discounted.toFixed(2),
+      discounted.toFixed(2).replace('.', ',')
+    );
   };
 
   // Email report
@@ -2137,8 +2141,8 @@ export default function CareerPathResults() {
               {/* Payment method */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
-                <div className={`grid gap-2 ${lang === 'en' ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                  {((lang === 'en' ? ['stripe', 'paypal'] : ['mbway', 'stripe', 'paypal']) as const).map((method) => {
+                <div className={`grid gap-2 ${lang === 'pt' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                  {((lang === 'pt' ? ['mbway', 'stripe', 'paypal'] : ['stripe', 'paypal']) as const).map((method) => {
                     const activeClass = method === 'stripe'
                       ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
                       : method === 'paypal'

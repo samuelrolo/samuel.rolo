@@ -235,7 +235,12 @@ export default function BundleHome() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
         try {
-          const requestBody: any = { mode: 'cv_extraction' };
+          const requestBody: any = {
+            mode: 'cv_extraction',
+            language: lang,
+            country: currentCountry,
+            region: currentRegion || undefined,
+          };
           if (useServerExtraction) {
             requestBody.file = base64Content;
             requestBody.filename = cvFilename;
