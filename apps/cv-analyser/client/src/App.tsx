@@ -204,7 +204,7 @@ function AppRouter() {
     );
   }
 
-  // EN Knowledge Hub: /en/knowledge
+  // EN Knowledge Hub: /en/knowledge (+ aliases /en/conhecimento, /en/pages/knowledge)
   if (pathname.startsWith('/en/knowledge')) {
     return (
       <Router base="/en/knowledge">
@@ -216,7 +216,29 @@ function AppRouter() {
     );
   }
 
-  // EN Services Page: /en/services
+  if (pathname.startsWith('/en/conhecimento')) {
+    return (
+      <Router base="/en/conhecimento">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  if (pathname.startsWith('/en/pages/knowledge')) {
+    return (
+      <Router base="/en/pages/knowledge">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN Services Page: /en/services (+ aliases /en/sobre, /en/pages/services)
   if (pathname.startsWith('/en/services')) {
     return (
       <Router base="/en/services">
@@ -228,7 +250,29 @@ function AppRouter() {
     );
   }
 
-  // EN About: /en/about
+  if (pathname.startsWith('/en/servicos')) {
+    return (
+      <Router base="/en/servicos">
+        <Switch>
+          <Route path="/" component={ServicesPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  if (pathname.startsWith('/en/pages/services')) {
+    return (
+      <Router base="/en/pages/services">
+        <Switch>
+          <Route path="/" component={ServicesPageEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN About: /en/about (+ alias /en/sobre)
   if (pathname.startsWith('/en/about')) {
     return (
       <Router base="/en/about">
@@ -240,10 +284,32 @@ function AppRouter() {
     );
   }
 
-  // EN Contact: /en/contact
+  if (pathname.startsWith('/en/sobre')) {
+    return (
+      <Router base="/en/sobre">
+        <Switch>
+          <Route path="/" component={AboutPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN Contact: /en/contact (+ alias /en/contactos)
   if (pathname.startsWith('/en/contact')) {
     return (
       <Router base="/en/contact">
+        <Switch>
+          <Route path="/" component={ContactPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  if (pathname.startsWith('/en/contactos')) {
+    return (
+      <Router base="/en/contactos">
         <Switch>
           <Route path="/" component={ContactPage} />
           <Route component={NotFound} />
@@ -346,7 +412,18 @@ function AppRouter() {
     );
   }
 
-  // ES Knowledge Hub: /es/knowledge
+  // ES Knowledge Hub: /es/conocimiento (+ alias /es/knowledge)
+  if (pathname.startsWith('/es/conocimiento')) {
+    return (
+      <Router base="/es/conocimiento">
+        <Switch>
+          <Route path="/" component={KnowledgeHubPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   if (pathname.startsWith('/es/knowledge')) {
     return (
       <Router base="/es/knowledge">
@@ -358,7 +435,18 @@ function AppRouter() {
     );
   }
 
-  // ES Services: /es/services
+  // ES Services: /es/servicos (+ alias /es/services)
+  if (pathname.startsWith('/es/servicos')) {
+    return (
+      <Router base="/es/servicos">
+        <Switch>
+          <Route path="/" component={ServicosPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   if (pathname.startsWith('/es/services')) {
     return (
       <Router base="/es/services">
