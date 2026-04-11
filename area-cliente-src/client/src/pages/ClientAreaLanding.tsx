@@ -12,8 +12,14 @@ import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText,
    ────────────────────────────────────────────────────────── */
 
 const CDN = {
-  logo: 'https://share2inspire.pt/images/logo.webp',
+  logo: '/logo-transparent.png',
 };
+
+function pickCopy(lang: 'pt' | 'en' | 'es', pt: string, en: string, es: string): string {
+  if (lang === 'pt') return pt;
+  if (lang === 'es') return es;
+  return en;
+}
 
 const i18n = {
   pt: {
@@ -550,6 +556,12 @@ export default function ClientAreaLanding() {
   });
   const [expandedFeat, setExpandedFeat] = useState<number | null>(null);
   const t = i18n[lang];
+  const footerSlogan = pickCopy(
+    lang,
+    'Partilhar conhecimento, Inspirar Carreiras!',
+    'Share Knowledge, Inspire Careers!',
+    'Compartir Conocimiento, ¡Inspirar Carreras!',
+  );
 
   const toggleLang = () => {
     const langs: Array<'pt' | 'en' | 'es'> = ['pt', 'en', 'es'];
@@ -943,12 +955,15 @@ export default function ClientAreaLanding() {
 
       {/* ─── Footer ─── */}
       <footer className="py-8 bg-[#1a1a1a] border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-white/40 text-xs">
-            <img src={CDN.logo} alt="S2I" className="h-5 w-auto opacity-40" />
-            Share2Inspire &copy; {new Date().getFullYear()}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <img src={CDN.logo} alt="Share2Inspire" className="h-9 sm:h-10 w-auto object-contain" />
+            <div>
+              <div className="text-white/85 text-sm font-semibold">Share2Inspire &copy; {new Date().getFullYear()}</div>
+              <p className="text-white/55 text-sm mt-1">{footerSlogan}</p>
+            </div>
           </div>
-          <div className="flex gap-6 text-white/40 text-xs">
+          <div className="flex flex-wrap justify-center gap-6 text-white/40 text-xs">
             <a href="https://share2inspire.pt/privacidade" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Privacidade' : lang === 'es' ? 'Privacidad' : 'Privacy'}</a>
             <a href="https://share2inspire.pt/termos" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Termos' : lang === 'es' ? 'Términos' : 'Terms'}</a>
             <a href="https://share2inspire.pt" className="hover:text-white/60 transition-colors">{lang === 'pt' ? 'Site principal' : lang === 'es' ? 'Sitio principal' : 'Main site'}</a>

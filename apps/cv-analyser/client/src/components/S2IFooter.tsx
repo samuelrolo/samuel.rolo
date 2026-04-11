@@ -47,8 +47,11 @@ export default function S2IFooter() {
           <div className="s2i-footer-grid">
             {/* Logo */}
             <div className="s2i-footer-logo">
-              <img loading="lazy" src="/images/logo-sem-fundo.png" alt={pick('Logótipo Share2Inspire', 'Share2Inspire logo', 'Logotipo Share2Inspire')}
-                style={{ height: '200px', width: 'auto', marginBottom: '16px' }} />
+              <img loading="lazy" src="/logo-transparent.png" alt={pick('Logótipo Share2Inspire', 'Share2Inspire logo', 'Logotipo Share2Inspire')}
+                style={{ height: '40px', width: 'auto', marginBottom: '16px' }} />
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', lineHeight: '1.7', margin: 0, maxWidth: '320px' }}>
+                {pick('Partilhar conhecimento, Inspirar Carreiras!', 'Share Knowledge, Inspire Careers!', 'Compartir Conocimiento, ¡Inspirar Carreras!')}
+              </p>
             </div>
             {/* Navigation */}
             <div>

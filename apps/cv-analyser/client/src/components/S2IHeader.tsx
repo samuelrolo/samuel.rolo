@@ -298,9 +298,9 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
           {/* Logo */}
           <a href={getHomeUrl(lang)} className="shrink-0">
             <img
-              src="https://www.share2inspire.pt/images/logo-s.png"
+              src="/logo-transparent.png"
               alt={logoAlt}
-              className="h-6 lg:h-8"
+              className="h-10 lg:h-12 w-auto object-contain"
               style={{ width: "auto" }}
             />
           </a>
@@ -393,7 +393,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         <div className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <div className="flex items-center justify-between px-4 h-11 border-b border-slate-200/80">
             <a href={getHomeUrl(lang)} className="shrink-0">
-              <img src="https://www.share2inspire.pt/images/logo-s.png" alt={logoAlt} className="h-6" style={{ width: "auto" }} />
+              <img src="/logo-transparent.png" alt={logoAlt} className="h-10 w-auto object-contain" style={{ width: "auto" }} />
             </a>
             <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 text-slate-800" aria-label={closeMenuLabel}>
               <X className="w-5 h-5" />

@@ -152,11 +152,14 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
       {/* Header */}
       <header className="border-b border-foreground/10 px-3 sm:px-6 py-4 sticky top-0 bg-background/90 backdrop-blur-lg z-50">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <GoldIcon size="w-8 h-8">
-              <FileCheck className="w-4 h-4 text-[#C9A961]" />
-            </GoldIcon>
-            <span className="font-semibold text-sm text-foreground">{pick({ pt: 'Share2Inspire — Relatório Completo', en: 'Share2Inspire — Full Report', es: 'Share2Inspire — Informe Completo' })}</span>
+          <div className="flex items-center gap-3">
+            <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
+            <div className="flex items-center gap-2">
+              <GoldIcon size="w-8 h-8">
+                <FileCheck className="w-4 h-4 text-[#C9A961]" />
+              </GoldIcon>
+              <span className="font-semibold text-sm text-foreground">{pick({ pt: 'Share2Inspire — Relatório Completo', en: 'Share2Inspire — Full Report', es: 'Share2Inspire — Informe Completo' })}</span>
+            </div>
           </div>
         </div>
       </header>

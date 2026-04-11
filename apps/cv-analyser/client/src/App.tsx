@@ -53,36 +53,83 @@ function PageLoader() {
 function usePageTitle() {
   useEffect(() => {
     const pathname = window.location.pathname;
-    const titles: Record<string, string> = {
-      '/en/career-intelligence': 'Share2Inspire — Career Intelligence',
-      '/en/career-path': 'Share2Inspire — Career Path',
-      '/en/cv-analyser': 'Share2Inspire — CV Analyser (EN)',
-      '/es/career-intelligence': 'Share2Inspire — Career Intelligence (ES)',
-      '/es/career-path': 'Share2Inspire — Career Path (ES)',
-      '/es/cv-analyser': 'Share2Inspire — CV Analyser (ES)',
-      '/es/linkedin-roaster': 'Share2Inspire — LinkedIn Roaster (ES)',
-      '/es/student-pack': 'Share2Inspire — Student Pack (ES)',
-      '/es/bundle': 'Share2Inspire — Bundle (ES)',
-      '/es/pages/knowledge': 'Share2Inspire — Knowledge Hub (ES)',
-      '/es/pages/services': 'Share2Inspire — Services (ES)',
-      '/es': 'Share2Inspire (ES)',
-      '/about': 'Share2Inspire — About',
-      '/contact': 'Share2Inspire — Contact',
-      '/sobre': 'Share2Inspire — About',
-      '/contactos': 'Share2Inspire — Contact',
-      '/career-intelligence': 'Share2Inspire — Career Intelligence',
-      '/career-path': 'Share2Inspire — Career Path',
-      '/student-pack': 'Share2Inspire — Student Pack',
-      '/estudante': 'Share2Inspire — Pack Estudante',
-      '/cv-analyser': 'Share2Inspire — CV Analyser',
+    const normalizedPath = pathname.replace(/^\/(en|es)(?=\/|$)/, '') || '/';
+    const titles: Record<string, [string, string, string]> = {
+      '/career-intelligence': [
+        'Share2Inspire — Inteligência de Carreira',
+        'Share2Inspire — Career Intelligence',
+        'Share2Inspire — Inteligencia de Carrera',
+      ],
+      '/career-path': [
+        'Share2Inspire — Career Path',
+        'Share2Inspire — Career Path',
+        'Share2Inspire — Career Path',
+      ],
+      '/cv-analyser': [
+        'Share2Inspire — CV Analyser',
+        'Share2Inspire — CV Analyser',
+        'Share2Inspire — CV Analyser',
+      ],
+      '/linkedin-roaster': [
+        'Share2Inspire — LinkedIn Roaster',
+        'Share2Inspire — LinkedIn Roaster',
+        'Share2Inspire — LinkedIn Roaster',
+      ],
+      '/student-pack': [
+        'Share2Inspire — Pack Estudante',
+        'Share2Inspire — Student Pack',
+        'Share2Inspire — Pack para Estudiantes',
+      ],
+      '/estudante': [
+        'Share2Inspire — Pack Estudante',
+        'Share2Inspire — Student Pack',
+        'Share2Inspire — Pack para Estudiantes',
+      ],
+      '/bundle': [
+        'Share2Inspire — Bundle',
+        'Share2Inspire — Bundle',
+        'Share2Inspire — Bundle',
+      ],
+      '/pages/knowledge': [
+        'Share2Inspire — Knowledge Hub',
+        'Share2Inspire — Knowledge Hub',
+        'Share2Inspire — Centro de Conocimiento',
+      ],
+      '/pages/services': [
+        'Share2Inspire — Serviços',
+        'Share2Inspire — Services',
+        'Share2Inspire — Servicios',
+      ],
+      '/about': [
+        'Share2Inspire — Sobre',
+        'Share2Inspire — About',
+        'Share2Inspire — Acerca de',
+      ],
+      '/sobre': [
+        'Share2Inspire — Sobre',
+        'Share2Inspire — About',
+        'Share2Inspire — Acerca de',
+      ],
+      '/contact': [
+        'Share2Inspire — Contactos',
+        'Share2Inspire — Contact',
+        'Share2Inspire — Contacto',
+      ],
+      '/contactos': [
+        'Share2Inspire — Contactos',
+        'Share2Inspire — Contact',
+        'Share2Inspire — Contacto',
+      ],
+      '/': ['Share2Inspire', 'Share2Inspire', 'Share2Inspire'],
     };
 
-    // Match the most specific path first
     const matchedKey = Object.keys(titles)
       .sort((a, b) => b.length - a.length)
-      .find(key => pathname.startsWith(key));
+      .find(key => normalizedPath === key || normalizedPath.startsWith(`${key}/`));
 
-    document.title = matchedKey ? titles[matchedKey] : 'Share2Inspire';
+    document.title = matchedKey
+      ? pick(...titles[matchedKey])
+      : pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire');
   }, []);
 }
 

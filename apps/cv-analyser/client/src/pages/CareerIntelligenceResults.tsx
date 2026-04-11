@@ -622,7 +622,10 @@ export default function CareerIntelligenceResults() {
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <a href="/" className="flex items-center" aria-label="Share2Inspire">
+              <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
+            </a>
+            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
                 <Scale className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C9A961]" />
               </GoldIcon>
