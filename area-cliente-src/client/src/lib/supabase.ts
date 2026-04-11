@@ -18,7 +18,6 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     storageKey: 'sb-cvlumvgrbuolrnwrtrgz-auth-token',
     flowType: 'implicit',
     lock: inProcessLock,
-    lockAcquireTimeout: 2000,
   },
 });
 

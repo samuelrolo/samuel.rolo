@@ -15,7 +15,7 @@ interface RecruiterPerceptionProps {
 }
 
 const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid = false, deepAnalysis, isEN = false }: RecruiterPerceptionProps) => {
-  const pick = ({ pt, en, es }: { pt: string; en: string; es: string }) => isEN ? en : pt; // es unused here but kept for structure
+  const pick = <T,>({ pt, en, es }: { pt: T; en: T; es: T }) => isEN ? en : pt; // es unused here but kept for structure
 
   const displayRole = perceivedRole || (roles.length > 0 ? roles[0] : pick({ pt: 'Profissional', en: 'Professional', es: '' }));
   const displaySeniority = perceivedSeniority || pick({ pt: 'Intermédio', en: 'Mid-level', es: '' });

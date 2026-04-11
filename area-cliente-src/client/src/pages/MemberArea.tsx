@@ -6,7 +6,7 @@
  * Análises: última de cada tipo em destaque, restantes colapsáveis
  */
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, type Lang } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase, type MemberContent } from '@/lib/supabase';
 import { Link } from 'wouter';
@@ -98,7 +98,8 @@ const BLOG_ARTICLES = [
 ];
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
-function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => void; lang: string }) {
+function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => void; lang: Lang }) {
+  const { t } = useI18n();
   // Normalize: try multiple paths to find the actual analysis payload
   const raw = data?.analysis || data;
   if (!raw) return null;

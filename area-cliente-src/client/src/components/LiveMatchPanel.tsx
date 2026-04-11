@@ -130,7 +130,7 @@ export default function LiveMatchPanel({
   const [result, setResult] = useState<LiveMatchResult | null>(null);
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [activeTab, setActiveTab] = useState<'editor' | 'keywords' | 'format'>('editor');
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isPT = lang === 'pt';
   const hasAccess = isMemberArea || isPaid;

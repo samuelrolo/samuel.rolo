@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import type { Lang } from '@/lib/i18n';
 import {
   Briefcase, Search, Plus, Download, ChevronDown, ChevronUp,
   ExternalLink, Trash2, Archive, Star, Calendar, StickyNote,
@@ -60,7 +61,7 @@ const SOURCE_ICONS: Record<string, string> = {
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
-type Props = { lang: 'pt' | 'en' };
+type Props = { lang: Lang };
 
 export default function SavedJobsTracker({ lang }: Props) {
   const { user } = useAuth();

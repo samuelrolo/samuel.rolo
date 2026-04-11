@@ -2,7 +2,7 @@
  * SalaryRealityCheck — Ferramenta de benchmark salarial (totalmente gratuita)
  * Passos: Contexto → Remuneração → Benefícios → Resultados
  */
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import {
   ChevronRight, ChevronLeft, Loader2, AlertCircle,
@@ -13,6 +13,11 @@ interface SalaryRealityCheckProps {
   userEmail?: string;
   userName?: string;
   isPro?: boolean;
+  onPaymentRequest?: (analysisId: number, amount: number) => void;
+}
+
+export interface SalaryRealityCheckRef {
+  unlockPremium: (analysisId: number) => void;
 }
 
 interface OtherIncome {
@@ -65,7 +70,7 @@ function computeCTC(
   return { base, bonus, car: carVal, health: healthV, pension, meal, flex, phone: phoneV, remote: remoteV, other, ctc };
 }
 
-export default function SalaryRealityCheck({ userEmail = '', userName = '' }: SalaryRealityCheckProps) {
+const SalaryRealityCheck = forwardRef<SalaryRealityCheckRef, SalaryRealityCheckProps>(function SalaryRealityCheck({ userEmail = '', userName = '' }: SalaryRealityCheckProps, ref) {
   const { lang } = useI18n();
   const pick = (pt: string, en: string, es: string) => ({ pt, en, es } as const)[lang as 'pt' | 'en' | 'es'] ?? en;
   const locale = pick('pt-PT', 'en-US', 'es-ES');
@@ -105,6 +110,12 @@ export default function SalaryRealityCheck({ userEmail = '', userName = '' }: Sa
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState<string | null>(null);
   const [result, setResult]     = useState<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    unlockPremium: (_analysisId: number) => {
+      // No-op: o fluxo atual já apresenta o resultado diretamente no componente.
+    },
+  }), []);
 
   const otherAnnual = computeOtherIncomeAnnual(otherIncome);
   const computed = computeCTC(
@@ -613,4 +624,6 @@ export default function SalaryRealityCheck({ userEmail = '', userName = '' }: Sa
       )}
     </div>
   );
-}
+});
+
+export default SalaryRealityCheck;

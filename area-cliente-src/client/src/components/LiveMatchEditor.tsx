@@ -10,13 +10,14 @@
  */
 import { useState, useRef, useCallback, useMemo } from 'react';
 import type { Annotation, MatchedKeyword } from '../lib/liveMatchEngine';
+import type { Lang } from '@/lib/i18n';
 import { CheckCircle, AlertTriangle, XCircle, Lightbulb, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface LiveMatchEditorProps {
   cvText: string;
   annotations: Annotation[];
   missingKeywords: MatchedKeyword[];
-  lang: 'pt' | 'en';
+  lang: Lang;
 }
 
 interface TooltipState {
