@@ -1450,7 +1450,11 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Produtos aplicáveis</label>
-                <div id="couponProductCheckboxes" style="display:flex;flex-direction:column;gap:8px;padding:8px 0;">
+                <div id="couponProductCheckboxes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 0;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;grid-column:1/-1;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:4px;">
+                        <input type="checkbox" class="coupon-product-cb" value="all" checked>
+                        <span class="badge" style="background:#374151;color:#fff;font-size:11px;">Todos os produtos</span>
+                    </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="cv_analysis" checked>
                         <span class="badge" style="background:var(--blue);color:#fff;font-size:11px;">CV Analyser</span>
@@ -1461,23 +1465,31 @@
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="career_intelligence_pro" checked>
-                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">CI PRO (29€)</span>
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">CI PRO</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="career_intelligence_full" checked>
-                        <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full (49€)</span>
+                        <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="student_pack" checked>
-                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack (7,99€)</span>
+                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="bundle" checked>
-                        <span class="badge" style="background:var(--purple);color:#fff;font-size:11px;">Bundle (CV + Career Path)</span>
+                        <span class="badge" style="background:var(--purple);color:#fff;font-size:11px;">Bundle</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="linkedin_roaster" checked>
                         <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="subscription" checked>
+                        <span class="badge" style="background:#D97706;color:#fff;font-size:11px;">Subscrição</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="salary_reality_check_premium" checked>
+                        <span class="badge" style="background:#DC2626;color:#fff;font-size:11px;">Salary Check</span>
                     </label>
                 </div>
             </div>

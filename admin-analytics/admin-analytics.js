@@ -2585,13 +2585,17 @@ function renderCoupons() {
     setText('couponKpiUses', totalUses);
 
     const productLabels = {
+        'all': '<span class="badge" style="background:#374151;color:#fff;font-size:10px;">Todos</span>',
         'cv_analysis': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV</span>',
         'career_path': '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Career</span>',
         'career_intelligence_pro': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>',
         'career_intelligence_full': '<span class="badge" style="background:#5B21B6;color:#fff;font-size:10px;">CI Full</span>',
         'student_pack': '<span class="badge" style="background:#059669;color:#fff;font-size:10px;">Student Pack</span>',
         'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
-        'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>'
+        'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>',
+        'linkedin_roast': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>',
+        'subscription': '<span class="badge" style="background:#D97706;color:#fff;font-size:10px;">Subscrição</span>',
+        'salary_reality_check_premium': '<span class="badge" style="background:#DC2626;color:#fff;font-size:10px;">Salary Check</span>'
     };
     const tbody = document.getElementById('couponsTable');
     if (!tbody) return;
