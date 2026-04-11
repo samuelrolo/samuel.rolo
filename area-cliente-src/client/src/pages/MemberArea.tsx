@@ -30,7 +30,7 @@ import {
   ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
   Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
   Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send, Share2,
-  Target, Layers, TrendingUp, Euro,
+  Target, Layers, TrendingUp, Euro, CalendarClock,
 } from 'lucide-react';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -1769,6 +1769,48 @@ return null;
                     {expandedTool === tool.key && (
                       <div className="border-t border-[#e5e5e5] p-5 bg-[#fafaf9]">
                         {renderInlinePanel(tool)}
+
+                        {/* Mini-cards for previous analyses */}
+                        {['cvAnalyzer', 'linkedinRoster', 'careerPath', 'careerIntelligence'].includes(tool.key) && (
+                          <div className="mt-6 space-y-3">
+                            <div className="flex items-center gap-2 mb-2">
+                              <CalendarClock className="w-3.5 h-3.5 text-[#999]" />
+                              <span className="text-[10px] font-semibold text-[#999] uppercase tracking-wider">{t('member.analyses.previous')}</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {(() => {
+                                const typeMap: Record<string, string> = {
+                                  cvAnalyzer: 'cv_analyser',
+                                  linkedinRoster: 'linkedin_roaster',
+                                  careerPath: 'career_path',
+                                  careerIntelligence: 'career_intelligence'
+                                };
+                                const type = typeMap[tool.key];
+                                const analyses = savedAnalyses.filter(a => a.analysis_type === type).slice(0, 4);
+                                
+                                if (analyses.length === 0) return <p className="text-[10px] text-[#bbb] italic">{t('member.lib.empty')}</p>;
+                                
+                                return analyses.map(analysis => (
+                                  <button
+                                    key={analysis.id}
+                                    onClick={() => setViewingAnalysis(analysis)}
+                                    className="flex items-center justify-between p-3 bg-white border border-[#e5e5e5] rounded-lg hover:border-gold/30 hover:shadow-sm transition-all group/card"
+                                  >
+                                    <div className="flex flex-col items-start min-w-0">
+                                      <span className="text-[10px] font-medium text-[#1a1a1a] truncate w-full">{getAnalysisSummary(analysis) || t('member.lastActivity')}</span>
+                                      <span className="text-[9px] text-[#999]">{formatDate(analysis.created_at)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-[9px] font-medium text-gold opacity-0 group-hover/card:opacity-100 transition-opacity shrink-0">
+                                      <span>{t('member.analyses.viewReport')}</span>
+                                      <ArrowRight className="w-2.5 h-2.5" />
+                                    </div>
+                                  </button>
+                                ));
+                              })()}
+                            </div>
+                          </div>
+                        )}
+
                         {analysisError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{analysisError}</span></div>)}
                         {analysisResult && (
                           analysisResult._enriched ? (

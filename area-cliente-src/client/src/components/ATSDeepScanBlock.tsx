@@ -31,7 +31,7 @@ interface ATSDeepScanData {
 interface ATSDeepScanBlockProps {
   data: ATSDeepScanData;
   isPaid?: boolean;
-  isEN?: boolean;
+  lang?: 'pt' | 'en' | 'es';
   onUnlock?: () => void;
 }
 
@@ -55,15 +55,21 @@ function ScoreRing({ score, size = 64, label, color }: { score: number; size?: n
   );
 }
 
-const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSDeepScanBlockProps) => {
+const ATSDeepScanBlock = ({ data, isPaid = false, lang = 'pt', onUnlock }: ATSDeepScanBlockProps) => {
   const [expandedKeyword, setExpandedKeyword] = useState<number | null>(null);
   const [showAllKeywords, setShowAllKeywords] = useState(false);
 
+  const pick = (pt: string, en: string, es: string) => {
+    if (lang === 'en') return en;
+    if (lang === 'es') return es;
+    return pt;
+  };
+
   const verdictLabels: Record<string, { label: string; color: string; bg: string }> = {
-    excellent: { label: isEN ? 'Excellent' : 'Excelente', color: 'text-green-600', bg: 'bg-green-500/10 border-green-500/20' },
-    good: { label: isEN ? 'Good' : 'Bom', color: 'text-[#C9A961]', bg: 'bg-[#C9A961]/10 border-[#C9A961]/20' },
-    needs_work: { label: isEN ? 'Needs Work' : 'Precisa de Melhoria', color: 'text-amber-600', bg: 'bg-amber-500/10 border-amber-500/20' },
-    critical: { label: isEN ? 'Critical' : 'Crítico', color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
+    excellent: { label: pick('Excelente', 'Excellent', 'Excelente'), color: 'text-green-600', bg: 'bg-green-500/10 border-green-500/20' },
+    good: { label: pick('Bom', 'Good', 'Bueno'), color: 'text-[#C9A961]', bg: 'bg-[#C9A961]/10 border-[#C9A961]/20' },
+    needs_work: { label: pick('Precisa de Melhoria', 'Needs Work', 'Necesita Mejoras'), color: 'text-amber-600', bg: 'bg-amber-500/10 border-amber-500/20' },
+    critical: { label: pick('Crítico', 'Critical', 'Crítico'), color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
   };
 
   const verdict = verdictLabels[data.verdict] || verdictLabels.needs_work;
@@ -86,9 +92,9 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
 
   const importanceLabel = (imp: string) => {
     const labels: Record<string, { text: string; cls: string }> = {
-      high: { text: isEN ? 'High' : 'Alta', cls: 'bg-red-500/10 text-red-500 border-red-500/20' },
-      medium: { text: isEN ? 'Medium' : 'Média', cls: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
-      low: { text: isEN ? 'Low' : 'Baixa', cls: 'bg-muted text-muted-foreground border-border' },
+      high: { text: pick('Alta', 'High', 'Alta'), cls: 'bg-red-500/10 text-red-500 border-red-500/20' },
+      medium: { text: pick('Média', 'Medium', 'Media'), cls: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+      low: { text: pick('Baixa', 'Low', 'Baja'), cls: 'bg-muted text-muted-foreground border-border' },
     };
     const l = labels[imp] || labels.low;
     return <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${l.cls}`}>{l.text}</span>;
@@ -96,9 +102,9 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
 
   const statusLabel = (status: string) => {
     const labels: Record<string, { text: string; cls: string }> = {
-      found: { text: isEN ? 'Found' : 'Encontrada', cls: 'text-green-600' },
-      missing: { text: isEN ? 'Missing' : 'Em Falta', cls: 'text-red-500' },
-      partial: { text: isEN ? 'Partial' : 'Parcial', cls: 'text-amber-600' },
+      found: { text: pick('Encontrada', 'Found', 'Encontrada'), cls: 'text-green-600' },
+      missing: { text: pick('Em Falta', 'Missing', 'Faltante'), cls: 'text-red-500' },
+      partial: { text: pick('Parcial', 'Partial', 'Parcial'), cls: 'text-amber-600' },
     };
     return labels[status] || labels.missing;
   };
@@ -125,16 +131,16 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${verdict.bg} ${verdict.color}`}>{verdict.label}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {isEN ? 'Complete keyword and formatting analysis for ATS systems' : 'Análise completa de keywords e formatação para sistemas ATS'}
+              {pick('Análise completa de keywords e formatação para sistemas ATS', 'Complete keyword and formatting analysis for ATS systems', 'Análisis completo de palabras clave y formato para sistemas ATS')}
             </p>
           </div>
         </div>
 
         {/* Score Rings */}
         <div className="grid grid-cols-3 gap-4 sm:gap-6">
-          <ScoreRing score={data.overallATSScore} size={72} label={isEN ? 'Overall ATS' : 'ATS Global'} color={scoreColor(data.overallATSScore)} />
-          <ScoreRing score={data.keywordScore} size={72} label={isEN ? 'Keywords' : 'Keywords'} color={scoreColor(data.keywordScore)} />
-          <ScoreRing score={data.formatScore} size={72} label={isEN ? 'Format' : 'Formato'} color={scoreColor(data.formatScore)} />
+          <ScoreRing score={data.overallATSScore} size={72} label={pick('ATS Global', 'Overall ATS', 'ATS Global')} color={scoreColor(data.overallATSScore)} />
+          <ScoreRing score={data.keywordScore} size={72} label={pick('Keywords', 'Keywords', 'Palabras Clave')} color={scoreColor(data.keywordScore)} />
+          <ScoreRing score={data.formatScore} size={72} label={pick('Formato', 'Format', 'Formato')} color={scoreColor(data.formatScore)} />
         </div>
       </div>
 
@@ -145,7 +151,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <Search className="w-4 h-4 text-[#C9A961]" />
-                <p className="text-xs font-semibold tracking-wider text-foreground">{isEN ? 'KEYWORD ANALYSIS' : 'ANÁLISE DE KEYWORDS'}</p>
+                <p className="text-xs font-semibold tracking-wider text-foreground">{pick('ANÁLISE DE KEYWORDS', 'KEYWORD ANALYSIS', 'ANÁLISIS DE PALABRAS CLAVE')}</p>
               </div>
               <div className="flex items-center gap-2 text-[10px]">
                 <span className="flex items-center gap-1 text-green-600"><CheckCircle className="w-3 h-3" /> {foundCount}</span>
@@ -158,9 +164,9 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
             <div className="border border-border rounded-lg overflow-hidden">
               {/* Table Header */}
               <div className="grid grid-cols-[1fr_80px_70px] sm:grid-cols-[1fr_100px_80px] gap-2 p-2.5 bg-muted/30 border-b border-border text-[10px] font-semibold text-muted-foreground">
-                <span>KEYWORD</span>
-                <span className="text-center">{isEN ? 'STATUS' : 'ESTADO'}</span>
-                <span className="text-center">{isEN ? 'IMPORTANCE' : 'IMPORT.'}</span>
+                <span>{pick('KEYWORD', 'KEYWORD', 'PALABRA CLAVE')}</span>
+                <span className="text-center">{pick('ESTADO', 'STATUS', 'ESTADO')}</span>
+                <span className="text-center">{pick('IMPORT.', 'IMPORTANCE', 'IMPORT.')}</span>
               </div>
 
               {/* Keyword Rows */}
@@ -186,7 +192,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
                     {/* Expanded suggestion */}
                     {isExpanded && kw.suggestion && (
                       <div className="px-4 py-3 bg-[#C9A961]/5 border-b border-[#C9A961]/10">
-                        <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'SUGGESTION' : 'SUGESTÃO'}</p>
+                        <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{pick('SUGESTÃO', 'SUGGESTION', 'SUGERENCIA')}</p>
                         <p className="text-xs text-foreground">{kw.suggestion}</p>
                         {kw.context && <p className="text-[10px] text-muted-foreground mt-1">{kw.context}</p>}
                       </div>
@@ -202,8 +208,8 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
                 className="text-xs text-[#C9A961] hover:text-[#A88B4E] font-medium flex items-center gap-1 mx-auto"
               >
                 {showAllKeywords
-                  ? (isEN ? 'Show less' : 'Ver menos')
-                  : (isEN ? `Show all ${data.keywords.length} keywords` : `Ver todas as ${data.keywords.length} keywords`)
+                  ? pick('Ver menos', 'Show less', 'Ver menos')
+                  : pick(`Ver todas as ${data.keywords.length} keywords`, `Show all ${data.keywords.length} keywords`, `Ver todas las ${data.keywords.length} palabras clave`)
                 }
                 {showAllKeywords ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
@@ -214,7 +220,7 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold tracking-wider text-foreground">{isEN ? 'ATS FORMAT CHECKLIST' : 'CHECKLIST DE FORMATO ATS'}</p>
+              <p className="text-xs font-semibold tracking-wider text-foreground">{pick('CHECKLIST DE FORMATO ATS', 'ATS FORMAT CHECKLIST', 'CHECKLIST DE FORMATO ATS')}</p>
             </div>
 
             <div className="space-y-2">
@@ -230,9 +236,9 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
                       <p className="text-sm font-medium text-foreground">{fc.check}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">{fc.detail}</p>
                       {fc.fix && (
-                        <div className="mt-2 p-2 bg-background/50 rounded border border-border">
-                          <p className="text-[10px] font-semibold text-[#C9A961] mb-0.5">{isEN ? 'HOW TO FIX' : 'COMO CORRIGIR'}</p>
-                          <p className="text-xs text-foreground">{fc.fix}</p>
+                        <div className="mt-2 p-2 bg-background/50 rounded border border-border/50">
+                          <p className="text-[10px] font-semibold text-[#C9A961] uppercase">{pick('COMO CORRIGIR', 'HOW TO FIX', 'CÓMO CORREGIR')}</p>
+                          <p className="text-xs text-foreground mt-0.5">{fc.fix}</p>
                         </div>
                       )}
                     </div>
@@ -241,93 +247,53 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
               ))}
             </div>
           </div>
-
-          {/* ── SUMMARY ── */}
-          <div className={`p-4 rounded-lg space-y-2 border ${
-            data.overallATSScore >= 80 ? 'bg-green-500/5 border-green-500/20' :
-            data.overallATSScore >= 60 ? 'bg-[#C9A961]/5 border-[#C9A961]/20' :
-            data.overallATSScore >= 40 ? 'bg-yellow-500/5 border-yellow-500/20' :
-            'bg-red-500/5 border-red-500/20'
-          }`}>
-            <p className={`text-xs font-semibold ${
-              data.overallATSScore >= 80 ? 'text-green-600' :
-              data.overallATSScore >= 60 ? 'text-[#C9A961]' :
-              data.overallATSScore >= 40 ? 'text-yellow-600' :
-              'text-red-500'
-            }`}>{isEN ? 'DEEP SCAN SUMMARY' : 'RESUMO DO DEEP SCAN'}</p>
-            <p className="text-sm text-foreground leading-relaxed">
-              {data.overallATSScore >= 80 ? (
-                isEN
-                  ? <>Your CV has <strong>excellent ATS compatibility</strong>. Keywords are well-placed and formatting follows best practices. Most ATS systems will parse your CV correctly.</>
-                  : <>O teu CV tem <strong>excelente compatibilidade ATS</strong>. As keywords estão bem posicionadas e a formatação segue as melhores práticas. A maioria dos sistemas ATS vai ler o teu CV correctamente.</>
-              ) : data.overallATSScore >= 60 ? (
-                isEN
-                  ? <>Your CV has <strong>good ATS compatibility</strong> but there are {missingCount} missing keyword{missingCount !== 1 ? 's' : ''} and {data.formatChecks.filter(f => f.status !== 'pass').length} formatting issue{data.formatChecks.filter(f => f.status !== 'pass').length !== 1 ? 's' : ''} to address. Fixing these points can significantly improve your approval rate.</>
-                  : <>O teu CV tem <strong>boa compatibilidade ATS</strong> mas existem {missingCount} keyword{missingCount !== 1 ? 's' : ''} em falta e {data.formatChecks.filter(f => f.status !== 'pass').length} questões de formatação a resolver. Corrigir estes pontos pode melhorar significativamente a tua taxa de aprovação.</>
-              ) : data.overallATSScore >= 40 ? (
-                isEN
-                  ? <>Your CV has <strong>moderate compatibility</strong> with ATS systems. With a <strong>{100 - data.overallATSScore}% rejection probability</strong>, about half of online applications may be filtered before reaching a recruiter. Addressing the {missingCount} missing keywords and {data.formatChecks.filter(f => f.status !== 'pass').length} formatting issues below can significantly reduce this rate.</>
-                  : <>O teu CV tem uma <strong>compatibilidade moderada</strong> com sistemas ATS. Com <strong>{100 - data.overallATSScore}% de probabilidade de rejeição</strong>, cerca de metade das candidaturas online podem ser filtradas antes de chegar a um recrutador. Corrigir as {missingCount} keywords em falta e {data.formatChecks.filter(f => f.status !== 'pass').length} questões de formatação abaixo pode reduzir esta taxa significativamente.</>
-              ) : (
-                isEN
-                  ? <>Your CV has <strong>low compatibility with ATS systems</strong>. With a <strong>{100 - data.overallATSScore}% rejection probability</strong>, most online applications will be automatically filtered out. It is urgent to restructure the format and add the missing keywords.</>
-                  : <>O teu CV tem uma <strong>compatibilidade baixa com sistemas ATS</strong>. Com <strong>{100 - data.overallATSScore}% de probabilidade de rejeição</strong>, a maioria das candidaturas online será filtrada automaticamente. É urgente reformular a estrutura e adicionar as keywords em falta.</>
-              )}
-            </p>
-          </div>
         </div>
       ) : (
         /* ── FREE TEASER ── */
-        <div className="relative">
-          {/* Blurred preview content */}
-          <div className="p-4 sm:p-6 space-y-4 pointer-events-none select-none" style={{ filter: 'blur(4px)', opacity: 0.4 }}>
-            <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold tracking-wider text-foreground">{isEN ? 'KEYWORD ANALYSIS' : 'ANÁLISE DE KEYWORDS'}</p>
+        <div className="relative p-6 overflow-hidden">
+          <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center">
+            <div className="w-12 h-12 rounded-full bg-[#C9A961] flex items-center justify-center mb-4 shadow-lg shadow-[#C9A961]/20">
+              <Lock className="w-6 h-6 text-white" />
             </div>
-            <div className="space-y-2">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="h-10 bg-muted/30 rounded-lg border border-border" />
-              ))}
-            </div>
-            <div className="flex items-center gap-2 mt-4">
-              <Shield className="w-4 h-4 text-[#C9A961]" />
-              <p className="text-xs font-semibold tracking-wider text-foreground">{isEN ? 'ATS FORMAT CHECKLIST' : 'CHECKLIST DE FORMATO ATS'}</p>
-            </div>
-            <div className="space-y-2">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-12 bg-muted/30 rounded-lg border border-border" />
-              ))}
-            </div>
+            <h4 className="text-lg font-bold text-foreground mb-2">{pick('Desbloqueia o ATS Deep Scan', 'Unlock ATS Deep Scan', 'Desbloquea ATS Deep Scan')}</h4>
+            <p className="text-sm text-muted-foreground max-w-xs mb-6">
+              {pick('Acede à análise detalhada de keywords, checklist de formatação e sugestões específicas para passar nos filtros ATS.', 'Get detailed keyword analysis, formatting checklist, and specific suggestions to pass ATS filters.', 'Accede al análisis detallado de palabras clave, checklist de formato y sugerencias específicas para superar los filtros ATS.')}
+            </p>
+            <button
+              onClick={onUnlock}
+              className="px-6 py-2.5 bg-[#C9A961] hover:bg-[#A88B4E] text-white rounded-full text-sm font-bold transition-all shadow-md hover:shadow-lg active:scale-95"
+            >
+              {pick('DESBLOQUEAR AGORA', 'UNLOCK NOW', 'DESBLOQUEAR AHORA')}
+            </button>
           </div>
 
-          {/* Unlock overlay */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-card/80 backdrop-blur-sm">
-            <Lock className="w-8 h-8 text-[#C9A961] mb-3" />
-            <p className="text-sm font-semibold text-foreground mb-1">{isEN ? 'ATS Deep Scan' : 'ATS Deep Scan'}</p>
-            <p className="text-xs text-muted-foreground text-center max-w-xs mb-4 px-4">
-              {isEN
-                ? 'Unlock the full keyword analysis, ATS format checklist, and personalised suggestions to pass automated filters.'
-                : 'Desbloqueia a análise completa de keywords, checklist de formato ATS e sugestões personalizadas para passar nos filtros automáticos.'
-              }
-            </p>
-            <ul className="text-xs text-muted-foreground space-y-1.5 mb-4">
-              <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#C9A961]" /> {isEN ? `${data.keywords.length} keywords analysed` : `${data.keywords.length} keywords analisadas`}</li>
-              <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#C9A961]" /> {isEN ? `${data.formatChecks.length} format checks` : `${data.formatChecks.length} verificações de formato`}</li>
-              <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#C9A961]" /> {isEN ? 'Personalised fix suggestions' : 'Sugestões de correção personalizadas'}</li>
-            </ul>
-            {onUnlock && (
-              <button
-                onClick={onUnlock}
-                className="px-6 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm transition-colors flex items-center gap-2"
-              >
-                <Lock className="w-4 h-4" />
-                {isEN ? 'Unlock Full Report' : 'Desbloquear Relatório Completo'}
-              </button>
-            )}
+          {/* Blurred Content Preview */}
+          <div className="opacity-20 select-none pointer-events-none space-y-6">
+            <div className="space-y-2">
+              <div className="h-4 w-32 bg-muted rounded" />
+              <div className="border border-border rounded-lg h-40 bg-muted/20" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-40 bg-muted rounded" />
+              <div className="space-y-2">
+                {[1, 2, 3].map(i => <div key={i} className="h-16 bg-muted/20 rounded-lg border border-border" />)}
+              </div>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Footer Info */}
+      <div className="bg-muted/30 p-3 border-t border-border flex items-center gap-2">
+        <Info className="w-3.5 h-3.5 text-muted-foreground" />
+        <p className="text-[10px] text-muted-foreground leading-tight">
+          {pick(
+            'Os sistemas ATS (Applicant Tracking Systems) são usados por 95% das empresas Fortune 500 para filtrar currículos automaticamente.',
+            'ATS (Applicant Tracking Systems) are used by 95% of Fortune 500 companies to automatically filter resumes.',
+            'Los sistemas ATS (Applicant Tracking Systems) son utilizados por el 95% de las empresas Fortune 500 para filtrar currículos automáticamente.'
+          )}
+        </p>
+      </div>
     </div>
   );
 };
