@@ -43,9 +43,105 @@ const safeText = (val: any): string => {
     if (Array.isArray(val)) return val.map(v => safeText(v)).filter(Boolean).join(', ');
     const firstStr = Object.values(val).find(v => typeof v === 'string');
     if (firstStr) return String(firstStr);
-    try { return JSON.stringify(val); } catch { return '[dados]'; }
+    try { return JSON.stringify(val); } catch { return '[data]'; }
   }
   return String(val);
+};
+
+const normalizeLabelKey = (value: string) => (value || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .replace(/&/g, ' e ')
+  .replace(/[^a-z0-9]+/g, '_')
+  .replace(/^_+|_+$/g, '');
+
+const translatedScoreLabel = (rawKey: string) => {
+  const normalized = normalizeLabelKey(rawKey);
+  const exactMap: Record<string, string> = {
+    conteudo_e_estrutura: pick('Conteúdo e Estrutura', 'Content and Structure', 'Contenido y Estructura'),
+    content_and_structure: pick('Conteúdo e Estrutura', 'Content and Structure', 'Contenido y Estructura'),
+    palavras_chave: pick('Palavras-chave', 'Keywords', 'Palabras clave'),
+    palavras_chave_ats: pick('Palavras-chave e ATS', 'Keywords and ATS', 'Palabras clave y ATS'),
+    ats_keywords: pick('Palavras-chave e ATS', 'Keywords and ATS', 'Palabras clave y ATS'),
+    experiencia: pick('Experiência', 'Experience', 'Experiencia'),
+    experience: pick('Experiência', 'Experience', 'Experiencia'),
+    formacao: pick('Formação', 'Education', 'Formación'),
+    education: pick('Formação', 'Education', 'Formación'),
+    educacao: pick('Educação', 'Education', 'Educación'),
+    hard_skills: pick('Hard Skills', 'Hard Skills', 'Hard Skills'),
+    soft_skills: pick('Soft Skills', 'Soft Skills', 'Soft Skills'),
+    headline: pick('Headline', 'Headline', 'Titular'),
+    sobre: pick('Sobre', 'About', 'Acerca de'),
+    about: pick('Sobre', 'About', 'Acerca de'),
+    resumo: pick('Resumo', 'Summary', 'Resumen'),
+    experiencia_profissional: pick('Experiência Profissional', 'Professional Experience', 'Experiencia Profesional'),
+    professional_experience: pick('Experiência Profissional', 'Professional Experience', 'Experiencia Profesional'),
+    educacao_e_certificacoes: pick('Educação e Certificações', 'Education and Certifications', 'Educación y Certificaciones'),
+    education_and_certifications: pick('Educação e Certificações', 'Education and Certifications', 'Educación y Certificaciones'),
+    visibilidade_e_seo: pick('Visibilidade e SEO', 'Visibility and SEO', 'Visibilidad y SEO'),
+    visibility_and_seo: pick('Visibilidade e SEO', 'Visibility and SEO', 'Visibilidad y SEO'),
+    foto_e_banner: pick('Foto e Banner', 'Photo and Banner', 'Foto y Banner'),
+    photo_and_banner: pick('Foto e Banner', 'Photo and Banner', 'Foto y Banner'),
+    coerencia: pick('Coerência', 'Consistency', 'Coherencia'),
+    consistency: pick('Coerência', 'Consistency', 'Coherencia'),
+  };
+
+  if (exactMap[normalized]) return exactMap[normalized];
+
+  const tokenMap: Record<string, string> = {
+    ats: 'ATS',
+    seo: 'SEO',
+    cv: 'CV',
+    linkedin: 'LinkedIn',
+    conteudo: pick('Conteúdo', 'Content', 'Contenido'),
+    content: pick('Conteúdo', 'Content', 'Contenido'),
+    estrutura: pick('Estrutura', 'Structure', 'Estructura'),
+    structure: pick('Estrutura', 'Structure', 'Estructura'),
+    palavras: pick('Palavras', 'Keywords', 'Palabras'),
+    chave: pick('Chave', 'Keywords', 'Clave'),
+    keywords: pick('Keywords', 'Keywords', 'Keywords'),
+    experiencia: pick('Experiência', 'Experience', 'Experiencia'),
+    experience: pick('Experiência', 'Experience', 'Experiencia'),
+    formacao: pick('Formação', 'Education', 'Formación'),
+    education: pick('Educação', 'Education', 'Educación'),
+    educacao: pick('Educação', 'Education', 'Educación'),
+    headline: pick('Headline', 'Headline', 'Titular'),
+    sobre: pick('Sobre', 'About', 'Acerca de'),
+    about: pick('Sobre', 'About', 'Acerca de'),
+    resumo: pick('Resumo', 'Summary', 'Resumen'),
+    skills: pick('Skills', 'Skills', 'Competencias'),
+    visibilidade: pick('Visibilidade', 'Visibility', 'Visibilidad'),
+    visibility: pick('Visibilidade', 'Visibility', 'Visibilidad'),
+    foto: pick('Foto', 'Photo', 'Foto'),
+    photo: pick('Foto', 'Photo', 'Foto'),
+    banner: pick('Banner', 'Banner', 'Banner'),
+    coerencia: pick('Coerência', 'Consistency', 'Coherencia'),
+    consistency: pick('Coerência', 'Consistency', 'Coherencia'),
+    certificacoes: pick('Certificações', 'Certifications', 'Certificaciones'),
+    certifications: pick('Certificações', 'Certifications', 'Certificaciones'),
+    profissional: pick('Profissional', 'Professional', 'Profesional'),
+    professional: pick('Profissional', 'Professional', 'Profesional'),
+    and: pick('e', 'and', 'y'),
+    e: pick('e', 'and', 'y'),
+  };
+
+  return normalized
+    .split('_')
+    .filter(Boolean)
+    .map(token => tokenMap[token] || token.charAt(0).toUpperCase() + token.slice(1))
+    .join(' ');
+};
+
+const urgencyBadgeClass = (urgency: string) => {
+  const normalized = normalizeLabelKey(urgency);
+  if (normalized.includes('primeiro_estagio') || normalized.includes('first_internship') || normalized.includes('internship') || normalized.includes('practicas')) {
+    return 'bg-red-50 text-red-700';
+  }
+  if (normalized.includes('primeiro_emprego') || normalized.includes('first_job') || normalized.includes('primer_empleo')) {
+    return 'bg-amber-50 text-amber-700';
+  }
+  return 'bg-green-50 text-green-700';
 };
 
 // Deep sanitizer — recursively converts {txt,href} objects to strings throughout the data
@@ -461,7 +557,7 @@ export default function StudentPackResults() {
                         {Object.entries(auditoria.scores_cv).map(([key, val]: [string, any]) => (
                           <div key={key} className={`rounded-xl p-3 border ${scoreBg(val?.valor || 0)}`}>
                             <p className={`text-2xl font-bold ${scoreColor(val?.valor || 0, true)}`}>{val?.valor || 0}</p>
-                            <p className="text-xs text-slate-600 capitalize font-medium">{key.replace(/_/g, ' ')}</p>
+                            <p className="text-xs text-slate-600 font-medium">{translatedScoreLabel(key)}</p>
                             {val?.benchmark_estudantes && <p className="text-[10px] text-slate-400 mt-1">{pick('Referência', 'Benchmark', 'Referencia')}: {val.benchmark_estudantes}</p>}
                           </div>
                         ))}
@@ -477,7 +573,7 @@ export default function StudentPackResults() {
                         {Object.entries(auditoria.scores_linkedin).map(([key, val]: [string, any]) => (
                           <div key={key} className={`rounded-xl p-3 border ${scoreBg((val?.valor || 0) * 10)}`}>
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-semibold text-slate-600 capitalize">{key.replace(/_/g, ' ')}</span>
+                              <span className="text-xs font-semibold text-slate-600">{translatedScoreLabel(key)}</span>
                               <span className={`text-lg font-bold ${scoreColor((val?.valor || 0) * 10, true)}`}>{val?.valor || 0}<span className="text-xs text-slate-400">/10</span></span>
                             </div>
                             {val?.analise && <p className="text-xs text-slate-500 leading-relaxed">{val.analise}</p>}
@@ -614,11 +710,7 @@ export default function StudentPackResults() {
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{cert.custo}</span>
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                  (cert.urgencia || '').includes('primeiro estágio') ? 'bg-red-50 text-red-700' :
-                                  (cert.urgencia || '').includes('primeiro emprego') ? 'bg-amber-50 text-amber-700' :
-                                  'bg-green-50 text-green-700'
-                                }`}>{cert.urgencia}</span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${urgencyBadgeClass(cert.urgencia || '')}`}>{cert.urgencia}</span>
                               </div>
                             </div>
                             {cert.impacto && <p className="text-xs text-slate-600">{cert.impacto}</p>}
@@ -833,7 +925,7 @@ export default function StudentPackResults() {
                             <h5 className="font-semibold text-slate-900 text-sm">{cargo.titulo}</h5>
                             <div className="flex items-center gap-2 mt-0.5">
                               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{cargo.tipo}</span>
-                              {cargo.salary_range && <span className="text-xs text-emerald-600 font-medium">{typeof cargo.salary_range === 'object' ? `${cargo.salary_range.moeda || '€'}${cargo.salary_range.min || '?'}–${cargo.salary_range.max || '?'}/${cargo.salary_range.periodo || 'mês'}` : `€${cargo.salary_range}/mês`}</span>}
+                              {cargo.salary_range && <span className="text-xs text-emerald-600 font-medium">{typeof cargo.salary_range === 'object' ? `${cargo.salary_range.moeda || '€'}${cargo.salary_range.min || '?'}–${cargo.salary_range.max || '?'}/${cargo.salary_range.periodo || pick('mês', 'month', 'mes')}` : `€${cargo.salary_range}/${pick('mês', 'month', 'mes')}`}</span>}
                             </div>
                           </div>
                         </div>

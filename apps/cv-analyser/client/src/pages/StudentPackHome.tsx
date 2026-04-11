@@ -405,7 +405,7 @@ export default function StudentPackHome() {
 
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar pagamento...');
+    setPollingMsg(pick('A verificar pagamento...', 'Checking payment...', 'Verificando el pago...'));
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
@@ -523,7 +523,7 @@ export default function StudentPackHome() {
               <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
                 <div className="flex items-center gap-2 md:gap-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-blue-600" /></div>
-                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">CV Analyser</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 9,99€", "Value: €9.99", "Valor: €9,99")}</p></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("CV Analyser", "CV Analyser", "CV Analyser")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 9,99€", "Value: €9.99", "Valor: €9,99")}</p></div>
                 </div>
                 <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
                   <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Análise ATS com score", "ATS analysis with score", "Análisis ATS con puntuación")}</span></li>
@@ -535,7 +535,7 @@ export default function StudentPackHome() {
               <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
                 <div className="flex items-center gap-2 md:gap-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><Linkedin className="w-4 h-4 md:w-5 md:h-5 text-purple-600" /></div>
-                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">LinkedIn Roaster</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 3,99€", "Value: €3.99", "Valor: €3,99")}</p></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 3,99€", "Value: €3.99", "Valor: €3,99")}</p></div>
                 </div>
                 <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
                   <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Auditoria do perfil", "Profile audit", "Auditoría del perfil")}</span></li>
@@ -730,7 +730,7 @@ export default function StudentPackHome() {
           {paymentStep === 'payment' && (
             <div className="space-y-4">
               <div className="bg-emerald-50 rounded-xl p-4 text-center">
-                <p className="text-sm text-slate-600">CV Analyser + LinkedIn Roaster</p>
+                <p className="text-sm text-slate-600">{pick("CV Analyser + LinkedIn Roaster", "CV Analyser + LinkedIn Roaster", "CV Analyser + LinkedIn Roaster")}</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
                   {appliedCoupon
                     ? <><span className="text-lg line-through text-slate-400">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span><span className="text-2xl font-bold text-green-600">{isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</span></>
