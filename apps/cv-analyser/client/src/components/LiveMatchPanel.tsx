@@ -199,7 +199,7 @@ export default function LiveMatchPanel({
         </div>
         <div>
           <h3 className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
-            Live Match
+            {pick('Live Match', 'Live Match', 'Análisis en Vivo')}
             <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
               {pick('Tempo Real', 'Real-time', 'Tiempo real')}
             </span>
@@ -294,7 +294,11 @@ export default function LiveMatchPanel({
               <div className="filter blur-[6px] pointer-events-none select-none opacity-60">
                 <div className="bg-white border border-[#e8e8e6] rounded-lg p-4 space-y-3">
                   <div className="flex gap-2">
-                    {['editor', 'keywords', 'format'].map(tab => (
+                    {[
+                      pick('Editor CV', 'CV Editor', 'Editor CV'),
+                      pick('Keywords', 'Keywords', 'Palabras clave'),
+                      pick('Formato', 'Format', 'Formato'),
+                    ].map(tab => (
                       <div key={tab} className="px-3 py-1.5 rounded-md bg-[#f0f0ee] text-[10px] text-[#888]">{tab}</div>
                     ))}
                   </div>
@@ -315,7 +319,7 @@ export default function LiveMatchPanel({
                   </div>
                   <div>
                     <p className="text-[13px] font-semibold text-[#333]">
-                      {pick('Live Match Completo', 'Full Live Match', 'Live Match Completo')}
+                      {pick('Live Match Completo', 'Full Live Match', 'Análisis en Vivo Completo')}
                     </p>
                     <p className="text-[10px] text-[#888] font-light mt-1">
                       {pick('Desbloqueie o editor com highlights, tabela de keywords e checklist de formato ATS.', 'Unlock the editor with highlights, keyword table and ATS format checklist.', 'Desbloquea el editor con highlights, tabla de palabras clave y checklist de formato ATS.')}
@@ -365,7 +369,7 @@ export default function LiveMatchPanel({
                   }`}
                 >
                   <Search className="w-3 h-3" />
-                  Keywords ({result.totalCount})
+                  {pick('Keywords', 'Keywords', 'Palabras clave')} ({result.totalCount})
                 </button>
                 <button
                   onClick={() => setActiveTab('format')}
@@ -396,7 +400,7 @@ export default function LiveMatchPanel({
                       { key: 'all', label: pick('Todas', 'All', 'Todas'), count: result.totalCount },
                       { key: 'found', label: pick('Encontradas', 'Found', 'Encontradas'), count: result.foundCount, color: 'text-green-600' },
                       { key: 'partial', label: pick('Parciais', 'Partial', 'Parciales'), count: result.partialCount, color: 'text-amber-600' },
-                      { key: 'missing', label: pick('Em Falta', 'Missing', 'Faltantes'), count: result.missingCount, color: 'text-red-600' },
+                      { key: 'missing', label: pick('Em Falta', 'Missing', 'Faltante'), count: result.missingCount, color: 'text-red-600' },
                     ].map(tab => (
                       <button
                         key={tab.key}

@@ -844,12 +844,12 @@ export default function Results() {
               } else {
                 console.warn('[JOB_SCRAPE] Re-analysis failed:', reanalysisData.error);
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa Live Match para una comparación detallada`));
+                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa el Análisis en Vivo para una comparación detallada`));
               }
             } else {
               console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
               setJobScrapeStatus('done');
-              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa Live Match para una comparación detallada`));
+              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa el Análisis en Vivo para una comparación detallada`));
             }
           } else {
             console.warn('[JOB_SCRAPE] Scraping failed:', scrapeData.error);
@@ -1583,18 +1583,79 @@ export default function Results() {
 
   const avgScore = analysisData.quadrants.reduce((sum, q) => sum + q.score, 0) / analysisData.quadrants.length;
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
-  // Translate quadrant titles for EN (handles both new EN titles and legacy PT titles from sessionStorage)
-  const quadrantTitleEN: Record<string, string> = {
-    'Estrutura': 'Structure', 'Structure': 'Structure',
-    'Conteúdo': 'Content', 'Content': 'Content',
-    'Formação': 'Education', 'Education': 'Education',
-    'Experiência': 'Experience', 'Experience': 'Experience',
+  const quadrantTitleMap: Record<string, { pt: string; en: string; es: string }> = {
+    'Estrutura': { pt: 'Estrutura', en: 'Structure', es: 'Estructura' },
+    'Structure': { pt: 'Estrutura', en: 'Structure', es: 'Estructura' },
+    'Estructura': { pt: 'Estrutura', en: 'Structure', es: 'Estructura' },
+    'Conteúdo': { pt: 'Conteúdo', en: 'Content', es: 'Contenido' },
+    'Content': { pt: 'Conteúdo', en: 'Content', es: 'Contenido' },
+    'Contenido': { pt: 'Conteúdo', en: 'Content', es: 'Contenido' },
+    'Formação': { pt: 'Formação', en: 'Education', es: 'Formación' },
+    'Education': { pt: 'Formação', en: 'Education', es: 'Formación' },
+    'Formación': { pt: 'Formação', en: 'Education', es: 'Formación' },
+    'Experiência': { pt: 'Experiência', en: 'Experience', es: 'Experiencia' },
+    'Experience': { pt: 'Experiência', en: 'Experience', es: 'Experiencia' },
+    'Experiencia': { pt: 'Experiência', en: 'Experience', es: 'Experiencia' },
   };
+  const quadrantInsightMap: Record<string, { pt: string; en: string; es: string }> = {
+    'Experiência profissional': { pt: 'Experiência profissional', en: 'Professional experience', es: 'Experiencia profesional' },
+    'Professional experience': { pt: 'Experiência profissional', en: 'Professional experience', es: 'Experiencia profesional' },
+    'Experiencia profesional': { pt: 'Experiência profissional', en: 'Professional experience', es: 'Experiencia profesional' },
+    'Qualidade e relevância do conteúdo': { pt: 'Qualidade e relevância do conteúdo', en: 'Content quality and relevance', es: 'Calidad y relevancia del contenido' },
+    'Content quality and relevance': { pt: 'Qualidade e relevância do conteúdo', en: 'Content quality and relevance', es: 'Calidad y relevancia del contenido' },
+    'Calidad y relevancia del contenido': { pt: 'Qualidade e relevância do conteúdo', en: 'Content quality and relevance', es: 'Calidad y relevancia del contenido' },
+    'Organização e clareza do CV': { pt: 'Organização e clareza do CV', en: 'CV organisation and clarity', es: 'Organización y claridad del CV' },
+    'CV organisation and clarity': { pt: 'Organização e clareza do CV', en: 'CV organisation and clarity', es: 'Organización y claridad del CV' },
+    'Organización y claridad del CV': { pt: 'Organização e clareza do CV', en: 'CV organisation and clarity', es: 'Organización y claridad del CV' },
+    'Formação académica e contínua': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
+    'Academic and continuous education': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
+    'Formación académica y continua': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
+  };
+  const translateQuadrantTitle = (title: string) => quadrantTitleMap[title]?.[lang] || title;
+  const translateQuadrantInsight = (insight?: string) => {
+    if (!insight) return insight;
+    return quadrantInsightMap[insight]?.[lang] || insight;
+  };
+  const defaultActionPlan = [
+    {
+      week: pick('Semana 1-2', 'Week 1-2', 'Semana 1-2'),
+      title: pick('Optimização de Conteúdo', 'Content Optimisation', 'Optimización de Contenido'),
+      tasks: [
+        pick('Reescrever resumo profissional com métricas de impacto', 'Rewrite professional summary with impact metrics', 'Reescribir el resumen profesional con métricas de impacto'),
+        pick('Adicionar resultados quantificáveis a cada experiência', 'Add quantifiable results to each experience', 'Añadir resultados cuantificables a cada experiencia'),
+        pick('Alinhar keywords com as funções-alvo', 'Align keywords with target roles', 'Alinear las palabras clave con los puestos objetivo'),
+      ],
+    },
+    {
+      week: pick('Semana 3', 'Week 3', 'Semana 3'),
+      title: pick('Estrutura e Formatação', 'Structure and Formatting', 'Estructura y Formato'),
+      tasks: [
+        pick('Optimizar hierarquia visual e espaçamento', 'Optimise visual hierarchy and spacing', 'Optimizar la jerarquía visual y el espaciado'),
+        pick('Garantir compatibilidade ATS (formato, fontes, secções)', 'Ensure ATS compatibility (format, fonts, sections)', 'Garantizar compatibilidad ATS (formato, fuentes, secciones)'),
+        pick('Adicionar secções em falta (certificações, idiomas, etc.)', 'Add missing sections (certifications, languages, etc.)', 'Añadir secciones que faltan (certificaciones, idiomas, etc.)'),
+      ],
+    },
+    {
+      week: pick('Semana 4', 'Week 4', 'Semana 4'),
+      title: pick('Validação e Ajustes', 'Validation and Adjustments', 'Validación y Ajustes'),
+      tasks: [
+        pick('Pedir feedback a 2-3 profissionais da área', 'Get feedback from 2-3 industry professionals', 'Pedir feedback a 2-3 profesionales del sector'),
+        pick('Testar em diferentes sistemas ATS', 'Test on different ATS systems', 'Probar en distintos sistemas ATS'),
+        pick('Personalizar versões para candidaturas específicas', 'Customise versions for specific applications', 'Personalizar versiones para candidaturas específicas'),
+      ],
+    },
+  ];
   const dimensions = analysisData.quadrants.map((q: any) => ({
-    label: lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title,
+    label: translateQuadrantTitle(q.title),
     score: q.score,
     benchmark: q.benchmark
   }));
+  const translatedTopStrengths = analysisData.quadrants
+    .slice()
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+    .map(q => translateQuadrantTitle(q.title));
+  const benchmarkGapLabel = (gap: number) => `${gap >= 0 ? '+' : ''}${gap} vs ${t('benchmark_label')}`;
   // Send report by email — sends analysis data to backend for HTML email generation (like Career Path)
   const handleSendReport = async () => {
     const targetEmail = reportEmail || email || sessionStorage.getItem('paymentEmail') || '';
@@ -1862,7 +1923,7 @@ export default function Results() {
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
-                      Live Match
+                      {pick('Live Match', 'Live Match', 'Análisis en Vivo')}
                       <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
                         {t('novo')}
                       </span>
@@ -1880,7 +1941,7 @@ export default function Results() {
               <div className="bg-card border border-[#e8e8e6] rounded-lg p-5">
                 <LiveMatchPanel
                   cvText={cvText}
-                  lang={t('pt')}
+                  lang={lang as 'pt' | 'en' | 'es'}
                   isPaid={isPaid}
                   onRequestPayment={() => openPaymentModal()}
                   initialJD={sessionStorage.getItem('scrapedJobText') || undefined}
@@ -2090,7 +2151,7 @@ export default function Results() {
                 {/* Locked items */}
                 <div className="space-y-2">
                   {[
-                    pick('Live Match (matching de keywords da vaga em tempo real)', 'Live Match (real-time JD keyword matching)', 'Live Match (matching de keywords de la oferta en tiempo real)'),
+                    pick('Live Match (matching de keywords da vaga em tempo real)', 'Live Match (real-time JD keyword matching)', 'Análisis en Vivo (matching de palabras clave de la oferta en tiempo real)'),
                     pick('ATS Deep Scan (keywords + checklist de formato)', 'ATS Deep Scan (keywords + format checklist)', 'ATS Deep Scan (keywords + checklist de formato)'),
                     pick('Análise detalhada por quadrante', 'Detailed analysis by quadrant', 'Análisis detallado por cuadrante'),
                     pick('Diagnóstico ATS completo', 'Complete ATS diagnosis', 'Diagnóstico ATS completo'),
@@ -2150,10 +2211,10 @@ export default function Results() {
             {analysisData.quadrants.map((q, i) => (
               <QuadrantCard
                 key={i}
-                title={lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title}
+                title={translateQuadrantTitle(q.title)}
                 score={q.score}
                 benchmark={q.benchmark}
-                insight={q.impactPhrase}
+                insight={translateQuadrantInsight(q.impactPhrase)}
                 strengths={q.strengths}
                 weaknesses={q.weaknesses}
               />
@@ -2180,7 +2241,7 @@ export default function Results() {
           </div>
           <div className="space-y-5">
             {analysisData.quadrants.map((q, i) => (
-              <DimensionBar key={i} label={lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
+              <DimensionBar key={i} label={translateQuadrantTitle(q.title)} score={q.score} benchmark={q.benchmark} insight={translateQuadrantInsight(q.impactPhrase)} />
             ))}
           </div>
           <div className="pt-4 border-t border-border">
@@ -2237,7 +2298,11 @@ export default function Results() {
           <div className="flex flex-col items-center gap-3">
             <ScoreGauge score={100 - analysisData.atsRejectionRate} size={160} strokeWidth={8} />
             <p className="text-sm text-muted-foreground text-center max-w-md">
-              {lang === 'en' ? <>Your CV has <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> compatibility with ATS systems. {100 - analysisData.atsRejectionRate >= 70 ? 'Good compatibility.' : 'See the full report to learn how to improve.'}</> : <>O teu CV tem <span className="font-semibold text-foreground">{100 - analysisData.atsRejectionRate}%</span> de compatibilidade com sistemas ATS. {100 - analysisData.atsRejectionRate >= 70 ? 'Boa compatibilidade.' : 'Vê o relatório completo para saber como melhorar.'}</>}
+              {pick(
+                `O teu CV tem ${100 - analysisData.atsRejectionRate}% de compatibilidade com sistemas ATS. ${100 - analysisData.atsRejectionRate >= 70 ? 'Boa compatibilidade.' : 'Vê o relatório completo para saber como melhorar.'}`,
+                `Your CV has ${100 - analysisData.atsRejectionRate}% compatibility with ATS systems. ${100 - analysisData.atsRejectionRate >= 70 ? 'Good compatibility.' : 'See the full report to learn how to improve.'}`,
+                `Tu CV tiene ${100 - analysisData.atsRejectionRate}% de compatibilidad con sistemas ATS. ${100 - analysisData.atsRejectionRate >= 70 ? 'Buena compatibilidad.' : 'Consulta el informe completo para saber cómo mejorar.'}`
+              )}
             </p>
           </div>
         </div>
@@ -2297,7 +2362,7 @@ export default function Results() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            {lang === 'en' ? <>You are in the <span className="font-semibold text-foreground">percentile {percentile}</span>, which means your CV is better than {percentile}% of CVs analysed in the market.</> : <>→ Estás no <span className="font-semibold text-foreground">percentil {percentile}</span>, o que significa que o teu CV é melhor que {percentile}% dos CVs analisados no mercado.</>}
+            → {t('estas_no_percentil')} <span className="font-semibold text-foreground">{t('percentil')} {percentile}</span>, {t('o_que_significa')} {percentile}% {t('dos_cvs_analisados')}
           </p>
 
           {/* Interpretação detalhada quando pago */}
@@ -2305,30 +2370,38 @@ export default function Results() {
             <div className="bg-muted/30 rounded-lg p-4 space-y-2">
               <p className="text-xs font-semibold text-foreground">{t('interpretao_do_teu_posicionamento')}</p>
               <p className="text-sm text-muted-foreground">
-                {lang === 'en' ? (
-                  percentile >= 90 ? (
-                    <>Your CV is in the <strong className="text-foreground">top {100 - percentile}%</strong> of analysed candidates. This places you in a position of excellence — in a process with 100 candidates, your CV would be better than {percentile} of them. Your profile stands out for the quality of structure, content and presentation. Maintain this level and focus on customising your CV for each specific application.</>
-                  ) : percentile >= 75 ? (
-                    <>With a score in the <strong className="text-foreground">percentile {percentile}</strong>, your CV ranks above the vast majority of candidates. In a process with 100 candidates, you would surpass {percentile} of them. You are {90 - percentile} percentile points from the top 10% — small adjustments in the identified areas can make the difference to reach excellence.</>
-                  ) : percentile >= 50 ? (
-                    <>Your CV is in the <strong className="text-foreground">percentile {percentile}</strong>, above average but with significant room for improvement. In a competitive process, you could lose to candidates with more optimised CVs. Focus on the dimensions with the lowest score to quickly move up.</>
-                  ) : (
-                    <>Your CV is in the <strong className="text-foreground">percentile {percentile}</strong>, below the market average. This means that {100 - percentile}% of analysed CVs are more competitive. The good news is there is plenty of room for improvement — follow the recommendations below to significantly improve your positioning.</>
-                  )
+                {percentile >= 90 ? (
+                  <>{pick(
+                    `O teu CV está no top ${100 - percentile}% dos candidatos analisados. Isto coloca-te numa posição de excelência — num processo com 100 candidatos, o teu CV seria melhor que ${percentile} deles. O teu perfil destaca-se pela qualidade da estrutura, conteúdo e apresentação. Mantém este nível e foca-te em personalizar o CV para cada candidatura específica.`,
+                    `Your CV is in the top ${100 - percentile}% of analysed candidates. This places you in a position of excellence — in a process with 100 candidates, your CV would be better than ${percentile} of them. Your profile stands out for the quality of structure, content and presentation. Maintain this level and focus on customising your CV for each specific application.`,
+                    `Tu CV está en el top ${100 - percentile}% de los candidatos analizados. Esto te sitúa en una posición de excelencia: en un proceso con 100 candidatos, tu CV sería mejor que el de ${percentile} de ellos. Tu perfil destaca por la calidad de la estructura, el contenido y la presentación. Mantén este nivel y céntrate en personalizar el CV para cada candidatura específica.`
+                  )}</>
+                ) : percentile >= 75 ? (
+                  <>{pick(
+                    `Com um score no percentil ${percentile}, o teu CV posiciona-se acima da grande maioria dos candidatos. Num processo com 100 candidatos, superarias ${percentile} deles. Estás a ${90 - percentile} pontos percentuais do top 10% — pequenos ajustes nas áreas identificadas podem fazer a diferença para atingir a excelência.`,
+                    `With a score in percentile ${percentile}, your CV ranks above the vast majority of candidates. In a process with 100 candidates, you would surpass ${percentile} of them. You are ${90 - percentile} percentile points from the top 10% — small adjustments in the identified areas can make the difference to reach excellence.`,
+                    `Con una puntuación en el percentil ${percentile}, tu CV se sitúa por encima de la gran mayoría de los candidatos. En un proceso con 100 candidatos, superarías a ${percentile} de ellos. Estás a ${90 - percentile} puntos percentiles del top 10%: pequeños ajustes en las áreas identificadas pueden marcar la diferencia para alcanzar la excelencia.`
+                  )}</>
+                ) : percentile >= 50 ? (
+                  <>{pick(
+                    `O teu CV está no percentil ${percentile}, acima da média mas com margem significativa de melhoria. Num processo competitivo, poderias perder para candidatos com CVs mais optimizados. Foca-te nas dimensões com score mais baixo para subir rapidamente de posição.`,
+                    `Your CV is in percentile ${percentile}, above average but with significant room for improvement. In a competitive process, you could lose to candidates with more optimised CVs. Focus on the dimensions with the lowest score to quickly move up.`,
+                    `Tu CV está en el percentil ${percentile}, por encima de la media pero con un margen significativo de mejora. En un proceso competitivo, podrías perder frente a candidatos con CVs más optimizados. Céntrate en las dimensiones con menor puntuación para subir rápidamente de posición.`
+                  )}</>
                 ) : (
-                  percentile >= 90 ? (
-                    <>O teu CV está no <strong className="text-foreground">top {100 - percentile}%</strong> dos candidatos analisados. Isto coloca-te numa posição de excelência — num processo com 100 candidatos, o teu CV seria melhor que {percentile} deles. O teu perfil destaca-se pela qualidade da estrutura, conteúdo e apresentação. Mantém este nível e foca-te em personalizar o CV para cada candidatura específica.</>
-                  ) : percentile >= 75 ? (
-                    <>Com um score no <strong className="text-foreground">percentil {percentile}</strong>, o teu CV posiciona-se acima da grande maioria dos candidatos. Num processo com 100 candidatos, superarias {percentile} deles. Estás a {90 - percentile} pontos percentuais do top 10% — pequenos ajustes nas áreas identificadas podem fazer a diferença para atingir a excelência.</>
-                  ) : percentile >= 50 ? (
-                    <>O teu CV está no <strong className="text-foreground">percentil {percentile}</strong>, acima da média mas com margem significativa de melhoria. Num processo competitivo, poderias perder para candidatos com CVs mais optimizados. Foca-te nas dimensões com score mais baixo para subir rapidamente de posição.</>
-                  ) : (
-                    <>O teu CV está no <strong className="text-foreground">percentil {percentile}</strong>, abaixo da média do mercado. Isto significa que {100 - percentile}% dos CVs analisados são mais competitivos. A boa notícia é que há muito espaço para melhoria — segue as recomendações abaixo para subir significativamente o teu posicionamento.</>
-                  )
+                  <>{pick(
+                    `O teu CV está no percentil ${percentile}, abaixo da média do mercado. Isto significa que ${100 - percentile}% dos CVs analisados são mais competitivos. A boa notícia é que há muito espaço para melhoria — segue as recomendações abaixo para subir significativamente o teu posicionamento.`,
+                    `Your CV is in percentile ${percentile}, below the market average. This means that ${100 - percentile}% of analysed CVs are more competitive. The good news is there is plenty of room for improvement — follow the recommendations below to significantly improve your positioning.`,
+                    `Tu CV está en el percentil ${percentile}, por debajo de la media del mercado. Esto significa que el ${100 - percentile}% de los CV analizados son más competitivos. La buena noticia es que hay mucho margen de mejora: sigue las recomendaciones de abajo para mejorar significativamente tu posicionamiento.`
+                  )}</>
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
-                {lang === 'en' ? <>→ To move to the next level, you need to increase your global score by approximately <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} points</strong>.</> : <>→ Para subir para o próximo nível, precisas de aumentar o score global em aproximadamente <strong className="text-foreground">{percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} pontos</strong>.</>}
+                → {pick(
+                  `Para subir para o próximo nível, precisas de aumentar o score global em aproximadamente ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} pontos.`,
+                  `To move to the next level, you need to increase your global score by approximately ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} points.`,
+                  `Para pasar al siguiente nivel, necesitas aumentar la puntuación global en aproximadamente ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} puntos.`
+                )}
               </p>
             </div>
           )}
@@ -2370,25 +2443,45 @@ export default function Results() {
                 
                  title={t('anlise_detalhada_por_quadrante')}
                 visibleHint={t('breakdown_completo_de_cada_dimenso')}
-                previewItems={lang === 'en' ? ['Visual structure and information hierarchy', 'Alignment between skills and target role', 'Keywords and ATS filter compatibility', 'Market positioning'] : ['Estrutura visual e hierarquia de informação', 'Alinhamento entre competências e função-alvo', 'Keywords e compatibilidade com filtros ATS', 'Posicionamento face ao mercado']}
+                previewItems={[
+                  pick('Estrutura visual e hierarquia de informação', 'Visual structure and information hierarchy', 'Estructura visual y jerarquía de la información'),
+                  pick('Alinhamento entre competências e função-alvo', 'Alignment between skills and target role', 'Alineación entre competencias y puesto objetivo'),
+                  pick('Keywords e compatibilidade com filtros ATS', 'Keywords and ATS filter compatibility', 'Keywords y compatibilidad con filtros ATS'),
+                  pick('Posicionamento face ao mercado', 'Market positioning', 'Posicionamiento frente al mercado'),
+                ]}
               />
 <LockedSection
                 
                  title={t('comparao_com_perfis_top_25')}
                 visibleHint={t('v_como_o_teu_cv')}
-                previewItems={lang === 'en' ? ['Benchmark against best CVs in sector', 'Missing differentiating skills', 'Positioning vs competitors', 'Gap analysis with recommendations'] : ['Benchmark contra os melhores CVs do setor', 'Competências diferenciadoras em falta', 'Posicionamento face a concorrentes', 'Gap analysis com recomendações']}
+                previewItems={[
+                  pick('Benchmark contra os melhores CVs do setor', 'Benchmark against best CVs in sector', 'Benchmark frente a los mejores CV del sector'),
+                  pick('Competências diferenciadoras em falta', 'Missing differentiating skills', 'Competencias diferenciales que faltan'),
+                  pick('Posicionamento face a concorrentes', 'Positioning vs competitors', 'Posicionamiento frente a competidores'),
+                  pick('Gap analysis com recomendações', 'Gap analysis with recommendations', 'Análisis de brechas con recomendaciones'),
+                ]}
               />
 <LockedSection
                 
                  title={t('recomendaes_especficas_15')}
                 visibleHint={t('mais_de_15_microinsights_com')}
-                previewItems={lang === 'en' ? ['Optimised professional summary rewrite', 'Reformulation with impact metrics', 'ATS keyword optimisation', 'Visual formatting suggestions'] : ['Reescrita otimizada do resumo profissional', 'Reformulação com métricas de impacto', 'Otimização de keywords para ATS', 'Sugestões de formatação visual']}
+                previewItems={[
+                  pick('Reescrita otimizada do resumo profissional', 'Optimised professional summary rewrite', 'Reescritura optimizada del resumen profesional'),
+                  pick('Reformulação com métricas de impacto', 'Reformulation with impact metrics', 'Reformulación con métricas de impacto'),
+                  pick('Otimização de keywords para ATS', 'ATS keyword optimisation', 'Optimización de keywords para ATS'),
+                  pick('Sugestões de formatação visual', 'Visual formatting suggestions', 'Sugerencias de formato visual'),
+                ]}
               />
 <LockedSection
                 
                  title={t('plano_de_aco_30_dias')}
                 visibleHint={t('plano_estruturado_com_35_aces')}
-                previewItems={lang === 'en' ? ['3-5 ordered priority actions', 'Implementation timeline', 'Quick improvements checklist', 'Application strategy'] : ['3-5 acções prioritárias ordenadas', 'Timeline de implementação', 'Checklist de melhorias rápidas', 'Estratégia de candidatura']}
+                previewItems={[
+                  pick('3-5 acções prioritárias ordenadas', '3-5 ordered priority actions', '3-5 acciones prioritarias ordenadas'),
+                  pick('Timeline de implementação', 'Implementation timeline', 'Cronograma de implementación'),
+                  pick('Checklist de melhorias rápidas', 'Quick improvements checklist', 'Checklist de mejoras rápidas'),
+                  pick('Estratégia de candidatura', 'Application strategy', 'Estrategia de candidatura'),
+                ]}
               />
             </div>
           </div>
@@ -2410,11 +2503,11 @@ export default function Results() {
                   return (
                     <div key={q.title} className="p-3 bg-muted/20 rounded-lg space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-foreground">{lang === 'en' ? (quadrantTitleEN[q.title] || q.title) : q.title}</span>
+                        <span className="text-sm font-semibold text-foreground">{translateQuadrantTitle(q.title)}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-foreground">{q.score}/100</span>
                           <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
-                            {gap >= 0 ? '+' : ''}{gap} vs benchmark
+                            {benchmarkGapLabel(gap)}
                           </span>
                         </div>
                       </div>
@@ -2423,11 +2516,23 @@ export default function Results() {
                       ) : (
                         <p className="text-sm text-muted-foreground">
                           {isStrong ? (
-                            lang === 'en' ? <>✅ <strong>Strong point.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>✅ <strong>Ponto forte.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                            <>{pick(
+                              `✅ Ponto forte. Estás ${gap} pontos acima do ${t('benchmark_label')} (${q.benchmark}).`,
+                              `✅ Strong point. You are ${gap} points above the ${t('benchmark_label')} (${q.benchmark}).`,
+                              `✅ Punto fuerte. Estás ${gap} puntos por encima del ${t('benchmark_label')} (${q.benchmark}).`
+                            )}</>
                           ) : isWeak ? (
-                            lang === 'en' ? <>⚠️ <strong>Area for improvement.</strong> You are {Math.abs(gap)} points below the benchmark ({q.benchmark}).</> : <>⚠️ <strong>Área de melhoria.</strong> Estás {Math.abs(gap)} pontos abaixo do benchmark ({q.benchmark}).</>
+                            <>{pick(
+                              `⚠️ Área de melhoria. Estás ${Math.abs(gap)} pontos abaixo do ${t('benchmark_label')} (${q.benchmark}).`,
+                              `⚠️ Area for improvement. You are ${Math.abs(gap)} points below the ${t('benchmark_label')} (${q.benchmark}).`,
+                              `⚠️ Área de mejora. Estás ${Math.abs(gap)} puntos por debajo del ${t('benchmark_label')} (${q.benchmark}).`
+                            )}</>
                           ) : (
-                            lang === 'en' ? <>→ <strong>Above average.</strong> You are {gap} points above the benchmark ({q.benchmark}).</> : <>→ <strong>Acima da média.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                            <>{pick(
+                              `→ Acima da média. Estás ${gap} pontos acima do ${t('benchmark_label')} (${q.benchmark}).`,
+                              `→ Above average. You are ${gap} points above the ${t('benchmark_label')} (${q.benchmark}).`,
+                              `→ Por encima de la media. Estás ${gap} puntos por encima del ${t('benchmark_label')} (${q.benchmark}).`
+                            )}</>
                           )}
                         </p>
                       )}
@@ -2463,8 +2568,8 @@ export default function Results() {
               <div className="space-y-2">
                 {[...dimensions].sort((a: any, b: any) => (a.score - a.benchmark) - (b.score - b.benchmark)).map((dim: any, i: number) => {
                   const gap = dim.score - dim.benchmark;
-                  const priority = gap <= 0 ? (t('alta')) : gap <= 10 ? (lang === 'en' ? 'Medium' : lang === 'es' ? 'Media' : 'Média') : (t('baixa'));
-                  const prColor = (priority === 'Alta' || priority === 'High') ? 'bg-red-500/10 text-red-600 border-red-500/20' : (priority === 'Média' || priority === 'Medium') ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
+                  const priority = gap <= 0 ? t('alta') : gap <= 10 ? pick('Média', 'Medium', 'Media') : t('baixa');
+                  const prColor = (priority === 'Alta' || priority === 'High') ? 'bg-red-500/10 text-red-600 border-red-500/20' : (priority === 'Média' || priority === 'Medium' || priority === 'Media') ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
                   return (
                     <div key={dim.label} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -2531,15 +2636,7 @@ export default function Results() {
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('plano_de_aco_30_dias_2')}</p>
               </div>
               <div className="space-y-3">
-                {(analysisData.actionPlan || (lang === 'en' ? [
-                  { week: 'Week 1-2', title: 'Content Optimisation', tasks: ['Rewrite professional summary with impact metrics', 'Add quantifiable results to each experience', 'Align keywords with target roles'] },
-                  { week: 'Week 3', title: 'Structure and Formatting', tasks: ['Optimise visual hierarchy and spacing', 'Ensure ATS compatibility (format, fonts, sections)', 'Add missing sections (certifications, languages, etc.)'] },
-                  { week: 'Week 4', title: 'Validation and Adjustments', tasks: ['Get feedback from 2-3 industry professionals', 'Test on different ATS systems', 'Customise versions for specific applications'] },
-                ] : [
-                  { week: 'Semana 1-2', title: 'Optimização de Conteúdo', tasks: ['Reescrever resumo profissional com métricas de impacto', 'Adicionar resultados quantificáveis a cada experiência', 'Alinhar keywords com as funções-alvo'] },
-                  { week: 'Semana 3', title: 'Estrutura e Formatação', tasks: ['Optimizar hierarquia visual e espaçamento', 'Garantir compatibilidade ATS (formato, fontes, secções)', 'Adicionar secções em falta (certificações, idiomas, etc.)'] },
-                  { week: 'Semana 4', title: 'Validação e Ajustes', tasks: ['Pedir feedback a 2-3 profissionais da área', 'Testar em diferentes sistemas ATS', 'Personalizar versões para candidaturas específicas'] },
-                ])).map((phase: any, i: number) => (
+                {(analysisData.actionPlan || defaultActionPlan).map((phase: any, i: number) => (
                   <div key={i} className="p-3 bg-muted/20 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{phase.week}</span>
@@ -2973,18 +3070,13 @@ export default function Results() {
           const atsCompat = 100 - analysisData.atsRejectionRate;
           const role = analysisData.perceivedRole || (t('profissional'));
           const seniority = analysisData.perceivedSeniority || '';
-          const topStrengths = analysisData.quadrants
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 2)
-            .map(q => q.title);
+               const topStrengths = translatedTopStrengths;
           const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
-
-          const generatePostText = () => {
-            if (isEN) {
-              return `Do you know if your CV passes the automatic recruitment filters (ATS)?\n\nI tested mine with a tool that simulates those filters and the result surprised me.\n\n\u2705 ATS Compatibility Score: ${atsCompat}%\n\u2705 Overall Score: ${Math.round(avgScore)}/100 (Percentile ${percentile})\n\u2705 Top strengths: ${topStrengths.join(' & ')}\n\nMost CVs are rejected before a human even reads them. This analysis showed me exactly what to fix — and what was already working.\n\n\ud83d\udd17 https://share2inspire.pt/en/cv-analyser\n\nWhat would your CV score be?\n\n#CVAnalysis #ATS #CareerDevelopment #Share2Inspire`;
-            }
-            return `Sabes se o teu CV passa nos filtros autom\u00e1ticos de recrutamento (ATS)?\n\nTestei o meu numa ferramenta que simula esses filtros e o resultado surpreendeu-me.\n\n\u2705 Score de Compatibilidade ATS: ${atsCompat}%\n\u2705 Score Global: ${Math.round(avgScore)}/100 (Percentil ${percentile})\n\u2705 Pontos fortes: ${topStrengths.join(' e ')}\n\nA maioria dos CVs \u00e9 rejeitada antes de um humano sequer os ler. Esta an\u00e1lise mostrou-me exactamente o que corrigir \u2014 e o que j\u00e1 estava a funcionar.\n\n\ud83d\udd17 https://share2inspire.pt/cv-analyser\n\nQual seria o score do teu CV?\n\n#An\u00e1liseCV #ATS #Carreira #Share2Inspire`;
-          };
+          const generatePostText = () => pick(
+            `Sabes se o teu CV passa nos filtros automáticos de recrutamento (ATS)?\n\nTestei o meu numa ferramenta que simula esses filtros e o resultado surpreendeu-me.\n\n✅ Score de Compatibilidade ATS: ${atsCompat}%\n✅ Score Global: ${Math.round(avgScore)}/100 (Percentil ${percentile})\n✅ Pontos fortes: ${topStrengths.join(' e ')}\n\nA maioria dos CVs é rejeitada antes de um humano sequer os ler. Esta análise mostrou-me exactamente o que corrigir — e o que já estava a funcionar.\n\n🔗 https://share2inspire.pt/cv-analyser\n\nQual seria o score do teu CV?\n\n#AnáliseCV #ATS #Carreira #Share2Inspire`,
+            `Do you know if your CV passes the automatic recruitment filters (ATS)?\n\nI tested mine with a tool that simulates those filters and the result surprised me.\n\n✅ ATS Compatibility Score: ${atsCompat}%\n✅ Overall Score: ${Math.round(avgScore)}/100 (Percentile ${percentile})\n✅ Top strengths: ${topStrengths.join(' & ')}\n\nMost CVs are rejected before a human even reads them. This analysis showed me exactly what to fix — and what was already working.\n\n🔗 https://share2inspire.pt/en/cv-analyser\n\nWhat would your CV score be?\n\n#CVAnalysis #ATS #CareerDevelopment #Share2Inspire`,
+            `¿Sabes si tu CV supera los filtros automáticos de selección (ATS)?\n\nProbé el mío en una herramienta que simula esos filtros y el resultado me sorprendió.\n\n✅ Puntuación de Compatibilidad ATS: ${atsCompat}%\n✅ Puntuación Global: ${Math.round(avgScore)}/100 (Percentil ${percentile})\n✅ Puntos fuertes: ${topStrengths.join(' y ')}\n\nLa mayoría de los CV se rechazan antes de que una persona llegue siquiera a leerlos. Este análisis me mostró exactamente qué debía corregir y qué ya estaba funcionando.\n\n🔗 https://share2inspire.pt/es/cv-analyser\n\n¿Qué puntuación tendría tu CV?\n\n#AnalisisCV #ATS #Carrera #Share2Inspire`
+          );
 
           const generateCertImage = () => {
             const lang = getLang();
@@ -3058,7 +3150,7 @@ export default function Results() {
               const y = 358 + i * 42;
               ctx.fillStyle = '#CCCCCC';
               ctx.font = '500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-              ctx.fillText(q.title, 80, y + 12);
+              ctx.fillText(translateQuadrantTitle(q.title), 80, y + 12);
               // Bar background
               ctx.fillStyle = '#2a2f3e';
               ctx.beginPath();

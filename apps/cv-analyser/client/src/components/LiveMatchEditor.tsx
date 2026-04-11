@@ -119,7 +119,7 @@ export default function LiveMatchEditor({ cvText, annotations, missingKeywords, 
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block w-3 h-1 rounded" style={{ background: 'repeating-linear-gradient(90deg, #ef4444 0, #ef4444 2px, transparent 2px, transparent 4px)', backgroundSize: '4px 2px' }} />
-          <span className="text-[10px] text-[#888]">{pick('Em falta', 'Missing', 'Falta')}</span>
+          <span className="text-[10px] text-[#888]">{pick('Em falta', 'Missing', 'Faltante')}</span>
         </div>
       </div>
 
