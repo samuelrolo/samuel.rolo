@@ -324,12 +324,24 @@ export default function CareerPathResults() {
     return value || '';
   };
 
+  const getPriorityTone = (value?: string) => {
+    const normalized = (value || '').trim().toLowerCase();
+    if (['alta', 'high'].includes(normalized)) return 'bg-red-500/10 text-red-500 border border-red-500/20';
+    if (['média', 'media', 'medium'].includes(normalized)) return 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
+    return 'bg-green-500/10 text-green-600 border border-green-500/20';
+  };
+
   const PLANS = getPlans(isEN, CUR, P);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [pollingMsg, setPollingMsg] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('analysisLang', lang);
+    sessionStorage.setItem('analysisLang', lang);
+  }, [lang]);
 
   // Unified discount code modal for Career Path
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -470,13 +482,20 @@ export default function CareerPathResults() {
       const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
       const cvFile = (localStorage.getItem('careerPathCvFile') || sessionStorage.getItem('careerPathCvFile')) || '';
       const cvFilename = (localStorage.getItem('careerPathCvFilename') || sessionStorage.getItem('careerPathCvFilename')) || 'cv.pdf';
+      const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
+      const currentCountry = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined;
+      const currentRegion = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined;
+
+      localStorage.setItem('analysisLang', currentLanguage);
+      sessionStorage.setItem('analysisLang', currentLanguage);
+
       const requestBody: any = {
         mode: 'career_path',
         cv_text: cvText,
         linkedin_url: linkedinUrl || undefined,
-        language: (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || 'pt',
-        country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
-        region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
+        language: currentLanguage,
+        country: currentCountry,
+        region: currentRegion,
       };
       // If cv_text is too short but we have the file base64, send it as fallback
       if (cvText.trim().length < 50 && cvFile) {
@@ -679,7 +698,7 @@ export default function CareerPathResults() {
           name: email.split('@')[0],
           product_type: 'career_path',
           orderId,
-          language: t('pt'),
+          language: lang,
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
@@ -1414,11 +1433,7 @@ export default function CareerPathResults() {
                     <div key={i} className="p-3 border border-border rounded-lg">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-semibold text-foreground">{f.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
-                          f.priority === 'Alta' ? 'bg-red-500/10 text-red-500 border border-red-500/20'
-                          : f.priority === 'Média' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
-                          : 'bg-green-500/10 text-green-600 border border-green-500/20'
-                        }`}>{translatePriorityLabel(f.priority)}</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(f.priority)}`}>{translatePriorityLabel(f.priority)}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{f.provider} · {f.duration} · {f.cost}</p>
                       <p className="text-xs text-muted-foreground mt-1">{f.relevance}</p>
@@ -1524,11 +1539,7 @@ export default function CareerPathResults() {
                     <div key={i} className="p-3 border border-border rounded-lg">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-semibold text-foreground">{c.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
-                          c.priority === 'Alta' ? 'bg-red-500/10 text-red-500 border border-red-500/20'
-                          : c.priority === 'Média' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
-                          : 'bg-green-500/10 text-green-600 border border-green-500/20'
-                        }`}>{c.priority}</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(c.priority)}`}>{translatePriorityLabel(c.priority)}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{c.body} · {c.investment}</p>
                       <p className="text-xs text-muted-foreground mt-1">{c.impact}</p>
@@ -2126,47 +2137,33 @@ export default function CareerPathResults() {
               {/* Payment method */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {lang === 'en' ? (
-                    <>
+                <div className={`grid gap-2 ${lang === 'en' ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  {((lang === 'en' ? ['stripe', 'paypal'] : ['mbway', 'stripe', 'paypal']) as const).map((method) => {
+                    const activeClass = method === 'stripe'
+                      ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
+                      : method === 'paypal'
+                        ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground'
+                        : 'border-[#C9A961] bg-[#C9A961]/5 text-foreground';
+                    const hoverClass = method === 'stripe'
+                      ? 'hover:border-[#635BFF]/50'
+                      : method === 'paypal'
+                        ? 'hover:border-[#0070BA]/50'
+                        : 'hover:border-[#C9A961]/50';
+
+                    return (
                       <button
-                        onClick={() => setPaymentMethod('stripe')}
+                        key={method}
+                        onClick={() => setPaymentMethod(method)}
                         className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          paymentMethod === 'stripe'
-                            ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
-                            : 'border-border text-muted-foreground hover:border-[#635BFF]/50'
+                          paymentMethod === method
+                            ? activeClass
+                            : `border-border text-muted-foreground ${hoverClass}`
                         }`}
                       >
-                        {pick('Cartão', 'Card', 'Tarjeta')}
+                        {method === 'mbway' ? pick('MB WAY', 'MB WAY', 'MB WAY') : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : pick('PayPal', 'PayPal', 'PayPal')}
                       </button>
-                      <button
-                        onClick={() => setPaymentMethod('paypal')}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          paymentMethod === 'paypal'
-                            ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground'
-                            : 'border-border text-muted-foreground hover:border-[#0070BA]/50'
-                        }`}
-                      >
-                        {pick('PayPal', 'PayPal', 'PayPal')}
-                      </button>
-                    </>
-                  ) : (
-                    <>  
-                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                        <button
-                          key={method}
-                          onClick={() => setPaymentMethod(method)}
-                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                            paymentMethod === method
-                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
-                          }`}
-                        >
-                          {method === 'mbway' ? pick('MB WAY', 'MB WAY', 'MB WAY') : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : pick('PayPal', 'PayPal', 'PayPal')}
-                        </button>
-                      ))}
-                    </>
-                  )}
+                    );
+                  })}
                 </div>
               </div>
 

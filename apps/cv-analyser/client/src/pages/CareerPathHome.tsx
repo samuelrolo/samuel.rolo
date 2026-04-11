@@ -28,9 +28,6 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const getPageLang = () => window.location.pathname.startsWith('/en/') ? 'en' : window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
-const getPageBasePath = () => getPageLang() === 'en' ? '/en' : getPageLang() === 'es' ? '/es' : '';
-
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -116,6 +113,26 @@ export default function CareerPathHome() {
   useEffect(() => {
     setCountry((current) => current || getDefaultCountryByLanguage(lang));
   }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem('analysisLang', lang);
+    sessionStorage.setItem('analysisLang', lang);
+  }, [lang]);
+
+  useEffect(() => {
+    if (country) {
+      localStorage.setItem('analysisCountry', country);
+      sessionStorage.setItem('analysisCountry', country);
+    }
+
+    if (region) {
+      localStorage.setItem('analysisRegion', region);
+      sessionStorage.setItem('analysisRegion', region);
+    } else {
+      localStorage.removeItem('analysisRegion');
+      sessionStorage.removeItem('analysisRegion');
+    }
+  }, [country, region]);
   const [previewData, setPreviewData] = useState<any>(null);
 
   useEffect(() => {
@@ -378,14 +395,22 @@ export default function CareerPathHome() {
       }
 
       // Store CV data and LinkedIn URL for the results page
-      const pageLang = getPageLang();
+      const currentLanguage = lang;
       localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
       localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       localStorage.setItem('careerPathCvFile', base64Content);
       localStorage.setItem('careerPathCvFilename', file.name);
-      localStorage.setItem('analysisLang', pageLang);
+      localStorage.setItem('analysisLang', currentLanguage);
+      sessionStorage.setItem('analysisLang', currentLanguage);
       localStorage.setItem('analysisCountry', country);
-      localStorage.setItem('analysisRegion', region || '');
+      sessionStorage.setItem('analysisCountry', country);
+      if (region) {
+        localStorage.setItem('analysisRegion', region);
+        sessionStorage.setItem('analysisRegion', region);
+      } else {
+        localStorage.removeItem('analysisRegion');
+        sessionStorage.removeItem('analysisRegion');
+      }
       if (linkedinUrl) {
         localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
@@ -483,8 +508,7 @@ export default function CareerPathHome() {
     setPaymentError(null);
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const pageLang = getPageLang();
-      const pageBasePath = getPageBasePath();
+      const currentLanguage = lang;
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -493,14 +517,14 @@ export default function CareerPathHome() {
           name: email.split('@')[0],
           product_type: memberProductType,
           orderId,
-          language: pageLang,
+          language: currentLanguage,
           country,
           region,
           currency: 'eur',
           amount: FINAL_PRICE,
           description: 'Career Path — Share2Inspire',
-          success_url: `${window.location.origin}${pageBasePath}/career-path/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}${pageBasePath}/career-path`,
+          success_url: `${window.location.origin}${localePath('/career-path/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${localePath('/career-path')}`,
         })
       });
       const data = await response.json();
