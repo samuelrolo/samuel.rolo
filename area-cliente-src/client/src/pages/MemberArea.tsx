@@ -776,7 +776,7 @@ function getYouTubeId(url: string): string | null {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function MemberArea() {
-  const { t, lang, setLang } = useI18n();
+  const { t, lang, setLang, pick } = useI18n();
   const { profile, subscription, user } = useAuth();
   const [content, setContent] = useState<MemberContent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1199,19 +1199,24 @@ export default function MemberArea() {
     else { setExpandedTool(key); setAnalysisResult(null); setAnalysisError(null); setCvFile(null); setTimeout(() => { const el = document.querySelector(`[data-tool-key="${key}"]`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); }
   };
 
+  const getStandaloneToolUrl = useCallback((path: string) => {
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    if (lang === 'en') return `/en${normalizedPath}`;
+    if (lang === 'es') return `/es${normalizedPath}`;
+    return normalizedPath;
+  }, [lang]);
+
   // ─── Tool definitions ───────────────────────────────────────────────────
   type ToolDef = { key: string; icon: any; color: string; type: 'external' | 'inline' | 'locked' | 'discount' | 'widget'; action?: string; url?: string; discount?: string | null; discountOriginal?: string | null; label: string; desc: string; badge?: number };
 
   const tools: ToolDef[] = [
     { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'inline', action: 'cvMaker', label: t('member.tools.cvMakerLabel'), desc: t('member.tools.cvMakerDesc') },
-    { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: t('member.tools.cvAnalyzerLabel'), desc: t('member.tools.cvAnalyzerDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
-    { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: t('member.tools.linkedinRoasterLabel'), desc: t('member.tools.linkedinRoasterDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
+    { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'external', action: 'cv', url: getStandaloneToolUrl('/cv-analyser/'), label: t('member.tools.cvAnalyzerLabel'), desc: t('member.tools.cvAnalyzerDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
+    { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'external', action: 'linkedin', url: getStandaloneToolUrl('/linkedin-roaster/'), label: t('member.tools.linkedinRoasterLabel'), desc: t('member.tools.linkedinRoasterDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
     { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: t('member.tools.careerAdvisoryLabel'), desc: t('member.tools.careerAdvisoryDesc') },
-    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: t('member.tools.careerPathLabel'), desc: t('member.tools.careerPathDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
-    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: t('member.tools.careerIntelligenceLabel'), desc: t('member.tools.careerIntelligenceDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
-    { key: 'salaryRealityCheck',  icon: Euro,  color: 'from-amber-500/15 to-amber-500/5',  type: 'inline' as const,  action: 'salaryRealityCheck',  label: t('member.tools.salaryRealityCheckLabel'),  desc: t('member.tools.salaryRealityCheckDesc'),
-  badge: savedAnalyses.filter(a => a.analysis_type === 'salary_reality_check').length || undefined,
-},
+    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: 'external', action: 'careerPath', url: getStandaloneToolUrl('/career-path/'), label: t('member.tools.careerPathLabel'), desc: t('member.tools.careerPathDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
+    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: 'external', action: 'careerIntelligence', url: getStandaloneToolUrl('/career-intelligence/'), label: t('member.tools.careerIntelligenceLabel'), desc: t('member.tools.careerIntelligenceDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
+    { key: 'salaryRealityCheck', icon: Euro, color: 'from-amber-500/15 to-amber-500/5', type: 'inline', action: 'salaryRealityCheck', label: t('member.tools.salaryRealityCheckLabel'), desc: t('member.tools.salaryRealityCheckDesc'), badge: savedAnalyses.filter(a => a.analysis_type === 'salary_reality_check').length || undefined },
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
@@ -1505,10 +1510,22 @@ return null;
   // ─── Navigate to tool from next step / insight ─────────────────────────
   const navigateToAction = (action: string) => {
     if (action === 'profile') { window.location.href = '/area-cliente/perfil'; return; }
+
+    const standaloneActionMap: Record<string, string> = {
+      cv: getStandaloneToolUrl('/cv-analyser/'),
+      linkedin: getStandaloneToolUrl('/linkedin-roaster/'),
+      careerPath: getStandaloneToolUrl('/career-path/'),
+      careerIntelligence: getStandaloneToolUrl('/career-intelligence/'),
+    };
+
+    if (standaloneActionMap[action]) {
+      window.location.href = standaloneActionMap[action];
+      return;
+    }
+
     setActiveTab('tools');
     const toolKeyMap: Record<string, string> = {
-      cv: 'cvAnalyzer', linkedin: 'linkedinRoster', careerPath: 'careerPath',
-      careerIntelligence: 'careerIntelligence', tools: '',
+      tools: '',
     };
     const toolKey = toolKeyMap[action] ?? '';
     if (toolKey) {
@@ -1518,7 +1535,6 @@ return null;
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 150);
     } else {
-      // For 'tools' action — just scroll to the tools section
       setTimeout(() => {
         const el = document.querySelector('[data-tool-key]');
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1712,9 +1728,19 @@ return null;
               <div key={tool.key} data-tool-key={tool.key} className="border border-[#e5e5e5] rounded-xl overflow-hidden hover:border-gold/20 transition-all duration-300 bg-white shadow-sm">
                 {/* External link tool */}
                 {tool.type === 'external' && (
-                  <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                  <a href={tool.url} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
-                    <div className="flex-1 min-w-0"><h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3><p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                        {tool.badge && tool.badge > 0 && <span className="px-1.5 py-0.5 bg-gold/10 text-gold text-[10px] font-semibold rounded-full">{tool.badge}</span>}
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border border-[#e5e5e5] bg-[#fafaf9] text-[10px] font-medium text-[#777]">
+                          {pick('Abrir app', 'Open app', 'Abrir app')}
+                          <ExternalLink className="w-3 h-3" />
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                    </div>
                     <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
                   </a>
                 )}
