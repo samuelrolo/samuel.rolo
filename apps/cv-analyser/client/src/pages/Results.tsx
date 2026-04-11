@@ -756,11 +756,11 @@ export default function Results() {
             sessionStorage.setItem('careerPathData', JSON.stringify(cpResult));
           } else {
             console.error('[Bundle→CareerPath] API error:', cpData.error);
-            setCareerPathError(cpData.error || 'Erro ao gerar Career Path');
+            setCareerPathError(cpData.error || pick('Erro ao gerar o Career Path', 'Error generating Career Path', 'Error al generar el Career Path'));
           }
         } catch (cpErr: any) {
           console.error('[Bundle→CareerPath] Fetch error:', cpErr);
-          setCareerPathError(cpErr.message || 'Erro ao gerar Career Path');
+          setCareerPathError(cpErr.message || pick('Erro ao gerar o Career Path', 'Error generating Career Path', 'Error al generar el Career Path'));
         }
       })();
     }
@@ -1720,7 +1720,7 @@ export default function Results() {
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
                 <FileCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C9A961]" />
               </GoldIcon>
-              <span className="text-sm sm:text-base font-semibold text-foreground">CV Analyser</span>
+              <span className="text-sm sm:text-base font-semibold text-foreground">{pick('CV Analyser', 'CV Analyser', 'CV Analyser')}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -2571,8 +2571,8 @@ export default function Results() {
               <div className="space-y-2">
                 {[...dimensions].sort((a: any, b: any) => (a.score - a.benchmark) - (b.score - b.benchmark)).map((dim: any, i: number) => {
                   const gap = dim.score - dim.benchmark;
-                  const priority = gap <= 0 ? t('alta') : gap <= 10 ? pick('Média', 'Medium', 'Media') : t('baixa');
-                  const prColor = (priority === 'Alta' || priority === 'High') ? 'bg-red-500/10 text-red-600 border-red-500/20' : (priority === 'Média' || priority === 'Medium' || priority === 'Media') ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
+                  const priority = gap <= 0 ? pick('Alta', 'High', 'Alta') : gap <= 10 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja');
+                  const prColor = gap <= 0 ? 'bg-red-500/10 text-red-600 border-red-500/20' : gap <= 10 ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
                   return (
                     <div key={dim.label} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -2756,7 +2756,7 @@ export default function Results() {
               <div className="flex items-center gap-3 mb-4">
                 <GoldIcon><Rocket className="w-5 h-5 text-[#C9A961]" /></GoldIcon>
                 <div>
-                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">CAREER PATH</p>
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{pick('PLANO DE CARREIRA', 'CAREER PATH', 'PLAN DE CARRERA')}</p>
                   <p className="text-lg font-bold text-foreground">{t('o_teu_plano_de_evoluo')}</p>
                 </div>
               </div>
@@ -2805,8 +2805,8 @@ export default function Results() {
               <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">CV vs LINKEDIN</p>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' ? 'bg-green-500/10 text-green-600' : careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' ? 'bg-amber-500/10 text-amber-600' : 'bg-red-500/10 text-red-600'}`}>{t('consistncia')}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}</span>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{pick('CV vs LINKEDIN', 'CV vs LINKEDIN', 'CV vs LINKEDIN')}</p>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${(careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'High') ? 'bg-green-500/10 text-green-600' : (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Medium' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Media') ? 'bg-amber-500/10 text-amber-600' : 'bg-red-500/10 text-red-600'}`}>{t('consistncia')}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}</span>
                 </div>
                 {careerPathData.cv_linkedin_cross_analysis.optimization_suggestions?.map((s: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><span className="text-[#C9A961] mt-0.5">→</span><p>{s}</p></div>
@@ -2832,7 +2832,7 @@ export default function Results() {
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${(role.timeline?.includes('Curto') || role.timeline?.includes('Short')) ? 'border-green-500/30 text-green-600 bg-green-500/10' : (role.timeline?.includes('Médio') || role.timeline?.includes('Medium')) ? 'border-amber-500/30 text-amber-600 bg-amber-500/10' : 'border-blue-500/30 text-blue-600 bg-blue-500/10'}`}>{role.timeline}</span>
                           {role.fit_percentage && (
                           <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {role.fit_percentage}% fit
+                            {pick(`${role.fit_percentage}% adequação`, `${role.fit_percentage}% fit`, `${role.fit_percentage}% ajuste`)}
                           </span>
                           )}
                         </div>
@@ -2876,7 +2876,7 @@ export default function Results() {
                     <div key={i} className="p-3 border border-border rounded-lg">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-semibold text-foreground">{f.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(f.priority === 'Alta' || f.priority === 'High') ? 'bg-red-500/10 text-red-500 border border-red-500/20' : (f.priority === 'Média' || f.priority === 'Medium') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{f.priority}</span>
+                               <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(f.priority === 'Alta' || f.priority === 'High') ? 'bg-red-500/10 text-red-500 border-red-500/20' : (f.priority === 'Média' || f.priority === 'Medium' || f.priority === 'Media') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{f.priority}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{f.provider} · {f.duration} · {f.cost}</p>
                       <p className="text-xs text-muted-foreground mt-1">{f.relevance}</p>
@@ -2981,7 +2981,7 @@ export default function Results() {
                     <div key={i} className="p-3 border border-border rounded-lg">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-semibold text-foreground">{c.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(c.priority === 'Alta' || c.priority === 'High') ? 'bg-red-500/10 text-red-500 border border-red-500/20' : (c.priority === 'Média' || c.priority === 'Medium') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{c.priority}</span>
+                               <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(c.priority === 'Alta' || c.priority === 'High') ? 'bg-red-500/10 text-red-500 border-red-500/20' : (c.priority === 'Média' || c.priority === 'Medium' || c.priority === 'Media') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{c.priority}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{c.body} · {c.investment}</p>
                       <p className="text-xs text-muted-foreground mt-1">{c.impact}</p>
@@ -3104,7 +3104,7 @@ export default function Results() {
             ctx.fillStyle = '#C9A961';
             ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.letterSpacing = '4px';
-            ctx.fillText('CV CERTIFICATION', 80, 70);
+            ctx.fillText(pick('CERTIFICAÇÃO CV', 'CV CERTIFICATION', 'CERTIFICACIÓN CV'), 80, 70);
             ctx.letterSpacing = '0px';
 
             // Role / Seniority
@@ -3123,7 +3123,7 @@ export default function Results() {
 
             // Scores section
             const scores = [
-              { label: lang === 'en' ? 'Overall Score' : lang === 'es' ? 'Puntuación Global' : 'Score Global', value: `${Math.round(avgScore)}/100`, sub: `${t('percentil')} ${percentile}` },
+              { label: pick('Score Global', 'Overall Score', 'Puntuación Global'), value: `${Math.round(avgScore)}/100`, sub: `${t('percentil')} ${percentile}` },
               { label: t('compatibilidade_ats_2'), value: `${atsCompat}%`, sub: atsCompat >= 70 ? (t('boa')) : (t('a_melhorar')) },
             ];
 
@@ -3221,10 +3221,10 @@ export default function Results() {
             ctx.fillRect(80, 560, 1040, 1);
             ctx.fillStyle = '#C9A961';
             ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-            ctx.fillText('Share2Inspire', 80, 595);
+            ctx.fillText(pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire'), 80, 595);
             ctx.fillStyle = '#888888';
             ctx.font = '400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-            ctx.fillText(`CV Analyser \u2022 ${today}`, 220, 595);
+            ctx.fillText(`${pick('CV Analyser', 'CV Analyser', 'CV Analyser')} • ${today}`, 220, 595);
             ctx.textAlign = 'right';
             ctx.fillText('https://share2inspire.pt', 1120, 595);
             ctx.textAlign = 'left';
@@ -3429,7 +3429,7 @@ export default function Results() {
                     <p className="text-[10px] text-[#C9A961]/80 italic mt-0.5">{t('plano_completo_para_melhorar_o')}</p>
                     <div className="space-y-1">
                       <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('anlise_cv_completa')}</p>
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> Career Path</p>
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {pick('Plano de Carreira', 'Career Path', 'Plan de Carrera')}</p>
                       <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('skills_gap')}</p>
                       <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {t('estimativa_salarial_2')}</p>
                     </div>
@@ -3512,9 +3512,11 @@ export default function Results() {
                       voucher_type: 'standard',
                       includes_career_path: true,
                       popular: true,
-                      features: isEN
-                        ? ['Full CV analysis', 'Career Path from LinkedIn', 'Skills gap analysis', 'Salary estimate', 'Training recommendations', 'Application strategy']
-                        : ['Análise CV completa', 'Career Path baseado no LinkedIn', 'Análise de skills gap', 'Estimativa salarial', 'Recomendações de formação', 'Estratégia de candidatura'],
+                      features: pick(
+                        ['Análise CV completa', 'Plano de Carreira baseado no LinkedIn', 'Análise de skills gap', 'Estimativa salarial', 'Recomendações de formação', 'Estratégia de candidatura'],
+                        ['Full CV analysis', 'Career Path from LinkedIn', 'Skills gap analysis', 'Salary estimate', 'Training recommendations', 'Application strategy'],
+                        ['Análisis CV completo', 'Plan de Carrera basado en LinkedIn', 'Análisis de brechas de habilidades', 'Estimación salarial', 'Recomendaciones de formación', 'Estrategia de candidatura']
+                      ),
                     },
                   ].map((plan) => (
                     <button
@@ -3603,7 +3605,7 @@ export default function Results() {
                         }`}
                       >
                         <CreditCard className="w-6 h-6 text-[#635BFF]" />
-                        <span className="text-sm font-semibold text-foreground">Card</span>
+                        <span className="text-sm font-semibold text-foreground">{pick('Cartão', 'Card', 'Tarjeta')}</span>
                       </button>
                       <button
                         onClick={() => setPaymentMethod('paypal')}
@@ -3614,7 +3616,7 @@ export default function Results() {
                         }`}
                       >
                         <PayPalIcon className="w-6 h-6 text-[#0070BA]" />
-                        <span className="text-sm font-semibold text-foreground">PayPal</span>
+                        <span className="text-sm font-semibold text-foreground">{pick('PayPal', 'PayPal', 'PayPal')}</span>
                       </button>
                     </>
                   ) : (
@@ -3628,7 +3630,7 @@ export default function Results() {
                         }`}
                       >
                         <CreditCard className="w-6 h-6 text-[#C9A961]" />
-                        <span className="text-sm font-semibold text-foreground">MB WAY</span>
+                        <span className="text-sm font-semibold text-foreground">{pick('MB WAY', 'MB WAY', 'MB WAY')}</span>
                       </button>
                       <button
                         onClick={() => setPaymentMethod('paypal')}
@@ -3639,7 +3641,7 @@ export default function Results() {
                         }`}
                       >
                         <PayPalIcon className="w-6 h-6 text-[#0070BA]" />
-                        <span className="text-sm font-semibold text-foreground">PayPal</span>
+                        <span className="text-sm font-semibold text-foreground">{pick('PayPal', 'PayPal', 'PayPal')}</span>
                       </button>
                     </>
                   )}
@@ -3647,9 +3649,9 @@ export default function Results() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email
-                </label>
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
+                    {pick('Email', 'Email', 'Email')}
+                  </label>
                 <input
                   id="email"
                   type="email"
@@ -3684,7 +3686,7 @@ export default function Results() {
 
               <div className="pt-4 space-y-3">
                 <div className="flex items-center justify-between text-sm border-t border-border pt-3">
-                  <span className="text-muted-foreground">Total</span>
+                  <span className="text-muted-foreground">{pick('Total', 'Total', 'Total')}</span>
                   <span className="text-lg font-bold text-foreground">
                     {appliedCoupon ? (
                       <><span className="line-through text-muted-foreground mr-2">{CUR}{selectedPlan.price}</span><span className="text-green-600">{CUR}{getDiscountedPrice(selectedPlan.price)}</span></>
@@ -3713,7 +3715,7 @@ export default function Results() {
                       {t('a_processar')}
                     </>
                   ) : paymentMethod === 'stripe' ? (
-                    'Pay with Card'
+                    pick('Pagar com Cartão', 'Pay with Card', 'Pagar con Tarjeta')
                   ) : paymentMethod === 'mbway' ? (
                     t('pagar_com_mb_way')
                   ) : (
@@ -3946,7 +3948,7 @@ export default function Results() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="w-5 h-5 text-[#C9A961]" />
-              Career Path {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('includo')) : careerPathIsUpgrade ? (t('upgrade_1499')) : `— ${CUR}${P.career}`}
+              {pick('Plano de Carreira', 'Career Path', 'Plan de Carrera')} {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('includo')) : careerPathIsUpgrade ? (t('upgrade_1499')) : `— ${CUR}${P.career}`}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -3993,7 +3995,7 @@ export default function Results() {
                         onClick={() => setCareerPathPaymentMethod('mbway')}
                         className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'mbway' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
                       >
-                        <p className="text-sm font-semibold text-foreground">MB WAY</p>
+                        <p className="text-sm font-semibold text-foreground">{pick('MB WAY', 'MB WAY', 'MB WAY')}</p>
                       </button>
                     )}
                     <button
@@ -4006,7 +4008,7 @@ export default function Results() {
                       onClick={() => setCareerPathPaymentMethod('paypal')}
                       className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'paypal' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
                     >
-                      <p className="text-sm font-semibold text-foreground">PayPal</p>
+                      <p className="text-sm font-semibold text-foreground">{pick('PayPal', 'PayPal', 'PayPal')}</p>
                     </button>
                   </div>
                   {careerPathPaymentMethod === 'mbway' && (
@@ -4026,7 +4028,7 @@ export default function Results() {
                 >
                   {careerPathIsUpgrade
                     ? (t('pagar_1499_e_gerar_career'))
-                    : (pick(`Pagar ${CUR}${P.career} e Gerar Career Path`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} y Generar Career Path`))
+                    : (pick(`Pagar ${CUR}${P.career} e Gerar Plano de Carreira`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} y Generar Plan de Carrera`))
                   }
                 </Button>
               </>
