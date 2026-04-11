@@ -229,7 +229,7 @@ export default function LinkedInRoasterHome() {
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: PRICE_NUM.toFixed(2), email, product: 'LinkedIn Roaster — Share2Inspire', description: 'LinkedIn Roaster — Roast Brutal ao Perfil LinkedIn' })
+        body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: PRICE_NUM.toFixed(2), email, product: 'LinkedIn Roaster — Share2Inspire', description: pick('LinkedIn Roaster — Roast Brutal ao Perfil LinkedIn', 'LinkedIn Roaster — Brutal Profile Roast', 'LinkedIn Roaster — Roast Brutal al Perfil LinkedIn') })
       });
       const data = await response.json();
       if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar pago'));
@@ -480,9 +480,9 @@ export default function LinkedInRoasterHome() {
               <label className="flex items-start gap-2 cursor-pointer pt-1">
                 <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
                 <span className="text-xs text-slate-500">{pick(
-                  <>Aceito os <a href="https://www.share2inspire.pt/pages/privacidade.html" className="text-[#C9A961] underline" target="_blank">termos e condições</a>. O perfil é analisado de forma confidencial.</>,
-                  <>I accept the <a href="https://www.share2inspire.pt/en/pages/privacy" className="text-[#C9A961] underline" target="_blank">terms and conditions</a>. The profile is analysed confidentially.</>,
-                  <>Acepto los <a href="https://www.share2inspire.pt/es/pages/privacidad" className="text-[#C9A961] underline" target="_blank">términos y condiciones</a>. El perfil se analiza de forma confidencial.</>
+                  <>Aceito os <a href="/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">termos e condições</a>. O perfil é analisado de forma confidencial.</>,
+                  <>I accept the <a href="/en/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">terms and conditions</a>. The profile is analysed confidentially.</>,
+                  <>Acepto los <a href="/es/politica-privacidade/" className="text-[#C9A961] underline" target="_blank">términos y condiciones</a>. El perfil se analiza de forma confidencial.</>
                 )}</span>
               </label>
 

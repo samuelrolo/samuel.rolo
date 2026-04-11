@@ -422,7 +422,7 @@ export default function Home() {
         return;
       }
       if (selectedFile.size > 5 * 1024 * 1024) {
-        setError('O ficheiro não pode exceder 5MB');
+        setError(pick('O ficheiro não pode exceder 5MB', 'The file cannot exceed 5MB', 'El archivo no puede superar los 5MB'));
         setFile(null);
         return;
       }
@@ -441,7 +441,7 @@ export default function Home() {
     // Validate mandatory email
     const emailCheck = validateEmail(analysisEmail);
     if (!emailCheck.valid) {
-      setAnalysisEmailError(emailCheck.error || 'Email obrigatório.');
+      setAnalysisEmailError(emailCheck.error || pick('Email obrigatório.', 'Email required.', 'Email obligatorio.'));
       setError(emailCheck.error || 'Introduz o teu email para continuar.');
       return;
     }
@@ -547,11 +547,11 @@ export default function Home() {
       }
 
       if (!response?.ok) {
-        throw new Error('Erro na análise IA. Por favor, tente novamente.');
+        throw new Error(pick('Erro na análise IA. Por favor, tente novamente.', 'AI analysis error. Please try again.', 'Error en el análisis de IA. Por favor, inténtalo de nuevo.'));
       }
 
       if (!responseData?.success) {
-        throw new Error(responseData?.error || 'Erro na análise IA.');
+        throw new Error(responseData?.error || pick('Erro na análise IA.', 'AI analysis error.', 'Error en el análisis de IA.'));
       }
 
       // Pass full response - analysis data is at root level, not under .analysis
@@ -727,7 +727,7 @@ export default function Home() {
     // Validate mandatory email
     const emailCheck = validateEmail(analysisEmail);
     if (!emailCheck.valid) {
-      setAnalysisEmailError(emailCheck.error || 'Email obrigatório.');
+      setAnalysisEmailError(emailCheck.error || pick('Email obrigatório.', 'Email required.', 'Email obligatorio.'));
       setError(emailCheck.error || 'Introduz o teu email para continuar.');
       return;
     }
@@ -805,12 +805,12 @@ export default function Home() {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error('Erro na análise IA. Por favor, tente novamente.');
+        throw new Error(pick('Erro na análise IA. Por favor, tente novamente.', 'AI analysis error. Please try again.', 'Error en el análisis de IA. Por favor, inténtalo de nuevo.'));
       }
 
       const responseData = await response.json();
       if (!responseData?.success) {
-        throw new Error(responseData?.error || 'Erro na análise IA.');
+        throw new Error(responseData?.error || pick('Erro na análise IA.', 'AI analysis error.', 'Error en el análisis de IA.'));
       }
 
       const analysisSource = responseData.analysis || responseData;
@@ -1429,7 +1429,7 @@ export default function Home() {
                   }}
                   className="px-4 py-2 rounded-lg bg-[#C9A961] hover:bg-[#A88B4E] text-white text-sm font-semibold transition-colors"
                 >
-                  {emailSent ? 'Enviado!' : 'Enviar'}
+                  {emailSent ? pick('Enviado!', 'Sent!', '¡Enviado!') : pick('Enviar', 'Send', 'Enviar')}
                 </button>
               </div>
             </div>
@@ -1651,9 +1651,9 @@ export default function Home() {
                 {loadingMessages[loadingStep]}
               </>
             ) : linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn ? (
-              'Analisar Perfil LinkedIn'
+              pick('Analisar Perfil LinkedIn', 'Analyse LinkedIn Profile', 'Analizar Perfil de LinkedIn')
             ) : (
-              'Analisar CV Gratuitamente'
+              pick('Analisar CV Gratuitamente', 'Analyse CV for Free', 'Analizar CV Gratis')
             )}
           </Button>
 
@@ -1676,7 +1676,7 @@ export default function Home() {
                     type="text"
                     value={linkedInVoucherCode}
                     onChange={(e) => setLinkedInVoucherCode(e.target.value.toUpperCase())}
-                    placeholder="Inserir código"
+                    placeholder={pick('Inserir código', 'Enter code', 'Introducir código')}
                     className="flex-1 px-3 py-2 rounded-lg border border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] uppercase tracking-wider"
                   />
                   <button

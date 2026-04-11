@@ -1023,7 +1023,7 @@ export default function CareerIntelligenceHome() {
                 />
                 <label htmlFor="ci-terms" className="text-sm text-muted-foreground cursor-pointer">
                   {pick('Concordo com a', 'I agree with the', 'Acepto la')}{' '}
-                  <a href="https://www.share2inspire.pt/pages/politica-privacidade.html" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
+                  <a href="/politica-privacidade/" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
                     {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
                   </a>{' '}
                   {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para el análisis de carrera.')}

@@ -3496,9 +3496,11 @@ export default function Results() {
                       analyses: 1,
                       voucher_type: 'standard',
                       includes_career_path: false,
-                      features: isEN
-                        ? ['Full ATS analysis', 'Improvement suggestions', 'Missing keywords', 'Salary estimate']
-                        : ['Análise ATS completa', 'Sugestões de melhoria', 'Palavras-chave em falta', 'Estimativa salarial'],
+                      features: pick(
+                        ['Análise ATS completa', 'Sugestões de melhoria', 'Palavras-chave em falta', 'Estimativa salarial'],
+                        ['Full ATS analysis', 'Improvement suggestions', 'Missing keywords', 'Salary estimate'],
+                        ['Análisis ATS completo', 'Sugerencias de mejora', 'Palabras clave que faltan', 'Estimación salarial']
+                      ),
                     },
                     {
                       name: t('diagnstico_de_carreira_completo'),
