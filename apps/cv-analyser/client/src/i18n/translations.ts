@@ -821,7 +821,21 @@ export function t(key: string, lang?: Lang, replacements?: Record<string, string
 }
 
 /** Helper for inline ternaries with template literals */
-export function pick<T = string>(pt: T, en: T, es: T, lang?: Lang): T {
-  const l = lang || getLang();
-  return l === 'pt' ? pt : l === 'es' ? es : en;
+export function pick<T = string>(messages: { pt: T; en: T; es: T }, lang?: Lang): T;
+export function pick<T = string>(pt: T, en: T, es: T, lang?: Lang): T;
+export function pick<T = string>(
+  ptOrMessages: T | { pt: T; en: T; es: T },
+  enOrLang?: T | Lang,
+  es?: T,
+  lang?: Lang,
+): T {
+  const l = (typeof enOrLang === 'string' && ['pt', 'en', 'es'].includes(enOrLang) ? enOrLang : lang) || getLang();
+
+  if (typeof ptOrMessages === 'object' && ptOrMessages !== null && 'pt' in ptOrMessages && 'en' in ptOrMessages && 'es' in ptOrMessages) {
+    return l === 'pt' ? ptOrMessages.pt : l === 'es' ? ptOrMessages.es : ptOrMessages.en;
+  }
+
+  const pt = ptOrMessages as T;
+  const en = enOrLang as T;
+  return l === 'pt' ? pt : l === 'es' ? (es as T) : en;
 }

@@ -3574,7 +3574,11 @@ export default function Results() {
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
                 {appliedCoupon ? (
-                  lang === 'en' ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
+                  pick({
+                    pt: <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                    en: <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                    es: <>Continuar al Pago — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                  })
                 ) : (
                   pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar al Pago — ${CUR}${selectedPlan.price}`)
                 )}
@@ -3738,7 +3742,11 @@ export default function Results() {
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-foreground">{t('pedido_enviado_para_mb_way')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {lang === 'en' ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>}
+                  {pick({
+                    pt: <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                    en: <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                    es: <>Abre la app MB WAY en el móvil y aprueba el pago de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                  })}
                 </p>
               </div>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">
