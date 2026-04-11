@@ -72,6 +72,8 @@ function usePageTitle() {
       '/contactos': 'Share2Inspire — Contact',
       '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
+      '/student-pack': 'Share2Inspire — Student Pack',
+      '/estudante': 'Share2Inspire — Pack Estudante',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
     };
 
@@ -373,10 +375,22 @@ function AppRouter() {
 
   // ─── Portuguese Routes ───
 
-  // Student Pack PT: /estudante
+  // Student Pack PT aliases: /estudante and /student-pack
   if (pathname.startsWith('/estudante')) {
     return (
       <Router base="/estudante">
+        <Switch>
+          <Route path={"/"} component={StudentPackHome} />
+          <Route path={"/results"} component={StudentPackResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  if (pathname.startsWith('/student-pack')) {
+    return (
+      <Router base="/student-pack">
         <Switch>
           <Route path={"/"} component={StudentPackHome} />
           <Route path={"/results"} component={StudentPackResults} />

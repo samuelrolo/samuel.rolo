@@ -18,7 +18,7 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
-import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -821,6 +821,29 @@ export default function BundleHome() {
                 )}
               </label>
             </div>
+
+            {savedCvInfo && !file && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const restoredFile = await downloadAuthenticatedProfileCv({
+                      email,
+                      linkedinUrl,
+                      cvUrl: savedCvInfo.url,
+                      cvFilename: savedCvInfo.filename,
+                    });
+                    setFile(restoredFile);
+                    setError(null);
+                  } catch {
+                    setError(pick('Não foi possível carregar o CV guardado.', 'Could not load the saved CV.', 'No se pudo cargar el CV guardado.'));
+                  }
+                }}
+                className="text-sm font-medium text-emerald-700 hover:text-emerald-800 underline"
+              >
+                {pick('Usar CV guardado: ', 'Use saved CV: ', 'Usar CV guardado: ')}{savedCvInfo.filename}
+              </button>
+            )}
 
             {/* LinkedIn URL */}
             <div>

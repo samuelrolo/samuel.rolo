@@ -288,7 +288,7 @@ export default function CareerIntelligenceResults() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          mode: 'career_path',
+          mode: 'career_intelligence',
           cv_text: cvText,
           linkedin_url: linkedinUrl || undefined,
           language: (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || 'pt',
@@ -298,11 +298,11 @@ export default function CareerIntelligenceResults() {
       });
 
       const data = await response.json();
-      if (!data.success && !data.career_path) {
+      if (!data.success && !data.career_intelligence && !data.career_path) {
         throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
       }
 
-      const ciData = data.career_path || data;
+      const ciData = data.career_intelligence || data.career_path || data;
       setCareerData(ciData);
       setIsPaid(true);
       localStorage.setItem('careerPathPaid', 'true');

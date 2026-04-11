@@ -1514,11 +1514,15 @@ serve(async (req)=>{
 
     }
 
-    const { mode, cv_text, file, filename, message, history } = body;
+    const { mode: rawMode, cv_text, file, filename, message, history } = body;
+
+    const mode = typeof rawMode === 'string' ? rawMode.trim().toLowerCase().replace(/-/g, '_') : rawMode;
 
     // NEW: Extract language, country, region for internationalisation
 
-    const language = body.language || body.lang || 'pt';
+    const rawLanguage = String(body.language || body.lang || 'pt').trim().toLowerCase();
+
+    const language = rawLanguage.startsWith('es') ? 'es' : rawLanguage.startsWith('en') ? 'en' : 'pt';
 
     // NEW: Extract optional job description for CV vs Job matching
 
@@ -1557,6 +1561,8 @@ serve(async (req)=>{
           'career_coach',
 
           'career_path',
+
+          'career_intelligence',
 
           'linkedin_roast'
 
@@ -6341,9 +6347,11 @@ USING COMPANY DATA:
 
     // MODE: Career Path (Add-on)
 
-    if (mode === 'career_path') {
+    if (mode === 'career_path' || mode === 'career_intelligence') {
 
-      console.log(`🚀 Modo: Career Path Analysis [lang=${language}]`);
+      const reportLabel = mode === 'career_intelligence' ? 'Career Intelligence' : 'Career Path';
+
+      console.log(`🚀 Modo: ${reportLabel} Analysis [lang=${language}]`);
 
       const { valid, sanitized, error } = sanitizeCVText(cvText);
 
@@ -7444,7 +7452,7 @@ REGRAS CRÍTICAS:
 
             success: false,
 
-            error: 'Erro ao gerar Career Path',
+            error: mode === 'career_intelligence' ? 'Erro ao gerar Career Intelligence' : 'Erro ao gerar Career Path',
 
             details: errorText.substring(0, 200)
 
@@ -7671,9 +7679,17 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
           }
         }
 
-        console.log('✅ Career Path gerado com sucesso');
+        console.log(`✅ ${reportLabel} gerado com sucesso`);
 
-        return jsonResponse({
+        return jsonResponse(mode === 'career_intelligence' ? {
+
+          success: true,
+
+          career_intelligence: careerPath,
+
+          ...careerPath
+
+        } : {
 
           success: true,
 
@@ -7683,13 +7699,13 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
       } catch (error) {
 
-        console.error('❌ Erro no modo career_path:', error);
+        console.error(`❌ Erro no modo ${mode}:`, error);
 
         return jsonResponse({
 
           success: false,
 
-          error: 'Erro ao gerar Career Path',
+          error: mode === 'career_intelligence' ? 'Erro ao gerar Career Intelligence' : 'Erro ao gerar Career Path',
 
           message: error.message
 
@@ -7712,6 +7728,12 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
       const isES = language === 'es';
 
       // cvText may already be populated from linkedin_url extraction above
+
+      if ((!cvText || cvText.trim().length < 50) && linkedinUrl) {
+
+        cvText = `LinkedIn Profile URL: ${linkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+
+      }
 
       if (!cvText || cvText.length < 50) {
 

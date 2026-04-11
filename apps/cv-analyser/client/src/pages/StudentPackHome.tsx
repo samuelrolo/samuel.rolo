@@ -17,12 +17,11 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
-import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-const SUPABASE_EDGE_URL_PT = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/student-pack';
-const SUPABASE_EDGE_URL_EN = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
@@ -224,7 +223,7 @@ export default function StudentPackHome() {
           try {
             const body: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
-            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseDataPT = await res.json(); if (cvResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -237,7 +236,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -281,7 +280,7 @@ export default function StudentPackHome() {
           try {
             const body: any = { mode: 'cv_extraction', language: langCode, country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
-            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseData = await res.json(); if (cvResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -293,7 +292,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL_EN, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -619,9 +618,12 @@ export default function StudentPackHome() {
                   type="button"
                   onClick={async () => {
                     try {
-                      const res = await fetch(savedCvInfo.url);
-                      const blob = await res.blob();
-                      const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                      const f = await downloadAuthenticatedProfileCv({
+                        email,
+                        linkedinUrl,
+                        cvUrl: savedCvInfo.url,
+                        cvFilename: savedCvInfo.filename,
+                      });
                       setFile(f);
                       setError(null);
                     } catch {
