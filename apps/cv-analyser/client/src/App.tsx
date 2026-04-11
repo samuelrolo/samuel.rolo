@@ -66,6 +66,10 @@ function usePageTitle() {
       '/es/pages/knowledge': 'Share2Inspire — Knowledge Hub (ES)',
       '/es/pages/services': 'Share2Inspire — Services (ES)',
       '/es': 'Share2Inspire (ES)',
+      '/about': 'Share2Inspire — About',
+      '/contact': 'Share2Inspire — Contact',
+      '/sobre': 'Share2Inspire — About',
+      '/contactos': 'Share2Inspire — Contact',
       '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
@@ -457,8 +461,8 @@ function AppRouter() {
     );
   }
 
-  // Sobre PT: /sobre
-  if (pathname.startsWith('/sobre')) {
+  // Sobre PT: /sobre (+ legacy /about)
+  if (pathname.startsWith('/sobre') || pathname.startsWith('/about')) {
     return (
       <Router base="/sobre">
         <Switch>
@@ -469,8 +473,8 @@ function AppRouter() {
     );
   }
 
-  // Contactos PT: /contactos
-  if (pathname.startsWith('/contactos')) {
+  // Contactos PT: /contactos (+ legacy /contact)
+  if (pathname.startsWith('/contactos') || pathname.startsWith('/contact')) {
     return (
       <Router base="/contactos">
         <Switch>

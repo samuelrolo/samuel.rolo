@@ -112,9 +112,9 @@ function pick(lang: Lang, pt: string, en: string, es: string): string {
 
 function getNavItems(lang: Lang): NavItem[] {
   const lp = (ptPath: string) => localePath(ptPath, lang);
-  const homeHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/home" : lang === 'es' ? lp('/') : "https://www.share2inspire.pt";
-  const servicesHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/services" : lp('/servicos');
-  const knowledgeHref = lang === 'en' ? "https://www.share2inspire.pt/en/pages/knowledge" : lp('/conhecimento');
+  const homeHref = lp('/');
+  const servicesHref = lp('/servicos');
+  const knowledgeHref = lp('/conhecimento');
 
   return [
     { href: homeHref, label: pick(lang, "Início", "Home", "Inicio"), id: "home" },
