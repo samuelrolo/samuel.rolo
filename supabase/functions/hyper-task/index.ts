@@ -6378,10 +6378,12 @@ USING COMPANY DATA:
         const cpCompanyContext = await enrichWithCompanyData(sanitized, language);
 
         const careerPathOutputLanguageInstruction = getLanguageOutputInstruction(language);
+        const requestedLanguageLabel = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese (Portugal)';
 
         const careerPathPrompt = isEN ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
 
 ${careerPathOutputLanguageInstruction}
+MANDATORY LANGUAGE RULE: Respond entirely in ${requestedLanguageLabel}. Never mix languages in the analytical output.
 
 
 

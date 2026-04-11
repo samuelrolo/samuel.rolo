@@ -159,6 +159,12 @@ export default function CareerIntelligenceResults() {
   const lang = getLang();
   const isEN = lang === 'en';
   const isES = lang === 'es';
+  const careerIntelligenceHomePath = pick('/career-intelligence', '/en/career-intelligence', '/es/career-intelligence');
+  const siteHomePath = pick('/', '/en/', '/es/');
+  const defaultPaymentMethod: 'mbway' | 'stripe' | 'paypal' = isEN ? 'stripe' : 'mbway';
+  const paymentMethodOptions = (isEN ? ['stripe', 'paypal'] : ['mbway', 'stripe', 'paypal']) as const;
+  const paymentMethodLabel = (method: 'mbway' | 'stripe' | 'paypal') => method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal';
+  const paymentPhonePlaceholder = pick('9XXXXXXXX', '+1 555 123 4567', '6XXXXXXXX');
 
   const CUR = t('bca53fde');
   const CURRENCY_CODE = t('eur');
@@ -190,7 +196,7 @@ export default function CareerIntelligenceResults() {
   // Payment modal
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(t('mbway') as 'mbway' | 'stripe' | 'paypal');
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(defaultPaymentMethod);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [pollingMsg, setPollingMsg] = useState('');
@@ -205,14 +211,14 @@ export default function CareerIntelligenceResults() {
     const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
 
     if (!cvData) {
-      setLocation('/');
+      setLocation(careerIntelligenceHomePath);
       return;
     }
 
     try {
       setCvAnalysis(JSON.parse(cvData));
     } catch {
-      setLocation('/');
+      setLocation(careerIntelligenceHomePath);
       return;
     }
 
@@ -247,7 +253,7 @@ export default function CareerIntelligenceResults() {
     // Handle cancelled payment — clean URL and redirect to home
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
-      setLocation('/');
+      setLocation(careerIntelligenceHomePath);
       return;
     }
 
@@ -291,7 +297,7 @@ export default function CareerIntelligenceResults() {
           mode: 'career_intelligence',
           cv_text: cvText,
           linkedin_url: linkedinUrl || undefined,
-          language: (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || 'pt',
+          language: (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang,
           country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
           region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
         }),
@@ -419,7 +425,7 @@ export default function CareerIntelligenceResults() {
   const openPaymentModal = () => {
     setPaymentStep('payment');
     setPaymentError(null);
-    setPaymentMethod(t('mbway') as 'mbway' | 'stripe' | 'paypal');
+    setPaymentMethod(defaultPaymentMethod);
     setShowPaymentModal(true);
   };
 
@@ -471,7 +477,7 @@ export default function CareerIntelligenceResults() {
           name: email.split('@')[0],
           product_type: 'career_intelligence_full',
           orderId,
-          language: t('pt'),
+          language: lang,
           currency: CURRENCY_CODE.toLowerCase(),
           amount: CI_PRICE,
         }),
@@ -616,13 +622,13 @@ export default function CareerIntelligenceResults() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setLocation('/')}
+              onClick={() => setLocation(careerIntelligenceHomePath)}
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
-            <a href="/" className="flex items-center" aria-label="Share2Inspire">
+            <a href={siteHomePath} className="flex items-center" aria-label="Share2Inspire">
               <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
@@ -713,7 +719,7 @@ export default function CareerIntelligenceResults() {
               {linkedinUrl && (
                 <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 hover:border-[#0077B5]/30 transition-colors">
                   <Linkedin className="w-3.5 h-3.5 text-[#0077B5]" />
-                  <span className="text-xs font-medium text-[#0077B5]">LinkedIn</span>
+                  <span className="text-xs font-medium text-[#0077B5]">{pick('LinkedIn', 'LinkedIn', 'LinkedIn')}</span>
                 </a>
               )}
             </div>
@@ -1379,7 +1385,7 @@ export default function CareerIntelligenceResults() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Email</label>
+                <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
                 <input
                   type="email"
                   value={email}
@@ -1392,36 +1398,27 @@ export default function CareerIntelligenceResults() {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {lang === 'en' ? (
-                    <>
-                      <button
-                        onClick={() => setPaymentMethod('stripe')}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          paymentMethod === 'stripe' ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#635BFF]/50'
-                        }`}
-                      >{pick('Cartão', 'Card', 'Tarjeta')}</button>
-                      <button
-                        onClick={() => setPaymentMethod('paypal')}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          paymentMethod === 'paypal' ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#0070BA]/50'
-                        }`}
-                      >PayPal</button>
-                    </>
-                  ) : (
-                    <>
-                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                        <button
-                          key={method}
-                          onClick={() => setPaymentMethod(method)}
-                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                            paymentMethod === method ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
-                          }`}
-                        >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
-                        </button>
-                      ))}
-                    </>
-                  )}
+                  {paymentMethodOptions.map((method) => (
+                    <button
+                      key={method}
+                      onClick={() => setPaymentMethod(method)}
+                      className={`p-2.5 rounded-lg border text-xs font-semibold transition-all ${
+                        paymentMethod === method
+                          ? method === 'stripe'
+                            ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
+                            : method === 'paypal'
+                              ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground'
+                              : 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                          : method === 'stripe'
+                            ? 'border-border text-muted-foreground hover:border-[#635BFF]/50'
+                            : method === 'paypal'
+                              ? 'border-border text-muted-foreground hover:border-[#0070BA]/50'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                      }`}
+                    >
+                      {paymentMethodLabel(method)}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -1432,7 +1429,7 @@ export default function CareerIntelligenceResults() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
+                    placeholder={paymentPhonePlaceholder}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                   />
                 </div>

@@ -112,7 +112,12 @@ const buildCiHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
 export default function CareerIntelligenceHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
-  const careerIntelligenceDemoHref = lang === 'en' ? '/en/career-intelligence/demo' : '/career-intelligence/demo';
+  const careerIntelligenceDemoHref = localePath('/career-intelligence/demo');
+  const privacyPolicyHref = pick('/politica-privacidade/', '/en/privacy-policy/', '/es/politica-de-privacidad/');
+  const careerPathOfferText = pick('Career Path por 19,99€ →', 'Career Path for €19.99 →', 'Career Path por 19,99€ →');
+  const paymentMethodLabel = (method: 'mbway' | 'stripe' | 'paypal') => method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal';
+  const discountAppliedText = (percent: number) => pick(`Desconto de ${percent}% aplicado!`, `${percent}% discount applied!`, `¡Descuento de ${percent}% aplicado!`);
+  const paymentPhonePlaceholder = pick('9XXXXXXXX', '+351 9XXXXXXXX', '6XXXXXXXX');
   const isPT = lang === 'pt';
   const testimonials = buildTestimonials(pick);
   const ciHeadlines = buildCiHeadlines(pick);
@@ -787,7 +792,7 @@ export default function CareerIntelligenceHome() {
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
                 <p className="text-xs text-muted-foreground">
-                  {pick('Só o diagnóstico?', 'Just the diagnosis?', '¿Solo el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
+                  {pick('Só o diagnóstico?', 'Just the diagnosis?', '¿Solo el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">{careerPathOfferText}</a>
                 </p>
               </div>
             </div>
@@ -855,7 +860,7 @@ export default function CareerIntelligenceHome() {
                 {pick('Obter a minha recomendação de carreira', 'Get my career recommendation', 'Obtener mi recomendación de carrera')}
               </Button>
               <p className="text-xs text-muted-foreground">
-                {pick('Só precisas do diagnóstico?', 'Just need the diagnosis?', '¿Solo necesitas el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">Career Path {pick('por', 'for', 'por')} 19,99€ →</a>
+                {pick('Só precisas do diagnóstico?', 'Just need the diagnosis?', '¿Solo necesitas el diagnóstico?')} <a href={localePath('/career-path')} className="text-[#C9A961] hover:underline">{careerPathOfferText}</a>
               </p>
             </div>
           </div>
@@ -1023,7 +1028,7 @@ export default function CareerIntelligenceHome() {
                 />
                 <label htmlFor="ci-terms" className="text-sm text-muted-foreground cursor-pointer">
                   {pick('Concordo com a', 'I agree with the', 'Acepto la')}{' '}
-                  <a href="/politica-privacidade/" target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
+                  <a href={privacyPolicyHref} target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
                     {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
                   </a>{' '}
                   {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para el análisis de carrera.')}
@@ -1213,7 +1218,7 @@ export default function CareerIntelligenceHome() {
                   </Button>
                 </div>
                 {discountError && <p className="text-xs text-red-500">{discountError}</p>}
-                {discountValid && <p className="text-xs text-green-600 font-semibold">{pick(`Desconto de ${discountPercent}% aplicado!`, `${discountPercent}% discount applied!`, `¡Descuento de ${discountPercent}% aplicado!`)}</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">{discountAppliedText(discountPercent)}</p>}
               </div>
 
               {/* Email */}
@@ -1244,7 +1249,7 @@ export default function CareerIntelligenceHome() {
                               : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
                           }`}
                         >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal'}
+                          {paymentMethodLabel(method)}
                         </button>
                       ))}
                     </div>
@@ -1257,7 +1262,7 @@ export default function CareerIntelligenceHome() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
+                        placeholder={paymentPhonePlaceholder}
                         className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                       />
                     </div>
