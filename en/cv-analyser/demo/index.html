@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Analyser — Full Report | Demo</title>
+<link rel="canonical" href="https://www.share2inspire.pt/en/cv-analyser/demo" />
+<meta name="robots" content="noindex" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #B8973A;
+    --gold-light: #D4AF55;
+    --gold-pale: #F5EDD0;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --orange: #C4530A;
+    --orange-light: #FEF0E6;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F5;
+    --gray-200: #E4E4E7;
+    --gray-300: #D1D1D6;
+    --gray-400: #A0A0AB;
+    --gray-600: #52525B;
+    --gray-700: #3F3F46;
+    --gray-800: #27272A;
+    --gray-900: #18181B;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Top nav */
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
+  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .topnav-brand svg { color: var(--gold); }
+  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+  /* Layout */
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+  .report-header { margin-bottom: 24px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label.orange { color: var(--orange); }
+  .section-label.gold { color: var(--gold); }
+  .section-label.green { color: var(--green); }
+  .section-label.gray { color: var(--gray-600); }
+
+  /* ATS Score */
+  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+
+  .warn-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: var(--orange-light);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+  .warn-item svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* ATS Compat grid */
+  .ats-compat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+  }
+  .ats-compat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+  .ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
+  .ats-compat-row .boa { color: var(--green); font-weight: 600; }
+  .ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
+
+  .howto-list { list-style: none; margin-top: 12px; }
+  .howto-list li {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
+    padding: 5px 0;
+  }
+  .howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  /* Critical issues */
+  .issue-item { margin-bottom: 20px; }
+  .issue-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+
+  .issue-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+  }
+  .issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+
+  .code-block {
+    background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
+    color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+  }
+
+  .suggestion-block {
+    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+    line-height: 1.6;
+  }
+
+  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+
+  /* Quadrant scores */
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quadrant-cell {
+    border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+  }
+  .quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
+  .quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
+
+  .donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+  .donut-container svg { transform: rotate(-90deg); }
+  .donut-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 22px; font-weight: 700; color: var(--gray-900);
+  }
+  .benchmark-tag { font-size: 11px; color: var(--gray-400); }
+  .benchmark-tag span { color: var(--green); font-weight: 600; }
+
+  /* Factor bars */
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+  .factor-sub { font-size: 11px; color: var(--gray-400); }
+  .factor-bar-wrap { flex: 1; position: relative; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+
+  /* Recruiter perception */
+  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tag {
+    padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
+    color: var(--gold); font-size: 12px; font-weight: 600;
+    border: 1px solid #E2C96A;
+  }
+  .profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
+  .profile-line strong { color: var(--gray-900); }
+
+  .attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
+  .attention-list li {
+    counter-increment: attn; display: flex; gap: 10px;
+    font-size: 13px; color: var(--gray-600); padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .attention-list li::before {
+    content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
+    color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* Salary */
+  .salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
+  .salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+  .salary-cell .amount.highlight { color: var(--gold); }
+  .salary-cell .period { font-size: 10px; color: var(--gray-400); }
+
+  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
+  .benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+
+  /* Market position */
+  .market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
+  .market-stat { text-align: center; }
+  .market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+  .market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+  .market-stat .val.accent { color: var(--gold); }
+
+  .bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+
+  .market-items { margin-top: 12px; }
+  .market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* AI Risk */
+  .risk-bar-wrap { margin: 16px 0; }
+  .risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .risk-bar-bg { height: 10px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .risk-bar-fill { height: 100%; border-radius: 99px; }
+  .risk-bar-fill.low { background: var(--green); }
+  .risk-bar-fill.medium { background: var(--orange); }
+  .risk-bar-fill.high { background: var(--red); }
+
+  .risk-items { margin-top: 12px; }
+  .risk-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .risk-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* Priority Matrix */
+  .matrix-wrap { position: relative; margin: 16px 0; }
+  .matrix-bg { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .matrix-quad { padding: 16px; height: 140px; }
+  .matrix-quad:nth-child(1) { background: #FFFBEB; }
+  .matrix-quad:nth-child(2) { background: #F0FDF4; }
+  .matrix-quad:nth-child(3) { background: var(--gray-50); }
+  .matrix-quad:nth-child(4) { background: #FEF2F2; }
+  .matrix-label { font-weight: 600; font-size: 13px; color: var(--gray-800); }
+  .matrix-sub { font-size: 11px; color: var(--gray-500); }
+  .matrix-axis-y { position: absolute; top: 50%; left: -50px; transform: translateY(-50%) rotate(-90deg); font-size: 11px; color: var(--gray-400); font-weight: 600; }
+  .matrix-axis-x { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--gray-400); font-weight: 600; }
+
+  .matrix-dot {
+    position: absolute; width: 32px; height: 32px; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+    color: var(--gray-700); transform: translate(-50%, -50%);
+  }
+
+  /* Actions */
+  .action-list { list-style: none; counter-reset: action; }
+  .action-item {
+    counter-increment: action; display: flex; gap: 12px; margin-bottom: 16px;
+    padding: 12px; border-radius: 10px; border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+  }
+  .action-item::before {
+    content: counter(action);
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%; background: var(--gold-pale);
+    color: var(--gold); font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 3px;
+  }
+  .action-title { font-weight: 600; font-size: 14px; color: var(--gray-900); margin-bottom: 4px; }
+  .action-desc { font-size: 13px; color: var(--gray-600); }
+
+  /* 30-day plan */
+  .plan-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .plan-col h3 { font-size: 13px; color: var(--gray-800); margin-bottom: 8px; border-bottom: 2px solid var(--gray-200); padding-bottom: 6px; }
+  .plan-task { font-size: 12px; color: var(--gray-600); padding: 6px 0; border-bottom: 1px solid var(--gray-100); }
+
+  /* LinkedIn Post */
+  .linkedin-post {
+    background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 14px; font-size: 13px; color: var(--gray-700); line-height: 1.6; margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-left">
+    <a href="/en/cv-analyser">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Back to Product Page
+    </a>
+    <span style="color: var(--gray-300)">/</span>
+    <span class="topnav-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 11.55C12 10.12 12.87 9 14 9h5.5c.83 0 1.5.67 1.5 1.5v0c0 .83-.67 1.5-1.5 1.5H14c-1.13 0-2 .88-2 2.02V21"/><path d="M12 11.55a2.5 2.5 0 01-5 0V9c0-.83.67-1.5 1.5-1.5H14"/><path d="M12 3v5.55"/><circle cx="12" cy="3" r="1"/></svg>
+      CV Analyser
+    </span>
+  </div>
+  <div class="topnav-right">
+    DEMO
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  </div>
+</div>
+
+<div class="page">
+  <div class="report-header">
+    <p>CV Analysis Report</p>
+    <h1>John Doe</h1>
+  </div>
+
+  <!-- ─── ATS Score ─── -->
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+      ATS Score
+    </div>
+    <div class="ats-score-row">
+      <div class="ats-score-big">23<span>/100</span></div>
+      <div style="flex:1">
+        <div class="badge-orange">Low Compatibility</div>
+        <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">Percentile 25 (vs. Sales Managers)</p>
+      </div>
+    </div>
+    <p class="ats-desc">This score reflects your CV's compatibility with Applicant Tracking Systems (ATS). A low score suggests your CV may be automatically rejected before a human sees it.</p>
+
+    <div class="warn-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg>
+      <div>Your CV has a <strong>77% probability of being rejected</strong> by an ATS. It is critical to address the formatting and keyword issues below.</div>
+    </div>
+
+    <div style="margin-top:20px;font-size:13px;font-weight:600;color:var(--gray-700);">ATS Compatibility Breakdown</div>
+    <div class="ats-compat-grid">
+      <div class="ats-compat-row">
+        <span>File Format (.docx)</span>
+        <span class="boa">Good</span>
+      </div>
+      <div class="ats-compat-row">
+        <span>Date Formatting</span>
+        <span class="excelente">Excellent</span>
+      </div>
+      <div class="ats-compat-row">
+        <span>Contact Information</span>
+        <span class="boa">Good</span>
+      </div>
+      <div class="ats-compat-row">
+        <span>Section Headers</span>
+        <span class="boa">Good</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--gray-600);">How to improve your ATS score:</div>
+    <ul class="howto-list">
+      <li>Ensure your CV is in a standard format like .docx or .pdf.</li>
+      <li>Use conventional section titles (e.g., "Work Experience," "Education").</li>
+      <li>Include specific keywords from the job description.</li>
+      <li>Avoid using tables, columns, or excessive graphics.</li>
+    </ul>
+  </div>
+
+  <!-- ─── Email CTA ─── -->
+  <div class="card" style="background:var(--gray-800);color:white;border-color:var(--gray-700);">
+    <div style="display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:white;margin-bottom:4px;">Is your CV good enough?</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0;">Get a complete, instant and free analysis of your CV. Find out what you need to improve to get past the screening phase.</p>
+      </div>
+      <button style="background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">Analyse my CV</button>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-700);">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">Powered by AI. 100% free.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:rgba(255,255,255,0.7);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 98% accuracy</div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:rgba(255,255,255,0.7);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg> GDPR compliant</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:28px 24px;text-align:center;border:2px dashed var(--gray-200);box-shadow:none;background:transparent;">
+    <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--gray-800);margin-bottom:4px;">Unlock the Full Report</div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;max-width:420px;margin-left:auto;margin-right:auto;">To see the full analysis, including Critical Issues, Quadrant Analysis, Salary Estimate, and more, please purchase the full report.</p>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+      <button style="background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Purchase Full Report (€10)</button>
+      <button style="background:transparent;color:var(--gray-600);border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">View Sample Report</button>
+    </div>
+  </div>
+
+  <div style="height:80px;"></div>
+
+  <!-- ------------------ -->
+  <!-- Full report starts -->
+  <!-- ------------------ -->
+
+  <div class="report-header">
+    <p>Full Analysis Report</p>
+    <h1>John Doe</h1>
+  </div>
+
+  <div class="card" style="background:var(--orange-light);border-color:var(--orange);">
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg>
+      </div>
+      <div style="flex:1;font-size:13px;color:var(--orange);font-weight:500;">
+        This is a <strong>demo report</strong> based on a sample CV. The analysis shows what a real report contains, but the data is illustrative.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+      ATS Score
+    </div>
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div style="flex:1;">
+        <div class="ats-score-row">
+          <div class="ats-score-big">23<span>/100</span></div>
+          <div style="flex:1">
+            <div class="badge-orange">Low Compatibility</div>
+            <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">Percentile 25 (vs. Sales Managers)</p>
+          </div>
+        </div>
+        <p class="ats-desc">This score reflects your CV's compatibility with Applicant Tracking Systems (ATS). A low score suggests your CV may be automatically rejected before a human sees it.</p>
+      </div>
+      <div style="width:200px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:12px;font-size:12px;color:var(--gray-500);">
+        <div style="font-weight:600;color:var(--gray-700);margin-bottom:6px;">Keyword Match</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Leadership</span> <span style="color:var(--green);font-weight:600;">✓</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Sales Strategy</span> <span style="color:var(--green);font-weight:600;">✓</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Team Management</span> <span style="color:var(--red);font-weight:600;">✗</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Market Analysis</span> <span style="color:var(--red);font-weight:600;">✗</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Budgeting</span> <span style="color:var(--red);font-weight:600;">✗</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--gray-100);padding-top:16px;">
+      <div style="font-weight:600;color:var(--gray-700);font-size:13px;margin-bottom:8px;">Compatibility with Top ATS</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px;text-align:center;">
+        <div><img src="https://cdn.jsdelivr.net/gh/Share2Inspire/public-page-assets/images/greenhouse.png" alt="Greenhouse" style="height:24px;margin-bottom:4px;"><br><strong>85%</strong></div>
+        <div><img src="https://cdn.jsdelivr.net/gh/Share2Inspire/public-page-assets/images/lever.png" alt="Lever" style="height:24px;margin-bottom:4px;"><br><strong>75%</strong></div>
+        <div><img src="https://cdn.jsdelivr.net/gh/Share2Inspire/public-page-assets/images/workday.png" alt="Workday" style="height:24px;margin-bottom:4px;"><br><strong>30%</strong></div>
+        <div><img src="https://cdn.jsdelivr.net/gh/Share2Inspire/public-page-assets/images/taleo.png" alt="Taleo" style="height:24px;margin-bottom:4px;"><br><strong>10%</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="background:var(--gray-800);color:white;border-color:var(--gray-700);">
+    <div style="display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:white;margin-bottom:4px;">Deep Scan: ATS Format & Keywords</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0;">An in-depth check of your CV against thousands of rules from the most common ATS systems.</p>
+      </div>
+      <button style="background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">Run Deep Scan</button>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-700);display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;">
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Example of a Deep Scan result:</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--red);font-weight:600;">✗</span> Missing "Summary" section
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--red);font-weight:600;">✗</span> Dates are not in MM/YYYY format
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--green);font-weight:600;">✓</span> Contact info is parseable
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">&nbsp;</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--red);font-weight:600;">✗</span> Missing keyword: "P&L Management"
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--green);font-weight:600;">✓</span> Found keyword: "Leadership"
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);">
+          <span style="color:var(--red);font-weight:600;">✗</span> Missing keyword: "Go-to-market"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:24px 24px 0;">
+      <div class="section-label gray">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        ATS Deep Scan
+        <span style="font-size:11px;font-weight:700;background:#FEE2E2;color:var(--red);padding:2px 8px;border-radius:99px;margin-left:6px;">Premium</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+        <div style="font-size:40px;font-weight:700;color:var(--red);line-height:1;">18<span style="font-size:18px;color:var(--gray-400);">/100</span></div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:var(--gray-800);">Very Low Compatibility</div>
+          <p style="font-size:12px;color:var(--gray-500);">Your CV will likely be rejected by all major ATS systems.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div style="text-align:center;padding:12px 8px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200);">
+          <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">Format Score</div>
+          <div style="font-size:24px;font-weight:700;color:var(--orange);">35</div>
+        </div>
+        <div style="text-align:center;padding:12px 8px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200);">
+          <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">Keyword Score</div>
+          <div style="font-size:24px;font-weight:700;color:var(--red);">8</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#FFF8E1;padding:16px 24px;border-top:1px solid #FFECB3;font-size:13px;color:#6D4C41;">
+      <div style="font-weight:700;margin-bottom:4px;">Summary of Findings</div>
+      Detected <strong>15 critical errors</strong> and <strong>28 missing keywords</strong>. The document structure is not optimized for parsing, and key skills for a Sales Manager role are absent. We strongly recommend a complete rewrite.
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:24px 24px 16px;">
+      <div class="section-label gray">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        ATS Deep Scan
+        <span style="font-size:11px;font-weight:700;background:#FEE2E2;color:var(--red);padding:2px 8px;border-radius:99px;margin-left:6px;">Premium</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--gray-500);flex:1;">Summary of <strong>15 critical errors</strong> found:</div>
+        <span style="font-size:12px;color:var(--green);font-weight:600;">✓ 8 fixed</span>
+        <span style="font-size:12px;color:var(--red);font-weight:600;">✗ 7 remaining</span>
+      </div>
+      <div style="border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:1fr 80px 90px;background:var(--gray-50);padding:8px 12px;border-bottom:1px solid var(--gray-200);">
+          <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;">Error Description</span>
+          <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;text-align:center;">Severity</span>
+          <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;text-align:center;">Status</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-700);">
+          <div style="display:grid;grid-template-columns:1fr 80px 90px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+            <span>Missing "Summary" section</span>
+            <div style="text-align:center;"><span class="badge-orange">High</span></div>
+            <div style="text-align:center;"><span style="font-weight:600;color:var(--green);">Fixed</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px 90px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+            <span>Dates not in MM/YYYY format</span>
+            <div style="text-align:center;"><span class="badge-orange">High</span></div>
+            <div style="text-align:center;"><span style="font-weight:600;color:var(--green);">Fixed</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px 90px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+            <span>Contact info is not parseable</span>
+            <div style="text-align:center;"><span class="badge-orange">High</span></div>
+            <div style="text-align:center;"><span style="font-weight:600;color:var(--red);">Remaining</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px 90px;padding:8px 12px;align-items:center;">
+            <span>Use of non-standard fonts</span>
+            <div style="text-align:center;"><span class="badge-gray">Low</span></div>
+            <div style="text-align:center;"><span style="font-weight:600;color:var(--red);">Remaining</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:12px;color:var(--gray-400);">Showing 4 of 15 errors. Full list is available in the complete report.</div>
+    </div>
+    <div style="background:#F0FDF4;padding:16px 24px;border-top:1px solid #A7F3D0;font-size:13px;color:#14532D;">
+      <div style="font-weight:700;margin-bottom:4px;">Smart Fix Applied</div>
+      We automatically corrected 8 critical formatting errors. Your CV is now more compatible with ATS systems, but manual review is still recommended.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      ATS Deep Scan: Keywords
+      <span style="font-size:11px;font-weight:700;background:#FEE2E2;color:var(--red);padding:2px 8px;border-radius:99px;margin-left:6px;">Premium</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--gray-500);flex:1;">Analysis of <strong>28 keywords</strong> for "Sales Manager":</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:var(--green);font-weight:600;">✓ 5 found</span>
+        <span style="font-size:12px;color:var(--orange);font-weight:600;">~ 3 partial</span>
+        <span style="font-size:12px;color:var(--red);font-weight:600;">✗ 20 missing</span>
+      </div>
+    </div>
+    <div style="border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 100px 100px;background:var(--gray-50);padding:8px 12px;border-bottom:1px solid var(--gray-200);">
+        <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;">Keyword/Skill</span>
+        <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;text-align:center;">Found?</span>
+        <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.07em;text-align:center;">Suggestion</span>
+      </div>
+      <div style="font-size:12px;color:var(--gray-700);">
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+          <span>P&L Management</span>
+          <div style="text-align:center;"><span style="font-weight:600;color:var(--red);">Missing</span></div>
+          <div style="text-align:center;"><button style="font-size:11px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;">Add to CV</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+          <span>Go-to-market Strategy</span>
+          <div style="text-align:center;"><span style="font-weight:600;color:var(--red);">Missing</span></div>
+          <div style="text-align:center;"><button style="font-size:11px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;">Add to CV</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;padding:8px 12px;border-bottom:1px solid var(--gray-100);align-items:center;">
+          <span>Salesforce</span>
+          <div style="text-align:center;"><span style="font-weight:600;color:var(--green);">Found</span></div>
+          <div style="text-align:center;"><span style="color:var(--gray-400);font-size:11px;">-</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;padding:8px 12px;align-items:center;">
+          <span>Team Leadership</span>
+          <div style="text-align:center;"><span style="font-weight:600;color:var(--orange);">Partial</span></div>
+          <div style="text-align:center;"><button style="font-size:11px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;">Improve</button></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--gray-400);">Showing 4 of 28 keywords. Full list is available in the complete report.</div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:24px;">
+      <div class="section-label gray">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        ATS Deep Scan: Final Result
+        <span style="font-size:11px;font-weight:700;background:#DCFCE7;color:var(--green);padding:2px 8px;border-radius:99px;margin-left:6px;">Corrected</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+        <div style="font-size:40px;font-weight:700;color:var(--green);line-height:1;">82<span style="font-size:18px;color:var(--gray-400);">/100</span></div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:var(--gray-800);">High Compatibility</div>
+          <p style="font-size:12px;color:var(--gray-500);">Your CV is now optimized for all major ATS systems.</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:13px;">
+        <span style="color:var(--gray-500);">Previous Score: <span style="color:var(--red);font-weight:700;">18</span></span>
+        <span style="color:var(--green);font-weight:700;font-size:14px;">+64 points</span>
+      </div>
+    </div>
+    <div style="background:#F0FDF4;padding:16px 24px;border-top:1px solid #A7F3D0;font-size:13px;color:#14532D;">
+      <div style="font-weight:700;margin-bottom:4px;">Smart Fix & Keyword Suggestions Applied</div>
+      By applying our automatic corrections and adding the suggested keywords, your CV's ATS compatibility score has significantly improved. You can now apply with confidence.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Critical Issues Detected
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 specific issues that are harming your CV</p>
+
+    <div class="issue-item">
+      <p><span class="issue-num">1</span><span class="issue-title">Critical Date Discrepancy</span></p>
+      <p class="issue-sub">The current role, 'Executive District Sales Manager,' is listed with a start date in the future (January 2025).</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">This error immediately raises serious questions about accuracy and attention to detail, severely undermining the candidate's credibility. It suggests either a significant typo or a fundamental misunderstanding of how to present current employment, making the candidate appear currently unemployed or misrepresenting their role.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> 'Executive District Sales Manager January 2025 - Present'<br>
+        <strong>After:</strong> 'Executive District Sales Manager April 2019 - Present'
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Executive District Sales Manager | AstraZeneca | Boston, Massachusetts | April 2019 – Present
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">2</span><span class="issue-title">Absence of Quantifiable Achievements</span></p>
+      <p class="issue-sub">The CV lacks any specific metrics, numbers, or quantifiable results to demonstrate impact or success in previous roles.</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">For a senior sales executive with over 35 years of experience, a CV without metrics is a critical failure. It provides no evidence of sales growth, market share expansion, team performance, or revenue generation, making it impossible for a recruiter to assess the candidate's actual value and contribution.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> (No descriptions for any role)<br>
+        <strong>After:</strong> 'Led team to consistently exceed sales goals through innovative planning and execution.'
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Spearheaded regional sales initiatives, consistently surpassing annual targets by an average of 15% ($X million) across multiple product lines. Grew market share by Y% within key accounts in the Boston territory.
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">3</span><span class="issue-title">Generic Summary and Undetailed Experience</span></p>
+      <p class="issue-sub">The summary focuses on 'our team' rather than individual contributions, and the experience section provides only titles and dates without any job descriptions.</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">A senior executive's summary should be a powerful, concise pitch highlighting their unique value proposition and key achievements. The current summary is generic and lacks impact. Furthermore, listing 35+ years of experience with just titles and dates is unacceptable; it fails to convey responsibilities, strategic impact, or leadership capabilities.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> 'Leading with a strategic vision at AstraZeneca, our team consistently exceeds sales goals...'<br>
+        <strong>After:</strong> 'Highly accomplished Executive District Sales Manager with 35+ years in pharmaceutical sales, consistently driving market share growth and exceeding multi-million dollar sales targets.'
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Highly accomplished Executive District Sales Manager with 35+ years of progressive leadership in pharmaceutical sales, specializing in strategic market penetration and high-performance team development. Consistently delivered double-digit sales growth and successfully launched multiple blockbuster products.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/></svg>
+      Quadrant Analysis
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <div class="quadrant-grid">
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Content</div>
+        <div class="quadrant-sub">→ Quality and relevance of content</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="169.7" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">10</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 75 <span style="color:var(--red)">(-65)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Experience</div>
+        <div class="quadrant-sub">→ Professional experience</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="150.8" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">20</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 80 <span style="color:var(--red)">(-60)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Structure</div>
+        <div class="quadrant-sub">→ Formatting and readability</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="47.1" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">75</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 70 <span>(+5)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Impact</div>
+        <div class="quadrant-sub">→ Achievements and results</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="179.1" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">5</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 85 <span style="color:var(--red)">(-80)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.42 4.58a5.4 5.4 0 00-7.65 0l-.77.77-.77-.77a5.4 5.4 0 00-7.65 0C2.46 6.5 2 8.68 2 10c0 3 2.5 6 7 9l3 3 3-3c4.5-3 7-6 7-9 0-1.32-.46-3.5-2.58-5.42z"/><path d="M12 13a2 2 0 00-2-2 2 2 0 00-2 2 2 2 0 002 2 2 2 0 002-2z"/></svg>
+      Recruiter Perception
+    </div>
+    <div class="tags-row">
+      <div class="tag">Senior Executive</div>
+      <div class="tag">Pharmaceutical Sales</div>
+      <div class="tag">Experienced Leader</div>
+      <div class="tag" style="background:var(--orange-light);color:var(--orange);border-color:#F9A825;">Questionable Accuracy</div>
+      <div class="tag" style="background:var(--orange-light);color:var(--orange);border-color:#F9A825;">Lacks Detail</div>
+    </div>
+    <p class="profile-line">Your profile suggests a <strong>Senior Executive</strong> with extensive experience in <strong>Pharmaceutical Sales</strong>.</p>
+    <p class="profile-line">However, the lack of detail and data discrepancies may lead a recruiter to question your credibility and professionalism.</p>
+
+    <div style="margin-top:20px;font-size:13px;font-weight:600;color:var(--gray-700);">First Impression Analysis</div>
+    <ul class="attention-list">
+      <li>The summary is generic and lacks a strong value proposition.</li>
+      <li>The future start date for the current role is a major red flag.</li>
+      <li>The absence of any metrics makes it impossible to gauge performance.</li>
+      <li>The CV feels incomplete and hastily assembled.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22m-5-17h10"/><path d="M12 12a5 5 0 000 0Z"/></svg>
+      Salary Estimate
+    </div>
+    <div class="salary-grid">
+      <div class="salary-cell">
+        <div class="label">25th Percentile</div>
+        <div class="amount">€85K</div>
+        <div class="period">/ year</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">50th Percentile</div>
+        <div class="amount">€110K</div>
+        <div class="period">/ year</div>
+      </div>
+      <div class="salary-cell" style="border-color:var(--gold);background:var(--gold-pale);">
+        <div class="label">Your Estimate</div>
+        <div class="amount highlight">€125K</div>
+        <div class="period">/ year</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">75th Percentile</div>
+        <div class="amount">€140K</div>
+        <div class="period">/ year</div>
+      </div>
+    </div>
+    <div style="font-weight:600;color:var(--gray-700);font-size:13px;margin-bottom:8px;">Common Benefits Package</div>
+    <div class="benefits-grid">
+      <div class="benefit-item">Health & Dental Insurance</div>
+      <div class="benefit-item">Performance Bonus</div>
+      <div class="benefit-item">Company Car or Allowance</div>
+      <div class="benefit-item">Stock Options</div>
+      <div class="benefit-item">Pension Plan</div>
+      <div class="benefit-item">Flexible Work Hours</div>
+    </div>
+    <p class="salary-source">Source: Analysis of 5,000+ public salary data points for Sales Managers in your region.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      Market Position
+    </div>
+    <div class="market-stats">
+      <div class="market-stat" style="flex:1;">
+        <div class="val accent">Top 15%</div>
+        <div class="sub">Experience Level</div>
+      </div>
+      <div class="market-stat" style="flex:1;">
+        <div class="val">Medium</div>
+        <div class="sub">Demand</div>
+      </div>
+      <div class="market-stat" style="flex:1;">
+        <div class="val">High</div>
+        <div class="sub">Competition</div>
+      </div>
+    </div>
+    <div class="bell-curve-wrap">
+      <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
+        <path d="M0,100 C50,100 50,10 100,10 C150,10 150,100 200,100 C250,100 250,10 300,10" fill="none" stroke="var(--gray-200)" stroke-width="2"/>
+        <path d="M225,55 a5,5 0 1,1 -10,0 a5,5 0 1,1 10,0" fill="var(--gold)"/>
+      </svg>
+      <div style="position:absolute;bottom:10px;left:0;right:0;font-size:11px;color:var(--gray-400);">Your position on the experience curve</div>
+    </div>
+    <ul class="market-items">
+      <li class="market-item">Your years of experience place you in the top tier of candidates.</li>
+      <li class="market-item">However, the market for senior sales roles is competitive.</li>
+      <li class="market-item">To stand out, your CV must perfectly articulate your value and achievements.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4m0 16v-4m8-8h-4M4 12H8m11.5-7.5L16 8M8 8l-3.5-3.5M16 16l3.5 3.5M8 16l-3.5 3.5"/></svg>
+      AI Replacement Risk
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-labels">
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+      </div>
+      <div class="risk-bar-bg">
+        <div class="risk-bar-fill medium" style="width: 45%;"></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px;">Your role has a <strong>medium risk</strong> of being impacted by AI in the next 5-10 years. Tasks like data analysis, lead generation, and reporting are increasingly automated.</p>
+    <ul class="risk-items">
+      <li class="risk-item">Focus on developing skills that are difficult to automate: strategic thinking, complex relationship building, and team leadership.</li>
+      <li class="risk-item">Highlight your ability to mentor and develop sales teams.</li>
+      <li class="risk-item">Showcase your experience in navigating complex enterprise sales cycles.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8l4 4-4 4m-4-4h8"/></svg>
+      Priority Matrix
+    </div>
+    <div class="matrix-wrap">
+      <div class="matrix-bg">
+        <div class="matrix-quad">
+          <div class="matrix-label">2. Secondary Focus</div>
+          <div class="matrix-sub">High Impact, High Effort</div>
+        </div>
+        <div class="matrix-quad">
+          <div class="matrix-label">1. Top Priority</div>
+          <div class="matrix-sub">High Impact, Low Effort</div>
+        </div>
+        <div class="matrix-quad">
+          <div class="matrix-label">4. Later</div>
+          <div class="matrix-sub">Low Impact, High Effort</div>
+        </div>
+        <div class="matrix-quad">
+          <div class="matrix-label">3. Quick Wins</div>
+          <div class="matrix-sub">Low Impact, Low Effort</div>
+        </div>
+      </div>
+      <div class="matrix-dot" style="top: 25%; left: 75%;">A</div>
+      <div class="matrix-dot" style="top: 35%; left: 85%;">B</div>
+      <div class="matrix-dot" style="top: 70%; left: 65%;">C</div>
+      <div class="matrix-axis-y">Impact</div>
+      <div class="matrix-axis-x">Effort</div>
+    </div>
+    <div style="font-size:12px;color:var(--gray-600);">
+      <p style="margin-bottom:4px;"><strong>A:</strong> Quantify achievements in all roles.</p>
+      <p style="margin-bottom:4px;"><strong>B:</strong> Rewrite the professional summary.</p>
+      <p><strong>C:</strong> Correct the date discrepancy.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+      Improvement Actions
+    </div>
+    <ol class="action-list">
+      <li class="action-item">
+        <div>
+          <div class="action-title">Quantify Your Achievements</div>
+          <p class="action-desc">For each role, add 2-3 bullet points with specific, metric-driven accomplishments. Use the STAR method (Situation, Task, Action, Result) to frame your impact.</p>
+        </div>
+      </li>
+      <li class="action-item">
+        <div>
+          <div class="action-title">Rewrite Professional Summary</div>
+          <p class="action-desc">Create a powerful 3-4 line summary that highlights your key strengths, years of experience, and most significant achievements. Tailor it to the specific job you are applying for.</p>
+        </div>
+      </li>
+      <li class="action-item">
+        <div>
+          <div class="action-title">Correct All Errors</div>
+          <p class="action-desc">Proofread your CV multiple times to eliminate all typos and factual errors, including the incorrect start date. A flawless CV demonstrates professionalism and attention to detail.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="section-label green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4m-5 4h18"/></svg>
+      30-Day Action Plan
+    </div>
+    <div class="plan-grid">
+      <div class="plan-col">
+        <h3>Week 1: Foundation</h3>
+        <div class="plan-task">Rewrite CV summary</div>
+        <div class="plan-task">Quantify all achievements</div>
+        <div class="plan-task">Proofread and correct errors</div>
+      </div>
+      <div class="plan-col">
+        <h3>Week 2: Networking</h3>
+        <div class="plan-task">Update LinkedIn profile</div>
+        <div class="plan-task">Connect with 10 recruiters</div>
+        <div class="plan-task">Informational interviews (2)</div>
+      </div>
+      <div class="plan-col">
+        <h3>Weeks 3-4: Application</h3>
+        <div class="plan-task">Tailor CV for 5 target roles</div>
+        <div class="plan-task">Apply to 10-15 positions</div>
+        <div class="plan-task">Follow up on applications</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="background:var(--gray-800);color:white;border-color:var(--gray-700);">
+    <div style="display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:white;margin-bottom:4px;">Need help with your career?</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0;">Try our <strong>Career Path</strong> analysis. Get a personalized career roadmap, identify skill gaps, and discover your next best move.</p>
+      </div>
+      <button style="background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">Try Career Path</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      Post Preview
+    </div>
+    <div class="linkedin-post">
+      Do you know if your CV passes through automatic recruitment filters (ATS)?<br><br>
+      I tested mine in a tool that simulates these filters and the result surprised me.<br><br>
+      ✅ ATS Compatibility Score: 23%<br>
+      ✅ Global Score: 26/100 (Percentile 25)<br>
+      ✅ Top strengths: Education & Structure<br><br>
+      Most CVs are rejected before a human even reads them. This analysis showed me exactly what to fix — and what was already working.<br><br>
+      🔗 https://share2inspire.pt/cv-analyser<br><br>
+      What would your CV's score be?<br><br>
+      #CVAnalysis #ATS #Career #Share2Inspire
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;padding:10px;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Copy LinkedIn Post</button>
+      <button style="flex:1;padding:10px;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Download Certification Image</button>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:8px;">The certification image is optimized for LinkedIn posts (1200×630px)</p>
+  </div>
+
+  <div class="card" style="text-align:center;padding:28px 24px;">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </div>
+    <p style="font-weight:600;color:var(--gray-800);margin-bottom:4px;">Receive Report by Email</p>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">Send the full report to your email</p>
+    <div style="display:flex;gap:8px;max-width:360px;margin:0 auto;">
+      <input type="email" placeholder="your@email.com" style="flex:1;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;outline:none;font-family:'DM Sans',sans-serif;">
+      <button style="padding:10px 16px;background:var(--gold);color:white;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Send</button>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--green);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Report sent successfully! Check your inbox (and spam folder).
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

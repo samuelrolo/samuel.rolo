@@ -33,7 +33,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "Abr 2026",
     readTime: "12 min",
-    link: "/blog/artigos/ai-productivity-paradox.html",
+    link: "/blog/artigos/ai-productivity-paradox/",
     featured: true,
   },
   // Big4 & Consultoria
@@ -45,7 +45,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "Abr 2026",
     readTime: "14 min",
-    link: "/blog/artigos/futuro-consultoria-big4-2030.html",
+    link: "/blog/artigos/futuro-consultoria-big4-2030/",
     featured: true,
   },
   {
@@ -56,7 +56,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "25 Mar 2026",
     readTime: "12 min",
-    link: "/blog/artigos/big4-senior-ficar-ou-sair.html",
+    link: "/blog/artigos/big4-senior-ficar-ou-sair/",
     featured: true,
   },
   {
@@ -67,7 +67,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "24 Mar 2026",
     readTime: "14 min",
-    link: "/blog/artigos/big4-insider-10-anos.html",
+    link: "/blog/artigos/big4-insider-10-anos/",
   },
   {
     category: "big4",
@@ -77,7 +77,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "28 Mar 2026",
     readTime: "12 min",
-    link: "/blog/artigos/big4-manager-senior-manager-transicao.html",
+    link: "/blog/artigos/big4-manager-senior-manager-transicao/",
   },
   {
     category: "big4",
@@ -87,7 +87,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "19 Mar 2026",
     readTime: "12 min",
-    link: "/blog/artigos/recrutamento-big4-guia-candidatos.html",
+    link: "/blog/artigos/recrutamento-big4-guia-candidatos/",
   },
   {
     category: "big4",
@@ -97,7 +97,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     author: "Samuel Rolo",
     date: "20 Mar 2026",
     readTime: "12 min",
-    link: "/blog/artigos/big4-escola-aprendizagem-carreira.html",
+    link: "/blog/artigos/big4-escola-aprendizagem-carreira/",
   },
   // CV & Candidaturas
   {
@@ -107,7 +107,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.", "Modern employability requires moving from perception to actionable data.", "La empleabilidad moderna exige pasar de la percepción a los datos accionables."),
     author: "Samuel Rolo",
     readTime: "10 min",
-    link: "/blog/artigos/guia-superar-ats-curriculo.html",
+    link: "/blog/artigos/guia-superar-ats-curriculo/",
     featured: true,
   },
   {
@@ -117,7 +117,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Estratégias práticas para ultrapassar os filtros automáticos que eliminam 75% dos CVs.", "Practical strategies to bypass the automated filters that eliminate 75% of CVs.", "Estrategias prácticas para superar los filtros automáticos que eliminan el 75% de los CVs."),
     author: "Samuel Rolo",
     readTime: "12 min",
-    link: "/blog/artigos/guia-superar-ats-curriculo.html",
+    link: "/blog/artigos/guia-superar-ats-curriculo/",
   },
   {
     category: "cv",
@@ -126,7 +126,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Técnicas comprovadas para tornar o teu currículo num íman de entrevistas.", "Proven techniques to turn your resume into an interview magnet.", "Técnicas comprobadas para convertir tu currículum en un imán de entrevistas."),
     author: "Samuel Rolo",
     readTime: "10 min",
-    link: "/blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html",
+    link: "/blog/artigos/transformar-cv-ignorado-gerar-entrevistas/",
   },
   {
     category: "cv",
@@ -135,7 +135,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Os erros mais comuns que sabotam candidaturas — e como corrigi-los rapidamente.", "The most common mistakes that sabotage applications — and how to fix them quickly.", "Los errores más comunes que sabotean candidaturas — y cómo corregirlos rápidamente."),
     author: "Samuel Rolo",
     readTime: "8 min",
-    link: "/blog/artigos/7-erros-cv-candidatos-rejeitados.html",
+    link: "/blog/artigos/7-erros-cv-candidatos-rejeitados/",
   },
   {
     category: "cv",
@@ -144,7 +144,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Como te preparares para ambos os formatos e maximizar as tuas hipóteses de sucesso.", "How to prepare for both formats and maximise your chances of success.", "Cómo prepararte para ambos formatos y maximizar tus posibilidades de éxito."),
     author: "Samuel Rolo",
     readTime: "10 min",
-    link: "/blog/artigos/entrevista-presencial-vs-remota.html",
+    link: "/blog/artigos/entrevista-presencial-vs-remota/",
   },
   {
     category: "cv",
@@ -153,7 +153,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Comparação detalhada entre ferramentas de IA e coaching tradicional para decisões de carreira.", "Detailed comparison between AI tools and traditional coaching for career decisions.", "Comparación detallada entre herramientas de IA y coaching tradicional para decisiones de carrera."),
     author: "Samuel Rolo",
     readTime: "8 min",
-    link: "/blog/artigos/ai-career-path-vs-traditional-coaching.html",
+    link: "/blog/artigos/ai-career-path-vs-traditional-coaching/",
   },
   // Salário & Negociação
   {
@@ -163,7 +163,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais.", "When to ask, what to say, how to use market data, and the mistakes that cost you money. Practical guide with real scripts.", "Cuándo pedir, qué decir, cómo usar datos de mercado y los errores que cuestan dinero. Guía práctica con scripts reales."),
     author: "Samuel Rolo",
     readTime: "9 min",
-    link: "/blog/artigos/como-negociar-salario-portugal.html",
+    link: "/blog/artigos/como-negociar-salario-portugal/",
     featured: true,
   },
   // Desenvolvimento de Carreira
@@ -174,7 +174,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.", "Indicators, benchmarks and clarity on the next steps of your career.", "Indicadores, benchmarks y claridad sobre los próximos pasos de tu carrera."),
     author: "Samuel Rolo",
     readTime: "8 min",
-    link: "/blog/artigos/posicionamento-mercado.html",
+    link: "/blog/artigos/posicionamento-mercado/",
     featured: true,
   },
   {
@@ -184,7 +184,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Análise comparativa dos dois pilares da tua presença profissional.", "Comparative analysis of the two pillars of your professional presence.", "Análisis comparativo de los dos pilares de tu presencia profesional."),
     author: "Samuel Rolo",
     readTime: "8 min",
-    link: "/blog/artigos/cv-linkedin-importancia.html",
+    link: "/blog/artigos/cv-linkedin-importancia/",
   },
   {
     category: "carreira",
@@ -193,7 +193,7 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
     excerpt: pick("Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.", "Small profile adjustments that can significantly increase your visibility.", "Pequeños ajustes en el perfil que pueden aumentar significativamente tu visibilidad."),
     author: "Samuel Rolo",
     readTime: "9 min",
-    link: "/blog/artigos/melhorar-linkedin-pesquisas.html",
+    link: "/blog/artigos/melhorar-linkedin-pesquisas/",
   },
 ];
 
@@ -214,7 +214,7 @@ const buildVideos = (pick: <T,>(pt: T, en: T, es: T) => T): VideoItem[] => [
     badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
     title: pick("O Paradoxo de Produtividade da IA: Porque a Liderança Humana é o Elo que Falta", "The AI Productivity Paradox: Why Human Leadership is the Missing Link", "La Paradoja de Productividad de la IA: Por Qué el Liderazgo Humano es el Eslabón Perdido"),
     desc: pick("As ferramentas de IA multiplicam a capacidade individual. Mas as organizações que mais investiram em IA não são as mais produtivas. O problema não é a tecnologia. É a liderança.", "AI tools multiply individual capacity. But the organisations that have invested most in AI are not the most productive. The problem is not the technology. It is leadership.", "Las herramientas de IA multiplican la capacidad individual. Pero las organizaciones que más invirtieron en IA no son las más productivas. El problema no es la tecnología. Es el liderazgo."),
-    guideLink: "/blog/artigos/ai-productivity-paradox.html",
+    guideLink: "/blog/artigos/ai-productivity-paradox/",
     guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
     ytLink: "https://www.youtube.com/watch?v=Tribuqg2Hzk",
     featured: true,
@@ -224,7 +224,7 @@ const buildVideos = (pick: <T,>(pt: T, en: T, es: T) => T): VideoItem[] => [
     badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
     title: pick("O Futuro da Consultoria nas Big4: Sobreviver à Era da IA", "The Future of Big4 Consulting: Surviving the AI Era", "El Futuro de la Consultoría en las Big4: Sobrevivir a la Era de la IA"),
     desc: pick("A IA está a redefinir o trabalho do consultor. Quais os perfis que vão crescer, quais os que vão desaparecer e o que tens de fazer hoje para seres relevante em 2030. Uma análise honesta do mercado de consultoria nas Big4.", "AI is redefining the consultant's work. Which profiles will grow, which will disappear, and what you need to do today to remain relevant in 2030. An honest analysis of the Big4 consulting market.", "La IA está redefiniendo el trabajo del consultor. Qué perfiles crecerán, cuáles desaparecerán y qué necesitas hacer hoy para ser relevante en 2030. Un análisis honesto del mercado de consultoría en las Big4."),
-    guideLink: "/blog/artigos/futuro-consultoria-big4-2030.html",
+    guideLink: "/blog/artigos/futuro-consultoria-big4-2030/",
     guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
     ytLink: "https://www.youtube.com/watch?v=cFw11WRjuxM",
     featured: true,
@@ -508,7 +508,7 @@ export default function KnowledgeHubPage() {
                   )}
                 </p>
                 <a
-                  href="/blog/artigos/estado-linkedin-portugal-2026.html"
+                  href="/blog/artigos/estado-linkedin-portugal-2026/"
                   className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-[#C9A961] border border-[#C9A961]/30 px-5 py-2.5 rounded-lg hover:bg-[#C9A961]/10 transition-colors"
                 >
                   {pick("VER ESTUDO COMPLETO →", "VIEW COMPLETE STUDY →", "VER ESTUDIO COMPLETO →")}

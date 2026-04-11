@@ -417,7 +417,7 @@ export default function Home() {
     if (selectedFile) {
       const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/png', 'image/jpeg'];
       if (!validTypes.includes(selectedFile.type)) {
-        setError('Por favor, carregue um ficheiro PDF, DOCX ou imagem (PNG/JPEG)');
+        setError(pick('Por favor, carregue um ficheiro PDF, DOCX ou imagem (PNG/JPEG)', 'Please upload a PDF, DOCX or image file (PNG/JPEG)', 'Por favor, sube un archivo PDF, DOCX o imagen (PNG/JPEG)'));
         setFile(null);
         return;
       }
@@ -442,7 +442,7 @@ export default function Home() {
     const emailCheck = validateEmail(analysisEmail);
     if (!emailCheck.valid) {
       setAnalysisEmailError(emailCheck.error || pick('Email obrigatório.', 'Email required.', 'Email obligatorio.'));
-      setError(emailCheck.error || 'Introduz o teu email para continuar.');
+      setError(emailCheck.error || pick('Introduz o teu email para continuar.', 'Enter your email to continue.', 'Introduce tu email para continuar.'));
       return;
     }
     setAnalysisEmailError(null);
@@ -627,9 +627,9 @@ export default function Home() {
     } catch (err: any) {
       console.error('[CV_ENGINE] Erro:', err);
       if (err.name === 'AbortError') {
-        setError('A análise demorou demasiado. Por favor, tente novamente.');
+        setError(pick('A análise demorou demasiado. Por favor, tente novamente.', 'The analysis took too long. Please try again.', 'El análisis tardó demasiado. Por favor, inténtalo de nuevo.'));
       } else {
-        setError(err.message || 'Erro ao analisar o CV. Por favor, tente novamente.');
+        setError(err.message || pick('Erro ao analisar o CV. Por favor, tente novamente.', 'Error analysing the CV. Please try again.', 'Error al analizar el CV. Por favor, inténtalo de nuevo.'));
       }
       setLoading(false);
     }
@@ -648,12 +648,12 @@ export default function Home() {
       if (Array.isArray(coupons) && coupons.length > 0) {
         const coupon = coupons[0];
         const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError('Este código ainda não está ativo.'); return false; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError('Este código já expirou.'); return false; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError('Este código atingiu o limite de utilizações.'); return false; }
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError(pick('Este código ainda não está ativo.', 'This code is not active yet.', 'Este código todavía no está activo.')); return false; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError(pick('Este código já expirou.', 'This code has already expired.', 'Este código ya ha expirado.')); return false; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError(pick('Este código atingiu o limite de utilizações.', 'This code has reached its usage limit.', 'Este código ha alcanzado su límite de usos.')); return false; }
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_analysis')) {
-          setLinkedInVoucherError('Este código não é aplicável a esta análise.'); return false;
+          setLinkedInVoucherError(pick('Este código não é aplicável a esta análise.', 'This code is not applicable to this analysis.', 'Este código no es aplicable a este análisis.')); return false;
         }
         if (coupon.discount_percent === 100) {
           // 100% discount = free access, same as voucher
@@ -672,7 +672,7 @@ export default function Home() {
         sessionStorage.setItem('appliedCouponPercent', String(coupon.discount_percent));
         const { incrementCouponUsage } = await import('@/lib/affiliate');
         incrementCouponUsage(code);
-        setLinkedInVoucherError(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`);
+        setLinkedInVoucherError(pick(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`, `${coupon.discount_percent}% discount applied! It will be used at payment.`, `¡Descuento de ${coupon.discount_percent}% aplicado! Se usará en el pago.`));
         // Close paywall after a brief delay to show the message
         setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
         return true;
@@ -684,13 +684,13 @@ export default function Home() {
       });
       const vouchers = await res.json();
       if (!Array.isArray(vouchers) || vouchers.length === 0) {
-        setLinkedInVoucherError('Código inválido. Verifica e tenta novamente.');
+        setLinkedInVoucherError(pick('Código inválido. Verifica e tenta novamente.', 'Invalid code. Check it and try again.', 'Código inválido. Compruébalo e inténtalo de nuevo.'));
         return false;
       }
       const voucher = vouchers[0];
       const remaining = (voucher.total_analyses || 0) - (voucher.used_analyses || 0);
       if (remaining <= 0) {
-        setLinkedInVoucherError('Este código já não tem análises disponíveis.');
+        setLinkedInVoucherError(pick('Este código já não tem análises disponíveis.', 'This code no longer has analyses available.', 'Este código ya no tiene análisis disponibles.'));
         return false;
       }
       // Valid! Store payment info
@@ -703,7 +703,7 @@ export default function Home() {
       setShowLinkedInPaywall(false);
       return true;
     } catch (err) {
-      setLinkedInVoucherError('Erro ao validar código. Tenta novamente.');
+      setLinkedInVoucherError(pick('Erro ao validar código. Tenta novamente.', 'Error validating the code. Try again.', 'Error al validar el código. Inténtalo de nuevo.'));
       return false;
     } finally {
       setLinkedInVoucherValidating(false);
@@ -728,7 +728,7 @@ export default function Home() {
     const emailCheck = validateEmail(analysisEmail);
     if (!emailCheck.valid) {
       setAnalysisEmailError(emailCheck.error || pick('Email obrigatório.', 'Email required.', 'Email obligatorio.'));
-      setError(emailCheck.error || 'Introduz o teu email para continuar.');
+      setError(emailCheck.error || pick('Introduz o teu email para continuar.', 'Enter your email to continue.', 'Introduce tu email para continuar.'));
       return;
     }
     setAnalysisEmailError(null);
@@ -767,12 +767,12 @@ export default function Home() {
 
       if (!scrapeResponse.ok) {
         const scrapeError = await scrapeResponse.json().catch(() => ({}));
-        throw new Error(scrapeError?.error || 'Erro ao extrair dados do perfil LinkedIn.');
+        throw new Error(scrapeError?.error || pick('Erro ao extrair dados do perfil LinkedIn.', 'Error extracting data from the LinkedIn profile.', 'Error al extraer datos del perfil de LinkedIn.'));
       }
 
       const scrapeData = await scrapeResponse.json();
       if (!scrapeData?.success || !scrapeData?.cv_text) {
-        throw new Error(scrapeData?.error || 'Não foi possível extrair dados do perfil LinkedIn.');
+        throw new Error(scrapeData?.error || pick('Não foi possível extrair dados do perfil LinkedIn.', 'It was not possible to extract data from the LinkedIn profile.', 'No fue posible extraer datos del perfil de LinkedIn.'));
       }
 
       console.log('[CV_ENGINE] Step 1 OK: Extraídos', scrapeData.cv_text.length, 'chars do perfil', scrapeData.profile_name);
@@ -859,9 +859,9 @@ export default function Home() {
     } catch (err: any) {
       console.error('[CV_ENGINE] Erro LinkedIn:', err);
       if (err.name === 'AbortError') {
-        setError('A análise demorou demasiado. Por favor, tente novamente.');
+        setError(pick('A análise demorou demasiado. Por favor, tente novamente.', 'The analysis took too long. Please try again.', 'El análisis tardó demasiado. Por favor, inténtalo de nuevo.'));
       } else {
-        setError(err.message || 'Erro ao analisar o perfil LinkedIn. Por favor, tente novamente.');
+        setError(err.message || pick('Erro ao analisar o perfil LinkedIn. Por favor, tente novamente.', 'Error analysing the LinkedIn profile. Please try again.', 'Error al analizar el perfil de LinkedIn. Por favor, inténtalo de nuevo.'));
       }
       setLoading(false);
     }
@@ -870,11 +870,11 @@ export default function Home() {
   // Handle LinkedIn paywall inline payment (buy + auto-analyse)
   const handleLiPaywallPurchase = async () => {
     if (!liPaywallEmail.includes('@')) {
-      setLiPaywallError('Introduz um email válido.');
+      setLiPaywallError(pick('Introduz um email válido.', 'Enter a valid email.', 'Introduce un email válido.'));
       return;
     }
     if (!liPaywallPhone || liPaywallPhone.length < 9) {
-      setLiPaywallError('Introduz um número de telemóvel válido.');
+      setLiPaywallError(pick('Introduz um número de telemóvel válido.', 'Enter a valid phone number.', 'Introduce un número de teléfono válido.'));
       return;
     }
     const plan = pricingPlans[liPaywallPlan];
@@ -901,7 +901,7 @@ export default function Home() {
         })
       });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
       setLiPaywallStatus('polling');
       // Poll for payment confirmation using /status/ endpoint (same as working payment page)
       let paid = false;
@@ -979,7 +979,7 @@ export default function Home() {
       // Auto-trigger LinkedIn analysis
       handleLinkedInAnalyze();
     } catch (err: any) {
-      setLiPaywallError(err.message || 'Erro no pagamento.');
+      setLiPaywallError(err.message || pick('Erro no pagamento.', 'Payment error.', 'Error en el pago.'));
       setLiPaywallStatus('error');
     } finally {
       setLiPaywallLoading(false);
@@ -989,11 +989,11 @@ export default function Home() {
   // Handle voucher purchase (buy now, upload later)
   const handleVoucherPurchase = async () => {
     if (!voucherEmail.includes('@')) {
-      setVoucherPaymentError('Introduz um email válido.');
+      setVoucherPaymentError(pick('Introduz um email válido.', 'Enter a valid email.', 'Introduce un email válido.'));
       return;
     }
     if (!voucherPhone || voucherPhone.length < 9) {
-      setVoucherPaymentError('Introduz um número de telemóvel válido.');
+      setVoucherPaymentError(pick('Introduz um número de telemóvel válido.', 'Enter a valid phone number.', 'Introduce un número de teléfono válido.'));
       return;
     }
     const plan = pricingPlans[voucherSelectedPlan];
@@ -1020,7 +1020,7 @@ export default function Home() {
         })
       });
       const data = await response.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || pick('Erro ao iniciar pagamento', 'Error starting payment', 'Error al iniciar el pago'));
       setVoucherPaymentStatus('polling');
       // Poll for payment confirmation using /status/ endpoint (same as working payment page)
       let paid = false;
@@ -1103,7 +1103,7 @@ export default function Home() {
       trackPurchase('cv_analyser_voucher', parseFloat(plan.price.replace(',', '.')), orderId);
       setVoucherPaymentStatus('success');
     } catch (err: any) {
-      setVoucherPaymentError(err.message || 'Erro no pagamento.');
+      setVoucherPaymentError(err.message || pick('Erro no pagamento.', 'Payment error.', 'Error en el pago.'));
       setVoucherPaymentStatus('error');
     } finally {
       setVoucherPaymentLoading(false);
@@ -1153,7 +1153,7 @@ export default function Home() {
           </div>
 
           <a
-            href="/cv-analyser/demo.html"
+            href="/cv-analyser/demo/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-all text-sm font-medium text-[#C9A961] hover:scale-105"
@@ -1213,7 +1213,7 @@ export default function Home() {
                     const blob = await res.blob();
                     const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
                     setFile(f);
-                  } catch { setError('Não foi possível carregar o CV guardado.'); }
+                  } catch { setError(pick('Não foi possível carregar o CV guardado.', 'It was not possible to load the saved CV.', 'No fue posible cargar el CV guardado.')); }
                 }}
                 className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
               >
@@ -1297,7 +1297,7 @@ export default function Home() {
                         const blob = await res.blob();
                         const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
                         setFile(f);
-                      } catch { setError('Não foi possível carregar o CV guardado.'); }
+                      } catch { setError(pick('Não foi possível carregar o CV guardado.', 'It was not possible to load the saved CV.', 'No fue posible cargar el CV guardado.')); }
                     }}
                     className="text-xs text-[#C9A961] hover:underline font-medium"
                   >
