@@ -112,6 +112,13 @@ TARGETS=(
   "student-pack/index.html"
   "student-pack/results/index.html"
   "hr-report/index.html"
+  "about/index.html"
+  "archive/index.html"
+  "conhecimento/index.html"
+  "contact/index.html"
+  "contactos/index.html"
+  "servicos/index.html"
+  "sobre/index.html"
   # EN routes
   "en/index.html"
   "en/cv-analyser/index.html"
@@ -131,6 +138,8 @@ TARGETS=(
   "en/pages/services/index.html"
   "en/pages/privacy-policy/index.html"
   "en/estudante/index.html"
+  "en/about/index.html"
+  "en/contact/index.html"
   # ES routes
   "es/index.html"
   "es/cv-analyser/index.html"
@@ -178,7 +187,7 @@ echo ""
 # Verify all files have the same hash
 CORRECT_HASH=$(grep -o 'assets/index-[^"]*\.js' "$SRC")
 ERRORS=0
-for f in $(grep -rl "assets/index-" --include="*.html" "$REPO_ROOT" 2>/dev/null | grep -v area-cliente | grep -v node_modules | grep -v .git); do
+for f in $(grep -rl "assets/index-" --include="*.html" "$REPO_ROOT" 2>/dev/null | grep -v area-cliente | grep -v node_modules | grep -v .git | grep -v '/example/' | grep -v 'apps/cv-analyser/deploy'); do
   HASH=$(grep -o 'assets/index-[^"]*\.js' "$f" 2>/dev/null | head -1)
   if [ -n "$HASH" ] && [ "$HASH" != "$CORRECT_HASH" ]; then
     echo "  ❌ OUTDATED: $f (has $HASH, expected $CORRECT_HASH)"
