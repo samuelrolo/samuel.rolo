@@ -615,7 +615,7 @@ export default function Results() {
 
     // Auto-unlock for active members (Essential, Growth, or Pro)
     const memberTier = getMemberPlanTier();
-    if (memberTier && memberTier !== 'none') {
+    if (memberTier) {
       setIsPaid(true);
       sessionStorage.setItem('isPaid', 'true');
     }
@@ -892,7 +892,7 @@ export default function Results() {
     }, 1500); // Wait 1.5s for React to re-render unlocked content
   }, [isEN]);
 
-  const openPaymentModal = (plan?: { name: string; price: string; analyses: number }) => {
+  const openPaymentModal = (plan?: { name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }) => {
     if (plan) {
       setSelectedPlan(plan);
     }
@@ -1966,11 +1966,11 @@ export default function Results() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
-                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems.length} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems.length} specific issues that are hurting your CV`, `${analysisData.cvProblems.length} problemas específicos que están perjudicando tu CV`)}</p>
+                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems?.length ?? 0} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems?.length ?? 0} specific issues that are hurting your CV`, `${analysisData.cvProblems?.length ?? 0} problemas específicos que están perjudicando tu CV`)}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {analysisData.cvProblems.slice(0, 3).map((problem: any, i: number) => (
+                  {(analysisData.cvProblems ?? []).slice(0, 3).map((problem: any, i: number) => (
                     <div key={i} className="border border-border rounded-lg overflow-hidden">
                       <div className="p-4 bg-red-500/5">
                         <div className="flex items-start gap-3">
@@ -2645,7 +2645,7 @@ export default function Results() {
                       <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{phase.week}</span>
                       <span className="text-sm font-semibold text-foreground">{phase.title}</span>
                     </div>
-                    {phase.tasks.map((task, j) => (
+                    {phase.tasks.map((task: string, j: number) => (
                       <p key={j} className="text-sm text-muted-foreground ml-4 flex items-start gap-2 mb-1">
                         <span className="text-muted-foreground/50 shrink-0">○</span> {task}
                       </p>

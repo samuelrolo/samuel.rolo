@@ -16,8 +16,8 @@ import { Menu, X, User, LogOut, Globe, CreditCard, Home, Users } from 'lucide-re
 const LANGS: Lang[] = ['pt', 'en', 'es'];
 const LANG_LABELS: Record<Lang, string> = {
   pt: 'Português',
-  en: pick('Inglês', 'English', 'Inglés'),
-  es: pick('Espanhol', 'Spanish', 'Español'),
+  en: pick('en', 'Inglês', 'English', 'Inglés'),
+  es: pick('es', 'Espanhol', 'Spanish', 'Español'),
 };
 const LANG_SHORT: Record<Lang, string> = { pt: 'PT', en: 'EN', es: 'ES' };
 

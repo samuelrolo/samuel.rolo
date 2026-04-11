@@ -46,11 +46,17 @@ export const trackCVUpload = () => {
   trackFBEvent('InitiateCheckout');
 };
 
-export const trackAnalysisStart = (type: 'cv_analyser' | 'career_path') => {
+type AnalysisTrackingType =
+  | 'cv_analyser'
+  | 'cv_analyser_linkedin'
+  | 'career_path'
+  | 'career_intelligence_full';
+
+export const trackAnalysisStart = (type: AnalysisTrackingType) => {
   trackEvent('analysis_start', { event_category: 'engagement', analysis_type: type });
 };
 
-export const trackAnalysisComplete = (type: 'cv_analyser' | 'career_path', score?: number) => {
+export const trackAnalysisComplete = (type: AnalysisTrackingType, score?: number) => {
   trackEvent('analysis_complete', { event_category: 'engagement', analysis_type: type, score });
   trackFBEvent('ViewContent', { content_name: type, value: score });
 };

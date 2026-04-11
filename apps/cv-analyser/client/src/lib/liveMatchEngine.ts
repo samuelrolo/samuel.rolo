@@ -251,7 +251,7 @@ export function extractKeywordsFromJD(jdText: string): { keyword: string; import
   }
 
   // Only add single words that appear at least once and aren't part of already-extracted phrases
-  for (const [word, count] of wordFreq) {
+  for (const [word, count] of Array.from(wordFreq.entries())) {
     // Skip if this word is already part of a multi-word keyword
     const isPartOfPhrase = Array.from(keywords.keys()).some(k => k.includes(word) && k !== word);
     if (isPartOfPhrase && count < 3) continue;

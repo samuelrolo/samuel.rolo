@@ -131,7 +131,7 @@ export default function LiveMatchPanel({
   const [result, setResult] = useState<LiveMatchResult | null>(null);
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [activeTab, setActiveTab] = useState<'editor' | 'keywords' | 'format'>('editor');
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const pick = (pt: string, en: string, es: string) => (lang === 'es' ? es : lang === 'en' ? en : pt);
   const hasAccess = isMemberArea || isPaid;
@@ -155,7 +155,7 @@ export default function LiveMatchPanel({
     setIsAnalysing(true);
     // Small delay to show loading state
     setTimeout(() => {
-      const res = runLiveMatch(cvText, jd, lang);
+      const res = runLiveMatch(cvText, jd, lang === 'es' ? 'en' : lang);
       setResult(res);
       setIsAnalysing(false);
     }, 300);

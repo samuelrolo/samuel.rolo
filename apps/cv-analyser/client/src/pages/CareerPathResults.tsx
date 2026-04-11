@@ -228,7 +228,6 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
 }
 
 export default function CareerPathResults() {
-  const { pick } = useTranslation();
 
   useEffect(() => {
     document.title = pick(
@@ -278,7 +277,7 @@ export default function CareerPathResults() {
   const isES = lang === 'es';
   const [selectedPlan, setSelectedPlan] = useState(getPlans(isEN)[0]);
   const [paymentStep, setPaymentStep] = useState<'select' | 'payment' | 'polling' | 'success'>('select');
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'multibanco' | 'paypal' | 'stripe'>(t('mbway'));
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'multibanco' | 'paypal' | 'stripe'>('mbway');
 
   // Currency & pricing: PT = EUR, EN = USD
   const CUR = t('bca53fde');

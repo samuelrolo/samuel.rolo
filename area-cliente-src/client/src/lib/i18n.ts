@@ -2502,16 +2502,25 @@ export function setStoredLang(lang: Lang) {
   localStorage.setItem('s2i-lang', lang);
 }
 
+export type I18nPickInput = { pt: string; en: string; es: string };
+
 export type I18nContextType = {
   lang: Lang;
   setLang: (lang: Lang) => void;
   t: (key: string) => string;
+  pick: (ptOrMap: string | I18nPickInput, en?: string, es?: string) => string;
 };
 
 export const I18nContext = createContext<I18nContextType>({
   lang: 'pt',
   setLang: () => {},
   t: (key: string) => key,
+  pick: (ptOrMap: string | I18nPickInput, en?: string, es?: string) => {
+    if (typeof ptOrMap === 'string') {
+      return ptOrMap;
+    }
+    return ptOrMap.pt;
+  },
 });
 
 export function useI18n() {

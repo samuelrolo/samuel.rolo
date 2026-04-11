@@ -1,0 +1,281 @@
+        </p>
+        <p className="text-xs text-[#bbb] font-light mb-4 max-w-sm mx-auto">
+          {variant === 'no-sub'
+            ? 'Experimenta uma das ferramentas gratuitas e guarda o resultado.'
+            : 'Usa as ferramentas e clica em "Guardar" para as ver aqui.'}
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 mb-4">
+          {tools.map(tool => (
+            <a key={tool.type} href={tool.link}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-gold/60 border border-gold/10 rounded hover:border-gold/30 hover:text-gold transition-all">
+              <tool.icon className="w-3 h-3" /> {tool.label}
+            </a>
+          ))}
+        </div>
+        {variant === 'no-sub' && (
+          <Link href="/planos" className="inline-flex items-center gap-1.5 text-xs text-gold font-medium hover:text-[#a07d08] transition-colors">
+            Ver planos <ArrowRight className="w-3 h-3" />
+          </Link>
+        )}
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen pt-24 pb-16">
+      <div className="container max-w-4xl mx-auto px-4">
+
+        {/* ── Header ──────────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between gap-6 mb-8">
+          <div className="min-w-0">
+            <p className="text-gold text-[10px] font-light tracking-[0.15em] uppercase mb-1">
+              {t('dash.title')}
+            </p>
+            <h1 className="text-xl font-semibold text-[#1a1a1a]">
+              {profile?.first_name ? `${t('dash.hello')}, ${profile.first_name}` : t('dash.title')}
+            </h1>
+            <p className="text-[11px] text-[#999] font-light mt-0.5">
+              {isSubscriber
+                ? `Plano ${getPlanLabel(subscription?.plan)} · Renova a ${new Date(subscription!.expires_at).toLocaleDateString('pt-PT')}`
+                : `Conta gratuita · ${analyses.length} ${analyses.length === 1 ? 'análise guardada' : 'análises guardadas'}`}
+            </p>
+          </div>
+          {/* Quota widget no header — só subscribers */}
+          {isSubscriber && (
+            <div className="shrink-0 w-[180px]">
+              <QuotaCard used={weeklyUsed} limit={weeklyLimit} resetDay="2ª feira" />
+            </div>
+          )}
+        </div>
+
+        {/* ── Free-account hero ────────────────────────────────────────────── */}
+        {!isSubscriber && (
+          <div className="mb-8 p-5 border border-gold/15 rounded-lg bg-[#faf9f6]">
+            <p className="text-sm font-medium text-[#1a1a1a] mb-1.5">
+              O teu repositório de análises está aqui
+            </p>
+            <p className="text-xs text-[#888] font-light leading-relaxed mb-4 max-w-xl">
+              Cada análise que guardas nas ferramentas fica disponível nesta área, mesmo sem subscrição.
+              Para análises recorrentes, Job Feed, e-books e acompanhamento de carreira, considera um plano.
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              <Link href="/planos"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold text-white text-xs font-medium rounded hover:bg-[#a07d08] transition-colors">
+                {t('dash.seePlans')} <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a href="https://share2inspire.pt/cv-analyser"
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#e0e0e0] text-[#555] text-xs font-light rounded hover:border-gold/30 hover:text-[#1a1a1a] transition-colors">
+                Explorar ferramentas
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* ── Tabs ─────────────────────────────────────────────────────────── */}
+        <div className="flex gap-0 mb-8 border-b border-[#e5e5e5] overflow-x-auto scrollbar-hide">
+          {tabs.map(tab => (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 px-3 sm:px-4 py-3 text-xs sm:text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] whitespace-nowrap ${
+                activeTab === tab.key
+                  ? 'border-gold text-gold'
+                  : 'border-transparent text-[#999] hover:text-[#1a1a1a]/60'
+              }`}>
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ══ Tab: Ferramentas ═══════════════════════════════════════════════ */}
+        {activeTab === 'tools' && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {ALL_TOOLS.map(tool => {
+                const isLocked = TIER_ORDER[tier] < TIER_ORDER[tool.minTier];
+                const count = toolCounts[tool.type] || 0;
+                const ToolIcon = tool.icon;
+                const config = TOOL_CONFIG[tool.type];
+
+                const quotaLabel = (() => {
+                  if (isLocked) return `A partir de ${tool.minTier.charAt(0).toUpperCase() + tool.minTier.slice(1)}`;
+                  if (tool.minTier === 'free') return 'Análise avulso';
+                  if (tier === 'pro' && ['cv_analyser','linkedin_roaster'].includes(tool.type)) return 'Ilimitado';
+                  if (['cv_analyser','linkedin_roaster'].includes(tool.type)) return `${weeklyLimit}/semana`;
+                  return tool.quota === 'bonus' ? 'Bónus incluído' : 'Incluído no plano';
+                })();
+
+                return (
+                  <div key={tool.type}
+                    className={`relative border rounded-lg p-4 transition-all duration-200 ${
+                      isLocked ? 'border-[#e5e5e5] opacity-60' : 'border-[#e5e5e5] hover:border-[#d0d0d0] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+                    }`}>
+                    {isLocked && (
+                      <div className="absolute top-3 right-3">
+                        <Lock className="w-3.5 h-3.5 text-[#ccc]" />
+                      </div>
+                    )}
+                    {!isLocked && count > 0 && (
+                      <div className="absolute top-3 right-3 px-2 py-0.5 bg-gold/10 border border-gold/15 rounded-full">
+                        <span className="text-[10px] text-gold font-medium">{count}</span>
+                      </div>
+                    )}
+                    <div className="w-8 h-8 rounded-lg bg-[#f5f5f4] flex items-center justify-center mb-3">
+                      <ToolIcon className={`w-4 h-4 ${config?.color || 'text-gold/60'}`} />
+                    </div>
+                    <p className="text-sm font-medium text-[#1a1a1a] mb-0.5">{tool.label}</p>
+                    <p className="text-xs text-[#999] font-light mb-3 leading-relaxed">{tool.desc}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-[#bbb] font-light">{quotaLabel}</span>
+                      {!isLocked ? (
+                        <a href={tool.link}
+                          className="text-xs text-gold/70 hover:text-gold font-medium flex items-center gap-1 transition-colors">
+                          Usar <ArrowRight className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <Link href="/planos"
+                          className="text-xs text-[#bbb] hover:text-gold font-medium flex items-center gap-1 transition-colors">
+                          Upgrade <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {tier !== 'pro' && <UpgradeBanner fromTier={tier === 'free' ? 'free' : tier as 'essential' | 'growth'} />}
+          </div>
+        )}
+
+        {/* ══ Tab: Análises ══════════════════════════════════════════════════ */}
+        {activeTab === 'analyses' && (
+          <div className="space-y-6">
+            {loadingAnalyses ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-5 h-5 text-gold/40 animate-spin" />
+                <span className="ml-2 text-sm text-[#999] font-light">{t('dash.loadingAnalyses')}</span>
+              </div>
+            ) : analyses.length === 0 ? (
+              <EmptyAnalyses variant={isSubscriber ? 'no-data' : 'no-sub'} />
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-[#1a1a1a]">
+                    {analyses.length} {analyses.length === 1 ? t('dash.analysisSaved') : t('dash.analysesSaved')}
+                  </p>
+                  <button onClick={loadAnalyses}
+                    className="flex items-center gap-1.5 text-xs text-[#999] hover:text-gold transition-colors">
+                    <RefreshCw className="w-3 h-3" /> {t('dash.refresh')}
+                  </button>
+                </div>
+
+                {Object.entries(groupedAnalyses).map(([type, items]) => {
+                  const config = TOOL_CONFIG[type];
+                  const ToolIcon = config?.icon || FileText;
+                  return (
+                    <div key={type} id={`saved-${type}`} className="space-y-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <ToolIcon className={`w-3.5 h-3.5 ${config?.color || 'text-gold/60'}`} />
+                        <h3 className="text-xs font-medium text-[#777] uppercase tracking-wider">
+                          {config?.label || type} ({items.length})
+                        </h3>
+                      </div>
+                      {items.map(analysis => (
+                        <div key={analysis.id}
+                          className="border border-[#e8e8e8] rounded-lg overflow-hidden hover:border-[#d8d8d8] transition-colors">
+                          <div className="flex items-center justify-between px-4 py-3 cursor-pointer"
+                            onClick={() => setExpandedId(expandedId === analysis.id ? null : analysis.id)}>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-[#333] font-light truncate">
+                                {getAnalysisSummary(analysis) || t('dash.analysisSaved')}
+                              </p>
+                              <p className="text-[10px] text-[#bbb] font-light mt-0.5 flex items-center gap-1">
+                                <Clock className="w-2.5 h-2.5" />
+                                {formatDate(analysis.created_at)}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4">
+                              <button onClick={e => { e.stopPropagation(); handleDelete(analysis.id); }}
+                                disabled={deletingId === analysis.id}
+                                className="p-1.5 text-[#bbb] hover:text-red-400 transition-colors">
+                                {deletingId === analysis.id
+                                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  : <Trash2 className="w-3.5 h-3.5" />}
+                              </button>
+                              {expandedId === analysis.id
+                                ? <ChevronUp className="w-3.5 h-3.5 text-[#bbb]" />
+                                : <ChevronDown className="w-3.5 h-3.5 text-[#bbb]" />}
+                            </div>
+                          </div>
+                          {expandedId === analysis.id && (
+                            <div className="px-4 pb-4 border-t border-[#f0f0f0]">
+                              <div className="pt-3 space-y-3">
+                                <AnalysisDetailRenderer
+                                  analysisType={analysis.analysis_type}
+                                  data={analysis.data}
+                                />
+                                {config?.link && (
+                                  <a href={config.link} className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors">
+                                    {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+
+                {/* CV Upload */}
+                <div className="border border-[#e5e5e5] rounded-lg p-5">
+                  <h3 className="text-sm font-medium text-[#1a1a1a] mb-3">{t('dash.cv')}</h3>
+                  {(profile?.cv_url || profile?.cv_file_url) ? (
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className="flex items-center gap-2 text-sm text-[#555]">
+                        <FileText className="w-4 h-4 text-gold/60" />
+                        <span className="font-light">{profile.cv_filename || t('dash.cvUploaded')}</span>
+                      </div>
+                      <a href={profile.cv_url || profile.cv_file_url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs text-gold hover:text-[#a07d08] transition-colors">
+                        <Download className="w-3.5 h-3.5" /> {t('dash.downloadCv')}
+                      </a>
+                      <button onClick={() => fileRef.current?.click()}
+                        className="flex items-center gap-1.5 text-xs text-[#999] hover:text-[#555] transition-colors">
+                        <Upload className="w-3.5 h-3.5" /> {t('dash.replaceCv')}
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-[#999] font-light mb-3">{t('dash.noCv')}</p>
+                      <button onClick={() => fileRef.current?.click()} disabled={uploading}
+                        className="flex items-center gap-2 px-4 py-2 border border-[#ddd] rounded text-sm text-[#555] hover:border-gold/30 hover:text-[#1a1a1a] transition-all duration-300">
+                        {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                        {t('dash.uploadCv')}
+                      </button>
+                    </div>
+                  )}
+                  {cvUploaded && <p className="text-xs text-gold mt-2 font-light">{t('dash.cvUploaded')}</p>}
+                  <p className="text-[10px] text-[#bbb] mt-2 font-light">{t('dash.maxFileSize')}</p>
+                  <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" onChange={handleCvUpload} className="hidden" />
+                </div>
+
+                {tier !== 'pro' && <UpgradeBanner fromTier={tier === 'free' ? 'free' : tier as 'essential' | 'growth'} />}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ══ Tab: Recursos ══════════════════════════════════════════════════ */}
+        {activeTab === 'resources' && isSubscriber && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {resources.map(res => {
+                const ResIcon = res.icon;
+                return (
+                  <div key={res.id}
+                    className="flex items-start gap-3 border border-[#e5e5e5] rounded-lg p-4 hover:border-[#d5d5d5] transition-colors">
+                    <div className="w-8 h-8 bg-[#f5f5f4] rounded-lg flex items-center justify-center shrink-0">
+                      <ResIcon className="w-4 h-4 text-gold/60" />
+                    </div>
