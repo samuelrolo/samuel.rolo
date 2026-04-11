@@ -18,6 +18,7 @@ export default function S2IFooter() {
     fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px',
     color: '#C9A961', fontWeight: 600, marginBottom: '20px',
   };
+  const slogan = pick('Partilhar conhecimento, Inspirar Carreiras!', 'Share Knowledge, Inspire Careers!', 'Compartir Conocimiento, ¡Inspirar Carreras!');
 
   return (
     <>
@@ -49,8 +50,8 @@ export default function S2IFooter() {
             <div className="s2i-footer-logo">
               <img loading="lazy" src="/logo-transparent.png" alt={pick('Logótipo Share2Inspire', 'Share2Inspire logo', 'Logotipo Share2Inspire')}
                 style={{ height: '40px', width: 'auto', marginBottom: '16px' }} />
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', lineHeight: '1.7', margin: 0, maxWidth: '320px' }}>
-                {pick('Partilhar conhecimento, Inspirar Carreiras!', 'Share Knowledge, Inspire Careers!', 'Compartir Conocimiento, ¡Inspirar Carreras!')}
+              <p style={{ color: '#FFFFFF', fontSize: '0.85rem', lineHeight: '1.7', margin: 0, maxWidth: '320px' }}>
+                {slogan}
               </p>
             </div>
             {/* Navigation */}

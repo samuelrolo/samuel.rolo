@@ -27,7 +27,7 @@ export default function Footer() {
           <img src="/logo-transparent.png" alt="Share2Inspire" className="h-9 sm:h-10 w-auto object-contain" />
           <div>
             <p className="text-sm font-semibold text-white">Share2Inspire</p>
-            <p className="text-sm text-white/60">{slogan}</p>
+            <p className="text-sm text-white">{slogan}</p>
           </div>
         </div>
         <p className="text-xs text-white/40">© {new Date().getFullYear()} Share2Inspire</p>

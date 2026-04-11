@@ -960,7 +960,7 @@ export default function ClientAreaLanding() {
             <img src={CDN.logo} alt="Share2Inspire" className="h-9 sm:h-10 w-auto object-contain" />
             <div>
               <div className="text-white/85 text-sm font-semibold">Share2Inspire &copy; {new Date().getFullYear()}</div>
-              <p className="text-white/55 text-sm mt-1">{footerSlogan}</p>
+              <p className="text-white text-sm mt-1">{footerSlogan}</p>
             </div>
           </div>
           <div className="flex flex-wrap justify-center gap-6 text-white/40 text-xs">
