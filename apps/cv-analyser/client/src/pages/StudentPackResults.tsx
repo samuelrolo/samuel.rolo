@@ -12,6 +12,8 @@ import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -383,7 +385,7 @@ function adaptLegacyToUnified(legacy: any): any {
 export default function StudentPackResults() {
   const [, setLocation] = useLocation();
   const lang = getLang();
-  useEffect(() => { document.title = t('resultados_pack_estudante_share2inspire'); }, [lang]);
+  usePageSEO(pageSeo.studentPackResults);
 
   const rawData = useMemo(() => {
     try {

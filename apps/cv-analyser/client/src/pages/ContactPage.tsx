@@ -3,17 +3,12 @@ import { Clock3, Linkedin, Mail, MessageSquare } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import useTranslation from "@/i18n/useTranslation";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 export default function ContactPage() {
   const { pick, lang } = useTranslation();
-
-  useEffect(() => {
-    document.title = pick(
-      "Contactos | Share2Inspire",
-      "Contact | Share2Inspire",
-      "Contacto | Share2Inspire"
-    );
-  }, [lang, pick]);
+  usePageSEO(pageSeo.contact);
 
   const cards = [
     {

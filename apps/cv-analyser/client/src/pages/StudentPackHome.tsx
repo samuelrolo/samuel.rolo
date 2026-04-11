@@ -18,6 +18,8 @@ import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -72,14 +74,7 @@ export default function StudentPackHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
   const isPT = lang === 'pt';
-
-  useEffect(() => {
-    document.title = pick(
-      "Pack Estudante — CV Analyser + LinkedIn Roaster | Share2Inspire",
-      "Student Pack — CV Analyser + LinkedIn Roaster | Share2Inspire",
-      "Pack Estudiante — CV Analyser + LinkedIn Roaster | Share2Inspire"
-    );
-  }, [lang]);
+  usePageSEO(pageSeo.studentPack);
 
   const headlines = [
     { text: pick("Prepara o teu CV e LinkedIn para", "Prepare your CV and LinkedIn to", "Prepara tu CV y LinkedIn para"), highlight: pick("conquistar o primeiro emprego", "land your first job", "conquistar tu primer empleo") },

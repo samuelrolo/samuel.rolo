@@ -12,6 +12,8 @@ import S2IHeader from "@/components/S2IHeader";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -178,7 +180,7 @@ function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, b
 export default function LinkedInRoasterResults() {
   const [, setLocation] = useLocation();
   const lang = getLang();
-  useEffect(() => { document.title = t('resultados_linkedin_roaster_share2inspire'); }, [lang]);
+  usePageSEO(pageSeo.linkedinRoasterResults);
 
   // Load from sessionStorage
   const rawData = useMemo(() => {
@@ -257,6 +259,7 @@ export default function LinkedInRoasterResults() {
           </div>
         ) : (
           <>
+            <h1 className="sr-only">{pick('Relatório do LinkedIn Roaster', 'LinkedIn Roaster report', 'Informe de LinkedIn Roaster')}</h1>
             {/* ═══ SECÇÃO 1 — HERO / TEASER ═══ */}
             <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 md:p-8 text-white mb-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />

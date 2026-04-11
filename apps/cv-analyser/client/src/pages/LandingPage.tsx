@@ -6,13 +6,12 @@ import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 export default function LandingPage() {
   const { pick, localePath: lp } = useTranslation();
-
-  useEffect(() => {
-    document.title = pick("Share2Inspire | Plataforma de Inteligência de Carreira", "Share2Inspire | Career Intelligence Platform", "Share2Inspire | Plataforma de Inteligencia de Carrera");
-  }, [pick]);
+  usePageSEO(pageSeo.landing);
 
   const tools = [
     {
@@ -175,7 +174,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <S2IHeader activePage="home" />
       <PromoBanner />
 

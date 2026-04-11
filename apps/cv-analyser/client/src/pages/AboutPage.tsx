@@ -14,17 +14,12 @@ import {
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import useTranslation from "@/i18n/useTranslation";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 export default function AboutPage() {
   const { pick, lang, localePath } = useTranslation();
-
-  useEffect(() => {
-    document.title = pick(
-      "Sobre | Share2Inspire",
-      "About | Share2Inspire",
-      "Sobre | Share2Inspire"
-    );
-  }, [lang, pick]);
+  usePageSEO(pageSeo.about);
 
   const companyFacts = [
     {
@@ -151,6 +146,10 @@ export default function AboutPage() {
               <img
                 src="/logo-transparent.png"
                 alt={pick("Logótipo Share2Inspire", "Share2Inspire logo", "Logotipo Share2Inspire")}
+                loading="lazy"
+                decoding="async"
+                width="360"
+                height="96"
                 className="h-16 md:h-20 w-auto mx-auto mb-6 object-contain"
               />
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C9A961] mb-4">

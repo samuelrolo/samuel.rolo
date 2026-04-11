@@ -7,6 +7,8 @@ import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
 import { pick as pickLang } from "@/i18n";
 import useTranslation from "@/i18n/useTranslation";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 /* ─── COMPONENTS ─── */
 function ServiceCard({ svc, featured }: { svc: any; featured?: boolean }) {
@@ -427,14 +429,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
 /* ─── PAGE ─── */
 export default function ServicosPage() {
   const { pick, lang, localePath } = useTranslation();
-
-  useEffect(() => {
-    document.title = pick(
-      "Serviços | CV com IA, Career Path e Career Intelligence | Share2Inspire",
-      "Services | AI CV, Career Path & Career Intelligence | Share2Inspire",
-      "Servicios | CV con IA, Career Path e Career Intelligence | Share2Inspire"
-    );
-  }, [lang]);
+  usePageSEO(pageSeo.services);
 
   const phase1Services = [
     {

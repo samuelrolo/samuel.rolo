@@ -22,6 +22,8 @@ import S2IHeader from "@/components/S2IHeader";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -248,7 +250,7 @@ export default function Home() {
   const testimonials = buildTestimonials(pick);
   const pricingPlans = buildPricingPlans(pick);
   const comparisonFeatures = buildComparisonFeatures(pick);
-  useEffect(() => { document.title = pick("CV Analyser — Análise de CV com IA | Share2Inspire", "CV Analyser — AI CV Analysis | Share2Inspire", "CV Analyser — Análisis de CV con IA | Share2Inspire"); }, [pick]);
+  usePageSEO(pageSeo.cvAnalyser);
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);

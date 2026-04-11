@@ -20,6 +20,8 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n/translations';
 import { localePath } from '@/i18n/useTranslation';
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -228,14 +230,7 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
 }
 
 export default function CareerPathResults() {
-
-  useEffect(() => {
-    document.title = pick(
-      "Career Path — Resultados | Share2Inspire",
-      "Career Path — Results | Share2Inspire",
-      "Career Path — Resultados | Share2Inspire"
-    );
-  }, [pick]);
+  usePageSEO(pageSeo.careerPathResults);
 
   const [, setLocation] = useLocation();
 
@@ -888,7 +883,7 @@ export default function CareerPathResults() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href={localePath('/')} className="flex items-center" aria-label={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')}>
-              <img src="/logo-transparent.png" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-transparent.png" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">

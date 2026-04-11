@@ -20,6 +20,8 @@ import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -88,7 +90,7 @@ export default function CareerPathHome() {
   const testimonials = buildTestimonials(pick);
   const careerPathHeadlines = buildCareerPathHeadlines(pick);
   const careerPathExampleHref = localePath('/career-path/example/');
-  useEffect(() => { document.title = pick("Career Path — Roadmap de Carreira com IA | Share2Inspire", "Career Path — AI Career Roadmap | Share2Inspire", "Career Path — Roadmap de Carrera con IA | Share2Inspire"); }, [pick]);
+  usePageSEO(pageSeo.careerPath);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
 

@@ -18,6 +18,8 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -74,7 +76,7 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 }
 
 export default function CareerIntelligenceResults() {
-  useEffect(() => { document.title = pick("Career Intelligence — Resultados | Share2Inspire", "Career Intelligence — Results | Share2Inspire", "Career Intelligence — Resultados | Share2Inspire"); }, []);
+  usePageSEO(pageSeo.careerIntelligenceResults);
 
   const [, setLocation] = useLocation();
 
@@ -629,7 +631,7 @@ export default function CareerIntelligenceResults() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href={siteHomePath} className="flex items-center" aria-label="Share2Inspire">
-              <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-transparent.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">

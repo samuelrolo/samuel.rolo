@@ -1,28 +1,47 @@
 User-agent: *
 Allow: /
 
-# Private, admin and payment-related routes
+# Internal, admin and utility areas
 Disallow: /admin/
+Disallow: /admin-analytics
 Disallow: /api/
 Disallow: /pages/
-Disallow: /area-cliente/
-Disallow: /linkedin-roaster/results
+Disallow: /en/pages/
+Disallow: /es/pages/
+Disallow: /area-cliente
+Disallow: /en/area-cliente
+Disallow: /es/area-cliente
+Disallow: /hr-report
+Disallow: /archive
+
+# Non-indexable transactional and generated result routes
+Disallow: /cv-analyser/results
+Disallow: /cv-analyser/demo
+Disallow: /cv-analyser/test
 Disallow: /career-path/results
 Disallow: /career-path/example
 Disallow: /career-intelligence/results
-Disallow: /career-intelligence/demo
-Disallow: /cv-analyser/results
+Disallow: /linkedin-roaster/results
 Disallow: /bundle/results
 Disallow: /student-pack/results
 Disallow: /estudante/results
+Disallow: /en/cv-analyser/results
+Disallow: /en/cv-analyser/demo
+Disallow: /en/cv-analyser/test
 Disallow: /en/career-path/results
 Disallow: /en/career-path/example
 Disallow: /en/career-intelligence/results
-Disallow: /en/cv-analyser/results
+Disallow: /en/linkedin-roaster/results
 Disallow: /en/bundle/results
-Disallow: /es/career-path/results
-Disallow: /es/career-intelligence/results
+Disallow: /en/student-pack/results
 Disallow: /es/cv-analyser/results
+Disallow: /es/cv-analyser/demo
+Disallow: /es/cv-analyser/test
+Disallow: /es/career-path/results
+Disallow: /es/career-path/example
+Disallow: /es/career-intelligence/results
+Disallow: /es/linkedin-roaster/results
 Disallow: /es/bundle/results
+Disallow: /es/student-pack/results
 
 Sitemap: https://www.share2inspire.pt/sitemap.xml

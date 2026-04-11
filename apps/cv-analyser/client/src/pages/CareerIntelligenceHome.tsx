@@ -20,6 +20,8 @@ import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -121,7 +123,7 @@ export default function CareerIntelligenceHome() {
   const isPT = lang === 'pt';
   const testimonials = buildTestimonials(pick);
   const ciHeadlines = buildCiHeadlines(pick);
-  useEffect(() => { document.title = pick("Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire", "Career Intelligence — Strategic Career Decision with AI | Share2Inspire", "Career Intelligence — Decisión Estratégica de Carrera con IA | Share2Inspire"); }, [pick]);
+  usePageSEO(pageSeo.careerIntelligence);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % ciHeadlines.length), 4000); return () => clearInterval(t); }, []);
 

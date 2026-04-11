@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 export default function TestData() {
   const [, setLocation] = useLocation();
+  usePageSEO(pageSeo.testData);
 
   const loadMockData = () => {
     const mockAnalysis = {

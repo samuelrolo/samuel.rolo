@@ -6,6 +6,8 @@ import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 /* ─── DATA ─── */
 

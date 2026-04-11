@@ -11,6 +11,8 @@ import S2IFooter from "@/components/S2IFooter";
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -56,14 +58,7 @@ export default function LinkedInRoasterHome() {
     pick("Headline killer pronto a usar", "Killer headline ready to use", "Headline killer listo para usar"),
     pick("Plano de acção com 5 quick-fixes prioritários", "Action plan with 5 priority quick-fixes", "Plan de acción con 5 quick-fixes prioritarios"),
   ];
-
-  useEffect(() => {
-    document.title = pick(
-      "LinkedIn Roaster — Roast Brutal ao teu Perfil LinkedIn | Share2Inspire",
-      "LinkedIn Roaster — Brutal Profile Roast with AI | Share2Inspire",
-      "LinkedIn Roaster — Roast Brutal a tu Perfil LinkedIn | Share2Inspire"
-    );
-  }, [pick]);
+  usePageSEO(pageSeo.linkedinRoaster);
 
   const [headlineIndex, setHeadlineIndex] = useState(0);
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % roastHeadlines.length), 4000); return () => clearInterval(t); }, []);

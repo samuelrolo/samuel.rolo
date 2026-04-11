@@ -26,6 +26,8 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
 import { localePath } from '@/i18n/useTranslation';
+import { usePageSEO } from "@/lib/seo";
+import { pageSeo } from "@/lib/pageSeo";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -435,7 +437,7 @@ function PayPalIcon({ className }: { className?: string }) {
 
 export default function Results() {
   const lang = getLang();
-  useEffect(() => { document.title = pick("Resultados da Análise de CV | Share2Inspire", "CV Analysis Results | Share2Inspire", "Resultados del Análisis de CV | Share2Inspire"); }, []);
+  usePageSEO(pageSeo.cvResults);
 
   const [, setLocation] = useLocation();
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
@@ -1716,7 +1718,7 @@ export default function Results() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href="/" className="flex items-center" aria-label="Share2Inspire">
-              <img src="/logo-transparent.png" alt="Share2Inspire" className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-transparent.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
@@ -1764,6 +1766,7 @@ export default function Results() {
       </header>
 
       <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8">
+        <h1 className="sr-only">{pick("Relatório da análise de CV", "CV analysis report", "Informe del análisis de CV")}</h1>
         {/* Report Label */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {isPaid ? (

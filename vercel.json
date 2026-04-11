@@ -67,8 +67,8 @@
     },
     {
       "source": "/pages/services",
-      "destination": "/en/pages/services",
-      "permanent": false
+      "destination": "/en/services",
+      "permanent": true
     },
     {
       "source": "/cv-builder",
@@ -122,7 +122,7 @@
     },
     {
       "source": "/en/pages/conhecimento",
-      "destination": "/en/pages/knowledge",
+      "destination": "/en/knowledge",
       "statusCode": 301
     },
     {
@@ -138,6 +138,31 @@
     {
       "source": "/en/privacy-policy",
       "destination": "/en/pages/privacy-policy",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/about",
+      "destination": "/en/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/contact",
+      "destination": "/en/contact",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/services",
+      "destination": "/en/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/es/pages/knowledge",
+      "destination": "/es/conocimiento",
+      "statusCode": 301
+    },
+    {
+      "source": "/es/pages/services",
+      "destination": "/es/servicos",
       "statusCode": 301
     },
     {
@@ -166,7 +191,7 @@
       ]
     },
     {
-      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|pages/sobre|contactos|pages/contactos|en/pages/about|en/pages/contact|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack|es/pages)(.*)",
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|servicos|conhecimento|contactos|en/about|en/contact|en/services|en/knowledge|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/sobre|es/servicos|es/conocimiento|es/contacto|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -207,15 +232,15 @@
     },
     {
       "source": "/",
-      "destination": "/cv-analyser"
+      "destination": "/index.html"
     },
     {
       "source": "/en",
-      "destination": "/cv-analyser"
+      "destination": "/en/index.html"
     },
     {
       "source": "/es",
-      "destination": "/cv-analyser"
+      "destination": "/es/index.html"
     },
     {
       "source": "/cv-analyser/llms.txt",
@@ -239,27 +264,27 @@
     },
     {
       "source": "/en/pages/about",
-      "destination": "/en/pages/about"
+      "destination": "/en/about"
     },
     {
       "source": "/en/home",
-      "destination": "/en/pages/home"
+      "destination": "/en/index.html"
     },
     {
       "source": "/en/pages/home",
-      "destination": "/en/pages/home"
+      "destination": "/en/index.html"
     },
     {
       "source": "/en/pages/knowledge",
-      "destination": "/en/pages/knowledge"
+      "destination": "/en/knowledge"
     },
     {
       "source": "/en/knowledge",
-      "destination": "/en/pages/knowledge"
+      "destination": "/en/knowledge"
     },
     {
       "source": "/en/pages/services",
-      "destination": "/cv-analyser"
+      "destination": "/en/services"
     },
     {
       "source": "/en/pages/privacy-policy",
@@ -267,7 +292,7 @@
     },
     {
       "source": "/en/pages/contact",
-      "destination": "/en/pages/contact"
+      "destination": "/en/contact"
     },
     {
       "source": "/bundle",
@@ -399,15 +424,15 @@
     },
     {
       "source": "/sobre",
-      "destination": "/area-cliente"
+      "destination": "/sobre"
     },
     {
       "source": "/pages/sobre",
-      "destination": "/area-cliente"
+      "destination": "/sobre"
     },
     {
       "source": "/servicos",
-      "destination": "/cv-analyser"
+      "destination": "/servicos"
     },
     {
       "source": "/conhecimento",
@@ -419,11 +444,11 @@
     },
     {
       "source": "/contactos",
-      "destination": "/area-cliente"
+      "destination": "/contactos"
     },
     {
       "source": "/pages/contactos",
-      "destination": "/area-cliente"
+      "destination": "/contactos"
     },
     {
       "source": "/area-cliente",
@@ -463,15 +488,15 @@
     },
     {
       "source": "/en/sobre",
-      "destination": "/en/pages/about"
+      "destination": "/en/about"
     },
     {
       "source": "/en/servicos",
-      "destination": "/en/pages/services"
+      "destination": "/en/services"
     },
     {
       "source": "/en/contactos",
-      "destination": "/en/pages/contact"
+      "destination": "/en/contact"
     },
     {
       "source": "/blog/artigos/big4-insider-10-anos",
@@ -567,11 +592,11 @@
     },
     {
       "source": "/es/pages/knowledge",
-      "destination": "/es/pages/knowledge"
+      "destination": "/es/conocimiento"
     },
     {
       "source": "/es/pages/services",
-      "destination": "/es/pages/services"
+      "destination": "/es/servicos"
     },
     {
       "source": "/en/share2inspire",
