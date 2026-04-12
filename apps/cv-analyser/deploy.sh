@@ -15,15 +15,15 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BUILD_DIR="$SCRIPT_DIR/dist/public"
+BUILD_DIR="$SCRIPT_DIR/dist"
 # Navigate to the monorepo root (two levels up from apps/cv-analyser/)
 DEPLOY_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMMIT_MSG="${1:-deploy: update CV Analyser assets}"
 
 # All 6 SPA directories that share the same build output
-SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence" "bundle" "en/bundle" "linkedin-roaster" "en/linkedin-roaster" "estudante" "student-pack" "en/student-pack" "es" "es/cv-analyser" "es/career-path" "es/career-intelligence" "es/bundle" "es/linkedin-roaster" "es/student-pack" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services")
+SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence" "bundle" "en/bundle" "linkedin-roaster" "en/linkedin-roaster" "estudante" "student-pack" "en/student-pack" "es" "es/cv-analyser" "es/career-path" "es/career-intelligence" "es/bundle" "es/linkedin-roaster" "es/student-pack" "es/pack-estudiante" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services")
 
-# All 12 routes to verify after deploy
+# All critical routes to verify after deploy
 ROUTES=(
   "https://www.share2inspire.pt/cv-analyser"
   "https://www.share2inspire.pt/cv-analyser/results"
@@ -32,6 +32,9 @@ ROUTES=(
   "https://www.share2inspire.pt/career-intelligence"
   "https://www.share2inspire.pt/estudante"
   "https://www.share2inspire.pt/student-pack"
+  "https://www.share2inspire.pt/en/student-pack"
+  "https://www.share2inspire.pt/es/pack-estudiante"
+  "https://www.share2inspire.pt/es/student-pack"
   "https://www.share2inspire.pt/en/cv-analyser"
   "https://www.share2inspire.pt/en/cv-analyser/results"
   "https://www.share2inspire.pt/en/career-path"

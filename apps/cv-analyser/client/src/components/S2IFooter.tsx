@@ -4,11 +4,27 @@
  * Mobile (<768px): 2-column grid, logo full-width on top
  */
 import { getLang, pick } from '@/i18n';
-import { localePath } from '@/i18n/useTranslation';
+import {
+  getLocaleFromPath,
+  getLocalizedPath,
+  getRouteDefinition,
+  type PageId,
+} from '@/config/navigation';
+
+const FOOTER_NAV_PAGE_IDS: PageId[] = ['home', 'sobre', 'servicos', 'conhecimento'];
+const FOOTER_TOOL_PAGE_IDS: PageId[] = ['cv-analyser', 'linkedin-roaster', 'career-path', 'career-intelligence'];
+const FOOTER_LEGAL_PAGE_IDS: PageId[] = [
+  'politica-privacidade',
+  'politica-cookies',
+  'informacao-legal',
+  'termos-condicoes',
+  'tratamento-dados',
+];
 
 export default function S2IFooter() {
-  const lang = getLang();
-  const lp = (ptPath: string) => localePath(ptPath, lang);
+  const lang = typeof window === 'undefined' ? getLang() : getLocaleFromPath(window.location.pathname);
+  const getLabel = (pageId: PageId) => getRouteDefinition(pageId)?.localized[lang].label ?? '';
+  const getHref = (pageId: PageId) => getLocalizedPath(pageId, lang);
 
   const linkStyle: React.CSSProperties = {
     display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)',
@@ -57,27 +73,41 @@ export default function S2IFooter() {
             {/* Navigation */}
             <div>
               <h5 style={headingStyle}>{pick('Navegação', 'Navigation', 'Navegación')}</h5>
-              <a href={lp('/')} style={linkStyle}>{pick('Início', 'Home', 'Inicio')}</a>
-              <a href={lp('/sobre')} style={linkStyle}>{pick('Sobre', 'About', 'Sobre')}</a>
-              <a href={lp('/servicos')} style={linkStyle}>{pick('Serviços', 'Services', 'Servicios')}</a>
-              <a href={lp('/conhecimento')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Knowledge Hub', 'Knowledge Hub', 'Hub de Conocimiento')}</a>
+              {FOOTER_NAV_PAGE_IDS.map((pageId, index) => (
+                <a
+                  key={pageId}
+                  href={getHref(pageId)}
+                  style={index === FOOTER_NAV_PAGE_IDS.length - 1 ? { ...linkStyle, marginBottom: 0 } : linkStyle}
+                >
+                  {getLabel(pageId)}
+                </a>
+              ))}
             </div>
             {/* Tools */}
             <div>
               <h5 style={headingStyle}>{pick('Ferramentas', 'Tools', 'Herramientas')}</h5>
-              <a href={lp('/cv-analyser')} style={linkStyle}>{pick('CV Analyser', 'CV Analyser', 'CV Analyser')}</a>
-              <a href={lp('/linkedin-roaster')} style={linkStyle}>{pick('LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}</a>
-              <a href={lp('/career-path')} style={linkStyle}>{pick('Career Path', 'Career Path', 'Career Path')}</a>
-              <a href={lp('/career-intelligence')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Career Intelligence', 'Career Intelligence', 'Career Intelligence')}</a>
+              {FOOTER_TOOL_PAGE_IDS.map((pageId, index) => (
+                <a
+                  key={pageId}
+                  href={getHref(pageId)}
+                  style={index === FOOTER_TOOL_PAGE_IDS.length - 1 ? { ...linkStyle, marginBottom: 0 } : linkStyle}
+                >
+                  {getLabel(pageId)}
+                </a>
+              ))}
             </div>
             {/* Legal */}
             <div>
               <h5 style={headingStyle}>{pick('Legal', 'Legal', 'Legal')}</h5>
-              <a href={lp('/politica-privacidade')} style={linkStyle}>{pick('Privacidade', 'Privacy Policy', 'Privacidad')}</a>
-              <a href={lp('/politica-cookies')} style={linkStyle}>{pick('Cookies', 'Cookies', 'Cookies')}</a>
-              <a href={lp('/informacao-legal')} style={linkStyle}>{pick('Informação Legal', 'Legal Information', 'Información Legal')}</a>
-              <a href={lp('/termos-condicoes')} style={linkStyle}>{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>
-              <a href={lp('/tratamento-dados')} style={{ ...linkStyle, marginBottom: 0 }}>{pick('Tratamento de Dados', 'Data Processing', 'Tratamiento de Datos')}</a>
+              {FOOTER_LEGAL_PAGE_IDS.map((pageId, index) => (
+                <a
+                  key={pageId}
+                  href={getHref(pageId)}
+                  style={index === FOOTER_LEGAL_PAGE_IDS.length - 1 ? { ...linkStyle, marginBottom: 0 } : linkStyle}
+                >
+                  {getLabel(pageId)}
+                </a>
+              ))}
             </div>
             {/* Contact */}
             <div>

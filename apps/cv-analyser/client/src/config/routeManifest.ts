@@ -28,7 +28,7 @@ type LocalizedLabels = Record<Lang, string>;
 type LocaleVariant = {
   path: string;
   aliases?: string[];
-  menuLabel?: string;
+  label?: string;
   menuVisible?: boolean;
 };
 
@@ -49,7 +49,7 @@ type FlattenedRouteEntry = {
   allowChildren: boolean;
   activeMenuId: PageId;
   group: RouteGroup;
-  menuLabel?: string;
+  label?: string;
   menuVisible: boolean;
 };
 
@@ -68,9 +68,9 @@ export const routeManifest: RouteDefinition[] = [
     id: 'home',
     group: 'menu',
     localized: {
-      pt: { path: '/', aliases: ['/pt'], menuLabel: 'Início', menuVisible: true },
-      en: { path: '/en', aliases: ['/en/'], menuLabel: 'Home', menuVisible: true },
-      es: { path: '/es', aliases: ['/es/'], menuLabel: 'Inicio', menuVisible: true },
+      pt: { path: '/', aliases: ['/pt'], label: 'Início', menuVisible: true },
+      en: { path: '/en', aliases: ['/en/'], label: 'Home', menuVisible: true },
+      es: { path: '/es', aliases: ['/es/'], label: 'Inicio', menuVisible: true },
     },
   },
   {
@@ -79,9 +79,9 @@ export const routeManifest: RouteDefinition[] = [
     activeMenuId: 'servicos',
     allowChildren: true,
     localized: {
-      pt: { path: '/cv-analyser' },
-      en: { path: '/en/cv-analyser' },
-      es: { path: '/es/cv-analyser' },
+      pt: { path: '/cv-analyser', label: 'CV Analyser' },
+      en: { path: '/en/cv-analyser', label: 'CV Analyser' },
+      es: { path: '/es/cv-analyser', label: 'CV Analyser' },
     },
   },
   {
@@ -90,9 +90,9 @@ export const routeManifest: RouteDefinition[] = [
     activeMenuId: 'servicos',
     allowChildren: true,
     localized: {
-      pt: { path: '/career-path' },
-      en: { path: '/en/career-path' },
-      es: { path: '/es/career-path' },
+      pt: { path: '/career-path', label: 'Career Path' },
+      en: { path: '/en/career-path', label: 'Career Path' },
+      es: { path: '/es/career-path', label: 'Career Path' },
     },
   },
   {
@@ -101,9 +101,9 @@ export const routeManifest: RouteDefinition[] = [
     activeMenuId: 'servicos',
     allowChildren: true,
     localized: {
-      pt: { path: '/career-intelligence' },
-      en: { path: '/en/career-intelligence' },
-      es: { path: '/es/career-intelligence' },
+      pt: { path: '/career-intelligence', label: 'Career Intelligence' },
+      en: { path: '/en/career-intelligence', label: 'Career Intelligence' },
+      es: { path: '/es/career-intelligence', label: 'Career Intelligence' },
     },
   },
   {
@@ -112,9 +112,9 @@ export const routeManifest: RouteDefinition[] = [
     activeMenuId: 'servicos',
     allowChildren: true,
     localized: {
-      pt: { path: '/linkedin-roaster' },
-      en: { path: '/en/linkedin-roaster' },
-      es: { path: '/es/linkedin-roaster' },
+      pt: { path: '/linkedin-roaster', label: 'LinkedIn Roaster' },
+      en: { path: '/en/linkedin-roaster', label: 'LinkedIn Roaster' },
+      es: { path: '/es/linkedin-roaster', label: 'LinkedIn Roaster' },
     },
   },
   {
@@ -122,9 +122,9 @@ export const routeManifest: RouteDefinition[] = [
     group: 'service',
     activeMenuId: 'servicos',
     localized: {
-      pt: { path: '/bundle' },
-      en: { path: '/en/bundle' },
-      es: { path: '/es/bundle' },
+      pt: { path: '/bundle', label: 'Bundle' },
+      en: { path: '/en/bundle', label: 'Bundle' },
+      es: { path: '/es/bundle', label: 'Bundle' },
     },
   },
   {
@@ -133,90 +133,90 @@ export const routeManifest: RouteDefinition[] = [
     activeMenuId: 'servicos',
     allowChildren: true,
     localized: {
-      pt: { path: '/estudante', aliases: ['/student-pack'] },
-      en: { path: '/en/student-pack' },
-      es: { path: '/es/pack-estudiante', aliases: ['/es/student-pack'] },
+      pt: { path: '/estudante', aliases: ['/student-pack'], label: 'Pacote para Estudantes' },
+      en: { path: '/en/student-pack', label: 'Student Pack' },
+      es: { path: '/es/pack-estudiante', aliases: ['/es/student-pack'], label: 'Pack de Estudiante' },
     },
   },
   {
     id: 'conhecimento',
     group: 'menu',
     localized: {
-      pt: { path: '/conhecimento', aliases: ['/knowledge'], menuLabel: 'Knowledge Hub', menuVisible: true },
-      en: { path: '/en/knowledge', aliases: ['/en/conhecimento', '/en/pages/knowledge'], menuLabel: 'Knowledge Hub', menuVisible: true },
-      es: { path: '/es/conocimiento', aliases: ['/es/knowledge'], menuLabel: 'Hub de Conocimiento', menuVisible: true },
+      pt: { path: '/conhecimento', aliases: ['/knowledge'], label: 'Knowledge Hub', menuVisible: true },
+      en: { path: '/en/knowledge', aliases: ['/en/conhecimento', '/en/pages/knowledge'], label: 'Knowledge Hub', menuVisible: true },
+      es: { path: '/es/conocimiento', aliases: ['/es/knowledge'], label: 'Hub de Conocimiento', menuVisible: true },
     },
   },
   {
     id: 'servicos',
     group: 'menu',
     localized: {
-      pt: { path: '/servicos', aliases: ['/services'], menuLabel: 'Serviços', menuVisible: true },
-      en: { path: '/en/services', aliases: ['/en/servicos', '/en/pages/services'], menuLabel: 'Services', menuVisible: true },
-      es: { path: '/es/servicos', aliases: ['/es/services'], menuLabel: 'Servicios', menuVisible: true },
+      pt: { path: '/servicos', aliases: ['/services'], label: 'Serviços', menuVisible: true },
+      en: { path: '/en/services', aliases: ['/en/servicos', '/en/pages/services'], label: 'Services', menuVisible: true },
+      es: { path: '/es/servicos', aliases: ['/es/services'], label: 'Servicios', menuVisible: true },
     },
   },
   {
     id: 'sobre',
     group: 'menu',
     localized: {
-      pt: { path: '/sobre', aliases: ['/about'], menuLabel: 'Sobre', menuVisible: true },
-      en: { path: '/en/about', aliases: ['/en/sobre'], menuLabel: 'About', menuVisible: true },
-      es: { path: '/es/sobre', aliases: ['/es/acerca-de', '/es/about'], menuLabel: 'Acerca de', menuVisible: true },
+      pt: { path: '/sobre', aliases: ['/about'], label: 'Sobre', menuVisible: true },
+      en: { path: '/en/about', aliases: ['/en/sobre'], label: 'About', menuVisible: true },
+      es: { path: '/es/sobre', aliases: ['/es/acerca-de', '/es/about'], label: 'Acerca de', menuVisible: true },
     },
   },
   {
     id: 'contactos',
     group: 'menu',
     localized: {
-      pt: { path: '/contactos', aliases: ['/contact', '/contacto'], menuLabel: 'Contactos', menuVisible: true },
-      en: { path: '/en/contact', aliases: ['/en/contactos'], menuLabel: 'Contact', menuVisible: true },
-      es: { path: '/es/contacto', aliases: ['/es/contact'], menuLabel: 'Contacto', menuVisible: true },
+      pt: { path: '/contactos', aliases: ['/contact', '/contacto'], label: 'Contactos', menuVisible: true },
+      en: { path: '/en/contact', aliases: ['/en/contactos'], label: 'Contact', menuVisible: true },
+      es: { path: '/es/contacto', aliases: ['/es/contact'], label: 'Contacto', menuVisible: true },
     },
   },
   {
     id: 'politica-privacidade',
     group: 'utility',
     localized: {
-      pt: { path: '/politica-privacidade' },
-      en: { path: '/en/privacy-policy', aliases: ['/en/politica-privacidade'] },
-      es: { path: '/es/politica-privacidad', aliases: ['/es/privacy-policy'] },
+      pt: { path: '/politica-privacidade', label: 'Privacidade' },
+      en: { path: '/en/privacy-policy', aliases: ['/en/politica-privacidade'], label: 'Privacy Policy' },
+      es: { path: '/es/politica-privacidad', aliases: ['/es/privacy-policy'], label: 'Privacidad' },
     },
   },
   {
     id: 'politica-cookies',
     group: 'utility',
     localized: {
-      pt: { path: '/politica-cookies' },
-      en: { path: '/en/cookie-policy', aliases: ['/en/politica-cookies'] },
-      es: { path: '/es/politica-cookies', aliases: ['/es/cookie-policy'] },
+      pt: { path: '/politica-cookies', label: 'Cookies' },
+      en: { path: '/en/cookie-policy', aliases: ['/en/politica-cookies'], label: 'Cookies' },
+      es: { path: '/es/politica-cookies', aliases: ['/es/cookie-policy'], label: 'Cookies' },
     },
   },
   {
     id: 'informacao-legal',
     group: 'utility',
     localized: {
-      pt: { path: '/informacao-legal' },
-      en: { path: '/en/legal-information', aliases: ['/en/informacao-legal'] },
-      es: { path: '/es/informacion-legal', aliases: ['/es/informacao-legal'] },
+      pt: { path: '/informacao-legal', label: 'Informação Legal' },
+      en: { path: '/en/legal-information', aliases: ['/en/informacao-legal'], label: 'Legal Information' },
+      es: { path: '/es/informacion-legal', aliases: ['/es/informacao-legal'], label: 'Información Legal' },
     },
   },
   {
     id: 'termos-condicoes',
     group: 'utility',
     localized: {
-      pt: { path: '/termos-condicoes' },
-      en: { path: '/en/terms-and-conditions', aliases: ['/en/termos-condicoes'] },
-      es: { path: '/es/terminos-condiciones', aliases: ['/es/termos-condicoes'] },
+      pt: { path: '/termos-condicoes', label: 'Termos e Condições' },
+      en: { path: '/en/terms-and-conditions', aliases: ['/en/termos-condicoes'], label: 'Terms & Conditions' },
+      es: { path: '/es/terminos-condiciones', aliases: ['/es/termos-condicoes'], label: 'Términos y Condiciones' },
     },
   },
   {
     id: 'tratamento-dados',
     group: 'utility',
     localized: {
-      pt: { path: '/tratamento-dados' },
-      en: { path: '/en/data-processing', aliases: ['/en/tratamento-dados'] },
-      es: { path: '/es/tratamiento-datos', aliases: ['/es/tratamento-dados'] },
+      pt: { path: '/tratamento-dados', label: 'Tratamento de Dados' },
+      en: { path: '/en/data-processing', aliases: ['/en/tratamento-dados'], label: 'Data Processing' },
+      es: { path: '/es/tratamiento-datos', aliases: ['/es/tratamento-dados'], label: 'Tratamiento de Datos' },
     },
   },
   {
@@ -305,7 +305,7 @@ const routeEntries: FlattenedRouteEntry[] = routeManifest
         allowChildren: Boolean(route.allowChildren),
         activeMenuId: route.activeMenuId ?? route.id,
         group: route.group,
-        menuLabel: variant.menuLabel,
+        label: variant.label,
         menuVisible: Boolean(variant.menuVisible),
       };
 
@@ -425,14 +425,14 @@ export function getMenuItems(lang: Lang): Array<{ id: PageId; href: string; labe
     const route = getRouteDefinition(pageId);
     const variant = route?.localized[lang];
 
-    if (!route || !variant?.menuLabel || !variant.menuVisible) {
+    if (!route || !variant?.label || !variant.menuVisible) {
       throw new Error(`Menu route "${pageId}" is missing visible localized labels.`);
     }
 
     return {
       id: pageId,
       href: variant.path,
-      label: variant.menuLabel,
+      label: variant.label,
     };
   });
 }
