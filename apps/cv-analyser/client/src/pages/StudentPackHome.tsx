@@ -269,12 +269,12 @@ export default function StudentPackHome() {
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
         trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-PT-${Date.now()}` });
         const elapsed = Date.now() - startTime;
-        if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
+        if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
         clearInterval(msgInterval);
         setAnalysisMsg(pick("Tudo pronto! A redirecionar...", "All done! Redirecting...", "¡Todo listo! Redirigiendo..."));
         setStep('done');
         try { saveToUserAnalyses('student_pack', { score: cvAnalysisResultPT.overallScore || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
-        setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 1500);
+        setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 300);
       } else {
         // ─── EN/ES: two separate engines ───
         const langCode = lang;
@@ -324,11 +324,11 @@ export default function StudentPackHome() {
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: currencyCodeUpper });
         trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-${langCode.toUpperCase()}-${Date.now()}` });
         const elapsed = Date.now() - startTime;
-        if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
+        if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
         clearInterval(msgInterval);
         setAnalysisMsg(pick("Tudo pronto! A redirecionar...", "All done! Redirecting...", "¡Todo listo! Redirigiendo..."));
         setStep('done');
-        setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 1500);
+        setTimeout(() => { window.location.href = localePath('/estudante') + '/results'; }, 300);
       }
     } catch (err: any) {
       clearInterval(msgInterval);
@@ -469,7 +469,7 @@ export default function StudentPackHome() {
 
   useEffect(() => {
     if (paymentStep === 'success' && step !== 'analyzing' && step !== 'done') {
-      const timer = setTimeout(() => { setShowPaymentModal(false); runBothEngines(); }, 2000);
+      const timer = setTimeout(() => { setShowPaymentModal(false); runBothEngines(); }, 350);
       return () => clearTimeout(timer);
     }
   }, [paymentStep]);

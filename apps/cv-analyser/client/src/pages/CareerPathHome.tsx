@@ -95,6 +95,12 @@ export default function CareerPathHome() {
   useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlines.length), 4000); return () => clearInterval(t); }, []);
 
   const [, setLocation] = useLocation();
+  const goToResults = () => {
+    window.location.href = localePath('/career-path/results');
+  };
+  const getCareerPathProfile = (analysis: any) => {
+    return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
+  };
   const [file, setFile] = useState<File | null>(null);
   const profileCvAutofillRef = useRef(false);
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -266,7 +272,7 @@ export default function CareerPathHome() {
           localStorage.setItem('careerPathPaid', 'true');
           localStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
           if (email) localStorage.setItem('cpPaymentEmail', email);
-          setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
+          setTimeout(() => { goToResults(); }, 400);
         }
         return;
       }
@@ -294,7 +300,7 @@ export default function CareerPathHome() {
         localStorage.setItem('careerPathPaid', 'true');
         localStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
         if (v.email) localStorage.setItem('cpPaymentEmail', v.email);
-        setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
+        setTimeout(() => { goToResults(); }, 400);
         return;
       }
 
@@ -400,7 +406,7 @@ export default function CareerPathHome() {
         throw new Error(responseData?.error || pick('Erro na análise IA.', 'Error in AI analysis.', 'Error en el análisis IA.'));
       }
 
-      const analysisSource = responseData.analysis || responseData;
+      const analysisSource = responseData.analysis || responseData.cv_analysis || responseData.data?.analysis || responseData;
 
       // If server-side extraction was used, update cvText from the extracted data
       // Check raw_text at top level (responseData.raw_text) and nested (analysisSource.raw_text)
@@ -431,17 +437,17 @@ export default function CareerPathHome() {
       }
 
       // Show preview before payment
-      const profile = analysisSource.candidate_profile || {};
+      const profile = getCareerPathProfile(analysisSource);
       setPreviewData({
-        name: profile.detected_name || 'N/A',
-        role: profile.detected_role || 'N/A',
-        seniority: profile.seniority || 'N/A',
-        experience: profile.total_years_exp || 'N/A',
-        skills: (profile.key_skills || []).slice(0, 5),
-        nextRole: profile.likely_next_role || null,
+        name: profile.detected_name || profile.name || 'N/A',
+        role: profile.detected_role || profile.primary_role || 'N/A',
+        seniority: profile.seniority || profile.level || 'N/A',
+        experience: profile.total_years_exp || profile.years_experience || 'N/A',
+        skills: (profile.key_skills || profile.skills || profile.top_skills || []).slice(0, 5),
+        nextRole: profile.likely_next_role || profile.recommended_next_role || null,
       });
       const elapsed = Date.now() - startTime;
-      const remaining = 2800 - elapsed;
+      const remaining = 800 - elapsed;
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLoading(false);
@@ -590,7 +596,7 @@ export default function CareerPathHome() {
           clearInterval(interval);
           setShowPaymentModal(false);
           localStorage.setItem('careerPathPaid', 'true');
-          setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
+          setTimeout(() => { goToResults(); }, 400);
           return;
         }
 
@@ -637,7 +643,7 @@ export default function CareerPathHome() {
       if (data.paid) {
         setShowPaymentModal(false);
         localStorage.setItem('careerPathPaid', 'true');
-        setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
+        setTimeout(() => { goToResults(); }, 400);
       } else {
         setPollingExpired(true);
         setPollingMsg(pick('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.', 'Payment not yet confirmed. Wait a few seconds and try again.', 'Pago aún no confirmado. Espera unos segundos e inténtalo de nuevo.'));
@@ -652,7 +658,7 @@ export default function CareerPathHome() {
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
     localStorage.setItem('careerPathPaid', 'true');
-    setTimeout(() => { setLocation(localePath('/career-path/results')); }, 400);
+    setTimeout(() => { goToResults(); }, 400);
   };
 
   return (
@@ -1321,7 +1327,7 @@ export default function CareerPathHome() {
                       localStorage.setItem('careerPathPaid', 'true');
                       localStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
                       if (email) localStorage.setItem('cpPaymentEmail', email);
-                      setLocation(localePath('/career-path/results'));
+                      goToResults();
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >

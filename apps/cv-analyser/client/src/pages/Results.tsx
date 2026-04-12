@@ -848,7 +848,7 @@ export default function Results() {
               } else {
                 console.warn('[JOB_SCRAPE] Re-analysis failed:', reanalysisData.error);
                 setJobScrapeStatus('done');
-                setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa el Análisis en Vivo para una comparación detallada`));
+                setJobScrapeMessage(t('results_job_extracted_live_match_message', lang, { title: scrapeData.job_data.title }));
               }
             } else {
               console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
@@ -1718,7 +1718,7 @@ export default function Results() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href="/" className="flex items-center" aria-label="Share2Inspire">
-              <img src="/logo-transparent.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-s2i.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
@@ -1931,7 +1931,7 @@ export default function Results() {
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
-                      {pick('Live Match', 'Live Match', 'Análisis en Vivo')}
+                      {t('live_match_title', lang)}
                       <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
                         {t('novo')}
                       </span>
@@ -1971,7 +1971,7 @@ export default function Results() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
-                    <p className="text-xs text-muted-foreground">{pick(`${analysisData.cvProblems?.length ?? 0} problemas específicos que estão a prejudicar o teu CV`, `${analysisData.cvProblems?.length ?? 0} specific issues that are hurting your CV`, `${analysisData.cvProblems?.length ?? 0} problemas específicos que están perjudicando tu CV`)}</p>
+                    <p className="text-xs text-muted-foreground">{t('results_cv_problems_count', lang, { count: String(analysisData.cvProblems?.length ?? 0) })}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -2021,15 +2021,15 @@ export default function Results() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold tracking-wider text-red-500">{t('problemas_crticos_detetados')}</p>
-                    <p className="text-xs text-muted-foreground">{pick(`3 problemas específicos que estão a prejudicar o teu CV`, `3 specific issues that are hurting your CV`, `3 problemas específicos que están perjudicando tu CV`)}</p>
+                    <p className="text-xs text-muted-foreground">{t('results_cv_problems_count', lang, { count: '3' })}</p>
                   </div>
                 </div>
                 <div className="space-y-3 mb-4">
                   {[0, 1, 2].map((i: number) => {
                     const areaLabels = [
-                      pick('Problema detetado na secção de Experiência', 'Issue found in your Experience section', 'Problema detectado en la sección de Experiencia'),
-                      pick('Problema detetado na secção de Perfil/Resumo', 'Issue found in your Profile/Summary section', 'Problema detectado en la sección de Perfil/Resumen'),
-                      pick('Problema detetado nas Competências e Credenciais', 'Issue found in your Skills & Credentials', 'Problema detectado en Competencias y Credenciales'),
+                      t('results_cv_problem_experience', lang),
+                      t('results_cv_problem_summary', lang),
+                      t('results_cv_problem_skills_credentials', lang),
                     ];
                     const label = areaLabels[i];
                     return (
@@ -2082,11 +2082,7 @@ export default function Results() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground text-center max-w-sm">
-                    {pick(
-                      `O teu CV tem ${atsScore}/100 de compatibilidade ATS.`,
-                      `Your CV has ${atsScore}/100 ATS compatibility.`,
-                      `Tu CV tiene ${atsScore}/100 de compatibilidad ATS.`
-                    )}
+                    {t('results_ats_score_sentence', lang, { score: String(atsScore) })}
                   </p>
                 </div>
 
@@ -2159,7 +2155,7 @@ export default function Results() {
                 {/* Locked items */}
                 <div className="space-y-2">
                   {[
-                    pick('Live Match (matching de keywords da vaga em tempo real)', 'Live Match (real-time JD keyword matching)', 'Análisis en Vivo (matching de palabras clave de la oferta en tiempo real)'),
+                    t('live_match_real_time', lang),
                     pick('ATS Deep Scan (keywords + checklist de formato)', 'ATS Deep Scan (keywords + format checklist)', 'ATS Deep Scan (keywords + checklist de formato)'),
                     pick('Análise detalhada por quadrante', 'Detailed analysis by quadrant', 'Análisis detallado por cuadrante'),
                     pick('Diagnóstico ATS completo', 'Complete ATS diagnosis', 'Diagnóstico ATS completo'),

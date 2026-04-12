@@ -12,6 +12,11 @@ export type PageId =
   | 'servicos'
   | 'sobre'
   | 'contactos'
+  | 'politica-privacidade'
+  | 'politica-cookies'
+  | 'informacao-legal'
+  | 'termos-condicoes'
+  | 'tratamento-dados'
   | 'area-cliente';
 
 export type RouteGroup = 'menu' | 'service' | 'utility';
@@ -167,6 +172,51 @@ export const routeManifest: RouteDefinition[] = [
       pt: { path: '/contactos', aliases: ['/contact', '/contacto'], menuLabel: 'Contactos', menuVisible: true },
       en: { path: '/en/contact', aliases: ['/en/contactos'], menuLabel: 'Contact', menuVisible: true },
       es: { path: '/es/contacto', aliases: ['/es/contact'], menuLabel: 'Contacto', menuVisible: true },
+    },
+  },
+  {
+    id: 'politica-privacidade',
+    group: 'utility',
+    localized: {
+      pt: { path: '/politica-privacidade' },
+      en: { path: '/en/privacy-policy', aliases: ['/en/politica-privacidade'] },
+      es: { path: '/es/politica-privacidad', aliases: ['/es/privacy-policy'] },
+    },
+  },
+  {
+    id: 'politica-cookies',
+    group: 'utility',
+    localized: {
+      pt: { path: '/politica-cookies' },
+      en: { path: '/en/cookie-policy', aliases: ['/en/politica-cookies'] },
+      es: { path: '/es/politica-cookies', aliases: ['/es/cookie-policy'] },
+    },
+  },
+  {
+    id: 'informacao-legal',
+    group: 'utility',
+    localized: {
+      pt: { path: '/informacao-legal' },
+      en: { path: '/en/legal-information', aliases: ['/en/informacao-legal'] },
+      es: { path: '/es/informacion-legal', aliases: ['/es/informacao-legal'] },
+    },
+  },
+  {
+    id: 'termos-condicoes',
+    group: 'utility',
+    localized: {
+      pt: { path: '/termos-condicoes' },
+      en: { path: '/en/terms-and-conditions', aliases: ['/en/termos-condicoes'] },
+      es: { path: '/es/terminos-condiciones', aliases: ['/es/termos-condicoes'] },
+    },
+  },
+  {
+    id: 'tratamento-dados',
+    group: 'utility',
+    localized: {
+      pt: { path: '/tratamento-dados' },
+      en: { path: '/en/data-processing', aliases: ['/en/tratamento-dados'] },
+      es: { path: '/es/tratamiento-datos', aliases: ['/es/tratamento-dados'] },
     },
   },
   {

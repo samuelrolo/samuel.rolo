@@ -632,7 +632,7 @@ export default function Home() {
       } catch (e) { /* silent */ }
 
       const elapsed = Date.now() - startTime;
-      const remaining = 2800 - elapsed;
+      const remaining = 800 - elapsed;
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
@@ -687,7 +687,7 @@ export default function Home() {
         incrementCouponUsage(code);
         setLinkedInVoucherError(pick(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`, `${coupon.discount_percent}% discount applied! It will be used at payment.`, `¡Descuento de ${coupon.discount_percent}% aplicado! Se usará en el pago.`));
         // Close paywall after a brief delay to show the message
-        setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
+        setTimeout(() => { setShowLinkedInPaywall(false); }, 600);
         return true;
       }
 
@@ -864,7 +864,7 @@ export default function Home() {
       if (liEmail) sendWelcomeEmail(liEmail, '', lang);
 
       const elapsed = Date.now() - startTime;
-      const remaining = 2800 - elapsed;
+      const remaining = 800 - elapsed;
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');

@@ -30,11 +30,16 @@ const ptCanonicalMap: Record<string, { en: string; es: string }> = {
   "/career-intelligence": { en: "/en/career-intelligence", es: "/es/career-intelligence" },
   "/linkedin-roaster": { en: "/en/linkedin-roaster", es: "/es/linkedin-roaster" },
   "/bundle": { en: "/en/bundle", es: "/es/bundle" },
-  "/student-pack": { en: "/en/student-pack", es: "/es/student-pack" },
+  "/estudante": { en: "/en/student-pack", es: "/es/pack-estudiante" },
   "/servicos": { en: "/en/services", es: "/es/servicos" },
   "/conhecimento": { en: "/en/knowledge", es: "/es/conocimiento" },
   "/sobre": { en: "/en/about", es: "/es/sobre" },
   "/contactos": { en: "/en/contact", es: "/es/contacto" },
+  "/politica-privacidade": { en: "/en/privacy-policy", es: "/es/politica-privacidad" },
+  "/politica-cookies": { en: "/en/cookie-policy", es: "/es/politica-cookies" },
+  "/informacao-legal": { en: "/en/legal-information", es: "/es/informacion-legal" },
+  "/termos-condicoes": { en: "/en/terms-and-conditions", es: "/es/terminos-condiciones" },
+  "/tratamento-dados": { en: "/en/data-processing", es: "/es/tratamiento-datos" },
 };
 
 function getCurrentLang(pathname: string): SupportedLang {

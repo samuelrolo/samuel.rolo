@@ -290,7 +290,7 @@ export default function BundleHome() {
       }
 
       const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
-      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource);
+      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, lang);
 
       // Store CV Analyser results
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
@@ -379,7 +379,7 @@ export default function BundleHome() {
       // Redirect to CV Analyser results (which also shows Career Path link)
       setTimeout(() => {
         window.location.href = localePath('/cv-analyser') + '/results';
-      }, 1500);
+      }, 300);
 
     } catch (err: any) {
       clearInterval(msgInterval);
@@ -630,7 +630,7 @@ export default function BundleHome() {
       const timer = setTimeout(() => {
         setShowPaymentModal(false);
         runBothEngines();
-      }, 2000);
+      }, 350);
       return () => clearTimeout(timer);
     }
   }, [paymentStep]);

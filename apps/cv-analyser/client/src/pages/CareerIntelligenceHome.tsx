@@ -144,6 +144,12 @@ export default function CareerIntelligenceHome() {
   const memberProductType = isMemberPro ? 'career_intelligence_member_pro' : 'career_intelligence_full';
 
   const [, setLocation] = useLocation();
+  const goToResults = () => {
+    window.location.href = localePath('/career-intelligence/results');
+  };
+  const getCareerIntelligenceProfile = (analysis: any) => {
+    return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
+  };
   const [file, setFile] = useState<File | null>(null);
   const profileCvAutofillRef = useRef(false);
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
@@ -314,10 +320,12 @@ export default function CareerIntelligenceHome() {
         // Force fresh generation with the country selected in THIS form
         localStorage.setItem('ciNeedsRegeneration', 'true');
         (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
+        localStorage.removeItem('careerIntelligenceData');
+        sessionStorage.removeItem('careerIntelligenceData');
         localStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
         if (v.email) localStorage.setItem('cpPaymentEmail', v.email);
         trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: 'EUR', payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
-        setTimeout(() => { setLocation('/results'); }, 400);
+        setTimeout(() => { goToResults(); }, 400);
         return;
       }
 
@@ -425,7 +433,7 @@ export default function CareerIntelligenceHome() {
       localStorage.setItem('analysisRegion', region || '');
       if (linkedinUrl) localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
 
-      const profile = analysisSource.candidate_profile || {};
+      const profile = getCareerIntelligenceProfile(analysisSource);
       setPreviewData({
         name: profile.detected_name || 'N/A',
         role: profile.detected_role || 'N/A',
@@ -435,7 +443,7 @@ export default function CareerIntelligenceHome() {
         nextRole: profile.likely_next_role || null,
       });
       const elapsed = Date.now() - startTime;
-      const remaining = 2800 - elapsed;
+      const remaining = 800 - elapsed;
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLoading(false);
@@ -663,7 +671,7 @@ export default function CareerIntelligenceHome() {
         payment_id: orderId,
       });
     } catch (e) { console.warn('[S2I] Error saving career intelligence:', e); }
-    setTimeout(() => { setLocation('/results'); }, 400);
+    setTimeout(() => { goToResults(); }, 400);
   };
 
   const handleManualCheck = async () => {
@@ -701,7 +709,7 @@ export default function CareerIntelligenceHome() {
       // Force fresh generation with the country selected in THIS form
       localStorage.setItem('ciNeedsRegeneration', 'true');
       (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
-      setTimeout(() => { setLocation('/results'); }, 400);
+      setTimeout(() => { goToResults(); }, 400);
     }
   };
 
@@ -1315,9 +1323,11 @@ export default function CareerIntelligenceHome() {
                       // Force fresh generation with the country selected in THIS form
                       localStorage.setItem('ciNeedsRegeneration', 'true');
                       (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
+        localStorage.removeItem('careerIntelligenceData');
+        sessionStorage.removeItem('careerIntelligenceData');
                       localStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
                       if (email) localStorage.setItem('cpPaymentEmail', email);
-                      setLocation('/results');
+                      goToResults();
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >

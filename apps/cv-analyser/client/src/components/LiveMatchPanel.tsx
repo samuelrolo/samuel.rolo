@@ -23,6 +23,7 @@ import {
   ChevronDown, ChevronUp, Clipboard, Sparkles, Lock, ArrowRight,
   BarChart3, Shield, Type, Search
 } from 'lucide-react';
+import { t } from '@/i18n';
 
 interface LiveMatchPanelProps {
   cvText: string;
@@ -64,7 +65,20 @@ function ScoreRing({ score, label, size = 64, color }: { score: number; label: s
 
 function KeywordRow({ kw, lang }: { kw: MatchedKeyword; lang: 'pt' | 'en' | 'es' }) {
   const [expanded, setExpanded] = useState(false);
-  const pick = (pt: string, en: string, es: string) => (lang === 'es' ? es : lang === 'en' ? en : pt);
+  const getCategoryLabel = (category: MatchedKeyword['category']) => {
+    if (category === 'technical') return t('live_match_category_technical', lang);
+    if (category === 'soft-skill') return t('live_match_category_soft_skill', lang);
+    if (category === 'certification') return t('live_match_category_certification', lang);
+    if (category === 'tool') return t('live_match_category_tool', lang);
+    if (category === 'education') return t('live_match_category_education', lang);
+    if (category === 'experience') return t('live_match_category_experience', lang);
+    return t('live_match_category_other', lang);
+  };
+  const getImportanceLabel = (importance: MatchedKeyword['importance']) => {
+    if (importance === 'high') return t('live_match_importance_high', lang);
+    if (importance === 'medium') return t('live_match_importance_medium', lang);
+    return t('live_match_importance_low', lang);
+  };
 
   return (
     <div className="border-b border-[#f0f0ee] last:border-b-0">
@@ -91,20 +105,14 @@ function KeywordRow({ kw, lang }: { kw: MatchedKeyword; lang: 'pt' | 'en' | 'es'
             kw.category === 'experience' ? 'bg-orange-50 text-orange-600' :
             'bg-gray-50 text-gray-500'
           }`}>
-            {kw.category === 'technical' ? pick('Técnica', 'Technical', 'Técnica') :
-             kw.category === 'soft-skill' ? pick('Soft Skill', 'Soft Skill', 'Habilidad blanda') :
-             kw.category === 'certification' ? pick('Certificação', 'Certification', 'Certificación') :
-             kw.category === 'tool' ? pick('Ferramenta', 'Tool', 'Herramienta') :
-             kw.category === 'education' ? pick('Formação', 'Education', 'Formación') :
-             kw.category === 'experience' ? pick('Experiência', 'Experience', 'Experiencia') :
-             pick('Outro', 'Other', 'Otro')}
+            {getCategoryLabel(kw.category)}
           </span>
           <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${
             kw.importance === 'high' ? 'bg-red-50 text-red-600 border-red-200' :
             kw.importance === 'medium' ? 'bg-amber-50 text-amber-600 border-amber-200' :
             'bg-gray-50 text-gray-500 border-gray-200'
           }`}>
-            {kw.importance === 'high' ? pick('Alta', 'High', 'Alta') : kw.importance === 'medium' ? pick('Média', 'Med', 'Media') : pick('Baixa', 'Low', 'Baja')}
+            {getImportanceLabel(kw.importance)}
           </span>
           {kw.suggestion && (
             expanded ? <ChevronUp className="w-3 h-3 text-[#ccc]" /> : <ChevronDown className="w-3 h-3 text-[#ccc]" />
@@ -133,7 +141,6 @@ export default function LiveMatchPanel({
   const [activeTab, setActiveTab] = useState<'editor' | 'keywords' | 'format'>('editor');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const pick = (pt: string, en: string, es: string) => (lang === 'es' ? es : lang === 'en' ? en : pt);
   const hasAccess = isMemberArea || isPaid;
 
   const [urlWarning, setUrlWarning] = useState(false);
@@ -199,13 +206,13 @@ export default function LiveMatchPanel({
         </div>
         <div>
           <h3 className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
-            {pick('Live Match', 'Live Match', 'Análisis en Vivo')}
+            {t('live_match_title', lang)}
             <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
-              {pick('Tempo Real', 'Real-time', 'Tiempo real')}
+              {t('live_match_badge_realtime', lang)}
             </span>
           </h3>
           <p className="text-[10px] text-[#888] font-light">
-            {pick('Cole a descrição da vaga e veja instantaneamente a compatibilidade ATS', 'Paste the job description and instantly see ATS compatibility', 'Pega la descripción de la vacante y ve al instante la compatibilidad ATS')}
+            {t('live_match_subtitle', lang)}
           </p>
         </div>
       </div>
@@ -215,19 +222,19 @@ export default function LiveMatchPanel({
         <textarea
           value={jdText}
           onChange={(e) => handleJDChange(e.target.value)}
-          placeholder={pick('Cole aqui a descrição da vaga / job description...', 'Paste the job description here...', 'Pega aquí la descripción de la vacante...')}
+          placeholder={t('live_match_placeholder', lang)}
           className="w-full h-28 p-3 pr-10 text-[11px] text-[#333] bg-[#fafaf9] border border-[#e8e8e6] rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#C9A961]/40 focus:border-[#C9A961]/40 placeholder:text-[#bbb] font-light transition-colors"
         />
         <button
           onClick={handlePaste}
           className="absolute top-2 right-2 p-1.5 rounded-md bg-white border border-[#e8e8e6] hover:border-[#C9A961]/40 hover:bg-[#C9A961]/5 transition-colors"
-          title={pick('Colar da área de transferência', 'Paste from clipboard', 'Pegar desde el portapapeles')}
+          title={t('live_match_paste_clipboard', lang)}
         >
           <Clipboard className="w-3 h-3 text-[#888]" />
         </button>
         {jdText.trim() && (
           <div className="absolute bottom-2 right-2 text-[9px] text-[#bbb]">
-            {jdText.split(/\s+/).filter(Boolean).length} {pick('palavras', 'words', 'palabras')}
+            {jdText.split(/\s+/).filter(Boolean).length} {t('live_match_words_label', lang)}
           </div>
         )}
       </div>
@@ -237,7 +244,7 @@ export default function LiveMatchPanel({
         <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
           <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
           <p className="text-[11px] text-amber-700">
-            {pick('Detetámos um link em vez de uma descrição de vaga. Para resultados precisos, copie e cole o texto completo da descrição da vaga (não o URL).', 'We detected a URL instead of a job description. For accurate results, please copy and paste the full job description text (not the URL).', 'Detectamos un enlace en lugar de una descripción de vacante. Para obtener resultados precisos, copia y pega el texto completo de la descripción de la vacante (no la URL).')}
+            {t('live_match_url_warning', lang)}
           </p>
         </div>
       )}
@@ -246,7 +253,7 @@ export default function LiveMatchPanel({
       {isAnalysing && (
         <div className="flex items-center justify-center gap-2 py-6">
           <div className="w-4 h-4 border-2 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
-          <span className="text-[11px] text-[#888]">{pick('A analisar...', 'Analysing...', 'Analizando...')}</span>
+          <span className="text-[11px] text-[#888]">{t('live_match_loading', lang)}</span>
         </div>
       )}
 
@@ -257,13 +264,13 @@ export default function LiveMatchPanel({
           <div className="bg-[#fafaf9] border border-[#e8e8e6] rounded-lg p-4">
             <div className="flex items-center justify-around">
               <div className="relative">
-                <ScoreRing score={result.globalScore} label={pick('Global', 'Overall', 'Global')} size={68} color={scoreColor(result.globalScore)} />
+                <ScoreRing score={result.globalScore} label={t('live_match_score_overall', lang)} size={68} color={scoreColor(result.globalScore)} />
               </div>
               <div className="relative">
                 <ScoreRing score={result.keywordScore} label="Keywords" size={56} color={scoreColor(result.keywordScore)} />
               </div>
               <div className="relative">
-                <ScoreRing score={result.formatScore} label={pick('Formato', 'Format', 'Formato')} size={56} color={scoreColor(result.formatScore)} />
+                <ScoreRing score={result.formatScore} label={t('live_match_tab_format', lang)} size={56} color={scoreColor(result.formatScore)} />
               </div>
             </div>
 
@@ -271,15 +278,15 @@ export default function LiveMatchPanel({
             <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-[#e8e8e6]">
               <div className="flex items-center gap-1">
                 <CheckCircle className="w-3 h-3 text-green-500" />
-                <span className="text-[10px] text-[#666]">{result.foundCount} {pick('encontradas', 'found', 'encontradas')}</span>
+                <span className="text-[10px] text-[#666]">{result.foundCount} {t('live_match_stat_found', lang)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <AlertTriangle className="w-3 h-3 text-amber-500" />
-                <span className="text-[10px] text-[#666]">{result.partialCount} {pick('parciais', 'partial', 'parciales')}</span>
+                <span className="text-[10px] text-[#666]">{result.partialCount} {t('live_match_stat_partial', lang)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <XCircle className="w-3 h-3 text-red-500" />
-                <span className="text-[10px] text-[#666]">{result.missingCount} {pick('em falta', 'missing', 'faltantes')}</span>
+                <span className="text-[10px] text-[#666]">{result.missingCount} {t('live_match_stat_missing', lang)}</span>
               </div>
             </div>
 
@@ -295,9 +302,9 @@ export default function LiveMatchPanel({
                 <div className="bg-white border border-[#e8e8e6] rounded-lg p-4 space-y-3">
                   <div className="flex gap-2">
                     {[
-                      pick('Editor CV', 'CV Editor', 'Editor CV'),
-                      pick('Keywords', 'Keywords', 'Palabras clave'),
-                      pick('Formato', 'Format', 'Formato'),
+                      t('live_match_tab_editor', lang),
+                      t('live_match_tab_keywords', lang),
+                      t('live_match_tab_format', lang),
                     ].map(tab => (
                       <div key={tab} className="px-3 py-1.5 rounded-md bg-[#f0f0ee] text-[10px] text-[#888]">{tab}</div>
                     ))}
@@ -319,17 +326,17 @@ export default function LiveMatchPanel({
                   </div>
                   <div>
                     <p className="text-[13px] font-semibold text-[#333]">
-                      {pick('Live Match Completo', 'Full Live Match', 'Análisis en Vivo Completo')}
+                      {t('live_match_paywall_title', lang)}
                     </p>
                     <p className="text-[10px] text-[#888] font-light mt-1">
-                      {pick('Desbloqueie o editor com highlights, tabela de keywords e checklist de formato ATS.', 'Unlock the editor with highlights, keyword table and ATS format checklist.', 'Desbloquea el editor con highlights, tabla de palabras clave y checklist de formato ATS.')}
+                      {t('live_match_paywall_description', lang)}
                     </p>
                   </div>
                   <div className="space-y-1.5 text-left">
                     {[
-                      pick('CV anotado com keywords destacadas', 'Annotated CV with highlighted keywords', 'CV anotado con palabras clave destacadas'),
-                      pick('Sugestões de reformulação inline', 'Inline reformulation suggestions', 'Sugerencias de reformulación inline'),
-                      pick('Checklist de formato ATS completa', 'Complete ATS format checklist', 'Checklist completa de formato ATS'),
+                      t('live_match_paywall_benefit_annotated_cv', lang),
+                      t('live_match_paywall_benefit_inline_suggestions', lang),
+                      t('live_match_paywall_benefit_format_checklist', lang),
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3 text-[#C9A961] shrink-0" />
@@ -343,7 +350,7 @@ export default function LiveMatchPanel({
                       className="mt-2 px-4 py-2 bg-gradient-to-r from-[#C9A961] to-[#B8943F] text-white text-[11px] font-medium rounded-lg hover:shadow-md transition-all flex items-center gap-1.5 mx-auto"
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      {pick('Desbloquear Relatório Completo', 'Unlock Full Report', 'Desbloquear informe completo')}
+                      {t('desbloquear_relatorio_completo', lang)}
                     </button>
                   )}
                 </div>
@@ -360,7 +367,7 @@ export default function LiveMatchPanel({
                   }`}
                 >
                   <FileSearch className="w-3 h-3" />
-                  {pick('Editor CV', 'CV Editor', 'Editor CV')}
+                  {t('live_match_tab_editor', lang)}
                 </button>
                 <button
                   onClick={() => setActiveTab('keywords')}
@@ -369,7 +376,7 @@ export default function LiveMatchPanel({
                   }`}
                 >
                   <Search className="w-3 h-3" />
-                  {pick('Keywords', 'Keywords', 'Palabras clave')} ({result.totalCount})
+                  {t('live_match_tab_keywords', lang)} ({result.totalCount})
                 </button>
                 <button
                   onClick={() => setActiveTab('format')}
@@ -378,7 +385,7 @@ export default function LiveMatchPanel({
                   }`}
                 >
                   <Shield className="w-3 h-3" />
-                  {pick('Formato', 'Format', 'Formato')} ({result.formatChecks.length})
+                  {t('live_match_tab_format', lang)} ({result.formatChecks.length})
                 </button>
               </div>
 
@@ -397,10 +404,10 @@ export default function LiveMatchPanel({
                   {/* Filter tabs */}
                   <div className="flex gap-0 border-b border-[#e8e8e6] bg-[#fafaf9]">
                     {[
-                      { key: 'all', label: pick('Todas', 'All', 'Todas'), count: result.totalCount },
-                      { key: 'found', label: pick('Encontradas', 'Found', 'Encontradas'), count: result.foundCount, color: 'text-green-600' },
-                      { key: 'partial', label: pick('Parciais', 'Partial', 'Parciales'), count: result.partialCount, color: 'text-amber-600' },
-                      { key: 'missing', label: pick('Em Falta', 'Missing', 'Faltante'), count: result.missingCount, color: 'text-red-600' },
+                      { key: 'all', label: t('live_match_filter_all', lang), count: result.totalCount },
+                      { key: 'found', label: t('live_match_filter_found', lang), count: result.foundCount, color: 'text-green-600' },
+                      { key: 'partial', label: t('live_match_filter_partial', lang), count: result.partialCount, color: 'text-amber-600' },
+                      { key: 'missing', label: t('live_match_filter_missing', lang), count: result.missingCount, color: 'text-red-600' },
                     ].map(tab => (
                       <button
                         key={tab.key}
@@ -459,7 +466,7 @@ export default function LiveMatchPanel({
             <Crosshair className="w-5 h-5 text-[#ccc]" />
           </div>
           <p className="text-[11px] text-[#888] font-light max-w-[200px]">
-            {pick('Cole a descrição da vaga acima para ver a compatibilidade ATS em tempo real.', 'Paste the job description above to see ATS compatibility in real-time.', 'Pega la descripción de la vacante arriba para ver la compatibilidad ATS en tiempo real.')}
+            {t('live_match_empty_state', lang)}
           </p>
         </div>
       )}

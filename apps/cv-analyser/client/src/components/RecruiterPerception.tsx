@@ -1,6 +1,6 @@
 // RecruiterPerception.tsx - Estilo Share2Inspire
 import { Lock, Eye, Clock, AlertCircle, MessageSquare } from "lucide-react";
-import { t, pick, getLang } from '@/i18n';
+import { t, getLang } from '@/i18n';
 
 interface RecruiterPerceptionProps {
   roles: string[];
@@ -20,22 +20,22 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
   const displaySeniority = perceivedSeniority || 'Mid-level';
 
   const defaultAttentionMap = [
-    pick("Nome e título profissional — primeira impressão em 2 segundos", "Name and professional title — first impression in 2 seconds", "Nombre y título profesional — primera impresión en 2 segundos"),
-    pick("Última experiência profissional — cargo e empresa", "Latest professional experience — role and company", "Última experiencia profesional — cargo y empresa"),
-    pick("Competências-chave listadas — matching rápido com a vaga", "Key skills listed — quick matching with the vacancy", "Competencias clave listadas — matching rápido con la vacante"),
-    pick("Formação académica — validação de qualificações base", "Academic background — validation of base qualifications", "Formación académica — validación de cualificaciones base"),
+    t('recruiter_default_attention_name_title', lang),
+    t('recruiter_default_attention_latest_experience', lang),
+    t('recruiter_default_attention_key_skills', lang),
+    t('recruiter_default_attention_education', lang),
   ];
 
   const defaultFrictionPoints = [
-    pick("Densidade de texto elevada pode dificultar a leitura rápida", "High text density may hinder quick reading", "Alta densidad de texto puede dificultar la lectura rápida"),
-    pick("Secções longas sem bullets ou destaques visuais", "Long sections without bullets or visual highlights", "Secciones largas sin viñetas o destacados visuales"),
-    pick("Informação de contacto pode não estar suficientemente visível", "Contact information may not be sufficiently visible", "La información de contacto puede no ser suficientemente visible"),
+    t('recruiter_default_friction_text_density', lang),
+    t('recruiter_default_friction_long_sections', lang),
+    t('recruiter_default_friction_contact_visibility', lang),
   ];
 
   const defaultInvoluntaryMessages = [
-    pick("Profissional com trajectória consistente e progressão de carreira", "Professional with consistent trajectory and career progression", "Profesional con trayectoria consistente y progresión de carrera"),
-    pick("Perfil orientado para resultados com experiência diversificada", "Results-oriented profile with diversified experience", "Perfil orientado a resultados con experiencia diversificada"),
-    pick("Candidato com potencial de liderança e visão estratégica", "Candidate with leadership potential and strategic vision", "Candidato con potencial de liderazgo y visión estratégica"),
+    t('recruiter_default_message_consistent_trajectory', lang),
+    t('recruiter_default_message_results_oriented', lang),
+    t('recruiter_default_message_leadership_potential', lang),
   ];
 
   const attentionMap = deepAnalysis?.attentionMap?.length ? deepAnalysis.attentionMap : defaultAttentionMap;
@@ -69,11 +69,9 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
           <>→ {t('perfil_percebido')}: <span className="font-semibold text-foreground">{displayRole}</span> ({displaySeniority})</>
         </p>
         <p className="text-sm text-muted-foreground">
-          <>→ {pick(
-              <>O recrutador identifica <span className="font-semibold text-foreground">{roles.length} competências-chave</span> nos primeiros 5 segundos</>,
-              <>The recruiter identifies <span className="font-semibold text-foreground">{roles.length} key skills</span> in the first 5 seconds</>,
-              <>El reclutador identifica <span className="font-semibold text-foreground">{roles.length} competencias clave</span> en los primeros 5 segundos</>
-            )}</>
+          <>
+            → <span className="font-semibold text-foreground">{t('recruiter_identifies_key_skills', lang, { count: String(roles.length) })}</span>
+          </>
         </p>
       </div>
 

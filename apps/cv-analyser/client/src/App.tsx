@@ -37,6 +37,7 @@ const KnowledgeHubPage = lazy(() => import("./pages/KnowledgeHubPage"));
 const KnowledgeHubPageEN = lazy(() => import("./pages/en/KnowledgeHubPageEN"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
+const LegalPage = lazy(() => import("./pages/LegalPage"));
 
 type SupportedLang = Lang;
 type LocalizedComponents = Record<SupportedLang, ComponentType>;
@@ -58,6 +59,12 @@ const sharedContactPages: LocalizedComponents = {
   pt: ContactPage,
   en: ContactPage,
   es: ContactPage,
+};
+
+const sharedLegalPages: LocalizedComponents = {
+  pt: LegalPage,
+  en: LegalPage,
+  es: LegalPage,
 };
 
 const pageViews: Record<RoutablePageId, RoutedPageView> = {
@@ -135,6 +142,21 @@ const pageViews: Record<RoutablePageId, RoutedPageView> = {
   },
   contactos: {
     component: sharedContactPages,
+  },
+  "politica-privacidade": {
+    component: sharedLegalPages,
+  },
+  "politica-cookies": {
+    component: sharedLegalPages,
+  },
+  "informacao-legal": {
+    component: sharedLegalPages,
+  },
+  "termos-condicoes": {
+    component: sharedLegalPages,
+  },
+  "tratamento-dados": {
+    component: sharedLegalPages,
   },
 };
 

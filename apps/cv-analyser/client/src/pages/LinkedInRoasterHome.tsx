@@ -203,13 +203,13 @@ export default function LinkedInRoasterHome() {
       } catch (_) {}
 
       const elapsed = Date.now() - startTime;
-      if (elapsed < 2800) await new Promise(r => setTimeout(r, 2800 - elapsed));
+      if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
 
       clearInterval(msgInterval);
       setLoadingMsg(pick("Tudo pronto! A abrir o relatório...", "All done! Opening your report...", "¡Todo listo! Abriendo tu informe..."));
 
       const resultsPath = lp('/linkedin-roaster') + '/results';
-      setTimeout(() => { window.location.href = resultsPath; }, 800);
+      setTimeout(() => { window.location.href = resultsPath; }, 250);
     } catch (err: any) {
       clearInterval(msgInterval);
       setError(err.message || pick("Erro ao processar. Tenta novamente.", "Error processing. Try again.", "Error al procesar. Inténtalo de nuevo."));

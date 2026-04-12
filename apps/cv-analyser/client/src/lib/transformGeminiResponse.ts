@@ -11,6 +11,7 @@ import { t, pick, getLang } from '../i18n/translations';
 export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' = 'pt'): any {
   const isEN = lang === 'en';
   const isES = lang === 'es';
+  const localize = (pt: string, en: string, es: string) => pick(pt, en, es, lang);
   let atsRejectionRate = 35;
   let atsTopFactor: string | undefined;
   let quadrants: any[] = [];
@@ -260,9 +261,13 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
         topMax: typeof sd.topMax === 'string' ? parseInt(sd.topMax, 10) : (sd.topMax || 3000),
         currency: sd.currency || 'EUR',
         period: sd.period || 'mensal',
-        benefits: Array.isArray(sd.benefits) ? sd.benefits : ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua'],
-        benefitsNote: sd.benefitsNote || sd.benefits_note || `Valores de referência para o mercado.`,
-        source: sd.source || 'Estimativa de mercado baseada em IA',
+        benefits: Array.isArray(sd.benefits) ? sd.benefits : [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+        ],
+        benefitsNote: sd.benefitsNote || sd.benefits_note || localize('Valores de referência para o mercado.', 'Reference values for the market.', 'Valores de referencia para el mercado.'),
+        source: sd.source || localize('Estimativa de mercado baseada em IA', 'AI-based market estimate', 'Estimación de mercado basada en IA'),
       };
     } else {
       // LEGACY FALLBACK: compute from seniority
@@ -279,14 +284,70 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       };
       const salaryBand = salaryBands[seniorityLevel] || salaryBands['Mid-level'];
       const benefitsByLevel: Record<string, string[]> = {
-        'Junior': ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua'],
-        'Júnior': ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua'],
-        'Mid-level': ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua', 'Bónus anual variável', 'Flexibilidade horária'],
-        'Pleno': ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua', 'Bónus anual variável', 'Flexibilidade horária'],
-        'Mid-Senior': ['Seguro de saúde extensível ao agregado', 'Subsídio de alimentação', 'Formação (2-5% do salário anual)', 'Bónus anual (10-20%)', 'Carro ou subsídio de mobilidade', 'Telemóvel e comunicações', 'Benefícios flexíveis'],
-        'Senior': ['Plano de saúde premium (agregado familiar)', 'Plano de reforma/PPR', 'Carro de função ou subsídio', 'Telemóvel e comunicações', 'Formação executiva (3-8% do salário anual)', 'Bónus anual (15-30%)', 'Benefícios flexíveis (cheques infância, ginásio, etc.)', 'Stock options ou participação nos resultados'],
-        'Sénior': ['Plano de saúde premium (agregado familiar)', 'Plano de reforma/PPR', 'Carro de função ou subsídio', 'Telemóvel e comunicações', 'Formação executiva (3-8% do salário anual)', 'Bónus anual (15-30%)', 'Benefícios flexíveis (cheques infância, ginásio, etc.)', 'Stock options ou participação nos resultados'],
-        'Director': ['Plano de saúde premium (agregado familiar)', 'Plano de reforma/PPR contributivo', 'Carro de função premium', 'Telemóvel e comunicações', 'Formação executiva e MBA', 'Bónus anual (20-50%)', 'Benefícios flexíveis premium', 'Stock options / LTIP', 'Seguro de vida'],
+        'Junior': [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+        ],
+        'Júnior': [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+        ],
+        'Mid-level': [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+          localize('Bónus anual variável', 'Variable annual bonus', 'Bonus anual variable'),
+          localize('Flexibilidade horária', 'Flexible schedule', 'Flexibilidad horaria'),
+        ],
+        'Pleno': [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+          localize('Bónus anual variável', 'Variable annual bonus', 'Bonus anual variable'),
+          localize('Flexibilidade horária', 'Flexible schedule', 'Flexibilidad horaria'),
+        ],
+        'Mid-Senior': [
+          localize('Seguro de saúde extensível ao agregado', 'Health insurance extended to dependants', 'Seguro de salud ampliado a la familia'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação (2-5% do salário anual)', 'Training (2-5% of annual salary)', 'Formación (2-5 % del salario anual)'),
+          localize('Bónus anual (10-20%)', 'Annual bonus (10-20%)', 'Bonus anual (10-20 %)'),
+          localize('Carro ou subsídio de mobilidade', 'Company car or mobility allowance', 'Coche o ayuda de movilidad'),
+          localize('Telemóvel e comunicações', 'Mobile phone and communications', 'Teléfono móvil y comunicaciones'),
+          localize('Benefícios flexíveis', 'Flexible benefits', 'Beneficios flexibles'),
+        ],
+        'Senior': [
+          localize('Plano de saúde premium (agregado familiar)', 'Premium health plan (family household)', 'Plan de salud premium (unidad familiar)'),
+          localize('Plano de reforma/PPR', 'Retirement plan/PPR', 'Plan de jubilación/PPR'),
+          localize('Carro de função ou subsídio', 'Company car or allowance', 'Coche de empresa o subsidio'),
+          localize('Telemóvel e comunicações', 'Mobile phone and communications', 'Teléfono móvil y comunicaciones'),
+          localize('Formação executiva (3-8% do salário anual)', 'Executive training (3-8% of annual salary)', 'Formación ejecutiva (3-8 % del salario anual)'),
+          localize('Bónus anual (15-30%)', 'Annual bonus (15-30%)', 'Bonus anual (15-30 %)'),
+          localize('Benefícios flexíveis (cheques infância, ginásio, etc.)', 'Flexible benefits (childcare vouchers, gym, etc.)', 'Beneficios flexibles (cheques guardería, gimnasio, etc.)'),
+          localize('Stock options ou participação nos resultados', 'Stock options or profit sharing', 'Stock options o participación en resultados'),
+        ],
+        'Sénior': [
+          localize('Plano de saúde premium (agregado familiar)', 'Premium health plan (family household)', 'Plan de salud premium (unidad familiar)'),
+          localize('Plano de reforma/PPR', 'Retirement plan/PPR', 'Plan de jubilación/PPR'),
+          localize('Carro de função ou subsídio', 'Company car or allowance', 'Coche de empresa o subsidio'),
+          localize('Telemóvel e comunicações', 'Mobile phone and communications', 'Teléfono móvil y comunicaciones'),
+          localize('Formação executiva (3-8% do salário anual)', 'Executive training (3-8% of annual salary)', 'Formación ejecutiva (3-8 % del salario anual)'),
+          localize('Bónus anual (15-30%)', 'Annual bonus (15-30%)', 'Bonus anual (15-30 %)'),
+          localize('Benefícios flexíveis (cheques infância, ginásio, etc.)', 'Flexible benefits (childcare vouchers, gym, etc.)', 'Beneficios flexibles (cheques guardería, gimnasio, etc.)'),
+          localize('Stock options ou participação nos resultados', 'Stock options or profit sharing', 'Stock options o participación en resultados'),
+        ],
+        'Director': [
+          localize('Plano de saúde premium (agregado familiar)', 'Premium health plan (family household)', 'Plan de salud premium (unidad familiar)'),
+          localize('Plano de reforma/PPR contributivo', 'Contributory retirement plan/PPR', 'Plan de jubilación/PPR contributivo'),
+          localize('Carro de função premium', 'Premium company car', 'Coche de empresa premium'),
+          localize('Telemóvel e comunicações', 'Mobile phone and communications', 'Teléfono móvil y comunicaciones'),
+          localize('Formação executiva e MBA', 'Executive training and MBA', 'Formación ejecutiva y MBA'),
+          localize('Bónus anual (20-50%)', 'Annual bonus (20-50%)', 'Bonus anual (20-50 %)'),
+          localize('Benefícios flexíveis premium', 'Premium flexible benefits', 'Beneficios flexibles premium'),
+          localize('Stock options / LTIP', 'Stock options / LTIP', 'Stock options / LTIP'),
+          localize('Seguro de vida', 'Life insurance', 'Seguro de vida'),
+        ],
       };
       const benefits = benefitsByLevel[seniorityLevel] || benefitsByLevel['Mid-level'];
       salaryDetailed = {
@@ -295,10 +356,14 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
         percentile75: salaryBand.p75,
         topMax: salaryBand.topMax,
         currency: 'EUR',
-        period: 'mensal',
+        period: localize('mensal', 'monthly', 'mensual'),
         benefits,
-        benefitsNote: `Valores de referência para perfis ${seniorityLevel} no mercado português. O pacote de compensação total pode representar 20-40% acima do salário base, dependendo do setor e dimensão da empresa.`,
-        source: 'Dados agregados do mercado português (Hays, Michael Page, Robert Walters, Mercer 2024/2025)',
+        benefitsNote: localize(
+          `Valores de referência para perfis ${seniorityLevel} no mercado português. O pacote de compensação total pode representar 20-40% acima do salário base, dependendo do setor e dimensão da empresa.`,
+          `Reference values for ${seniorityLevel} profiles in the Portuguese market. Total compensation can represent 20–40% above base salary, depending on sector and company size.`,
+          `Valores de referencia para perfiles ${seniorityLevel} en el mercado portugués. La compensación total puede situarse entre un 20 % y un 40 % por encima del salario base, según el sector y el tamaño de la empresa.`
+        ),
+        source: localize('Dados agregados do mercado português (Hays, Michael Page, Robert Walters, Mercer 2024/2025)', 'Aggregated Portuguese market data (Hays, Michael Page, Robert Walters, Mercer 2024/2025)', 'Datos agregados del mercado portugués (Hays, Michael Page, Robert Walters, Mercer 2024/2025)'),
       };
     }
 
@@ -309,30 +374,50 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       const ar = analysis.automationRisk;
       automationRisk = {
         percentage: typeof ar.percentage === 'string' ? parseInt(ar.percentage, 10) : (ar.percentage || 35),
-        level: ar.level || 'Médio',
-        description: ar.description || 'Risco moderado de automação.',
-        recommendations: Array.isArray(ar.recommendations) ? ar.recommendations : ['Investir em competências de liderança', 'Desenvolver pensamento estratégico', 'Aprofundar conhecimentos em IA'],
+        level: ar.level || localize('Médio', 'Medium', 'Medio'),
+        description: ar.description || localize('Risco moderado de automação.', 'Moderate automation risk.', 'Riesgo moderado de automatización.'),
+        recommendations: Array.isArray(ar.recommendations) ? ar.recommendations : [
+          localize('Investir em competências de liderança', 'Invest in leadership skills', 'Invertir en competencias de liderazgo'),
+          localize('Desenvolver pensamento estratégico', 'Develop strategic thinking', 'Desarrollar pensamiento estratégico'),
+          localize('Aprofundar conhecimentos em IA', 'Deepen AI knowledge', 'Profundizar conocimientos en IA'),
+        ],
       };
     } else {
       // LEGACY FALLBACK: compute from role keywords
       const roleStr = (perceivedRole || '').toLowerCase();
       let autoPercentage = 35;
-      let autoLevel = 'Médio';
-      let autoDesc = 'O teu perfil tem um risco moderado de automação.';
-      let autoRecs = ['Investir em competências de liderança e gestão de equipas', 'Desenvolver pensamento estratégico e criativo', 'Aprofundar conhecimentos em IA e automação para liderar a transformação'];
+      let autoLevel = localize('Médio', 'Medium', 'Medio');
+      let autoDesc = localize('O teu perfil tem um risco moderado de automação.', 'Your profile has a moderate automation risk.', 'Tu perfil presenta un riesgo moderado de automatización.');
+      let autoRecs = [
+        localize('Investir em competências de liderança e gestão de equipas', 'Invest in leadership and team management skills', 'Invertir en competencias de liderazgo y gestión de equipos'),
+        localize('Desenvolver pensamento estratégico e criativo', 'Develop strategic and creative thinking', 'Desarrollar pensamiento estratégico y creativo'),
+        localize('Aprofundar conhecimentos em IA e automação para liderar a transformação', 'Deepen AI and automation knowledge to lead transformation', 'Profundizar conocimientos en IA y automatización para liderar la transformación'),
+      ];
 
       if (roleStr.includes('director') || roleStr.includes('líder') || roleStr.includes('leader') || roleStr.includes('head') || roleStr.includes('vp') || roleStr.includes('chief')) {
-        autoPercentage = 15; autoLevel = 'Baixo';
-        autoDesc = 'Funções de liderança estratégica têm baixo risco de automação.';
-        autoRecs = ['Manter foco em decisão estratégica e gestão de stakeholders', 'Liderar iniciativas de transformação digital', 'Desenvolver capacidades de change management'];
+        autoPercentage = 15; autoLevel = localize('Baixo', 'Low', 'Bajo');
+        autoDesc = localize('Funções de liderança estratégica têm baixo risco de automação.', 'Strategic leadership roles have low automation risk.', 'Las funciones de liderazgo estratégico tienen bajo riesgo de automatización.');
+        autoRecs = [
+          localize('Manter foco em decisão estratégica e gestão de stakeholders', 'Keep focus on strategic decision-making and stakeholder management', 'Mantener el foco en la toma de decisiones estratégicas y la gestión de stakeholders'),
+          localize('Liderar iniciativas de transformação digital', 'Lead digital transformation initiatives', 'Liderar iniciativas de transformación digital'),
+          localize('Desenvolver capacidades de change management', 'Develop change management capabilities', 'Desarrollar capacidades de change management'),
+        ];
       } else if (roleStr.includes('manager') || roleStr.includes('gestor') || roleStr.includes('senior') || roleStr.includes('consultor')) {
-        autoPercentage = 25; autoLevel = 'Baixo';
-        autoDesc = 'Perfis de gestão e consultoria sénior têm risco baixo de automação.';
-        autoRecs = ['Reforçar competências de people management', 'Integrar ferramentas de IA no dia-a-dia', 'Desenvolver expertise em áreas emergentes do setor'];
+        autoPercentage = 25; autoLevel = localize('Baixo', 'Low', 'Bajo');
+        autoDesc = localize('Perfis de gestão e consultoria sénior têm risco baixo de automação.', 'Senior management and consulting profiles have low automation risk.', 'Los perfiles sénior de gestión y consultoría tienen bajo riesgo de automatización.');
+        autoRecs = [
+          localize('Reforçar competências de people management', 'Strengthen people management skills', 'Reforzar competencias de people management'),
+          localize('Integrar ferramentas de IA no dia-a-dia', 'Integrate AI tools into day-to-day work', 'Integrar herramientas de IA en el día a día'),
+          localize('Desenvolver expertise em áreas emergentes do setor', 'Develop expertise in emerging sector areas', 'Desarrollar expertise en áreas emergentes del sector'),
+        ];
       } else if (roleStr.includes('admin') || roleStr.includes('assist') || roleStr.includes('data entry') || roleStr.includes('operador')) {
-        autoPercentage = 65; autoLevel = 'Alto';
-        autoDesc = 'Funções operacionais e administrativas têm risco elevado de automação.';
-        autoRecs = ['Desenvolver competências analíticas e de interpretação de dados', 'Aprender ferramentas de automação (RPA, low-code)', 'Investir em upskilling para funções de maior valor acrescentado'];
+        autoPercentage = 65; autoLevel = localize('Alto', 'High', 'Alto');
+        autoDesc = localize('Funções operacionais e administrativas têm risco elevado de automação.', 'Operational and administrative roles have high automation risk.', 'Las funciones operativas y administrativas tienen alto riesgo de automatización.');
+        autoRecs = [
+          localize('Desenvolver competências analíticas e de interpretação de dados', 'Develop analytical and data interpretation skills', 'Desarrollar competencias analíticas y de interpretación de datos'),
+          localize('Aprender ferramentas de automação (RPA, low-code)', 'Learn automation tools (RPA, low-code)', 'Aprender herramientas de automatización (RPA, low-code)'),
+          localize('Investir em upskilling para funções de maior valor acrescentado', 'Invest in upskilling for higher-value roles', 'Invertir en upskilling para funciones de mayor valor añadido'),
+        ];
       }
       automationRisk = { percentage: autoPercentage, level: autoLevel, description: autoDesc, recommendations: autoRecs };
     }
@@ -342,9 +427,17 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       .filter((q: any) => q.weaknesses && q.weaknesses.length > 0)
       .map((q: any) => ({
         action: q.weaknesses![0],
-        before: `Score actual: ${q.score}/100 (${q.score >= q.benchmark ? 'acima' : 'abaixo'} do benchmark de ${q.benchmark})`,
-        after: `Score estimado após melhoria: ${Math.min(100, q.score + 8)}/100`,
-        impact: q.score < q.benchmark ? 'Alto' : 'Médio',
+        before: localize(
+          `Score actual: ${q.score}/100 (${q.score >= q.benchmark ? 'acima' : 'abaixo'} do benchmark de ${q.benchmark})`,
+          `Current score: ${q.score}/100 (${q.score >= q.benchmark ? 'above' : 'below'} the benchmark of ${q.benchmark})`,
+          `Puntuación actual: ${q.score}/100 (${q.score >= q.benchmark ? 'por encima' : 'por debajo'} del benchmark de ${q.benchmark})`
+        ),
+        after: localize(
+          `Score estimado após melhoria: ${Math.min(100, q.score + 8)}/100`,
+          `Estimated score after improvement: ${Math.min(100, q.score + 8)}/100`,
+          `Puntuación estimada tras la mejora: ${Math.min(100, q.score + 8)}/100`
+        ),
+        impact: q.score < q.benchmark ? localize('Alto', 'High', 'Alto') : localize('Médio', 'Medium', 'Medio'),
         dimension: q.title,
       }));
 
@@ -353,7 +446,7 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       const gap = q.benchmark - q.score;
       return {
         dimension: q.title,
-        urgency: gap > 5 ? 'Alta' : gap > -5 ? 'Média' : 'Baixa',
+        urgency: gap > 5 ? localize('Alta', 'High', 'Alta') : gap > -5 ? localize('Média', 'Medium', 'Media') : localize('Baixa', 'Low', 'Baja'),
         currentScore: q.score,
         potentialScore: Math.min(100, q.score + (gap > 0 ? gap + 5 : 5)),
         actions: [
@@ -362,7 +455,11 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
         ].filter(Boolean),
       };
     }).sort((a: any, b: any) => {
-      const urgencyOrder: Record<string, number> = { 'Alta': 0, 'Média': 1, 'Baixa': 2 };
+      const urgencyOrder: Record<string, number> = {
+        [localize('Alta', 'High', 'Alta')]: 0,
+        [localize('Média', 'Medium', 'Media')]: 1,
+        [localize('Baixa', 'Low', 'Baja')]: 2,
+      };
       return (urgencyOrder[a.urgency] || 1) - (urgencyOrder[b.urgency] || 1);
     });
 
@@ -389,29 +486,29 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
         }).filter(Boolean);
       }
       detailedAtsAnalysis = {
-        factors: factors.length > 0 ? factors : [atsTopFactor || 'Optimizar palavras-chave para a função-alvo'],
+        factors: factors.length > 0 ? factors : [atsTopFactor || localize('Optimizar palavras-chave para a função-alvo', 'Optimise keywords for the target role', 'Optimizar palabras clave para la función objetivo')],
         atsSystems: atsSystems.length > 0 ? atsSystems : ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
         quickFixes: Array.isArray(da.quickFixes) ? da.quickFixes : [
-          'Usar formato cronológico inverso',
-          'Evitar tabelas, colunas e gráficos',
-          'Incluir palavras-chave do anúncio de emprego',
-          'Usar fontes standard (Arial, Calibri, Times)',
-          'Guardar em PDF com texto seleccionável',
+          localize('Usar formato cronológico inverso', 'Use reverse-chronological format', 'Usar formato cronológico inverso'),
+          localize('Evitar tabelas, colunas e gráficos', 'Avoid tables, columns and graphics', 'Evitar tablas, columnas y gráficos'),
+          localize('Incluir palavras-chave do anúncio de emprego', 'Include keywords from the job posting', 'Incluir palabras clave de la oferta de empleo'),
+          localize('Usar fontes standard (Arial, Calibri, Times)', 'Use standard fonts (Arial, Calibri, Times)', 'Usar fuentes estándar (Arial, Calibri, Times)'),
+          localize('Guardar em PDF com texto seleccionável', 'Save as PDF with selectable text', 'Guardar en PDF con texto seleccionable'),
         ],
       };
     } else {
       detailedAtsAnalysis = {
         factors: [
-          atsTopFactor || 'Optimizar palavras-chave para a função-alvo',
+          atsTopFactor || localize('Optimizar palavras-chave para a função-alvo', 'Optimise keywords for the target role', 'Optimizar palabras clave para la función objetivo'),
           ...(analysis.global_summary?.improvements || []).slice(0, 3),
         ].filter(Boolean),
         atsSystems: ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
         quickFixes: [
-          'Usar formato cronológico inverso',
-          'Evitar tabelas, colunas e gráficos',
-          'Incluir palavras-chave do anúncio de emprego',
-          'Usar fontes standard (Arial, Calibri, Times)',
-          'Guardar em PDF com texto seleccionável',
+          localize('Usar formato cronológico inverso', 'Use reverse-chronological format', 'Usar formato cronológico inverso'),
+          localize('Evitar tabelas, colunas e gráficos', 'Avoid tables, columns and graphics', 'Evitar tablas, columnas y gráficos'),
+          localize('Incluir palavras-chave do anúncio de emprego', 'Include keywords from the job posting', 'Incluir palabras clave de la oferta de empleo'),
+          localize('Usar fontes standard (Arial, Calibri, Times)', 'Use standard fonts (Arial, Calibri, Times)', 'Usar fuentes estándar (Arial, Calibri, Times)'),
+          localize('Guardar em PDF com texto seleccionável', 'Save as PDF with selectable text', 'Guardar en PDF con texto seleccionable'),
         ],
       };
     }
@@ -423,9 +520,9 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       recruiterDeepAnalysis = {
         firstImpression: rd.firstImpression || rd.first_impression || '',
         attentionMap: Array.isArray(rd.attentionMap) ? rd.attentionMap : Array.isArray(rd.attention_map) ? rd.attention_map : [
-          'Nome e título profissional (0-2 segundos)',
-          'Experiência mais recente (2-5 segundos)',
-          'Formação académica (5-8 segundos)',
+          localize('Nome e título profissional (0-2 segundos)', 'Name and professional title (0-2 seconds)', 'Nombre y título profesional (0-2 segundos)'),
+          localize('Experiência mais recente (2-5 segundos)', 'Most recent experience (2-5 seconds)', 'Experiencia más reciente (2-5 segundos)'),
+          localize('Formação académica (5-8 segundos)', 'Academic background (5-8 seconds)', 'Formación académica (5-8 segundos)'),
         ],
         frictionPoints: Array.isArray(rd.frictionPoints) ? rd.frictionPoints : Array.isArray(rd.redFlags) ? rd.redFlags : Array.isArray(rd.friction_points) ? rd.friction_points : [],
         positiveSignals: Array.isArray(rd.positiveSignals) ? rd.positiveSignals : Array.isArray(rd.greenFlags) ? rd.greenFlags : Array.isArray(rd.positive_signals) ? rd.positive_signals : [],
@@ -436,21 +533,25 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
     } else {
       recruiterDeepAnalysis = {
         attentionMap: [
-          'Nome e título profissional (0-2 segundos)',
-          'Experiência mais recente (2-5 segundos)',
-          'Formação académica (5-8 segundos)',
-          'Competências-chave e certificações (8-15 segundos)',
-          'Coerência geral e formatação (15-30 segundos)',
+          localize('Nome e título profissional (0-2 segundos)', 'Name and professional title (0-2 seconds)', 'Nombre y título profesional (0-2 segundos)'),
+          localize('Experiência mais recente (2-5 segundos)', 'Most recent experience (2-5 seconds)', 'Experiencia más reciente (2-5 segundos)'),
+          localize('Formação académica (5-8 segundos)', 'Academic background (5-8 seconds)', 'Formación académica (5-8 segundos)'),
+          localize('Competências-chave e certificações (8-15 segundos)', 'Key skills and certifications (8-15 seconds)', 'Competencias clave y certificaciones (8-15 segundos)'),
+          localize('Coerência geral e formatação (15-30 segundos)', 'Overall coherence and formatting (15-30 seconds)', 'Coherencia general y formato (15-30 segundos)'),
         ],
         frictionPoints: [
           ...(analysis.global_summary?.improvements || []).slice(0, 2),
-          ...(quadrants.filter((q: any) => q.score < q.benchmark).map((q: any) => `${q.title}: abaixo do benchmark (${q.score} vs ${q.benchmark})`)),
+          ...(quadrants.filter((q: any) => q.score < q.benchmark).map((q: any) => localize(`${q.title}: abaixo do benchmark (${q.score} vs ${q.benchmark})`, `${q.title}: below benchmark (${q.score} vs ${q.benchmark})`, `${q.title}: por debajo del benchmark (${q.score} vs ${q.benchmark})`))),
         ].filter(Boolean).slice(0, 4),
         positiveSignals: [
           ...(analysis.global_summary?.strengths || []).slice(0, 2),
-          ...(quadrants.filter((q: any) => q.score >= q.benchmark).map((q: any) => `${q.title}: acima do benchmark (+${q.score - q.benchmark})`)),
+          ...(quadrants.filter((q: any) => q.score >= q.benchmark).map((q: any) => localize(`${q.title}: acima do benchmark (+${q.score - q.benchmark})`, `${q.title}: above benchmark (+${q.score - q.benchmark})`, `${q.title}: por encima del benchmark (+${q.score - q.benchmark})`))),
         ].filter(Boolean).slice(0, 4),
-        readingFlow: `O recrutador identifica rapidamente o perfil como ${perceivedRole || 'profissional qualificado'} (${perceivedSeniority || 'nível não determinado'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'A maioria das dimensões está acima do benchmark, transmitindo uma imagem sólida.' : 'Algumas dimensões estão abaixo do benchmark, o que pode gerar hesitação na triagem inicial.'}`,
+        readingFlow: localize(
+          `O recrutador identifica rapidamente o perfil como ${perceivedRole || 'profissional qualificado'} (${perceivedSeniority || 'nível não determinado'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'A maioria das dimensões está acima do benchmark, transmitindo uma imagem sólida.' : 'Algumas dimensões estão abaixo do benchmark, o que pode gerar hesitação na triagem inicial.'}`,
+          `The recruiter quickly identifies the profile as ${perceivedRole || 'a qualified professional'} (${perceivedSeniority || 'undetermined level'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'Most dimensions are above benchmark, conveying a strong image.' : 'Some dimensions are below benchmark, which may create hesitation in the initial screening.'}`,
+          `El reclutador identifica rápidamente el perfil como ${perceivedRole || 'un perfil cualificado'} (${perceivedSeniority || 'nivel no determinado'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'La mayoría de las dimensiones están por encima del benchmark, transmitiendo una imagen sólida.' : 'Algunas dimensiones están por debajo del benchmark, lo que puede generar dudas en el cribado inicial.'}`
+        ),
       };
     }
 
@@ -465,30 +566,30 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
     } else {
     actionPlan30Days = [
       {
-        week: 'Semana 1-2',
-        title: 'Optimização de Conteúdo',
+        week: localize('Semana 1-2', 'Weeks 1-2', 'Semanas 1-2'),
+        title: localize('Optimização de Conteúdo', 'Content Optimisation', 'Optimización de Contenido'),
         actions: [
-          'Reescrever o resumo profissional com foco em resultados quantificáveis',
-          'Adicionar métricas de impacto a cada experiência (%, €, equipas geridas)',
-          'Alinhar palavras-chave com as funções-alvo',
+          localize('Reescrever o resumo profissional com foco em resultados quantificáveis', 'Rewrite the professional summary with a focus on quantified results', 'Reescribir el resumen profesional con foco en resultados cuantificables'),
+          localize('Adicionar métricas de impacto a cada experiência (%, €, equipas geridas)', 'Add impact metrics to each experience (%, €, teams managed)', 'Añadir métricas de impacto a cada experiencia (%, €, equipos gestionados)'),
+          localize('Alinhar palavras-chave com as funções-alvo', 'Align keywords with target roles', 'Alinear palabras clave con las funciones objetivo'),
         ],
       },
       {
-        week: 'Semana 2-3',
-        title: 'Estrutura e Formatação',
+        week: localize('Semana 2-3', 'Weeks 2-3', 'Semanas 2-3'),
+        title: localize('Estrutura e Formatação', 'Structure and Formatting', 'Estructura y Formato'),
         actions: [
-          'Reorganizar secções por ordem de relevância para o recrutador',
-          'Garantir compatibilidade ATS (formato, fontes, estrutura)',
-          'Adicionar secção de competências-chave com keywords relevantes',
+          localize('Reorganizar secções por ordem de relevância para o recrutador', 'Reorganise sections by order of relevance for the recruiter', 'Reorganizar secciones por orden de relevancia para el reclutador'),
+          localize('Garantir compatibilidade ATS (formato, fontes, estrutura)', 'Ensure ATS compatibility (format, fonts, structure)', 'Garantizar compatibilidad ATS (formato, fuentes, estructura)'),
+          localize('Adicionar secção de competências-chave com keywords relevantes', 'Add a key-skills section with relevant keywords', 'Añadir una sección de competencias clave con keywords relevantes'),
         ],
       },
       {
-        week: 'Semana 3-4',
-        title: 'Validação e Refinamento',
+        week: localize('Semana 3-4', 'Weeks 3-4', 'Semanas 3-4'),
+        title: localize('Validação e Refinamento', 'Validation and Refinement', 'Validación y Refinamiento'),
         actions: [
-          'Pedir feedback a 2-3 profissionais do setor',
-          'Testar o CV em ferramentas ATS gratuitas',
-          'Criar versões adaptadas para diferentes funções-alvo',
+          localize('Pedir feedback a 2-3 profissionais do setor', 'Ask 2-3 professionals in the sector for feedback', 'Pedir feedback a 2-3 profesionales del sector'),
+          localize('Testar o CV em ferramentas ATS gratuitas', 'Test the CV with free ATS tools', 'Probar el CV en herramientas ATS gratuitas'),
+          localize('Criar versões adaptadas para diferentes funções-alvo', 'Create tailored versions for different target roles', 'Crear versiones adaptadas para distintas funciones objetivo'),
         ],
       },
     ];
@@ -507,12 +608,25 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       keywords: ['Perfil Profissional', 'Competências Técnicas', 'Experiência', 'Formação'],
       salaryDetailed: {
         percentile25: 1000, median: 1400, percentile75: 1900, topMax: 2500,
-        currency: 'EUR', period: 'mensal',
-        benefits: ['Seguro de saúde', 'Subsídio de alimentação', 'Formação contínua'],
-        benefitsNote: 'Valores de referência para o mercado português.',
-        source: 'Dados agregados do mercado português (Hays, Michael Page, Robert Walters, Mercer 2024/2025)',
+        currency: 'EUR', period: localize('mensal', 'monthly', 'mensual'),
+        benefits: [
+          localize('Seguro de saúde', 'Health insurance', 'Seguro de salud'),
+          localize('Subsídio de alimentação', 'Meal allowance', 'Subsidio de comida'),
+          localize('Formação contínua', 'Continuous training', 'Formación continua'),
+        ],
+        benefitsNote: localize('Valores de referência para o mercado português.', 'Reference values for the Portuguese market.', 'Valores de referencia para el mercado portugués.'),
+        source: localize('Dados agregados do mercado português (Hays, Michael Page, Robert Walters, Mercer 2024/2025)', 'Aggregated Portuguese market data (Hays, Michael Page, Robert Walters, Mercer 2024/2025)', 'Datos agregados del mercado portugués (Hays, Michael Page, Robert Walters, Mercer 2024/2025)'),
       },
-      automationRisk: { percentage: 35, level: 'Médio', description: 'Risco moderado de automação.', recommendations: ['Investir em competências de liderança', 'Desenvolver pensamento estratégico', 'Aprofundar conhecimentos em IA'] },
+      automationRisk: {
+        percentage: 35,
+        level: localize('Médio', 'Medium', 'Medio'),
+        description: localize('Risco moderado de automação.', 'Moderate automation risk.', 'Riesgo moderado de automatización.'),
+        recommendations: [
+          localize('Investir em competências de liderança', 'Invest in leadership skills', 'Invertir en competencias de liderazgo'),
+          localize('Desenvolver pensamento estratégico', 'Develop strategic thinking', 'Desarrollar pensamiento estratégico'),
+          localize('Aprofundar conhecimentos em IA', 'Deepen AI knowledge', 'Profundizar conocimientos en IA'),
+        ],
+      },
     };
   }
 
@@ -585,9 +699,14 @@ function computeATSDeepScan(
   } else {
     // Mode 1 (no job posting): use extracted keywords as "found" and generate typical missing ones
     const genericImportant = [
-      'Resultados quantificáveis', 'Métricas de impacto', 'Verbos de ação',
-      'Competências técnicas específicas', 'Certificações relevantes',
-      'Palavras-chave do sector', 'Soft skills mensuráveis', 'Ferramentas e tecnologias',
+      pick('Resultados quantificáveis', 'Quantified results', 'Resultados cuantificables', lang),
+      pick('Métricas de impacto', 'Impact metrics', 'Métricas de impacto', lang),
+      pick('Verbos de ação', 'Action verbs', 'Verbos de acción', lang),
+      pick('Competências técnicas específicas', 'Specific technical skills', 'Competencias técnicas específicas', lang),
+      pick('Certificações relevantes', 'Relevant certifications', 'Certificaciones relevantes', lang),
+      pick('Palavras-chave do sector', 'Sector keywords', 'Palabras clave del sector', lang),
+      pick('Soft skills mensuráveis', 'Measurable soft skills', 'Soft skills medibles', lang),
+      pick('Ferramentas e tecnologias', 'Tools and technologies', 'Herramientas y tecnologías', lang),
     ];
     extractedKeywords.slice(0, 6).forEach((kw, i) => {
       kws.push({

@@ -136,7 +136,7 @@ export const pageSeo = {
     },
   } satisfies SEOConfig,
   studentPack: {
-    canonicalPtPath: "/student-pack",
+    canonicalPtPath: "/estudante",
     title: {
       pt: "Student Pack | CV Analyser + LinkedIn Roaster | Share2Inspire",
       en: "Student Pack | CV Analyser + LinkedIn Roaster | Share2Inspire",
@@ -149,7 +149,7 @@ export const pageSeo = {
     },
   } satisfies SEOConfig,
   studentPackResults: {
-    canonicalPtPath: "/student-pack",
+    canonicalPtPath: "/estudante",
     title: {
       pt: "Resultados Student Pack | Diagnóstico de CV e LinkedIn | Share2Inspire",
       en: "Student Pack Results | CV and LinkedIn Review | Share2Inspire",
@@ -212,6 +212,71 @@ export const pageSeo = {
       pt: "Entra em contacto com a Share2Inspire para dúvidas, parcerias ou apoio na tua carreira. Envia a tua mensagem e fala connosco hoje.",
       en: "Contact Share2Inspire for questions, partnerships or career support. Send your message and speak with us today.",
       es: "Contacta con Share2Inspire para dudas, colaboraciones o apoyo profesional. Envía tu mensaje y habla con nosotros hoy.",
+    },
+  } satisfies SEOConfig,
+  privacyPolicy: {
+    canonicalPtPath: "/politica-privacidade",
+    title: {
+      pt: "Política de Privacidade | Share2Inspire",
+      en: "Privacy Policy | Share2Inspire",
+      es: "Política de Privacidad | Share2Inspire",
+    },
+    description: {
+      pt: "Consulta a política de privacidade da Share2Inspire e compreende como tratamos dados pessoais, finalidades, bases legais e direitos dos titulares.",
+      en: "Review the Share2Inspire privacy policy and understand how we process personal data, legal bases, purposes and data subject rights.",
+      es: "Consulta la política de privacidad de Share2Inspire y entiende cómo tratamos los datos personales, las bases legales, las finalidades y los derechos de los titulares.",
+    },
+  } satisfies SEOConfig,
+  cookiePolicy: {
+    canonicalPtPath: "/politica-cookies",
+    title: {
+      pt: "Política de Cookies | Share2Inspire",
+      en: "Cookie Policy | Share2Inspire",
+      es: "Política de Cookies | Share2Inspire",
+    },
+    description: {
+      pt: "Conhece os tipos de cookies e tecnologias semelhantes utilizados pela Share2Inspire, as respetivas finalidades e as opções de gestão disponíveis.",
+      en: "Learn about the cookie categories and similar technologies used by Share2Inspire, their purposes and the available management options.",
+      es: "Conoce las categorías de cookies y tecnologías similares utilizadas por Share2Inspire, sus finalidades y las opciones de gestión disponibles.",
+    },
+  } satisfies SEOConfig,
+  legalInformation: {
+    canonicalPtPath: "/informacao-legal",
+    title: {
+      pt: "Informação Legal | Share2Inspire",
+      en: "Legal Information | Share2Inspire",
+      es: "Información Legal | Share2Inspire",
+    },
+    description: {
+      pt: "Acede à informação legal essencial sobre a Share2Inspire, identificação da entidade, contacto, propriedade intelectual e utilização do website.",
+      en: "Access key legal information about Share2Inspire, including entity identification, contact details, intellectual property and website use.",
+      es: "Accede a la información legal esencial sobre Share2Inspire, incluida la identificación de la entidad, el contacto, la propiedad intelectual y el uso del sitio web.",
+    },
+  } satisfies SEOConfig,
+  termsAndConditions: {
+    canonicalPtPath: "/termos-condicoes",
+    title: {
+      pt: "Termos e Condições | Share2Inspire",
+      en: "Terms & Conditions | Share2Inspire",
+      es: "Términos y Condiciones | Share2Inspire",
+    },
+    description: {
+      pt: "Consulta os termos e condições da Share2Inspire para compreender o âmbito dos serviços, regras de utilização, pagamentos e limitações aplicáveis.",
+      en: "Review the Share2Inspire terms and conditions to understand service scope, usage rules, payments and applicable limitations.",
+      es: "Consulta los términos y condiciones de Share2Inspire para entender el alcance de los servicios, las reglas de uso, los pagos y las limitaciones aplicables.",
+    },
+  } satisfies SEOConfig,
+  dataProcessing: {
+    canonicalPtPath: "/tratamento-dados",
+    title: {
+      pt: "Tratamento de Dados | Share2Inspire",
+      en: "Data Processing | Share2Inspire",
+      es: "Tratamiento de Datos | Share2Inspire",
+    },
+    description: {
+      pt: "Conhece os princípios de tratamento de dados aplicados pela Share2Inspire, categorias de informação tratada, retenção e medidas de proteção.",
+      en: "Understand the data processing principles applied by Share2Inspire, including data categories, retention and protection measures.",
+      es: "Conoce los principios de tratamiento de datos aplicados por Share2Inspire, incluidas las categorías de datos, la conservación y las medidas de protección.",
     },
   } satisfies SEOConfig,
   notFound: {

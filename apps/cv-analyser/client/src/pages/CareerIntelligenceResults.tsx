@@ -162,6 +162,37 @@ export default function CareerIntelligenceResults() {
   const isEN = lang === 'en';
   const isES = lang === 'es';
   const careerIntelligenceHomePath = pick('/career-intelligence', '/en/career-intelligence', '/es/career-intelligence');
+  const getCareerIntelligenceProfile = (analysis: any) => {
+    return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
+  };
+  const hasCareerIntelligenceStructure = (analysis: any) => {
+    if (!analysis || typeof analysis !== 'object') return false;
+    return Boolean(
+      analysis.market_context ||
+      analysis.decision_recommendation ||
+      analysis.career_potential_score ||
+      (Array.isArray(analysis.strategic_paths) && analysis.strategic_paths.length > 0) ||
+      (Array.isArray(analysis.action_plan_by_path) && analysis.action_plan_by_path.length > 0) ||
+      (Array.isArray(analysis.strategic_comparison) && analysis.strategic_comparison.length > 0) ||
+      (Array.isArray(analysis.tradeoffs) && analysis.tradeoffs.length > 0)
+    );
+  };
+  const readCareerIntelligenceData = () => {
+    const raw =
+      localStorage.getItem('careerIntelligenceData') ||
+      sessionStorage.getItem('careerIntelligenceData') ||
+      localStorage.getItem('careerPathData') ||
+      sessionStorage.getItem('careerPathData');
+
+    if (!raw) return null;
+
+    try {
+      const parsed = JSON.parse(raw);
+      return hasCareerIntelligenceStructure(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  };
   const siteHomePath = pick('/', '/en/', '/es/');
   const defaultPaymentMethod: 'mbway' | 'stripe' | 'paypal' = isEN ? 'stripe' : 'mbway';
   const paymentMethodOptions = (isEN ? ['stripe', 'paypal'] : ['mbway', 'stripe', 'paypal']) as const;
@@ -210,7 +241,7 @@ export default function CareerIntelligenceResults() {
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
     const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid'));
-    const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
+    const savedData = readCareerIntelligenceData();
 
     if (!cvData) {
       setLocation(careerIntelligenceHomePath);
@@ -237,11 +268,9 @@ export default function CareerIntelligenceResults() {
         setIsPaid(true);
         setTimeout(() => { generateAnalysis(); }, 300);
       } else if (savedData) {
-        try {
-          setCareerData(JSON.parse(savedData));
-          setIsPaid(true);
-        } catch { /* ignore */ }
-      } else {
+        setCareerData(savedData);
+        setIsPaid(true);
+      } else if (ciFullFlag === 'true') {
         setIsPaid(true);
         setTimeout(() => { generateAnalysis(); }, 300);
       }
@@ -314,6 +343,8 @@ export default function CareerIntelligenceResults() {
       setCareerData(ciData);
       setIsPaid(true);
       localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerIntelligenceData', JSON.stringify(ciData));
+      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(ciData));
       localStorage.setItem('careerPathData', JSON.stringify(ciData));
 
       // Save to user_analyses for area-cliente
@@ -613,9 +644,10 @@ export default function CareerIntelligenceResults() {
     );
   }
 
-  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
-  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
-  const seniority = cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
+  const candidateProfile = getCareerIntelligenceProfile(cvAnalysis);
+  const profileName = candidateProfile.detected_name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
+  const currentRole = candidateProfile.detected_role || cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
+  const seniority = candidateProfile.seniority || cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 
   return (
     <div className="min-h-screen bg-background">
@@ -631,7 +663,7 @@ export default function CareerIntelligenceResults() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href={siteHomePath} className="flex items-center" aria-label="Share2Inspire">
-              <img src="/logo-transparent.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-s2i.png" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">

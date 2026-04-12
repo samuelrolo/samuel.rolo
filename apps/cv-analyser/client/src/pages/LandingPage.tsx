@@ -304,7 +304,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
             {pick(
-              <>Para quem é o <strong className="text-[#C9A961]">Share2Inspire</strong>?</>,
+              <>Para quem é a <strong className="text-[#C9A961]">Share2Inspire</strong>?</>,
               <>Who is <strong className="text-[#C9A961]">Share2Inspire</strong> for?</>,
               <>¿Para quién es <strong className="text-[#C9A961]">Share2Inspire</strong>?</>
             )}

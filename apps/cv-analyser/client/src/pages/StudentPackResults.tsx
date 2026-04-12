@@ -236,7 +236,8 @@ function ProgressBar({ value, max = 100, color = 'emerald' }: { value: number; m
 function adaptLegacyToUnified(legacy: any): any {
   const cv = legacy.cv || {};
   const li = legacy.linkedin || {};
-  const liAnalysis = li.analysis || li;
+  const liTeaser = li.teaser || li.data?.teaser || {};
+  const liAnalysis = li.analise_completa || li.data?.analise_completa || li.analysis || li;
   const rawCv = (() => { try { return JSON.parse(sessionStorage.getItem('studentPackCvRaw') || '{}'); } catch { return {}; } })();
   const cp = rawCv.candidate_profile || {};
   const overallScore = cv.overallScore || 0;
@@ -320,26 +321,26 @@ function adaptLegacyToUnified(legacy: any): any {
       nome: cp.name || cp.nome || '',
       curso: cp.detected_role || cp.area || '',
       area_alvo: cv.perceivedRole || cp.detected_role || '',
-      resumo_executivo: liAnalysis.sumario_executivo || ''
+      resumo_executivo: liAnalysis.sumario_executivo || liTeaser.hook_vendas || ''
     },
     score_global: {
       valor: overallScore,
       nivel,
-      interpretacao: liAnalysis.sumario_executivo || '',
+      interpretacao: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
       vs_mercado_entrada: liAnalysis.benchmarking?.resumo || ''
     },
     auditoria_perfil_dual: {
       coerencia_cv_linkedin: overallScore >= 65 ? pick('Alta', 'High', 'Alta') : overallScore >= 45 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja'),
-      analise_coerencia: liAnalysis.sumario_executivo || '',
+      analise_coerencia: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
       primeira_impressao_cv: strengths.slice(0, 2).join('. ') || '',
-      primeira_impressao_linkedin: liAnalysis.hook_vendas || liAnalysis.sumario_executivo || '',
+      primeira_impressao_linkedin: liTeaser.hook_vendas || liAnalysis.hook_vendas || liAnalysis.sumario_executivo || '',
       scores_cv: scoresCv,
       scores_linkedin: scoresLinkedin
     },
     prontidao_mercado: {
       score_estagio: Math.min(100, Math.round(overallScore * 1.1)),
       score_primeiro_emprego: Math.min(100, overallScore),
-      analise_prontidao: liAnalysis.recomendacao_prioritaria || '',
+      analise_prontidao: liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || '',
       o_que_ja_tens: strengths.slice(0, 5),
       o_que_ainda_precisas: weaknesses.slice(0, 5)
     },
@@ -368,14 +369,14 @@ function adaptLegacyToUnified(legacy: any): any {
       keywords_em_falta: []
     },
     marca_pessoal_estudante: {
-      headline_linkedin_sugeridas: headlines.slice(0, 3),
+      headline_linkedin_sugeridas: (Array.isArray(liAnalysis.headlines_sugeridas) && liAnalysis.headlines_sugeridas.length > 0 ? liAnalysis.headlines_sugeridas : headlines).slice(0, 3),
       resumo_linkedin_sugerido: liAnalysis.resumo_linkedin_sugerido || '',
       problemas_criticos_cv: problemasCv,
       acoes_linkedin_prioritarias: Array.isArray(liAnalysis.areas_melhoria) ? liAnalysis.areas_melhoria.map((am: any) => am.diagnostico || am.recomendacao || '').filter(Boolean).slice(0, 5) : []
     },
     primeiros_cargos_alvo: [],
     plano_90_dias: plano90,
-    recomendacao_prioritaria: liAnalysis.recomendacao_prioritaria || ''
+    recomendacao_prioritaria: liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || ''
   };
 }
 

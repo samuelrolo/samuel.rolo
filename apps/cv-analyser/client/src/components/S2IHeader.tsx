@@ -214,11 +214,6 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
     setMobileMenuOpen(prev => !prev);
   }
 
-  function openMobileMenu() {
-    setLangDropdownOpen(false);
-    setMobileMenuOpen(true);
-  }
-
   function toggleLangDropdown() {
     setMobileMenuOpen(false);
     setLangDropdownOpen(prev => !prev);
@@ -279,7 +274,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
     <>
       <header
         className={`sticky top-0 z-50 transition-all duration-300 border-b bg-white/95 backdrop-blur-md border-slate-200/80 ${
-          scrolledDown ? 'lg:visible invisible h-0 lg:h-auto overflow-hidden lg:overflow-visible' : ''
+          scrolledDown ? 'shadow-sm' : ''
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
@@ -323,7 +318,11 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
 
             <div ref={desktopLangRef} className="relative">
               <button
+                type="button"
                 onClick={toggleLangDropdown}
+                aria-haspopup="menu"
+                aria-expanded={langDropdownOpen}
+                aria-controls="desktop-language-switcher"
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[0.7rem] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 <Globe className="w-3.5 h-3.5" />
@@ -331,7 +330,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
                 <ChevronDown className={`w-3 h-3 transition-transform ${langDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {langDropdownOpen && (
-                <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
+                <div id="desktop-language-switcher" className="absolute right-0 top-full mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
                   {langOptions.map(opt => <LangOption key={opt.code} opt={opt} />)}
                 </div>
               )}
@@ -340,14 +339,22 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
 
           <div className="lg:hidden flex items-center gap-1" ref={mobileLangRef}>
             <button
+              type="button"
               onClick={toggleLangDropdown}
-              className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label={`${labels.langSection}: ${lang.toUpperCase()}`}
+              aria-haspopup="menu"
+              aria-expanded={langDropdownOpen}
+              aria-controls="mobile-language-switcher"
+              className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-500 hover:text-slate-700 border border-slate-200 bg-white/90 transition-colors"
             >
               <Globe className="w-3.5 h-3.5" />
               {lang.toUpperCase()}
             </button>
             <button
+              type="button"
               onClick={toggleMobileMenu}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation-drawer"
               className="p-2 -mr-2 text-slate-500 hover:text-slate-800"
               aria-label={labels.menu}
             >
@@ -357,29 +364,19 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         </div>
       </header>
 
-      {scrolledDown && !mobileMenuOpen && (
-        <button
-          onClick={openMobileMenu}
-          className="lg:hidden fixed top-3 right-3 z-[60] p-2.5 bg-white/95 shadow-lg border border-slate-100 rounded-xl text-slate-800"
-          aria-label={labels.menu}
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      )}
-
       {langDropdownOpen && !mobileMenuOpen && (
-        <div className="lg:hidden fixed top-11 right-3 z-[55] w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1">
+        <div id="mobile-language-switcher" className="lg:hidden fixed top-11 right-3 z-[55] w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1">
           {langOptions.map(opt => <LangOption key={opt.code} opt={opt} isMobile />)}
         </div>
       )}
 
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+        <div id="mobile-navigation-drawer" className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <div className="flex items-center justify-between px-4 h-11 border-b border-slate-200/80">
             <a href={homeHref} className="shrink-0">
               <img src="/logo-s2i.png" alt={labels.logoAlt} width="240" height="64" decoding="async" className="h-10 w-auto object-contain" style={{ width: 'auto' }} />
             </a>
-            <button onClick={closeAllMenus} className="p-2 -mr-2 text-slate-800" aria-label={labels.closeMenu}>
+            <button type="button" onClick={closeAllMenus} className="p-2 -mr-2 text-slate-800" aria-label={labels.closeMenu}>
               <X className="w-5 h-5" />
             </button>
           </div>

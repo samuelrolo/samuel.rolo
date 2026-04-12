@@ -876,7 +876,7 @@ export default function CareerPathResults() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setLocation(localePath('/'))}
+              onClick={() => setLocation('/')}
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
