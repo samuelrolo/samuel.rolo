@@ -117,3 +117,21 @@ Ação corretiva adicional publicada: foi criado e publicado um **alias de compa
 | Homepage ES / página Sobre ES | Footer `Privacidad` | `https://www.share2inspire.pt/es/politica-privacidad` | **404 NOT_FOUND** em produção. |
 
 Conclusão intermédia: a correção do bundle antigo resolveu o problema de homepage em branco, mas persiste pelo menos uma falha real de navegação no footer em espanhol. O problema atual já não é apenas de asset em falta; existe também pelo menos um **href localizado incorreto ou sem entrypoint publicado** para a política de privacidade em espanhol.
+
+## Revalidação após deploy dos entrypoints legais localizados — 12/04/2026
+
+| Fluxo validado | URL final | Resultado observado |
+| --- | --- | --- |
+| Acesso direto à privacidade ES | `https://www.share2inspire.pt/es/politica-privacidad` | A rota deixou de devolver **404**. Primeiro mostrou loading e depois carregou corretamente a página **Política de Privacidad**. |
+| Navegação pelo footer ES para `Información Legal` | `https://www.share2inspire.pt/es/informacion-legal` | Carregamento correto da página **Información Legal** sem ecrã branco. |
+| Navegação pelo header ES para `Acerca de` | `https://www.share2inspire.pt/es/sobre` | Carregamento correto da página **Sobre Share2Inspire** sem ecrã branco. |
+
+Conclusão intermédia: depois da publicação do commit `fe2b3277a`, a falha remanescente encontrada no footer espanhol passou a estar corrigida, e a navegação real por **footer** e **header/menu** em espanhol voltou a renderizar conteúdo normal em produção.
+
+## Nova evidência crítica em EN após a correção das rotas ES — 12/04/2026
+
+| URL testada | Comportamento observado | Impacto |
+| --- | --- | --- |
+| `https://www.share2inspire.pt/en/privacy-policy` | A navegação acabou em `https://www.share2inspire.pt/en/pages/privacy-policy`, com **ecrã totalmente em branco** no browser. | A rota legal canónica em inglês continua com comportamento incorreto em produção. |
+
+Conclusão intermédia: embora a correção anterior tenha resolvido a rota espanhola de privacidade e a navegação via header/footer em ES, existe ainda pelo menos uma falha remanescente na camada EN. O problema aparenta envolver uma **reescrita/redirecionamento para `/en/pages/...`** que não está a renderizar conteúdo.

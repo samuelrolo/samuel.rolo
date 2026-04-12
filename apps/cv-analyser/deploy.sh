@@ -30,7 +30,7 @@ SPA_DIRS=(
   "cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence"
   "bundle" "en/bundle" "linkedin-roaster" "en/linkedin-roaster" "estudante" "student-pack" "en/student-pack"
   "es" "es/cv-analyser" "es/career-path" "es/career-intelligence" "es/bundle" "es/linkedin-roaster"
-  "es/student-pack" "es/pack-estudiante" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services"
+  "es/student-pack" "es/pack-estudiante" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services" "en/pages/privacy-policy"
   "sobre" "about" "en/about" "en/sobre" "es/sobre"
   "contactos" "contact" "en/contact" "en/contactos" "es/contacto"
   "politica-privacidade" "politica-cookies" "informacao-legal" "termos-condicoes" "tratamento-dados"

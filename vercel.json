@@ -136,8 +136,8 @@
       "statusCode": 301
     },
     {
-      "source": "/en/privacy-policy",
-      "destination": "/en/pages/privacy-policy",
+      "source": "/en/pages/privacy-policy",
+      "destination": "/en/privacy-policy",
       "statusCode": 301
     },
     {
@@ -317,8 +317,8 @@
       "destination": "/en/services"
     },
     {
-      "source": "/en/pages/privacy-policy",
-      "destination": "/en/pages/privacy-policy"
+      "source": "/en/privacy-policy",
+      "destination": "/en/privacy-policy"
     },
     {
       "source": "/en/pages/contact",
