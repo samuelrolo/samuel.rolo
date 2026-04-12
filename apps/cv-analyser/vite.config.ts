@@ -21,7 +21,7 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
     // Warn when any individual chunk exceeds 500 KB (uncompressed)
     chunkSizeWarningLimit: 500,

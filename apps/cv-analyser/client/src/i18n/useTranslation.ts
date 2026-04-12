@@ -38,8 +38,7 @@ export function localePath(ptPath: string, lang?: Lang): string {
  */
 export function switchLangUrl(targetLang: Lang): string {
   const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  const nextPath = switchPathToLang(currentPath, targetLang);
-  return `${nextPath}${window.location.search}${window.location.hash}`;
+  return switchPathToLang(currentPath, targetLang);
 }
 
 /**
