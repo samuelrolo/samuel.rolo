@@ -175,6 +175,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const desktopLangRef = useRef<HTMLDivElement>(null);
   const mobileLangRef = useRef<HTMLDivElement>(null);
+  const mobileLangDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
@@ -193,9 +194,10 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
       const clickedDesktop = desktopLangRef.current?.contains(target);
-      const clickedMobile = mobileLangRef.current?.contains(target);
+      const clickedMobileTrigger = mobileLangRef.current?.contains(target);
+      const clickedMobileDropdown = mobileLangDropdownRef.current?.contains(target);
 
-      if (!clickedDesktop && !clickedMobile) {
+      if (!clickedDesktop && !clickedMobileTrigger && !clickedMobileDropdown) {
         setLangDropdownOpen(false);
       }
     };
@@ -365,7 +367,11 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
       </header>
 
       {langDropdownOpen && !mobileMenuOpen && (
-        <div id="mobile-language-switcher" className="lg:hidden fixed top-11 right-3 z-[55] w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1">
+        <div
+          id="mobile-language-switcher"
+          ref={mobileLangDropdownRef}
+          className="lg:hidden fixed top-11 right-3 z-[55] w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1"
+        >
           {langOptions.map(opt => <LangOption key={opt.code} opt={opt} isMobile />)}
         </div>
       )}
