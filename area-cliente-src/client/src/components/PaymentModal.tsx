@@ -463,7 +463,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 </p>
               </div>
               <button
-                onClick={() => { onClose(); window.location.href = '/area-cliente/membro'; }}
+                onClick={() => { onClose(); window.location.href = '/area-cliente/membros'; }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] text-[#1a1a1a] text-sm font-semibold rounded hover:bg-[#d4b574] transition-all duration-300"
               >
                 {t('pay.goToMember')}

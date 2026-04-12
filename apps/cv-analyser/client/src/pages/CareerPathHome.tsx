@@ -935,14 +935,14 @@ export default function CareerPathHome() {
                   {pick('2. LinkedIn', '2. LinkedIn', '2. LinkedIn')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Linkedin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <Linkedin className="hidden sm:block absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <input
                     type="url"
                     placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                     disabled={loading}
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
+                    className="w-full pl-4 sm:pl-11 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
                   />
                 </div>
                 {/* Transparency note */}

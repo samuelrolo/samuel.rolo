@@ -53,6 +53,7 @@ export function normalizeCareerPathPayload(payload: any, language?: string) {
   const analysis = preferObject(
     careerPath.career_path,
     careerPath.analysis,
+    careerPath.data,
     raw.career_path,
     raw.analysis,
     raw.data,
@@ -74,6 +75,7 @@ export function normalizeCareerIntelligencePayload(payload: any, language?: stri
   const raw = safeObject(payload);
   const careerIntelligence = safeObject(raw.career_intelligence);
   const analysis = preferObject(
+    careerIntelligence.career_intelligence,
     careerIntelligence.career_path,
     careerIntelligence.analysis,
     careerIntelligence.data,

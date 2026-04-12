@@ -21,6 +21,7 @@ import ClientAreaLanding from "./pages/ClientAreaLanding";
 function Routes() {
   return (
     <Switch>
+      <Route path="" component={Home} />
       <Route path="/" component={Home} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/contactos" component={ClientAreaLanding} />
@@ -37,6 +38,9 @@ function Routes() {
         </ProtectedRoute>
       </Route>
       {/* Legacy redirects */}
+      <Route path="/membro">
+        <Redirect to="/membros" />
+      </Route>
       <Route path="/dashboard">
         <Redirect to="/membros" />
       </Route>
@@ -51,7 +55,7 @@ function Routes() {
 
 function Layout() {
   const [location] = useLocation();
-  const isAuthPage = location === '/auth';
+  const isAuthPage = location === "/auth";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
@@ -65,8 +69,8 @@ function Layout() {
   );
 }
 
-// Detect base path: in production under /area-cliente/, in dev at root
-const basePath = window.location.pathname.startsWith('/area-cliente') ? '/area-cliente' : '';
+const rawBasePath = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+const basePath = rawBasePath === "/" ? "" : rawBasePath;
 
 function App() {
   return (
