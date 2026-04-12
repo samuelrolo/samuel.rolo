@@ -6,32 +6,30 @@
  *   <h1>{t('hero_title')}</h1>
  *   <a href={localePath('/cv-analyser')}>...</a>
  */
+import {
+  getCanonicalPtPath,
+  resolvePageId,
+  switchPathToLang,
+  getLocalizedPath,
+} from '@/config/navigation';
 import { t as translate, pick as pickFn, getLang, type Lang } from './translations';
-
-/* ── URL path mapping (PT canonical → EN / ES equivalents) ── */
-const pathMap: Record<string, Record<string, string>> = {
-  '/':                    { en: '/en',                    es: '/es' },
-  '/cv-analyser':         { en: '/en/cv-analyser',        es: '/es/cv-analyser' },
-  '/career-path':         { en: '/en/career-path',        es: '/es/career-path' },
-  '/career-intelligence': { en: '/en/career-intelligence', es: '/es/career-intelligence' },
-  '/linkedin-roaster':    { en: '/en/linkedin-roaster',    es: '/es/linkedin-roaster' },
-  '/bundle':              { en: '/en/bundle',              es: '/es/bundle' },
-  '/estudante':           { en: '/en/student-pack',        es: '/es/student-pack' },
-  '/conhecimento':        { en: '/en/knowledge',           es: '/es/conocimiento' },
-  '/servicos':            { en: '/en/services',            es: '/es/servicos' },
-  '/sobre':               { en: '/en/about',               es: '/es/sobre' },
-  '/contactos':           { en: '/en/contact',             es: '/es/contacto' },
-  '/area-cliente':        { en: '/area-cliente/?lang=en',   es: '/area-cliente/?lang=es' },
-};
 
 /**
  * Convert a PT-canonical path to the equivalent path in the current language.
- * If no mapping exists, prepends the language prefix (e.g. /en/some-path).
+ * If the path matches a known route, use the central navigation config.
+ * Otherwise, fall back to prefixing the language.
  */
 export function localePath(ptPath: string, lang?: Lang): string {
   const l = lang || getLang();
-  if (l === 'pt') return ptPath;
-  return pathMap[ptPath]?.[l] || `/${l}${ptPath}`;
+  const pageId = resolvePageId(ptPath) || resolvePageId(getCanonicalPtPath(ptPath));
+
+  if (pageId) {
+    return getLocalizedPath(pageId, l);
+  }
+
+  const canonicalPtPath = getCanonicalPtPath(ptPath);
+  if (l === 'pt') return canonicalPtPath;
+  return canonicalPtPath === '/' ? `/${l}` : `/${l}${canonicalPtPath}`;
 }
 
 /**
@@ -39,31 +37,9 @@ export function localePath(ptPath: string, lang?: Lang): string {
  * Used by the language switcher in the header.
  */
 export function switchLangUrl(targetLang: Lang): string {
-  const currentPath = window.location.pathname;
-  const search = window.location.search;
-
-  // Strip current lang prefix to get the "base" path
-  let basePath = currentPath;
-  if (currentPath.startsWith('/en/')) basePath = currentPath.slice(3);
-  else if (currentPath.startsWith('/es/')) basePath = currentPath.slice(3);
-  else if (currentPath === '/en' || currentPath === '/es') basePath = '/';
-
-  // Map known EN/ES paths back to PT canonical
-  const reverseMap: Record<string, string> = {};
-  for (const [pt, langs] of Object.entries(pathMap)) {
-    for (const [, mapped] of Object.entries(langs)) {
-      // Strip query params from mapped path for matching
-      const cleanMapped = mapped.split('?')[0];
-      reverseMap[cleanMapped] = pt;
-    }
-  }
-
-  // Try to find the PT canonical path
-  const ptCanonical = reverseMap[basePath] || basePath;
-
-  // Now map to target language
-  if (targetLang === 'pt') return ptCanonical + search;
-  return (pathMap[ptCanonical]?.[targetLang] || `/${targetLang}${ptCanonical}`) + search;
+  const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const nextPath = switchPathToLang(currentPath, targetLang);
+  return `${nextPath}${window.location.search}${window.location.hash}`;
 }
 
 /**
@@ -73,15 +49,10 @@ export function useTranslation() {
   const lang = getLang();
 
   return {
-    /** Current language */
     lang,
-    /** Translate a key */
     t: (key: string, replacements?: Record<string, string>) => translate(key, lang, replacements),
-    /** Pick between PT / EN / ES inline values (strings or JSX) */
     pick: <T = string>(pt: T, en: T, es: T): T => pickFn<T>(pt, en, es, lang),
-    /** Convert a PT-canonical path to the current language equivalent */
     localePath: (ptPath: string) => localePath(ptPath, lang),
-    /** Get the URL to switch to a different language */
     switchLangUrl,
   };
 }

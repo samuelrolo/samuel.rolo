@@ -10,7 +10,7 @@
       ]
     },
     {
-      "source": "/cv-analyser/assets/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -20,48 +20,9 @@
     }
   ],
   "rewrites": [
-    { "source": "/cv-analyser/(.*)", "destination": "/index.html" },
-    { "source": "/career-path/(.*)", "destination": "/index.html" },
-    { "source": "/career-intelligence/(.*)", "destination": "/index.html" },
-    { "source": "/career-intelligence", "destination": "/index.html" },
-    { "source": "/bundle", "destination": "/index.html" },
-    { "source": "/estudante/(.*)", "destination": "/index.html" },
-    { "source": "/estudante", "destination": "/index.html" },
-    { "source": "/linkedin-roaster/(.*)", "destination": "/index.html" },
-    { "source": "/linkedin-roaster", "destination": "/index.html" },
-    { "source": "/conhecimento", "destination": "/index.html" },
-    { "source": "/servicos", "destination": "/index.html" },
-    { "source": "/results", "destination": "/index.html" },
-    { "source": "/career-path/results", "destination": "/index.html" },
-
-    { "source": "/en", "destination": "/index.html" },
-    { "source": "/en/cv-analyser/(.*)", "destination": "/index.html" },
-    { "source": "/en/cv-analyser", "destination": "/index.html" },
-    { "source": "/en/career-path/(.*)", "destination": "/index.html" },
-    { "source": "/en/career-path", "destination": "/index.html" },
-    { "source": "/en/career-intelligence/(.*)", "destination": "/index.html" },
-    { "source": "/en/career-intelligence", "destination": "/index.html" },
-    { "source": "/en/bundle", "destination": "/index.html" },
-    { "source": "/en/student-pack/(.*)", "destination": "/index.html" },
-    { "source": "/en/student-pack", "destination": "/index.html" },
-    { "source": "/en/linkedin-roaster/(.*)", "destination": "/index.html" },
-    { "source": "/en/linkedin-roaster", "destination": "/index.html" },
-    { "source": "/en/pages/knowledge", "destination": "/index.html" },
-    { "source": "/en/pages/services", "destination": "/index.html" },
-
-    { "source": "/es", "destination": "/index.html" },
-    { "source": "/es/cv-analyser/(.*)", "destination": "/index.html" },
-    { "source": "/es/cv-analyser", "destination": "/index.html" },
-    { "source": "/es/career-path/(.*)", "destination": "/index.html" },
-    { "source": "/es/career-path", "destination": "/index.html" },
-    { "source": "/es/career-intelligence/(.*)", "destination": "/index.html" },
-    { "source": "/es/career-intelligence", "destination": "/index.html" },
-    { "source": "/es/bundle", "destination": "/index.html" },
-    { "source": "/es/student-pack/(.*)", "destination": "/index.html" },
-    { "source": "/es/student-pack", "destination": "/index.html" },
-    { "source": "/es/linkedin-roaster/(.*)", "destination": "/index.html" },
-    { "source": "/es/linkedin-roaster", "destination": "/index.html" },
-    { "source": "/es/pages/knowledge", "destination": "/index.html" },
-    { "source": "/es/pages/services", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

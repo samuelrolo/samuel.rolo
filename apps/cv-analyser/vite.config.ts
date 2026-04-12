@@ -6,7 +6,10 @@ import { defineConfig } from "vite";
 const plugins = [react(), tailwindcss()];
 
 export default defineConfig({
-  base: '/cv-analyser/',
+  // Use root-relative asset URLs because the same SPA build is served under
+  // multiple localized mount points (/cv-analyser, /career-path, /en/..., /es/...).
+  // A product-specific base causes stale hashed files and blank pages on non-CV routes.
+  base: '/',
   plugins,
   resolve: {
     alias: {
@@ -64,10 +67,21 @@ export default defineConfig({
     allowedHosts: [
       "localhost",
       "127.0.0.1",
+      ".manus.computer",
     ],
     fs: {
       strict: true,
       deny: ["**/.*"],
     },
+  },
+  preview: {
+    host: true,
+    port: 4173,
+    strictPort: false,
+    allowedHosts: [
+      "localhost",
+      "127.0.0.1",
+      ".manus.computer",
+    ],
   },
 });
