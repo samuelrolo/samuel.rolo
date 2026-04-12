@@ -57,6 +57,8 @@ ASSET_DIRS=(
   "es/cv-analyser/results/assets"
   "es/linkedin-roaster/assets"
   "es/linkedin-roaster/results/assets"
+  "es/pack-estudiante/assets"
+  "es/pack-estudiante/results/assets"
   "es/student-pack/assets"
   "es/student-pack/results/assets"
   "estudante/assets"
@@ -69,6 +71,12 @@ ASSET_DIRS=(
   "student-pack/assets"
   "student-pack/results/assets"
 )
+
+mkdir -p \
+  "$REPO_ROOT/es/pack-estudiante/assets" \
+  "$REPO_ROOT/es/pack-estudiante/results/assets" \
+  "$REPO_ROOT/es/pack-estudiante" \
+  "$REPO_ROOT/es/pack-estudiante/results"
 
 for dir in "${ASSET_DIRS[@]}"; do
   FULL_DIR="$REPO_ROOT/$dir"
@@ -159,6 +167,8 @@ TARGETS=(
   "es/bundle/results/index.html"
   "es/linkedin-roaster/index.html"
   "es/linkedin-roaster/results/index.html"
+  "es/pack-estudiante/index.html"
+  "es/pack-estudiante/results/index.html"
   "es/student-pack/index.html"
   "es/student-pack/results/index.html"
   "es/pages/knowledge/index.html"
