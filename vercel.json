@@ -310,7 +310,7 @@
     },
     {
       "source": "/en/knowledge",
-      "destination": "/en/knowledge"
+      "destination": "/index.html"
     },
     {
       "source": "/en/pages/services",
@@ -454,7 +454,7 @@
     },
     {
       "source": "/sobre",
-      "destination": "/sobre"
+      "destination": "/index.html"
     },
     {
       "source": "/pages/sobre",
@@ -462,11 +462,11 @@
     },
     {
       "source": "/servicos",
-      "destination": "/servicos"
+      "destination": "/index.html"
     },
     {
       "source": "/conhecimento",
-      "destination": "/conhecimento"
+      "destination": "/index.html"
     },
     {
       "source": "/pages/conhecimento",
@@ -474,7 +474,7 @@
     },
     {
       "source": "/contactos",
-      "destination": "/contactos"
+      "destination": "/index.html"
     },
     {
       "source": "/pages/contactos",
@@ -646,7 +646,7 @@
     },
     {
       "source": "/es/servicios",
-      "destination": "/es/servicios"
+      "destination": "/index.html"
     },
     {
       "source": "/es/servicos",
@@ -663,6 +663,30 @@
     {
       "source": "/es/share2inspire",
       "destination": "/pages/share2inspire.html"
+    },
+    {
+      "source": "/en/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/en/services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/en/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/es/sobre",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/es/conocimiento",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/es/contacto",
+      "destination": "/index.html"
     }
   ]
 }
