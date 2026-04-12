@@ -11,11 +11,11 @@ set -e
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$REPO_ROOT/apps/cv-analyser"
-BUILD_DIR="$APP_DIR/dist/public"
+BUILD_DIR="$APP_DIR/dist"
 
 echo "🔨 Building cv-analyser..."
 cd "$APP_DIR"
-npx vite build
+pnpm exec vite build
 
 echo ""
 echo "📦 Syncing assets to all route directories (EXCEPT area-cliente)..."
@@ -95,6 +95,8 @@ echo "📄 Syncing ALL index.html files..."
 #       - en/career-path/example/index.html (EN example output)
 # ⚠️  DO NOT add area-cliente directories here!
 TARGETS=(
+  # Root
+  "index.html"
   # PT routes
   "cv-analyser/index.html"
   "cv-analyser/results/index.html"
@@ -140,6 +142,11 @@ TARGETS=(
   "en/estudante/index.html"
   "en/about/index.html"
   "en/contact/index.html"
+  "en/conhecimento/index.html"
+  "en/contactos/index.html"
+  "en/knowledge/index.html"
+  "en/services/index.html"
+  "en/sobre/index.html"
   # ES routes
   "es/index.html"
   "es/cv-analyser/index.html"
@@ -158,6 +165,12 @@ TARGETS=(
   "es/pages/services/index.html"
   "es/contacto/index.html"
   "es/sobre/index.html"
+  "es/conhecimento/index.html"
+  "es/conocimiento/index.html"
+  "es/contactos/index.html"
+  "es/knowledge/index.html"
+  "es/services/index.html"
+  "es/servicos/index.html"
   # Static/info pages (PT)
   "pages/pagamento/index.html"
   "pages/pagamento_sucesso/index.html"
@@ -187,7 +200,7 @@ echo ""
 # Verify all files have the same hash
 CORRECT_HASH=$(grep -o 'assets/index-[^"]*\.js' "$SRC")
 ERRORS=0
-for f in $(grep -rl "assets/index-" --include="*.html" "$REPO_ROOT" 2>/dev/null | grep -v area-cliente | grep -v node_modules | grep -v .git | grep -v '/example/' | grep -v 'apps/cv-analyser/deploy'); do
+for f in $(grep -rl "assets/index-" --include="*.html" "$REPO_ROOT" 2>/dev/null | grep -v area-cliente | grep -v node_modules | grep -v .git | grep -v '/example/' | grep -v 'apps/cv-analyser/deploy' | grep -v '/_archive/'); do
   HASH=$(grep -o 'assets/index-[^"]*\.js' "$f" 2>/dev/null | head -1)
   if [ -n "$HASH" ] && [ "$HASH" != "$CORRECT_HASH" ]; then
     echo "  ❌ OUTDATED: $f (has $HASH, expected $CORRECT_HASH)"
