@@ -1713,22 +1713,28 @@ Return ONLY the extracted text in a clean CV-like format. If you cannot access t
         console.log(`✅ LinkedIn profile extracted: ${cvText.length} characters`);
 
         if (!cvText || cvText.length < 50) {
-
-          console.warn('⚠️ LinkedIn scrape returned insufficient data, using URL as context');
-
-          cvText = `LinkedIn Profile URL: ${linkedinUrlInput}\nNote: Could not extract full profile data. The profile may be private or restricted. Please analyze based on any available public information from this URL.`;
-
+          console.error('❌ LinkedIn scrape returned insufficient data. Rejecting analysis.');
+          return jsonResponse({
+            success: false,
+            error: language === 'en'
+              ? 'Failed to extract enough data from the LinkedIn profile. The profile might be private or restricted, or the URL is incorrect. Please check the URL or try again later.'
+              : language === 'es'
+                ? 'No se pudieron extraer suficientes datos del perfil de LinkedIn. El perfil podría ser privado o restringido, o la URL es incorrecta. Por favor, verifica la URL o inténtalo de nuevo más tarde.'
+                : 'Não foi possível extrair dados suficientes do perfil LinkedIn. O perfil pode ser privado ou restrito, ou o URL está incorreto. Por favor, verifica o URL ou tenta novamente mais tarde.'
+          }, 400);
         }
 
       } catch (error) {
 
-        console.error('❌ Erro ao extrair perfil LinkedIn:', error);
-
-        // Instead of failing, use the URL as minimal context
-
-        cvText = `LinkedIn Profile URL: ${linkedinUrlInput}\nNote: Extraction failed (${error.message}). Please analyze based on any available public information from this URL.`;
-
-        console.log('⚠️ Using URL-only fallback for analysis');
+        console.error('❌ Erro ao extrair perfil LinkedIn. Rejeitando análise:', error);
+        return jsonResponse({
+          success: false,
+          error: language === 'en'
+            ? 'An error occurred while extracting data from the LinkedIn profile. The profile might be private or restricted, or the URL is incorrect. Please check the URL or try again later.'
+            : language === 'es'
+              ? 'Ocurrió un error al extraer datos del perfil de LinkedIn. El perfil podría ser privado o restringido, o la URL es incorrecta. Por favor, verifica la URL o inténtalo de nuevo más tarde.'
+              : 'Ocorreu um erro ao extrair dados do perfil LinkedIn. O perfil pode ser privado ou restrito, ou o URL está incorreto. Por favor, verifica o URL ou tenta novamente mais tarde.'
+        }, 400);
 
       }
 
@@ -7791,10 +7797,12 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
             ? 'Conserva exactamente el contenido existente en español. No traduzcas ni reescribas el análisis más allá de corregir la sintaxis JSON.'
             : 'Preserva exatamente o conteúdo existente em Português de Portugal. Não traduzas nem reescrevas a análise além de corrigir a sintaxe JSON.';
 
-        const roastPromptPT = `Atuas como Consultor Sénior de Personal Branding e Estratégia de LinkedIn, com mais de 15 anos de experiência em recrutamento executivo e otimização de perfis para profissionais de topo. O teu tom é PROFISSIONAL, CONSTRUTIVO e DETALHADO — como uma auditoria séria feita por um especialista que quer genuinamente ajudar o profissional a melhorar.
-
-
-
+           const roastPromptPT = `Atuas como Consultor Sénior de Personal Branding e Estratégia de LinkedIn, com mais de 15 anos de experiência em recrutamento executivo e otimização de perfis para profissionais de topo. O teu tom é PROFISSIONAL, CONSTRUTIVO e DETALHADO — como uma auditoria séria feita por um especialista que quer genuinamente ajudar o profissional a melhorar.
+INSTRUÇÕES CRÍTICAS ANTI-ALUCINAÇÃO:
+1. Baseia a tua análise EXCLUSIVAMENTE nos dados fornecidos no CV e perfil LinkedIn.
+2. NÃO inventes, fabriques ou assumes empresas, cargos, experiências, competências ou qualificações que não estejam explicitamente mencionados nos dados fornecidos.
+3. Se alguma informação estiver em falta, ambígua ou pouco clara, diz explicitamente que essa informação não está disponível em vez de fazer suposições.
+4. NÃO extrapoles histórico profissional, setor, antiguidade, resultados, responsabilidades, formação ou certificações para além do que está claramente presente nos dados.
 REGRAS ABSOLUTAS DE IDIOMA E TOM:
 
 1. Escreve SEMPRE em Português de Portugal (PT-PT), NUNCA em Português do Brasil.
@@ -8163,11 +8171,13 @@ REGRAS FINAIS:
 
 - NUNCA uses comentários genéricos que possam aplicar-se a qualquer perfil. Cada frase deve ser específica a este profissional.`;
 
-        const roastPromptEN = `You are a Senior Personal Branding & LinkedIn Strategy Consultant with over 15 years of experience in executive recruitment and profile optimisation for top professionals. Your tone is PROFESSIONAL, CONSTRUCTIVE and DETAILED — like a serious audit conducted by a specialist who genuinely wants to help the professional improve.
-
-
-
-ABSOLUTE LANGUAGE AND TONE RULES:
+          const roastPromptEN = `You are a Senior Personal Branding & LinkedIn Strategy Consultant with over 15 years of experience in executive recruitment and profile optimisation for top professionals. Your tone is PROFESSIONAL, CONSTRUCTIVE and DETAILED — like a serious audit conducted by a specialist who genuinely wants to help the professional improve.
+CRITICAL ANTI-HALLUCINATION INSTRUCTIONS:
+1. Base your analysis EXCLUSIVELY on the data provided in the CV and LinkedIn profile.
+2. Do NOT invent, fabricate, or assume any companies, roles, experiences, skills, or qualifications that are not explicitly mentioned in the provided data.
+3. If information is missing, ambiguous, or unclear, explicitly state that it is not available rather than making assumptions.
+4. Do NOT extrapolate work history, industry, seniority, achievements, responsibilities, education, or certifications beyond what is clearly present in the provided data.
+ABSOLUTE LANGUAGE AND TONE RULES::
 
 1. Write ALWAYS in English.
 
@@ -8531,10 +8541,12 @@ FINAL RULES:
 
 - NEVER make generic comments that could apply to any profile. Every sentence must be specific to this professional.`;
 
-        const roastPromptES = `Actúas como Consultor Sénior de Personal Branding y Estrategia de LinkedIn, con más de 15 años de experiencia en reclutamiento ejecutivo y optimización de perfiles para profesionales de alto nivel. Tu tono es PROFESIONAL, CONSTRUCTIVO y DETALLADO — como una auditoría seria realizada por un especialista que realmente quiere ayudar al profesional a mejorar.
-
-
-
+           const roastPromptES = `Actúas como Consultor Sénior de Personal Branding y Estrategia de LinkedIn, con más de 15 años de experiencia en reclutamiento ejecutivo y optimización de perfiles para profesionales de alto nivel. Tu tono es PROFESIONAL, CONSTRUCTIVO y DETALLADO — como una auditoría seria realizada por un especialista que realmente quiere ayudar al profesional a mejorar.
+INSTRUCCIONES CRÍTICAS ANTI-ALUCINACIÓN:
+1. Basa tu análisis EXCLUSIVAMENTE en los datos proporcionados en el CV y perfil LinkedIn.
+2. NO inventes, fabriques o asumas empresas, cargos, experiencias, competencias o cualificaciones que no estén explícitamente mencionados en los datos proporcionados.
+3. Si falta información, es ambigua o no está clara, indícalo explícitamente en lugar de hacer suposiciones.
+4. NO extrapoles historial profesional, sector, seniority, logros, responsabilidades, estudios o certificaciones más allá de lo que esté claramente presente en los datos proporcionados.
 REGLAS ABSOLUTAS DE IDIOMA Y TONO:
 
 1. Escribe SIEMPRE en Español.

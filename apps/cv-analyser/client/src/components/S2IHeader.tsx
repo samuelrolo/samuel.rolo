@@ -122,7 +122,7 @@ function UserAvatar({
   if (initials) {
     return (
       <a
-        href="/area-cliente/membros"
+        href="/area-cliente"
         title={memberAreaLabel}
         onClick={onClick}
         className={

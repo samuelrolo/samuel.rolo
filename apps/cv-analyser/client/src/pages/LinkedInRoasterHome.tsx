@@ -456,7 +456,7 @@ export default function LinkedInRoasterHome() {
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("URL do LinkedIn", "LinkedIn URL", "URL de LinkedIn")}</label>
                 <div className="relative">
-                  <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600" />
+                  <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 md:left-4" />
                   <input
                     type="url"
                     value={linkedinUrl}
