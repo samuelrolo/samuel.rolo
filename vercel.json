@@ -516,11 +516,11 @@
     },
     {
       "source": "/estudante",
-      "destination": "/estudante/index.html"
+      "destination": "/estudante"
     },
     {
       "source": "/estudante/:path*",
-      "destination": "/estudante/index.html"
+      "destination": "/estudante"
     },
     {
       "source": "/en/student-pack",
