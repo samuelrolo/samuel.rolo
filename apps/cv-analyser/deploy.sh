@@ -34,8 +34,9 @@ SPA_DIRS=(
   "sobre" "about" "en/about" "en/sobre" "es/sobre"
   "contactos" "contact" "en/contact" "en/contactos" "es/contacto"
   "politica-privacidade" "politica-cookies" "informacao-legal" "termos-condicoes" "tratamento-dados"
+  "en/privacy-policy" "en/cookie-policy" "en/legal-information" "en/terms-and-conditions" "en/data-processing"
   "en/politica-privacidade" "en/politica-cookies" "en/informacao-legal" "en/termos-condicoes" "en/tratamento-dados"
-  "es/politica-cookies"
+  "es/politica-privacidad" "es/politica-cookies" "es/informacion-legal" "es/terminos-condiciones" "es/tratamiento-datos"
 )
 
 # All critical routes to verify after deploy
@@ -65,8 +66,17 @@ ROUTES=(
   "https://www.share2inspire.pt/en/contact"
   "https://www.share2inspire.pt/es/contacto"
   "https://www.share2inspire.pt/politica-privacidade"
+  "https://www.share2inspire.pt/en/privacy-policy"
+  "https://www.share2inspire.pt/en/cookie-policy"
+  "https://www.share2inspire.pt/en/legal-information"
+  "https://www.share2inspire.pt/en/terms-and-conditions"
+  "https://www.share2inspire.pt/en/data-processing"
   "https://www.share2inspire.pt/en/politica-privacidade"
+  "https://www.share2inspire.pt/es/politica-privacidad"
   "https://www.share2inspire.pt/es/politica-cookies"
+  "https://www.share2inspire.pt/es/informacion-legal"
+  "https://www.share2inspire.pt/es/terminos-condiciones"
+  "https://www.share2inspire.pt/es/tratamiento-datos"
   "https://www.share2inspire.pt/termos-condicoes"
   "https://www.share2inspire.pt/tratamento-dados"
 )
