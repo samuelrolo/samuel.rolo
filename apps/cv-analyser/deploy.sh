@@ -20,6 +20,11 @@ BUILD_DIR="$SCRIPT_DIR/dist"
 DEPLOY_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMMIT_MSG="${1:-deploy: update CV Analyser assets}"
 
+# Root entrypoints that must always reference the newest hashed bundle
+ROOT_ENTRYPOINTS=(
+  "." "en" "es"
+)
+
 # All SPA directories that share the same build output
 SPA_DIRS=(
   "cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence"
@@ -35,6 +40,9 @@ SPA_DIRS=(
 
 # All critical routes to verify after deploy
 ROUTES=(
+  "https://www.share2inspire.pt/"
+  "https://www.share2inspire.pt/en"
+  "https://www.share2inspire.pt/es"
   "https://www.share2inspire.pt/cv-analyser"
   "https://www.share2inspire.pt/cv-analyser/results"
   "https://www.share2inspire.pt/career-path"
@@ -103,6 +111,20 @@ mkdir -p "$DEPLOY_DIR/assets/"
 cp -r "$BUILD_DIR/assets/"* "$DEPLOY_DIR/assets/"
 echo "  ✓ root assets/"
 
+for entry in "${ROOT_ENTRYPOINTS[@]}"; do
+  if [ "$entry" = "." ]; then
+    TARGET_DIR="$DEPLOY_DIR"
+    LABEL="root"
+  else
+    TARGET_DIR="$DEPLOY_DIR/$entry"
+    LABEL="$entry"
+  fi
+
+  mkdir -p "$TARGET_DIR"
+  cp "$BUILD_DIR/index.html" "$TARGET_DIR/index.html"
+  echo "  ✓ $LABEL/index.html"
+done
+
 for dir in "${SPA_DIRS[@]}"; do
   TARGET="$DEPLOY_DIR/$dir"
 
@@ -157,6 +179,23 @@ if [ ! -f "$DEPLOY_DIR/assets/$NEW_CSS" ]; then
 else
   echo "  ✓ root assets/$NEW_CSS"
 fi
+
+for entry in "${ROOT_ENTRYPOINTS[@]}"; do
+  if [ "$entry" = "." ]; then
+    TARGET="$DEPLOY_DIR/index.html"
+    LABEL="root/index.html"
+  else
+    TARGET="$DEPLOY_DIR/$entry/index.html"
+    LABEL="$entry/index.html"
+  fi
+
+  if grep -q "$NEW_JS" "$TARGET" 2>/dev/null; then
+    echo "  ✓ $LABEL"
+  else
+    echo "  ✗ $LABEL — WRONG HASH!"
+    ALL_LOCAL_OK=false
+  fi
+done
 
 for dir in "${SPA_DIRS[@]}"; do
   TARGET="$DEPLOY_DIR/$dir/index.html"
