@@ -1,213 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt">
+<!doctype html>
+<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <!-- Preconnect hints para CDNs -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO Tags -->
-    <link rel="canonical" href="https://www.share2inspire.pt/pages/tratamento-dados" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <!-- /SEO Tags -->
-
-    <title>Tratamento de Dados | Share2Inspire | Samuel Rolo</title>
-    <meta property="og:title" content="Tratamento de Dados | Share2Inspire" />
-    <meta property="og:description" content="Informação sobre o tratamento de dados pessoais pela Share2Inspire, em conformidade com o RGPD." />
-    <meta property="og:url" content="https://www.share2inspire.pt/pages/tratamento-dados" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Share2Inspire" />
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tratamento de Dados | Share2Inspire" />
-    <meta name="twitter:description" content="Informação sobre o tratamento de dados pessoais pela Share2Inspire, em conformidade com o RGPD." />
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Tratamento de Dados | Share2Inspire",
-      "description": "Informação sobre o tratamento de dados pessoais pela Share2Inspire, em conformidade com o RGPD.",
-      "url": "https://www.share2inspire.pt/pages/tratamento-dados",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Share2Inspire",
-        "url": "https://www.share2inspire.pt"
-      }
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Share2Inspire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+    <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
     </script>
-    <meta name="description" content="Informações sobre o tratamento de dados pessoais pela Share2Inspire.">
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/assets/s2i-modern.css">
-    <style>
-        /* Estilos para a página */
-        .page-header {
-            background-color: #f8f9fa;
-            padding: 100px 0 50px;
-            margin-bottom: 50px;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .breadcrumb-item a {
-            color: #BF9A33;
-            text-decoration: none;
-        }
-
-        .breadcrumb-item.active {
-            color: #6c757d;
-        }
-
-        .content-section {
-            padding: 40px 0;
-        }
-
-        .content-section h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .content-section h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #333;
-            margin: 1.5rem 0 1rem;
-        }
-
-        .content-section p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .content-section ul {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-
-        .content-section li {
-            margin-bottom: 0.5rem;
-            line-height: 1.6;
-        }
-
-        .modal-header {
-            background-color: #BF9A33;
-            color: #fff;
-        }
-
-        .modal-title {
-            font-weight: 600;
-        }
-
-        .modal-body label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-footer .btn-primary {
-            background-color: #BF9A33;
-            border-color: #BF9A33;
-        }
-
-        .modal-footer .btn-primary:hover {
-            background-color: #a88629;
-            border-color: #a88629;
-        }
-
-        /* Estilos globais para botões primários */
-        .btn-primary {
-            background-color: #212529 !important;
-            border-color: #212529 !important;
-            color: #fff !important;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
-            color: #fff !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
-        }
-
-        .btn-primary:focus {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
-            box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
-        }
-
-        /* Media queries para otimização mobile */
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 80px 0 40px;
-                margin-bottom: 30px;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .content-section {
-                padding: 30px 0;
-            }
-        }
-    </style>
-<noscript>
-</noscript>
-    <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
-        crossorigin="anonymous"></script>
-
-    <style>
-    /* Mega Menu Serviços */
-    .nav-item.mega-dropdown{position:relative}
-    .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,0.08);padding:16px 20px;min-width:360px;z-index:1050}
-    .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
-    .mega-menu .mega-col{margin-bottom:10px}.mega-menu .mega-col:last-child{margin-bottom:0}
-    .mega-menu .mega-step-label{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:4px}
-    .mega-menu .mega-link{display:block;padding:3px 0;font-size:0.8rem;font-weight:400;color:#555;text-decoration:none;transition:color 0.2s}
-    .mega-menu .mega-link:hover{color:#C9A961}
-    
-    .mega-menu .mega-divider{height:1px;background:#f0f0f0;margin:8px 0}
-    @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;min-width:auto;padding:8px 12px;background:#fafafa}}
-    </style>
+    <!-- Google Ads + GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17015553005');
+      gtag('config', 'G-8GQ1KM9FQS');
+    </script>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -221,305 +44,20 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '3865352233767400');
 fbq('track', 'PageView');
 </script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-    <script src="/js/webview-detect.js" defer></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script type="module" crossorigin src="/assets/index-Cybi-4-e.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-radix-D0Yik1lL.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-pdf-BXl3LOEh.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-charts-oqdS8ALM.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-CiNYY8mh.css">
 </head>
 
-<body>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-8GQ1KM9FQS');
-    gtag('config', 'AW-17015553005');
-    </script>
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm font-sans" id="s2i-header">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <a href="https://www.share2inspire.pt" class="flex items-center gap-2 shrink-0">
-          <img src="/images/logo-transparent.png" alt="Share2Inspire" class="h-10" style="width:auto" />
-        </a>
-        <nav class="hidden lg:flex items-center gap-1">
-          <a href="https://www.share2inspire.pt" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Início</a>
-          <a href="/cv-analyser" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">CV Analyser</a>
-          <a href="/career-path" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Career Path</a>
-          <a href="/career-intelligence" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Career Intelligence</a>
-          <a href="/linkedin-roaster" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">LinkedIn Roaster</a>
-          <a href="/bundle" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Bundle</a>
-          <a href="/estudante" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Pack Estudante</a>
-          <a href="/servicos" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Serviços</a>
-          <a href="/conhecimento" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Knowledge Hub</a>
-          <a href="/sobre" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Sobre</a>
-          <a href="/contactos" class="px-3 py-1.5 rounded-md text-[0.75rem] font-medium tracking-wide transition-colors whitespace-nowrap text-slate-500 hover:text-slate-800 hover:bg-slate-50">Contactos</a>
-        </nav>
-        <div class="hidden lg:flex items-center gap-2">
-          <a href="/area-cliente/" class="px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors">Login</a>
-          <!-- Language dropdown -->
-          <div class="relative" id="langDropdown">
-            <button onclick="document.getElementById('langMenu').classList.toggle('hidden')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[0.7rem] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              <span id="langLabel">PT</span>
-            </button>
-            <div id="langMenu" class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg py-1 min-w-[130px] z-50">
-              <a href="#" onclick="setLang('pt'); return false;" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#C9A961] font-medium bg-[#C9A961]/5" data-lang="pt">PT — Português</a>
-              <a href="#" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" data-lang="en">EN — English</a>
-              <a href="#" class="lang-opt flex items-center gap-2 px-3 py-1.5 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" data-lang="es">ES — Español</a>
-            </div>
-          </div>
-        </div>
-        <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-600 hover:text-slate-900" id="menuToggleBtn">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-      <!-- Mobile menu -->
-      <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-1">
-        <a href="https://www.share2inspire.pt" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Início</a>
-        <a href="/cv-analyser" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">CV Analyser</a>
-        <a href="/career-path" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Career Path</a>
-        <a href="/career-intelligence" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Career Intelligence</a>
-        <a href="/linkedin-roaster" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">LinkedIn Roaster</a>
-        <a href="/bundle" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Bundle</a>
-        <a href="/estudante" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Pack Estudante</a>
-        <a href="/servicos" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Serviços</a>
-        <a href="/conhecimento" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Knowledge Hub</a>
-        <a href="/sobre" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Sobre</a>
-        <a href="/contactos" class="block px-4 py-3 rounded-lg text-base transition-colors text-slate-700 hover:text-slate-900 hover:bg-slate-50">Contactos</a>
-        <div class="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
-          <a href="/area-cliente/" class="px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors">Login</a>
-        </div>
-      </div>
-    </header>
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Tratamento de Dados</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Tratamento de Dados</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Conteúdo do Tratamento de Dados -->
-    <section class="policy-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="policy-text">
-                        <h2>Tratamento de Dados Pessoais</h2>
-                        <p>A Share2Inspire está empenhada em proteger a privacidade e os dados pessoais dos seus
-                            clientes e utilizadores. Este documento explica como recolhemos, utilizamos, partilhamos e
-                            protegemos os seus dados pessoais em conformidade com o Regulamento Geral de Proteção de
-                            Dados (RGPD) e outras leis de proteção de dados aplicáveis.</p>
-                        <h3>Responsável pelo Tratamento</h3>
-                        <p>O responsável pelo tratamento dos seus dados pessoais é:</p>
-                        <p>
-                            <strong>Share2Inspire</strong><br>
-                            Rua Capitão Joaquim Varela Gusmão 5<br>
-                            2640-791 Mafra, Portugal<br>
-                            Email: geral@share2inspire.pt<br>
-                            Telefone: +351 961 925 050
-                        </p>
-                        <h3>Dados Pessoais que Recolhemos</h3>
-                        <p>Podemos recolher os seguintes tipos de dados pessoais:</p>
-                        <ul>
-                            <li>Dados de identificação (nome, endereço de email, número de telefone)</li>
-                            <li>Dados profissionais (empresa, cargo)</li>
-                            <li>Dados de utilização do website (endereço IP, cookies, histórico de navegação)</li>
-                            <li>Informações fornecidas em formulários de contacto ou inscrição</li>
-                        </ul>
-                        <h3>Finalidades do Tratamento</h3>
-                        <p>Tratamos os seus dados pessoais para as seguintes finalidades:</p>
-                        <ul>
-                            <li>Fornecer os serviços solicitados (consultoria, coaching, formações)</li>
-                            <li>Responder a pedidos de informação ou contacto</li>
-                            <li>Enviar comunicações de marketing (se consentido)</li>
-                            <li>Melhorar os nossos serviços e a experiência do utilizador</li>
-                            <li>Cumprir obrigações legais e contratuais</li>
-                        </ul>
-                        <h3>Base Legal para o Tratamento</h3>
-                        <p>O tratamento dos seus dados pessoais é baseado em uma ou mais das seguintes bases legais:</p>
-                        <ul>
-                            <li>Consentimento (por exemplo, para envio de newsletter)</li>
-                            <li>Execução de um contrato (para fornecer os serviços solicitados)</li>
-                            <li>Interesse legítimo (para melhorar os nossos serviços)</li>
-                            <li>Cumprimento de obrigações legais</li>
-                        </ul>
-                        <h3>Período de Conservação</h3>
-                        <p>Conservamos os seus dados pessoais apenas pelo tempo necessário para cumprir as finalidades
-                            para as quais foram recolhidos, a menos que seja necessário conservá-los por períodos mais
-                            longos em virtude de obrigações legais, contratuais ou para a defesa de direitos em
-                            processos judiciais.</p>
-                        <h3>Partilha de Dados</h3>
-                        <p>Podemos partilhar os seus dados pessoais com:</p>
-                        <ul>
-                            <li>Prestadores de serviços que nos apoiam na gestão do website e na prestação dos nossos
-                                serviços</li>
-                            <li>Autoridades públicas, quando exigido por lei</li>
-                        </ul>
-                        <p>Não vendemos, alugamos ou partilhamos os seus dados pessoais com terceiros para fins de
-                            marketing sem o seu consentimento explícito.</p>
-                        <h3>Transferências Internacionais</h3>
-                        <p>Alguns dos nossos prestadores de serviços podem estar localizados fora do Espaço Económico
-                            Europeu (EEE). Quando transferimos os seus dados para fora do EEE, garantimos que são
-                            implementadas medidas de proteção adequadas, como cláusulas contratuais-tipo aprovadas pela
-                            Comissão Europeia.</p>
-                        <h3>Os Seus Direitos</h3>
-                        <p>Em relação aos seus dados pessoais, tem os seguintes direitos:</p>
-                        <ul>
-                            <li>Direito de acesso aos seus dados pessoais</li>
-                            <li>Direito de retificação de dados inexatos</li>
-                            <li>Direito ao apagamento dos dados ("direito a ser esquecido")</li>
-                            <li>Direito à limitação do tratamento</li>
-                            <li>Direito de oposição ao tratamento</li>
-                            <li>Direito à portabilidade dos dados</li>
-                            <li>Direito de retirar o consentimento a qualquer momento</li>
-                            <li>Direito de apresentar reclamação a uma autoridade de controlo</li>
-                        </ul>
-                        <h3>Como Exercer os Seus Direitos</h3>
-                        <p>Para exercer qualquer dos seus direitos ou para obter mais informações sobre o tratamento dos
-                            seus dados pessoais, pode contactar-nos através do email geral@share2inspire.pt ou por
-                            correio para o endereço acima indicado.</p>
-                        <h3>Segurança dos Dados</h3>
-                        <p>Implementamos medidas técnicas e organizativas adequadas para proteger os seus dados pessoais
-                            contra tratamento não autorizado ou ilícito e contra a sua perda, destruição ou danificação
-                            acidental.</p>
-                        <h3>Alterações à Política de Tratamento de Dados</h3>
-                        <p>Podemos atualizar esta política periodicamente. Quaisquer alterações serão publicadas nesta
-                            página e, quando apropriado, notificadas por email.</p>
-                        <p>Última atualização: <strong>Outubro de 2026</strong></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Contact Modal -->
-    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="contactForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="s2i-form-label">Nome *</label>
-                                <input type="text" class="s2i-form-control" id="name" name="name"
-                                    placeholder="O seu nome" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="s2i-form-label">Email *</label>
-                                <input type="email" class="s2i-form-control" id="email" name="email"
-                                    placeholder="O seu email" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="s2i-form-label">Telefone</label>
-                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
-                                    placeholder="9xxxxxxxx">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="reason" class="s2i-form-label">Motivo *</label>
-                                <select class="s2i-form-control" id="reason" name="reason" required>
-                                    <option value="" selected disabled>Selecione um motivo</option>
-                                    <option value="Informações">Informações</option>
-                                    <option value="Orçamento">Orçamento</option>
-                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="s2i-form-label">Mensagem *</label>
-                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
-                                placeholder="Como podemos ajudar?" required></textarea>
-                        </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                            <label class="form-check-label small text-muted" for="privacy">
-                                Aceito a <a href="/politica-privacidade" target="_blank"
-                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
-                            </label>
-                        </div>
-                        <div class="alert alert-success d-none" id="contactSuccess">
-                            Mensagem enviada com sucesso!
-                        </div>
-                        <div class="alert alert-danger d-none" id="contactError">
-                            Erro ao enviar mensagem.
-                        </div>
-                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            Enviar Mensagem
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-4 col-12">
-                <img loading="lazy" src="/images/logo-transparent.png" alt="Share2Inspire" style="height:40px;margin-bottom:16px;">
-                <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;margin:0;">Partilhar conhecimento, Inspirar Carreiras!</p>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Navegação</h5>
-                <a href="/" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Início</a>
-                <a href="/sobre" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Sobre</a>
-                <a href="/servicos" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Serviços</a>
-                <a href="/conhecimento" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Knowledge Hub</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Ferramentas</h5>
-                <a href="/cv-analyser" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">CV Analyser</a>
-                <a href="/linkedin-roaster" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">LinkedIn Roaster</a>
-                <a href="/career-path" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Career Path</a>
-                <a href="/career-intelligence" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Career Intelligence</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Legal</h5>
-                <a href="/politica-privacidade" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Privacidade</a>
-                <a href="/politica-cookies" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Cookies</a>
-                <a href="/informacao-legal" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Informação Legal</a>
-                <a href="/termos-condicoes" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:10px;transition:color .3s;">Termos e Condições</a>
-                <a href="/tratamento-dados" style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .3s;">Tratamento de Dados</a>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <h5 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#C9A961;font-weight:600;margin-bottom:20px;">Contacto</h5>
-                <p style="color:rgba(255,255,255,0.6);font-size:0.82rem;margin-bottom:15px;">
-                    <i class="fas fa-envelope" style="color:#C9A961;margin-right:8px;"></i>geral@share2inspire.pt
-                </p>
-                <div style="display:flex;gap:12px;">
-                    <a href="https://www.linkedin.com/company/107046213" target="_blank" style="color:#C9A961;font-size:1.1rem;transition:color .3s;"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:#C9A961;font-size:1.1rem;transition:color .3s;"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:40px;padding-top:25px;text-align:center;">
-            <p style="color:rgba(255,255,255,0.35);font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;margin:0;">&copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
-        </div>
-    </div>
-</footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/hub-widget.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</body>
+  <body>
+    <!-- Meta Pixel noscript (must be in body) -->
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+    /></noscript>
+    <div id="root"></div>
+  </body>
 
 </html>

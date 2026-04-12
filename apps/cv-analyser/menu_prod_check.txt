@@ -1,0 +1,75 @@
+=== https://www.share2inspire.pt ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/servicos ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/conhecimento ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/sobre ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/contactos ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/en ===
+TITLE: Share2Inspire | AI Career Intelligence Platform
+TEXT_SNIPPET: Share2Inspire | AI Career Intelligence Platform Home Services Knowledge Hub About Contact Login EN EN STUDENT PACK STUDENT PACK — Career tools for €7.99 (-43%) Discover → Build your career with strategy , not trial and error A complete ecosystem to understand where you are, what to adjust and what the right next step i
+BLANK_LIKELY: False
+
+=== https://www.share2inspire.pt/en/services ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/en/knowledge ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/en/about ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/en/contact ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/es ===
+TITLE: Share2Inspire | Plataforma de Inteligencia de Carrera con IA
+TEXT_SNIPPET: Share2Inspire | Plataforma de Inteligencia de Carrera con IA Inicio Servicios Hub de Conocimiento Acerca de Contacto Login ES ES PACK ESTUDIANTE PACK ESTUDIANTE — Herramientas de carrera por 7,99€ (-43%) Descubrir → Construye tu carrera con estrategia , no por ensayo y error Un ecosistema completo para entender dónde e
+BLANK_LIKELY: False
+
+=== https://www.share2inspire.pt/es/servicios ===
+TITLE: 404: NOT_FOUND
+TEXT_SNIPPET: 404: NOT_FOUND 404 : NOT_FOUND Code: NOT_FOUND ID: iad1::nf7ss-1776018550346-1a4f8aea6223 Read our documentation to learn more about this error.
+BLANK_LIKELY: False
+
+=== https://www.share2inspire.pt/es/conocimiento ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/es/sobre ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+
+=== https://www.share2inspire.pt/es/contacto ===
+TITLE: Share2Inspire
+TEXT_SNIPPET: Share2Inspire
+BLANK_LIKELY: True
+

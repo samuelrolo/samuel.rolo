@@ -20,8 +20,18 @@ BUILD_DIR="$SCRIPT_DIR/dist"
 DEPLOY_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMMIT_MSG="${1:-deploy: update CV Analyser assets}"
 
-# All 6 SPA directories that share the same build output
-SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence" "bundle" "en/bundle" "linkedin-roaster" "en/linkedin-roaster" "estudante" "student-pack" "en/student-pack" "es" "es/cv-analyser" "es/career-path" "es/career-intelligence" "es/bundle" "es/linkedin-roaster" "es/student-pack" "es/pack-estudiante" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services")
+# All SPA directories that share the same build output
+SPA_DIRS=(
+  "cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence"
+  "bundle" "en/bundle" "linkedin-roaster" "en/linkedin-roaster" "estudante" "student-pack" "en/student-pack"
+  "es" "es/cv-analyser" "es/career-path" "es/career-intelligence" "es/bundle" "es/linkedin-roaster"
+  "es/student-pack" "es/pack-estudiante" "es/pages/knowledge" "es/pages/services" "en/pages/knowledge" "en/pages/services"
+  "sobre" "about" "en/about" "en/sobre" "es/sobre"
+  "contactos" "contact" "en/contact" "en/contactos" "es/contacto"
+  "politica-privacidade" "politica-cookies" "informacao-legal" "termos-condicoes" "tratamento-dados"
+  "en/politica-privacidade" "en/politica-cookies" "en/informacao-legal" "en/termos-condicoes" "en/tratamento-dados"
+  "es/politica-cookies"
+)
 
 # All critical routes to verify after deploy
 ROUTES=(
@@ -40,6 +50,17 @@ ROUTES=(
   "https://www.share2inspire.pt/en/career-path"
   "https://www.share2inspire.pt/en/career-path/results"
   "https://www.share2inspire.pt/en/career-intelligence"
+  "https://www.share2inspire.pt/sobre"
+  "https://www.share2inspire.pt/en/about"
+  "https://www.share2inspire.pt/es/sobre"
+  "https://www.share2inspire.pt/contactos"
+  "https://www.share2inspire.pt/en/contact"
+  "https://www.share2inspire.pt/es/contacto"
+  "https://www.share2inspire.pt/politica-privacidade"
+  "https://www.share2inspire.pt/en/politica-privacidade"
+  "https://www.share2inspire.pt/es/politica-cookies"
+  "https://www.share2inspire.pt/termos-condicoes"
+  "https://www.share2inspire.pt/tratamento-dados"
 )
 
 echo "═══════════════════════════════════════"

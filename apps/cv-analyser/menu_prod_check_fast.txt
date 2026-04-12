@@ -1,0 +1,45 @@
+https://www.share2inspire.pt	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/servicos	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/conhecimento	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/sobre	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/contactos	ok	4742	Share2Inspire 
+SNIPPET	 Share2Inspire window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' }); window.da
+
+https://www.share2inspire.pt/en	ok	53196	Share2Inspire | AI Career Intelligence Platform 
+SNIPPET	 Share2Inspire | AI Career Intelligence Platform window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics
+
+https://www.share2inspire.pt/en/services	ok	4737	Share2Inspire 
+SNIPPET	 Share2Inspire window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' }); window.da
+
+https://www.share2inspire.pt/en/knowledge	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/en/about	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/en/contact	timeout	0	
+SNIPPET	
+
+https://www.share2inspire.pt/es	ok	53496	Share2Inspire | Plataforma de Inteligencia de Carrera con IA 
+SNIPPET	 Share2Inspire | Plataforma de Inteligencia de Carrera con IA window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted
+
+https://www.share2inspire.pt/es/servicios	ok	3786	404: NOT_FOUND 
+SNIPPET	 404: NOT_FOUND html{font-size:62.5%;box-sizing:border-box;height:-webkit-fill-available}*,::after,::before{box-sizing:inherit}body{font-family:sf pro text,sf pro icons,helvetica neue,helvetica,arial,sans-serif;font-size:1.6rem;line-height:1.65;word-break:brea
+
+https://www.share2inspire.pt/es/conocimiento	ok	4762	Share2Inspire 
+SNIPPET	 Share2Inspire window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' }); window.da
+
+https://www.share2inspire.pt/es/sobre	ok	4775	Share2Inspire 
+SNIPPET	 Share2Inspire window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' }); window.da
+
+https://www.share2inspire.pt/es/contacto	ok	4717	Share2Inspire 
+SNIPPET	 Share2Inspire window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('consent', 'default', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' }); window.da
+
