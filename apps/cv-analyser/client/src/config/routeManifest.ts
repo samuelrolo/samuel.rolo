@@ -153,7 +153,7 @@ export const routeManifest: RouteDefinition[] = [
     localized: {
       pt: { path: '/servicos', aliases: ['/services'], label: 'Serviços', menuVisible: true },
       en: { path: '/en/services', aliases: ['/en/servicos', '/en/pages/services'], label: 'Services', menuVisible: true },
-      es: { path: '/es/servicos', aliases: ['/es/services'], label: 'Servicios', menuVisible: true },
+      es: { path: '/es/servicios', aliases: ['/es/servicos', '/es/services', '/servicios'], label: 'Servicios', menuVisible: true },
     },
   },
   {
@@ -162,7 +162,7 @@ export const routeManifest: RouteDefinition[] = [
     localized: {
       pt: { path: '/sobre', aliases: ['/about'], label: 'Sobre', menuVisible: true },
       en: { path: '/en/about', aliases: ['/en/sobre'], label: 'About', menuVisible: true },
-      es: { path: '/es/sobre', aliases: ['/es/acerca-de', '/es/about'], label: 'Acerca de', menuVisible: true },
+      es: { path: '/es/sobre', aliases: ['/es/acerca-de', '/es/about', '/acerca-de'], label: 'Acerca de', menuVisible: true },
     },
   },
   {
@@ -171,7 +171,7 @@ export const routeManifest: RouteDefinition[] = [
     localized: {
       pt: { path: '/contactos', aliases: ['/contact', '/contacto'], label: 'Contactos', menuVisible: true },
       en: { path: '/en/contact', aliases: ['/en/contactos'], label: 'Contact', menuVisible: true },
-      es: { path: '/es/contacto', aliases: ['/es/contact'], label: 'Contacto', menuVisible: true },
+      es: { path: '/es/contacto', aliases: ['/es/contact', '/contacto'], label: 'Contacto', menuVisible: true },
     },
   },
   {

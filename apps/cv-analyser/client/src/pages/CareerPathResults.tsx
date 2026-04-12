@@ -270,6 +270,7 @@ export default function CareerPathResults() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const lang = getLang();
   const isEN = lang === 'en';
+  const careerPathHomePath = '/';
   const isES = lang === 'es';
   const [selectedPlan, setSelectedPlan] = useState(getPlans(isEN)[0]);
   const [paymentStep, setPaymentStep] = useState<'select' | 'payment' | 'polling' | 'success'>('select');
@@ -408,21 +409,35 @@ export default function CareerPathResults() {
   };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const sessionId = urlParams.get('session_id');
+    const isStripeReturn = paymentStatus === 'success' && !!sessionId;
+
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
     const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid'));
     const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
 
-    if (!cvData) {
-      setLocation('/');
+    if (!cvData && !isStripeReturn) {
+      setLocation(careerPathHomePath);
       return;
     }
 
-    try {
-      setCvAnalysis(JSON.parse(cvData));
-    } catch {
-      setLocation('/');
-      return;
+    if (cvData) {
+      try {
+        setCvAnalysis(JSON.parse(cvData));
+      } catch {
+        if (!isStripeReturn) {
+          setLocation(careerPathHomePath);
+          return;
+        }
+      }
+    }
+
+    if (!cvData && isStripeReturn) {
+      const savedEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail'));
+      if (savedEmail) setEmail(savedEmail);
     }
 
     if (linkedin) setLinkedinUrl(linkedin);
@@ -440,15 +455,10 @@ export default function CareerPathResults() {
       setTimeout(() => { generateCareerPath(); }, 300);
     }
 
-    // Check for Stripe payment return
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('payment');
-    const sessionId = urlParams.get('session_id');
-
-    // Handle cancelled payment — clean URL and redirect to home
+    // Handle cancelled payment — clean URL and redirect to the localized Career Path entry page
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
-      setLocation('/');
+      setLocation(careerPathHomePath);
       return;
     }
 
@@ -705,7 +715,9 @@ export default function CareerPathResults() {
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: getDiscountedPriceNum(selectedPlan.price)
+          amount: getDiscountedPriceNum(selectedPlan.price),
+          success_url: `${window.location.origin}${localePath('/career-path/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${localePath('/career-path/results')}?payment=cancelled`
         })
       });
       const data = await response.json();
@@ -880,7 +892,7 @@ export default function CareerPathResults() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setLocation('/')}
+              onClick={() => setLocation(careerPathHomePath)}
               className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

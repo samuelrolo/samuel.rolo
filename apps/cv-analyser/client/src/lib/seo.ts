@@ -31,7 +31,7 @@ const ptCanonicalMap: Record<string, { en: string; es: string }> = {
   "/linkedin-roaster": { en: "/en/linkedin-roaster", es: "/es/linkedin-roaster" },
   "/bundle": { en: "/en/bundle", es: "/es/bundle" },
   "/estudante": { en: "/en/student-pack", es: "/es/pack-estudiante" },
-  "/servicos": { en: "/en/services", es: "/es/servicos" },
+  "/servicos": { en: "/en/services", es: "/es/servicios" },
   "/conhecimento": { en: "/en/knowledge", es: "/es/conocimiento" },
   "/sobre": { en: "/en/about", es: "/es/sobre" },
   "/contactos": { en: "/en/contact", es: "/es/contacto" },

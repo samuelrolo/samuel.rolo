@@ -22,6 +22,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -438,13 +439,14 @@ export default function CareerPathHome() {
 
       // Show preview before payment
       const profile = getCareerPathProfile(analysisSource);
+      const normalizedCv = transformGeminiResponse(analysisSource, lang as 'pt' | 'en' | 'es');
       setPreviewData({
         name: profile.detected_name || profile.name || 'N/A',
-        role: profile.detected_role || profile.primary_role || 'N/A',
-        seniority: profile.seniority || profile.level || 'N/A',
-        experience: profile.total_years_exp || profile.years_experience || 'N/A',
-        skills: (profile.key_skills || profile.skills || profile.top_skills || []).slice(0, 5),
-        nextRole: profile.likely_next_role || profile.recommended_next_role || null,
+        role: profile.detected_role || profile.primary_role || normalizedCv.perceivedRole || 'N/A',
+        seniority: profile.seniority || profile.level || normalizedCv.perceivedSeniority || 'N/A',
+        experience: profile.total_years_exp || profile.experience || 'N/A',
+        skills: (profile.key_skills || normalizedCv.keywords || []).slice(0, 5),
+        nextRole: profile.likely_next_role || null,
       });
       const elapsed = Date.now() - startTime;
       const remaining = 800 - elapsed;

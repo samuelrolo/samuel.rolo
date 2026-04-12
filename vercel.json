@@ -162,7 +162,37 @@
     },
     {
       "source": "/es/pages/services",
-      "destination": "/es/servicos",
+      "destination": "/es/servicios",
+      "statusCode": 301
+    },
+    {
+      "source": "/servicios",
+      "destination": "/es/servicios",
+      "statusCode": 301
+    },
+    {
+      "source": "/es/servicos",
+      "destination": "/es/servicios",
+      "statusCode": 301
+    },
+    {
+      "source": "/acerca-de",
+      "destination": "/es/sobre",
+      "statusCode": 301
+    },
+    {
+      "source": "/contacto",
+      "destination": "/es/contacto",
+      "statusCode": 301
+    },
+    {
+      "source": "/es/acerca-de",
+      "destination": "/es/sobre",
+      "statusCode": 301
+    },
+    {
+      "source": "/es/contact",
+      "destination": "/es/contacto",
       "statusCode": 301
     },
     {
@@ -191,7 +221,7 @@
       ]
     },
     {
-      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|servicos|conhecimento|contactos|en/about|en/contact|en/services|en/knowledge|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/sobre|es/servicos|es/conocimiento|es/contacto|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack)(.*)",
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|servicos|conhecimento|contactos|en/about|en/contact|en/services|en/knowledge|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/sobre|es/acerca-de|es/servicios|es/servicos|es/conocimiento|es/contacto|es/contact|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -499,6 +529,22 @@
       "destination": "/en/contact"
     },
     {
+      "source": "/es/acerca-de",
+      "destination": "/es/sobre"
+    },
+    {
+      "source": "/acerca-de",
+      "destination": "/es/sobre"
+    },
+    {
+      "source": "/es/contact",
+      "destination": "/es/contacto"
+    },
+    {
+      "source": "/contacto",
+      "destination": "/es/contacto"
+    },
+    {
       "source": "/blog/artigos/big4-insider-10-anos",
       "destination": "/blog/artigos/big4-insider-10-anos.html"
     },
@@ -596,7 +642,19 @@
     },
     {
       "source": "/es/pages/services",
-      "destination": "/es/servicos"
+      "destination": "/es/servicios"
+    },
+    {
+      "source": "/es/servicios",
+      "destination": "/es/servicios"
+    },
+    {
+      "source": "/es/servicos",
+      "destination": "/es/servicios"
+    },
+    {
+      "source": "/servicios",
+      "destination": "/es/servicios"
     },
     {
       "source": "/en/share2inspire",

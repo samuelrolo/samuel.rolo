@@ -18,9 +18,11 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
+import { localePath } from '@/i18n/useTranslation';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerIntelligencePayload } from "@/lib/analysisPayload";
+import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -162,7 +164,7 @@ export default function CareerIntelligenceResults() {
   const lang = getLang();
   const isEN = lang === 'en';
   const isES = lang === 'es';
-  const careerIntelligenceHomePath = pick('/career-intelligence', '/en/career-intelligence', '/es/career-intelligence');
+  const careerIntelligenceHomePath = '/';
   const getCareerIntelligenceProfile = (analysis: any) => {
     return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
   };
@@ -242,21 +244,45 @@ export default function CareerIntelligenceResults() {
 
   // ─── Load data from sessionStorage ───
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const sessionId = urlParams.get('session_id');
+    const isStripeReturn = paymentStatus === 'success' && !!sessionId;
+
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
     const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid'));
     const savedData = readCareerIntelligenceData();
 
-    if (!cvData) {
+    if (!cvData && !isStripeReturn) {
       setLocation(careerIntelligenceHomePath);
       return;
     }
 
-    try {
-      setCvAnalysis(JSON.parse(cvData));
-    } catch {
-      setLocation(careerIntelligenceHomePath);
-      return;
+    if (cvData) {
+      try {
+        const parsedCv = JSON.parse(cvData);
+        const analysisLanguage = ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
+        const rawCvAnalysis = parsedCv?.analysis || parsedCv;
+        const normalizedCv = transformGeminiResponse(rawCvAnalysis, analysisLanguage);
+        setCvAnalysis({
+          ...parsedCv,
+          ...normalizedCv,
+          raw: rawCvAnalysis,
+          candidate_profile: parsedCv?.candidate_profile || parsedCv?.cv_analysis?.candidate_profile || rawCvAnalysis?.candidate_profile || {},
+          profile: parsedCv?.profile || rawCvAnalysis?.profile || {},
+        });
+      } catch {
+        if (!isStripeReturn) {
+          setLocation(careerIntelligenceHomePath);
+          return;
+        }
+      }
+    }
+
+    if (!cvData && isStripeReturn) {
+      const savedEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail'));
+      if (savedEmail) setEmail(savedEmail);
     }
 
     if (linkedin) setLinkedinUrl(linkedin);
@@ -280,12 +306,7 @@ export default function CareerIntelligenceResults() {
       }
     }
 
-    // Check for Stripe payment return
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('payment');
-    const sessionId = urlParams.get('session_id');
-
-    // Handle cancelled payment — clean URL and redirect to home
+    // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
       setLocation(careerIntelligenceHomePath);
@@ -296,15 +317,18 @@ export default function CareerIntelligenceResults() {
       fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({ session_id: sessionId }),
       }).then(res => res.json()).then(data => {
-        if (data.paid) {
+        if (data.success && data.paid) {
           const stripeAmount = data.amount || 49;
           const productType = data.product_type || 'career_intelligence_full';
           if (productType === 'career_intelligence_full') {
             localStorage.setItem('careerPathPaid', 'true');
             localStorage.setItem('careerIntelligenceProPaid', 'true');
             localStorage.setItem('careerIntelligenceFull', 'true');
+            sessionStorage.setItem('careerPathPaid', 'true');
+            sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+            sessionStorage.setItem('careerIntelligenceFull', 'true');
             trackPurchase('career_intelligence_full', stripeAmount, `CI-STRIPE-${sessionId}`);
             trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: t('eur'), payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
           }
@@ -519,6 +543,8 @@ export default function CareerIntelligenceResults() {
           language: lang,
           currency: CURRENCY_CODE.toLowerCase(),
           amount: CI_PRICE,
+          success_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=cancelled`,
         }),
       });
       const data = await response.json();

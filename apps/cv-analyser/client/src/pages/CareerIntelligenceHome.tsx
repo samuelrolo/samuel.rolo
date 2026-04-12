@@ -22,6 +22,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -53,7 +54,6 @@ async function saveToUserAnalyses(analysisType: string, data: Record<string, any
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 const getPageLang = () => window.location.pathname.startsWith('/en/') ? 'en' : window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
-const getPageBasePath = () => getPageLang() === 'en' ? '/en' : getPageLang() === 'es' ? '/es' : '';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -434,12 +434,13 @@ export default function CareerIntelligenceHome() {
       if (linkedinUrl) localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
 
       const profile = getCareerIntelligenceProfile(analysisSource);
+      const normalizedCv = transformGeminiResponse(analysisSource, lang as 'pt' | 'en' | 'es');
       setPreviewData({
-        name: profile.detected_name || 'N/A',
-        role: profile.detected_role || 'N/A',
-        seniority: profile.seniority || 'N/A',
-        experience: profile.total_years_exp || 'N/A',
-        skills: (profile.key_skills || []).slice(0, 5),
+        name: profile.detected_name || profile.name || 'N/A',
+        role: profile.detected_role || profile.primary_role || normalizedCv.perceivedRole || 'N/A',
+        seniority: profile.seniority || profile.level || normalizedCv.perceivedSeniority || 'N/A',
+        experience: profile.total_years_exp || profile.experience || 'N/A',
+        skills: (profile.key_skills || normalizedCv.keywords || []).slice(0, 5),
         nextRole: profile.likely_next_role || null,
       });
       const elapsed = Date.now() - startTime;
@@ -551,7 +552,6 @@ export default function CareerIntelligenceHome() {
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const pageLang = getPageLang();
-      const pageBasePath = getPageBasePath();
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -566,8 +566,8 @@ export default function CareerIntelligenceHome() {
           currency: 'eur',
           amount: FINAL_PRICE,
           description: 'Career Intelligence — Share2Inspire',
-          success_url: `${window.location.origin}${pageBasePath}/career-intelligence/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}${pageBasePath}/career-intelligence`,
+          success_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=cancelled`,
         })
       });
       const data = await response.json();
@@ -653,6 +653,9 @@ export default function CareerIntelligenceHome() {
     localStorage.setItem('careerPathPaid', 'true');
     localStorage.setItem('careerIntelligenceProPaid', 'true');
     localStorage.setItem('careerIntelligenceFull', 'true');
+    sessionStorage.setItem('careerPathPaid', 'true');
+    sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+    sessionStorage.setItem('careerIntelligenceFull', 'true');
     // Force fresh generation with the country selected in THIS form
     localStorage.setItem('ciNeedsRegeneration', 'true');
     (localStorage.removeItem('careerPathData'), sessionStorage.removeItem('careerPathData'));
