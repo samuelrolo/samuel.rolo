@@ -24,6 +24,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -613,22 +614,10 @@ export default function Home() {
 
       // Save to user_analyses for area-cliente dashboard
       try {
-        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-        if (storageKey) {
-          const stored = localStorage.getItem(storageKey);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            const accessToken = parsed?.access_token;
-            const userId = parsed?.user?.id;
-            if (accessToken && userId) {
-              fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-                body: JSON.stringify({ user_id: userId, analysis_type: 'cv_analyser', data: { ...analysisResult, captured_at: new Date().toISOString(), email: analysisEmail }, created_at: new Date().toISOString() })
-              }).catch(() => {});
-            }
-          }
-        }
+        await saveToUserAnalyses('cv_analyser', {
+          ...analysisResult,
+          email: analysisEmail,
+        });
       } catch (e) { /* silent */ }
 
       const elapsed = Date.now() - startTime;

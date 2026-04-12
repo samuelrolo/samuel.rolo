@@ -4140,9 +4140,13 @@ RETURN EXACTLY this JSON (no text before or after):
 
     "factors": [
 
-      { "factor": "<factor name>", "status": "pass|warning|fail", "detail": "<SPECIFIC explanation — cite concrete sections/elements>" }
+      { "factor": "<main factor affecting ATS compatibility of THIS specific CV — cite the concrete problem>", "status": "pass|warning|fail", "detail": "<SPECIFIC explanation tied to this CV — mention concrete sections/elements>" },
+      { "factor": "<second factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" },
+      { "factor": "<third factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" },
+      { "factor": "<fourth factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" }
 
     ],
+
 
     "atsSystems": [
 
@@ -4488,9 +4492,13 @@ DEVUELVE EXACTAMENTE este JSON (sin texto antes ni después):
 
     "factors": [
 
-      { "factor": "<nombre del factor>", "status": "pass|warning|fail", "detail": "<explicación ESPECÍFICA — cita secciones/elementos concretos>" }
+      { "factor": "<factor principal que afecta la compatibilidad ATS de ESTE CV específico — cita el problema concreto>", "status": "pass|warning|fail", "detail": "<explicación ESPECÍFICA — cita secciones/elementos concretos>" },
+      { "factor": "<segundo factor>", "status": "pass|warning|fail", "detail": "<explicación específica>" },
+      { "factor": "<tercer factor>", "status": "pass|warning|fail", "detail": "<explicación específica>" },
+      { "factor": "<cuarto factor>", "status": "pass|warning|fail", "detail": "<explicación específica>" }
 
     ],
+
 
     "atsSystems": [
 
@@ -4830,7 +4838,10 @@ RETORNA EXACTAMENTE este JSON (sem texto antes ou depois):
 
     "factors": [
 
-      { "factor": "<nome do factor>", "status": "pass|warning|fail", "detail": "<explicação ESPECÍFICA ao CV — cita secções/elementos concretos>" }
+      { "factor": "<nome do factor>", "status": "pass|warning|fail", "detail": "<explicação ESPECÍFICA ao CV — cita secções/elementos concretos>" },
+      { "factor": "<segundo factor>", "status": "pass|warning|fail", "detail": "<explicação específica>" },
+      { "factor": "<terceiro factor>", "status": "pass|warning|fail", "detail": "<explicação específica>" },
+      { "factor": "<quarto factor>", "status": "pass|warning|fail", "detail": "<explicação específica>" }
 
     ],
 

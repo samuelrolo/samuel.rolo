@@ -20,6 +20,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -32,26 +33,6 @@ const PRICE_PT = '7,99';
 const PRICE_ORIGINAL_PT = '13,98';
 const PRICE_ORIGINAL_EN = '13.98';
 
-async function saveToUserAnalyses(analysisType: string, data: Record<string, any>) {
-  try {
-    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-    if (!storageKey) return;
-    const stored = localStorage.getItem(storageKey);
-    if (!stored) return;
-    const parsed = JSON.parse(stored);
-    const accessToken = parsed?.access_token;
-    const userId = parsed?.user?.id;
-    if (!accessToken || !userId) return;
-    const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
-    if (sessionStorage.getItem(dedupKey)) return;
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-      body: JSON.stringify({ user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() })
-    });
-    if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); }
-  } catch (e) { console.warn('[S2I] Error saving:', e); }
-}
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const ab = await file.arrayBuffer();

@@ -689,11 +689,23 @@
       "destination": "/index.html"
     },
     {
+      "source": "/es/acerca-de",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/es/pages/about",
+      "destination": "/index.html"
+    },
+    {
       "source": "/es/servicios",
       "destination": "/index.html"
     },
     {
       "source": "/es/servicos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/es/pages/services",
       "destination": "/index.html"
     },
     {
@@ -705,11 +717,11 @@
       "destination": "/index.html"
     },
     {
-      "source": "/es/pages/services",
+      "source": "/es/contacto",
       "destination": "/index.html"
     },
     {
-      "source": "/es/contacto",
+      "source": "/es/pages/contact",
       "destination": "/index.html"
     },
     {

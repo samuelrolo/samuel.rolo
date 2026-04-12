@@ -472,9 +472,43 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       if (Array.isArray(da.factors)) {
         factors = da.factors.map((f: any) => {
           if (typeof f === 'string') return f;
-          if (f && typeof f === 'object') return f.detail || f.factor || JSON.stringify(f);
+          if (f && typeof f === 'object') {
+            return f.detail || f.factor || f.name || f.title || f.issue || f.description || JSON.stringify(f);
+          }
           return '';
         }).filter(Boolean);
+      }
+
+      const fallbackFactorCandidates = [
+        atsTopFactor,
+        ...(Array.isArray(analysis.global_summary?.improvements) ? analysis.global_summary.improvements : []),
+        ...(Array.isArray(analysis.weaknesses) ? analysis.weaknesses : []),
+        ...(Array.isArray(analysis.cv_problems)
+          ? analysis.cv_problems.flatMap((problem: any) => [problem?.title, problem?.description, problem?.rewriteSuggestion, problem?.correctionExample])
+          : []),
+      ]
+        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        .map((value) => value.trim());
+
+      const dedupedFactors = [...factors, ...fallbackFactorCandidates].filter((value, index, array) => {
+        const normalized = value.toLowerCase();
+        return array.findIndex((candidate) => candidate.toLowerCase() === normalized) === index;
+      });
+
+      factors = dedupedFactors.slice(0, 6);
+
+      if (factors.length < 3) {
+        const genericFactorFallbacks = [
+          localize('Optimizar palavras-chave para a função-alvo', 'Optimise keywords for the target role', 'Optimizar palabras clave para la función objetivo'),
+          localize('Usar secções standard e títulos reconhecíveis pelo ATS', 'Use standard sections and ATS-recognisable headings', 'Usar secciones estándar y títulos reconocibles por el ATS'),
+          localize('Evitar tabelas, colunas e elementos visuais complexos', 'Avoid tables, columns and complex visual elements', 'Evitar tablas, columnas y elementos visuales complejos'),
+          localize('Garantir datas, competências e experiência em formato linear e legível', 'Keep dates, skills and experience in a linear readable format', 'Mantener fechas, competencias y experiencia en un formato lineal y legible'),
+        ];
+
+        factors = [...factors, ...genericFactorFallbacks].filter((value, index, array) => {
+          const normalized = value.toLowerCase();
+          return array.findIndex((candidate) => candidate.toLowerCase() === normalized) === index;
+        }).slice(0, 6);
       }
       // Normalize atsSystems: Gemini may return [{name, compatibility}] or string[]
       let atsSystems: string[] = [];
@@ -488,7 +522,13 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       detailedAtsAnalysis = {
         factors: factors.length > 0 ? factors : [atsTopFactor || localize('Optimizar palavras-chave para a função-alvo', 'Optimise keywords for the target role', 'Optimizar palabras clave para la función objetivo')],
         atsSystems: atsSystems.length > 0 ? atsSystems : ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
-        quickFixes: Array.isArray(da.quickFixes) ? da.quickFixes : [
+        quickFixes: Array.isArray(da.quickFixes)
+          ? da.quickFixes.map((fix: any) => {
+              if (typeof fix === 'string') return fix;
+              if (fix && typeof fix === 'object') return fix.detail || fix.fix || fix.action || fix.title || JSON.stringify(fix);
+              return '';
+            }).filter(Boolean)
+          : [
           localize('Usar formato cronológico inverso', 'Use reverse-chronological format', 'Usar formato cronológico inverso'),
           localize('Evitar tabelas, colunas e gráficos', 'Avoid tables, columns and graphics', 'Evitar tablas, columnas y gráficos'),
           localize('Incluir palavras-chave do anúncio de emprego', 'Include keywords from the job posting', 'Incluir palabras clave de la oferta de empleo'),

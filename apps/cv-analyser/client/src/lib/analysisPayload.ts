@@ -49,7 +49,15 @@ export function normalizeLinkedinRoastPayload(payload: any, language?: string) {
 export function normalizeCareerPathPayload(payload: any, language?: string) {
   const lang = normalizeLanguage(language);
   const raw = safeObject(payload);
-  const analysis = preferObject(raw.career_path, raw.analysis, raw.data, raw);
+  const careerPath = safeObject(raw.career_path);
+  const analysis = preferObject(
+    careerPath.career_path,
+    careerPath.analysis,
+    raw.career_path,
+    raw.analysis,
+    raw.data,
+    raw,
+  );
 
   return {
     success: raw.success !== false,
@@ -64,7 +72,17 @@ export function normalizeCareerPathPayload(payload: any, language?: string) {
 export function normalizeCareerIntelligencePayload(payload: any, language?: string) {
   const lang = normalizeLanguage(language);
   const raw = safeObject(payload);
-  const analysis = preferObject(raw.career_intelligence, raw.career_path, raw.analysis, raw.data, raw);
+  const careerIntelligence = safeObject(raw.career_intelligence);
+  const analysis = preferObject(
+    careerIntelligence.career_path,
+    careerIntelligence.analysis,
+    careerIntelligence.data,
+    raw.career_intelligence,
+    raw.career_path,
+    raw.analysis,
+    raw.data,
+    raw,
+  );
 
   return {
     success: raw.success !== false,

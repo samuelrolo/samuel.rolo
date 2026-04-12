@@ -23,51 +23,11 @@ import { localePath } from '@/i18n/useTranslation';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerPathPayload } from "@/lib/analysisPayload";
+import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-
-/** Save analysis to user_analyses for area-cliente dashboard */
-async function saveToUserAnalyses(analysisType: string, data: Record<string, any>): Promise<boolean> {
-  const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-  if (!storageKey) throw new Error('NOT_LOGGED_IN');
-  const stored = localStorage.getItem(storageKey);
-  if (!stored) throw new Error('NOT_LOGGED_IN');
-  const parsed = JSON.parse(stored);
-  let accessToken = parsed?.access_token;
-  const refreshToken = parsed?.refresh_token;
-  const userId = parsed?.user?.id;
-  if (!accessToken || !userId) throw new Error('NOT_LOGGED_IN');
-  const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
-  if ((localStorage.getItem(dedupKey) || sessionStorage.getItem(dedupKey))) return true;
-  const payload = { user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() };
-  let res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-    body: JSON.stringify(payload)
-  });
-  if (res.status === 401 && refreshToken) {
-    console.log('[S2I] Access token expired, attempting refresh...');
-    const refreshRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: refreshToken })
-    });
-    if (refreshRes.ok) {
-      const newSession = await refreshRes.json();
-      accessToken = newSession.access_token;
-      localStorage.setItem(storageKey, JSON.stringify(newSession));
-      res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-        body: JSON.stringify(payload)
-      });
-    } else { throw new Error('SESSION_EXPIRED'); }
-  }
-  if (res.ok) { localStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved:', analysisType); return true; }
-  throw new Error(res.status === 401 ? 'SESSION_EXPIRED' : `SAVE_FAILED_${res.status}`);
-}
 
 /**
  * Fire-and-forget: log career path purchase to cv_analysis table for dashboard.
