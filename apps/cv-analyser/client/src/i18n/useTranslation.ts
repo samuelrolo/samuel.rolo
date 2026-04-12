@@ -8,28 +8,30 @@
  */
 import {
   getCanonicalPtPath,
-  resolvePageId,
+  resolveRoute,
   switchPathToLang,
-  getLocalizedPath,
 } from '@/config/navigation';
 import { t as translate, pick as pickFn, getLang, type Lang } from './translations';
 
 /**
  * Convert a PT-canonical path to the equivalent path in the current language.
- * If the path matches a known route, use the central navigation config.
- * Otherwise, fall back to prefixing the language.
+ * If the path matches a known route, use the central navigation config while
+ * preserving any child segments (for example, /results), query strings and hash.
  */
 export function localePath(ptPath: string, lang?: Lang): string {
   const l = lang || getLang();
-  const pageId = resolvePageId(ptPath) || resolvePageId(getCanonicalPtPath(ptPath));
+  const match = ptPath.match(/^([^?#]*)(.*)$/);
+  const pathname = match?.[1] || '/';
+  const suffix = match?.[2] || '';
+  const canonicalPtPath = getCanonicalPtPath(pathname);
+  const resolvedRoute = resolveRoute(canonicalPtPath);
 
-  if (pageId) {
-    return getLocalizedPath(pageId, l);
+  if (resolvedRoute) {
+    return `${switchPathToLang(canonicalPtPath, l)}${suffix}`;
   }
 
-  const canonicalPtPath = getCanonicalPtPath(ptPath);
-  if (l === 'pt') return canonicalPtPath;
-  return canonicalPtPath === '/' ? `/${l}` : `/${l}${canonicalPtPath}`;
+  if (l === 'pt') return `${canonicalPtPath}${suffix}`;
+  return `${canonicalPtPath === '/' ? `/${l}` : `/${l}${canonicalPtPath}`}${suffix}`;
 }
 
 /**
