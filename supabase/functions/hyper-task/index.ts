@@ -7691,6 +7691,10 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
           success: true,
 
+          analysis_type: 'career_intelligence',
+
+          language,
+
           career_intelligence: careerPath,
 
           ...careerPath
@@ -7698,6 +7702,12 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
         } : {
 
           success: true,
+
+          analysis_type: 'career_path',
+
+          language,
+
+          career_path: careerPath,
 
           ...careerPath
 
@@ -9311,6 +9321,12 @@ REGLAS FINALES:
         return jsonResponse({
 
           success: true,
+
+          analysis_type: 'linkedin_roast',
+
+          language,
+
+          linkedin_roast: roastAnalysis,
 
           ...roastAnalysis
 

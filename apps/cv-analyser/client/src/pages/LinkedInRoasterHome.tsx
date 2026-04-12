@@ -13,6 +13,7 @@ import useTranslation from "@/i18n/useTranslation";
 import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -180,10 +181,12 @@ export default function LinkedInRoasterHome() {
         ));
       }
 
-      sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(responseData));
+      const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(responseData, lang);
+      sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
       sessionStorage.setItem('linkedinRoasterEmail', email);
       sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
+      sessionStorage.setItem('analysisLang', normalizedLinkedinAnalysis.language);
 
       try {
         fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {

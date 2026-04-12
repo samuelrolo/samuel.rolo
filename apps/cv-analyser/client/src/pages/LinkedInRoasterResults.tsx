@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -188,14 +189,18 @@ export default function LinkedInRoasterResults() {
   }, []);
 
   const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true';
+  const normalizedData = useMemo(() => {
+    const storedLang = sessionStorage.getItem('analysisLang') || lang;
+    return normalizeLinkedinRoastPayload(rawData, storedLang);
+  }, [rawData, lang]);
 
   useEffect(() => {
     if (!isPaid) { window.location.href = localePath('/linkedin-roaster'); }
   }, [isPaid]);
 
   // Extract teaser & analysis
-  const teaser = deepSanitize(rawData?.teaser || rawData?.data?.teaser || {});
-  const analysis: AnaliseCompleta = deepSanitize(rawData?.analise_completa || rawData?.data?.analise_completa || rawData?.analysis || {});
+  const teaser = deepSanitize(normalizedData.teaser || {});
+  const analysis: AnaliseCompleta = deepSanitize(normalizedData.analysis || {});
 
   const notaGeral = teaser?.nota_geral || 0;
   const hookVendas = teaser?.hook_vendas || '';

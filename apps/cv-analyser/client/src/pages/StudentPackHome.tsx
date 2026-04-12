@@ -9,7 +9,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
-import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { buildUnifiedStudentPackPayload } from "@/lib/analysisPayload";
 import { getDefaultCountryByLanguage, getCountries, getRegions } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
@@ -248,10 +248,16 @@ export default function StudentPackHome() {
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
         const cvAnalysisSourcePT = cvResponseDataPT.analysis || cvResponseDataPT;
-        const cvAnalysisResultPT = transformGeminiResponse(cvAnalysisSourcePT, 'pt');
+        const unifiedStudentPackPT = buildUnifiedStudentPackPayload({
+          cvRaw: cvAnalysisSourcePT,
+          linkedinRaw: linkedinResponseDataPT || {},
+          language: 'pt',
+        });
+        const cvAnalysisResultPT = unifiedStudentPackPT.sources.cv_normalized;
+        sessionStorage.setItem('studentPackAnalysis', JSON.stringify(unifiedStudentPackPT));
         sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResultPT));
-        sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSourcePT));
-        sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseDataPT || {}));
+        sessionStorage.setItem('studentPackCvRaw', JSON.stringify(unifiedStudentPackPT.sources.cv_raw));
+        sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(unifiedStudentPackPT.sources.linkedin));
         sessionStorage.setItem('studentPackEmail', currentEmail);
         sessionStorage.setItem('studentPackCountry', currentCountry);
         sessionStorage.setItem('studentPackRegion', currentRegion);
@@ -259,7 +265,7 @@ export default function StudentPackHome() {
         sessionStorage.setItem('studentPackPaid', 'true');
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
-        sessionStorage.setItem('analysisLang', lang);
+        sessionStorage.setItem('analysisLang', 'pt');
         try {
           const cp = cvAnalysisSourcePT?.candidate_profile || {};
           fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResultPT.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSourcePT), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-PT-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
@@ -304,10 +310,16 @@ export default function StudentPackHome() {
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
         const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
-        const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, langCode as 'pt' | 'en' | 'es');
+        const unifiedStudentPack = buildUnifiedStudentPackPayload({
+          cvRaw: cvAnalysisSource,
+          linkedinRaw: linkedinResponseData || {},
+          language: langCode,
+        });
+        const cvAnalysisResult = unifiedStudentPack.sources.cv_normalized;
+        sessionStorage.setItem('studentPackAnalysis', JSON.stringify(unifiedStudentPack));
         sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
-        sessionStorage.setItem('studentPackCvRaw', JSON.stringify(cvAnalysisSource));
-        sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(linkedinResponseData || {}));
+        sessionStorage.setItem('studentPackCvRaw', JSON.stringify(unifiedStudentPack.sources.cv_raw));
+        sessionStorage.setItem('studentPackLinkedinAnalysis', JSON.stringify(unifiedStudentPack.sources.linkedin));
         sessionStorage.setItem('studentPackEmail', currentEmail);
         sessionStorage.setItem('studentPackCountry', currentCountry);
         sessionStorage.setItem('studentPackRegion', currentRegion || '');

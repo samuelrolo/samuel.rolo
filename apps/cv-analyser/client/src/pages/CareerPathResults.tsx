@@ -22,6 +22,7 @@ import { t, pick, getLang } from '@/i18n/translations';
 import { localePath } from '@/i18n/useTranslation';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { normalizeCareerPathPayload } from "@/lib/analysisPayload";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -428,7 +429,8 @@ export default function CareerPathResults() {
 
     if (paidFlag === 'true' && savedData) {
       try {
-        setCareerPathData(JSON.parse(savedData));
+        const normalizedStored = normalizeCareerPathPayload(JSON.parse(savedData), localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
+        setCareerPathData(normalizedStored.analysis);
         setIsPaid(true);
       } catch { /* ignore */ }
     } else if (paidFlag === 'true' && !savedData) {
@@ -515,11 +517,13 @@ export default function CareerPathResults() {
         throw new Error(data.error || (t('erro_ao_gerar_career_path')));
       }
 
-      const cpData = data.career_path || data;
+      const normalizedCareerPath = normalizeCareerPathPayload(data, currentLanguage);
+      const cpData = normalizedCareerPath.analysis;
       setCareerPathData(cpData);
       setIsPaid(true);
       localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerPathData', JSON.stringify(cpData));
+      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
+      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
 
       // Fire-and-forget: log to cv_analysis for dashboard
       const orderId = (localStorage.getItem('cpOrderId') || sessionStorage.getItem('cpOrderId')) || undefined;
@@ -2137,7 +2141,10 @@ export default function CareerPathResults() {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
                 <div className={`grid gap-2 ${lang === 'pt' ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                  {((lang === 'pt' ? ['mbway', 'stripe', 'paypal'] : ['stripe', 'paypal']) as const).map((method) => {
+                  {(lang === 'pt'
+                    ? (['mbway', 'stripe', 'paypal'] as Array<'mbway' | 'stripe' | 'paypal'>)
+                    : (['stripe', 'paypal'] as Array<'mbway' | 'stripe' | 'paypal'>)
+                  ).map((method) => {
                     const activeClass = method === 'stripe'
                       ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
                       : method === 'paypal'

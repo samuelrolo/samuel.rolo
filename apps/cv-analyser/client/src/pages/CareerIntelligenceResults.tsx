@@ -20,6 +20,7 @@ import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { normalizeCareerIntelligencePayload } from "@/lib/analysisPayload";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -188,14 +189,17 @@ export default function CareerIntelligenceResults() {
 
     try {
       const parsed = JSON.parse(raw);
-      return hasCareerIntelligenceStructure(parsed) ? parsed : null;
+      const normalized = normalizeCareerIntelligencePayload(parsed, (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang);
+      return hasCareerIntelligenceStructure(normalized.analysis) ? normalized.analysis : null;
     } catch {
       return null;
     }
   };
   const siteHomePath = pick('/', '/en/', '/es/');
   const defaultPaymentMethod: 'mbway' | 'stripe' | 'paypal' = isEN ? 'stripe' : 'mbway';
-  const paymentMethodOptions = (isEN ? ['stripe', 'paypal'] : ['mbway', 'stripe', 'paypal']) as const;
+  const paymentMethodOptions: Array<'mbway' | 'stripe' | 'paypal'> = isEN
+    ? ['stripe', 'paypal']
+    : ['mbway', 'stripe', 'paypal'];
   const paymentMethodLabel = (method: 'mbway' | 'stripe' | 'paypal') => method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal';
   const paymentPhonePlaceholder = pick('9XXXXXXXX', '+1 555 123 4567', '6XXXXXXXX');
 
@@ -339,13 +343,15 @@ export default function CareerIntelligenceResults() {
         throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
       }
 
-      const ciData = data.career_intelligence || data.career_path || data;
+      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang);
+      const ciData = normalizedCareerIntelligence.analysis;
       setCareerData(ciData);
       setIsPaid(true);
       localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerIntelligenceData', JSON.stringify(ciData));
-      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(ciData));
-      localStorage.setItem('careerPathData', JSON.stringify(ciData));
+      localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
+      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
+      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerIntelligence));
+      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerIntelligence));
 
       // Save to user_analyses for area-cliente
       // Delay to capture HTML after React renders the full results
