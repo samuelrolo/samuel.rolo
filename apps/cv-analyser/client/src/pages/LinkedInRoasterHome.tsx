@@ -158,7 +158,7 @@ export default function LinkedInRoasterHome() {
         try {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: lang }),
             signal: controller.signal
           });
@@ -197,7 +197,7 @@ export default function LinkedInRoasterHome() {
       try {
         fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email.trim().toLowerCase(), name: '', source: 'linkedin_roaster', language: lang })
         }).catch(() => {});
       } catch (_) {}

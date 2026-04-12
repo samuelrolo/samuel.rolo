@@ -228,7 +228,7 @@ export default function StudentPackHome() {
           try {
             const body: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseDataPT = await res.json(); if (cvResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -241,7 +241,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -264,7 +264,7 @@ export default function StudentPackHome() {
           const cp = cvAnalysisSourcePT?.candidate_profile || {};
           fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResultPT.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSourcePT), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-PT-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
         } catch (_) {}
-        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
+        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
         trackPurchase('student_pack', finalPrice, `STUDPACK-PT-${Date.now()}`);
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
         trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-PT-${Date.now()}` });
@@ -285,7 +285,7 @@ export default function StudentPackHome() {
           try {
             const body: any = { mode: 'cv_extraction', language: langCode, country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseData = await res.json(); if (cvResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -297,7 +297,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));

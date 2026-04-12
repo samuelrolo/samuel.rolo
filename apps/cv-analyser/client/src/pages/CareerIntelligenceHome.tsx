@@ -379,7 +379,7 @@ export default function CareerIntelligenceHome() {
           response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody),

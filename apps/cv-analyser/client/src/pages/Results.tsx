@@ -737,7 +737,7 @@ export default function Results() {
           const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -826,7 +826,7 @@ export default function Results() {
             const reanalysisRes = await fetch(SUPABASE_EDGE_URL, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(requestBody)
@@ -1515,7 +1515,7 @@ export default function Results() {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

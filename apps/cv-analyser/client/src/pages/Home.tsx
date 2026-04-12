@@ -46,7 +46,7 @@ function sendWelcomeEmail(email: string, name: string, lang: string = 'pt') {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify({ type: 'cv_analysis', email, name, lang }),
     }).then(res => {
@@ -525,7 +525,7 @@ export default function Home() {
           response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody),
@@ -808,7 +808,7 @@ export default function Home() {
       const response = await fetch(SUPABASE_EDGE_URL, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody),

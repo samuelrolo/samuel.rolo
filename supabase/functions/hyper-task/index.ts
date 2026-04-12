@@ -1392,7 +1392,7 @@ async function enrichWithCompanyData(cvText: string, language: string): Promise<
 
   const isEN = language === 'en';
 
-
+  const isES = language === 'es';
 
   // Fetch main company (details + competitors in one call) and all other companies in parallel
 
@@ -1422,7 +1422,11 @@ async function enrichWithCompanyData(cvText: string, language: string): Promise<
 
     ? '\n\n--- VERIFIED COMPANY DATA (enriched via Gemini) ---\n'
 
-    : '\n\n--- DADOS VERIFICADOS DAS EMPRESAS (enriquecidos via Gemini) ---\n';
+    : isES
+
+      ? '\n\n--- DATOS VERIFICADOS DE EMPRESAS (enriquecidos con Gemini) ---\n'
+
+      : '\n\n--- DADOS VERIFICADOS DAS EMPRESAS (enriquecidos via Gemini) ---\n';
 
 
 
@@ -10591,6 +10595,7 @@ REGLAS FINALES:
       const analysisSubject = body.subject || '';
 
       const isEN = body.language === 'en';
+      const isES = body.language === 'es';
 
       if (!recipientEmail) {
 
@@ -10630,7 +10635,9 @@ REGLAS FINALES:
 
           pt: 'Análise de CV',
 
-          en: 'CV Analysis'
+          en: 'CV Analysis',
+
+          es: 'Análisis de CV'
 
         },
 
@@ -10638,7 +10645,9 @@ REGLAS FINALES:
 
           pt: 'Career Path',
 
-          en: 'Career Path'
+          en: 'Career Path',
+
+          es: 'Career Path'
 
         },
 
@@ -10646,7 +10655,9 @@ REGLAS FINALES:
 
           pt: 'Career Intelligence',
 
-          en: 'Career Intelligence'
+          en: 'Career Intelligence',
+
+          es: 'Career Intelligence'
 
         },
 
@@ -10654,7 +10665,9 @@ REGLAS FINALES:
 
           pt: 'Auditoria LinkedIn',
 
-          en: 'LinkedIn Audit'
+          en: 'LinkedIn Audit',
+
+          es: 'Auditoría de LinkedIn'
 
         }
 
@@ -10662,7 +10675,7 @@ REGLAS FINALES:
 
       const typeLabel = typeLabels[analysisType] || typeLabels.cv_analysis;
 
-      const subject = analysisSubject || (isEN ? `Your ${typeLabel.en} Report — Share2Inspire` : `O teu Relatório de ${typeLabel.pt} — Share2Inspire`);
+      const subject = analysisSubject || (isEN ? `Your ${typeLabel.en} Report — Share2Inspire` : isES ? `Tu Informe de ${typeLabel.es || typeLabel.en} — Share2Inspire` : `O teu Relatório de ${typeLabel.pt} — Share2Inspire`);
 
       const htmlContent = `
 
@@ -10678,7 +10691,7 @@ REGLAS FINALES:
 
             <h2 style="color:#1a1a1a;font-size:22px;margin:0 0 8px">${isEN ? typeLabel.en : isES ? (typeLabel.es || typeLabel.en) : typeLabel.pt}</h2>
 
-            <p style="color:#666;font-size:14px;margin:0 0 24px">${isEN ? 'Here is your analysis report from Share2Inspire.' : 'Aqui está o teu relatório de análise da Share2Inspire.'}</p>
+            <p style="color:#666;font-size:14px;margin:0 0 24px">${isEN ? 'Here is your analysis report from Share2Inspire.' : isES ? 'Aquí tienes tu informe de análisis de Share2Inspire.' : 'Aqui está o teu relatório de análise da Share2Inspire.'}</p>
 
             <hr style="border:none;border-top:1px solid #e8e4dc;margin:0 0 24px">
 
@@ -10688,9 +10701,9 @@ REGLAS FINALES:
 
           <div style="text-align:center;margin-top:30px;padding:20px">
 
-            <p style="color:#999;font-size:12px;margin:0 0 8px">${isEN ? 'Want to explore more tools?' : 'Queres explorar mais ferramentas?'}</p>
+            <p style="color:#999;font-size:12px;margin:0 0 8px">${isEN ? 'Want to explore more tools?' : isES ? '¿Quieres explorar más herramientas?' : 'Queres explorar mais ferramentas?'}</p>
 
-            <a href="https://www.share2inspire.pt/area-cliente/membros" style="display:inline-block;background:#c8a45a;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">${isEN ? 'Go to Member Area' : 'Ir para Área de Membro'}</a>
+            <a href="https://www.share2inspire.pt/area-cliente/membros" style="display:inline-block;background:#c8a45a;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">${isEN ? 'Go to Member Area' : isES ? 'Ir al Área de Miembro' : 'Ir para Área de Membro'}</a>
 
           </div>
 
@@ -11157,6 +11170,8 @@ Cargo Objetivo: ${target_role || 'No especificado'}${targetCompanyMI ? `\nEmpres
         'career_coach',
 
         'career_path',
+
+        'career_intelligence',
 
         'linkedin_roast',
 

@@ -292,7 +292,7 @@ export default function CareerIntelligenceResults() {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
