@@ -66,13 +66,21 @@ echo "  JS:  $NEW_JS"
 echo "  CSS: $NEW_CSS"
 echo "✓ Build complete"
 
-# ── Step 2: Sync to all 4 directories ──
+# ── Step 2: Sync root assets + all SPA directories ──
 echo ""
 echo "▸ [2/5] Syncing assets to deploy directory..."
 
 # ⚠️  Static HTML files that must NEVER be overwritten:
 #   - cv-analyser/demo.html, en/cv-analyser/demo.html
 #   - career-path/example/index.html, en/career-path/example/index.html
+
+# IMPORTANT:
+# The generated index.html references assets with absolute URLs (/assets/...)
+# so every SPA entrypoint depends on the shared root assets directory.
+rm -rf "$DEPLOY_DIR/assets/"
+mkdir -p "$DEPLOY_DIR/assets/"
+cp -r "$BUILD_DIR/assets/"* "$DEPLOY_DIR/assets/"
+echo "  ✓ root assets/"
 
 for dir in "${SPA_DIRS[@]}"; do
   TARGET="$DEPLOY_DIR/$dir"
@@ -114,6 +122,21 @@ echo "  ℹ️  Static demo/example files preserved (not overwritten)"
 echo ""
 echo "▸ [3/5] Verifying local index.html hashes..."
 ALL_LOCAL_OK=true
+
+if [ ! -f "$DEPLOY_DIR/assets/$NEW_JS" ]; then
+  echo "  ✗ root assets/$NEW_JS — MISSING!"
+  ALL_LOCAL_OK=false
+else
+  echo "  ✓ root assets/$NEW_JS"
+fi
+
+if [ ! -f "$DEPLOY_DIR/assets/$NEW_CSS" ]; then
+  echo "  ✗ root assets/$NEW_CSS — MISSING!"
+  ALL_LOCAL_OK=false
+else
+  echo "  ✓ root assets/$NEW_CSS"
+fi
+
 for dir in "${SPA_DIRS[@]}"; do
   TARGET="$DEPLOY_DIR/$dir/index.html"
   if grep -q "$NEW_JS" "$TARGET" 2>/dev/null; then
