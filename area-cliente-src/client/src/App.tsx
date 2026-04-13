@@ -4,7 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch, Router as WouterRouter, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { I18nProvider } from "./contexts/I18nContext";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import Header from "./components/Header";
@@ -17,11 +17,21 @@ import MemberArea from "./pages/MemberArea";
 import ProfilePage from "./pages/ProfilePage";
 import ClientAreaLanding from "./pages/ClientAreaLanding";
 
+function RootRoute() {
+  const { user, loading, hasActiveSubscription } = useAuth();
+
+  if (!loading && user && hasActiveSubscription()) {
+    return <Redirect to="/membros" />;
+  }
+
+  return <Home />;
+}
+
 function Routes() {
   return (
     <Switch>
-      <Route path="" component={Home} />
-      <Route path="/" component={Home} />
+      <Route path="" component={RootRoute} />
+      <Route path="/" component={RootRoute} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/contactos" component={ClientAreaLanding} />
       <Route path="/planos" component={Plans} />
