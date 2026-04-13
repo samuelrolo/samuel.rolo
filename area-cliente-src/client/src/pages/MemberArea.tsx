@@ -9,7 +9,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { useI18n, type Lang } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase, type MemberContent } from '@/lib/supabase';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
 import CvMaker from '@/components/CvMaker';
 import UpgradePage from './UpgradePage';
@@ -99,7 +99,6 @@ const BLOG_ARTICLES = [
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
 function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => void; lang: Lang }) {
-  const { t } = useI18n();
   // Normalize: try multiple paths to find the actual analysis payload
   const raw = data?.analysis || data;
   if (!raw) return null;
@@ -777,6 +776,7 @@ function getYouTubeId(url: string): string | null {
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function MemberArea() {
   const { t, lang, setLang, pick } = useI18n();
+  const [, navigate] = useLocation();
   const { profile, subscription, user } = useAuth();
   const [content, setContent] = useState<MemberContent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1509,7 +1509,7 @@ return null;
 
   // ─── Navigate to tool from next step / insight ─────────────────────────
   const navigateToAction = (action: string) => {
-    if (action === 'profile') { window.location.href = '/area-cliente/perfil'; return; }
+    if (action === 'profile') { navigate('/perfil'); return; }
 
     const standaloneActionMap: Record<string, string> = {
       cv: getStandaloneToolUrl('/cv-analyser/'),
@@ -1997,7 +1997,7 @@ return null;
                 <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
                 <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.jobs.feedTitle')}</h3>
                 <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
-                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</a>
+                <Link href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</Link>
               </section>
             )}
           </div>
@@ -2011,7 +2011,7 @@ return null;
                 <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
                 <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h3>
                 <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedContent')}</p>
-                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</a>
+                <Link href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</Link>
               </section>
             ) : (
               <section>

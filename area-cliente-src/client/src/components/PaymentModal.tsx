@@ -9,6 +9,7 @@
  * Backend: share2inspire-beckend.lm.r.appspot.com
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'wouter';
 import { useI18n, type Lang } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
@@ -135,6 +136,7 @@ type Props = {
 
 export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
   const { t, lang } = useI18n();
+  const [, navigate] = useLocation();
   const { user, profile, refreshProfile } = useAuth();
   const [step, setStep] = useState<Step>('select');
   const [name, setName] = useState('');
@@ -463,7 +465,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 </p>
               </div>
               <button
-                onClick={() => { onClose(); window.location.href = '/area-cliente/membros'; }}
+                onClick={() => { onClose(); navigate('/membros'); }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] text-[#1a1a1a] text-sm font-semibold rounded hover:bg-[#d4b574] transition-all duration-300"
               >
                 {t('pay.goToMember')}
