@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { Globe, Menu, X, ChevronDown } from 'lucide-react';
-import PublicLoginModal from '@/components/PublicLoginModal';
+import LoginModal from '@/components/LoginModal';
 import {
   getLanguageLinks,
   getLocalizedPath,
@@ -279,7 +279,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
 
   return (
     <>
-      <PublicLoginModal open={loginModalOpen} lang={lang} onClose={() => setLoginModalOpen(false)} />
+      <LoginModal open={loginModalOpen} lang={lang} onClose={() => setLoginModalOpen(false)} />
       <header
         className={`sticky top-0 z-50 transition-all duration-300 border-b bg-white/95 backdrop-blur-md border-slate-200/80 ${
           scrolledDown ? 'shadow-sm' : ''
