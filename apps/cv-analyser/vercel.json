@@ -21,6 +21,134 @@
   ],
   "rewrites": [
     {
+      "source": "/servicos",
+      "destination": "/servicos/index.html"
+    },
+    {
+      "source": "/sobre",
+      "destination": "/sobre/index.html"
+    },
+    {
+      "source": "/contactos",
+      "destination": "/contactos/index.html"
+    },
+    {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/career-path",
+      "destination": "/career-path/index.html"
+    },
+    {
+      "source": "/career-intelligence",
+      "destination": "/career-intelligence/index.html"
+    },
+    {
+      "source": "/linkedin-roaster",
+      "destination": "/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/bundle",
+      "destination": "/bundle/index.html"
+    },
+    {
+      "source": "/student-pack",
+      "destination": "/student-pack/index.html"
+    },
+    {
+      "source": "/area-cliente",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/en",
+      "destination": "/en/index.html"
+    },
+    {
+      "source": "/en/services",
+      "destination": "/en/services/index.html"
+    },
+    {
+      "source": "/en/about",
+      "destination": "/en/about/index.html"
+    },
+    {
+      "source": "/en/contacts",
+      "destination": "/en/contacts/index.html"
+    },
+    {
+      "source": "/en/cv-analyser",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/career-path",
+      "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/en/career-intelligence",
+      "destination": "/en/career-intelligence/index.html"
+    },
+    {
+      "source": "/en/linkedin-roaster",
+      "destination": "/en/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/en/bundle",
+      "destination": "/en/bundle/index.html"
+    },
+    {
+      "source": "/en/student-pack",
+      "destination": "/en/student-pack/index.html"
+    },
+    {
+      "source": "/en/member-area",
+      "destination": "/en/member-area/index.html"
+    },
+    {
+      "source": "/es",
+      "destination": "/es/index.html"
+    },
+    {
+      "source": "/es/servicios",
+      "destination": "/es/servicios/index.html"
+    },
+    {
+      "source": "/es/sobre",
+      "destination": "/es/sobre/index.html"
+    },
+    {
+      "source": "/es/contactos",
+      "destination": "/es/contactos/index.html"
+    },
+    {
+      "source": "/es/cv-analyser",
+      "destination": "/es/cv-analyser/index.html"
+    },
+    {
+      "source": "/es/career-path",
+      "destination": "/es/career-path/index.html"
+    },
+    {
+      "source": "/es/career-intelligence",
+      "destination": "/es/career-intelligence/index.html"
+    },
+    {
+      "source": "/es/linkedin-roaster",
+      "destination": "/es/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/es/bundle",
+      "destination": "/es/bundle/index.html"
+    },
+    {
+      "source": "/es/student-pack",
+      "destination": "/es/student-pack/index.html"
+    },
+    {
+      "source": "/es/area-cliente",
+      "destination": "/es/area-cliente/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
