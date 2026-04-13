@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { Globe, Menu, X, ChevronDown } from 'lucide-react';
+import PublicLoginModal from '@/components/PublicLoginModal';
 import {
   getLanguageLinks,
   getLocalizedPath,
@@ -103,7 +104,6 @@ function useUserInitials(): { initials: string; isLoaded: boolean } {
 function UserAvatar({
   initials,
   isLoaded,
-  loginHref,
   loginLabel,
   memberAreaLabel,
   isMobile = false,
@@ -111,7 +111,6 @@ function UserAvatar({
 }: {
   initials: string;
   isLoaded: boolean;
-  loginHref: string;
   loginLabel: string;
   memberAreaLabel: string;
   isMobile?: boolean;
@@ -138,20 +137,21 @@ function UserAvatar({
   }
 
   return isMobile ? (
-    <a
-      href={loginHref}
+    <button
+      type="button"
       onClick={onClick}
       className="s2i-login-btn block text-center px-5 py-2.5 rounded-lg bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold uppercase transition-colors"
     >
       {loginLabel}
-    </a>
+    </button>
   ) : (
-    <a
-      href={loginHref}
+    <button
+      type="button"
+      onClick={onClick}
       className="s2i-login-btn px-3.5 py-1.5 rounded-md bg-[#C9A961] hover:bg-[#b8954f] text-white text-[0.7rem] font-semibold tracking-wide uppercase transition-colors"
     >
       {loginLabel}
-    </a>
+    </button>
   );
 }
 
@@ -167,10 +167,10 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   const labels = getMenuLabels(lang);
   const currentNavPage = resolvedCurrentRoute?.activeMenuId || normalizeActivePage(activePage) || '';
   const homeHref = getLocalizedPath('home', lang);
-  const loginHref = getLocalizedPath('area-cliente', lang);
   const { initials, isLoaded } = useUserInitials();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [scrolledDown, setScrolledDown] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const desktopLangRef = useRef<HTMLDivElement>(null);
@@ -209,6 +209,11 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
   function closeAllMenus() {
     setMobileMenuOpen(false);
     setLangDropdownOpen(false);
+  }
+
+  function openLoginModal() {
+    closeAllMenus();
+    setLoginModalOpen(true);
   }
 
   function toggleMobileMenu() {
@@ -274,6 +279,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
 
   return (
     <>
+      <PublicLoginModal open={loginModalOpen} lang={lang} onClose={() => setLoginModalOpen(false)} />
       <header
         className={`sticky top-0 z-50 transition-all duration-300 border-b bg-white/95 backdrop-blur-md border-slate-200/80 ${
           scrolledDown ? 'shadow-sm' : ''
@@ -313,9 +319,9 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
             <UserAvatar
               initials={initials}
               isLoaded={isLoaded}
-              loginHref={loginHref}
               loginLabel={labels.login}
               memberAreaLabel={labels.memberArea}
+              onClick={openLoginModal}
             />
 
             <div ref={desktopLangRef} className="relative">
@@ -416,11 +422,10 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
               <UserAvatar
                 initials={initials}
                 isLoaded={isLoaded}
-                loginHref={loginHref}
                 loginLabel={labels.login}
                 memberAreaLabel={labels.memberArea}
                 isMobile
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={openLoginModal}
               />
             </div>
           </div>

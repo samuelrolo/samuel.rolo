@@ -5,7 +5,8 @@
  */
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
-import { Link, useLocation } from 'wouter';
+import { useLoginModal } from '@/contexts/LoginModalContext';
+import { Link } from 'wouter';
 import { ArrowRight, FileText, BarChart3, Route, Linkedin, Bot, BookOpen, Target, DollarSign, ScanSearch, PenTool } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -31,7 +32,7 @@ const fadeUp = {
 export default function Home() {
   const { t, lang } = useI18n();
   const { user, hasActiveSubscription, profile } = useAuth();
-  const [, navigate] = useLocation();
+  const { openLoginModal } = useLoginModal();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -88,7 +89,7 @@ export default function Home() {
                 {!user && (
                   <button
                     type="button"
-                    onClick={() => navigate('/auth')}
+                    onClick={openLoginModal}
                     className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#bbb] text-[#333] font-light rounded hover:border-white/40 hover:text-[#1a1a1a] transition-all duration-300"
                   >
                     {t('nav.login')}
