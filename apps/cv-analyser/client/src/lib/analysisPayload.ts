@@ -15,19 +15,141 @@ const localize = (language: SupportedLanguage, pt: string, en: string, es: strin
   return pt;
 };
 
+const stripJsonCodeFences = (value: string) => value.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
 const safeObject = (value: any): Record<string, any> => {
   if (value && typeof value === 'object' && !Array.isArray(value)) return value;
-  return {};
-};
-
-const safeArray = <T = any>(value: any): T[] => Array.isArray(value) ? value : [];
-
-const preferObject = (...values: any[]): Record<string, any> => {
-  for (const value of values) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    const cleaned = stripJsonCodeFences(value);
+    if (cleaned.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(cleaned);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+      } catch {
+        return {};
+      }
+    }
   }
   return {};
 };
+
+const safeArray = <T = any>(value: any): T[] => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    const cleaned = stripJsonCodeFences(value);
+    if (cleaned.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(cleaned);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+  }
+  return [];
+};
+
+const preferObject = (...values: any[]): Record<string, any> => {
+  for (const value of values) {
+    const parsed = safeObject(value);
+    if (Object.keys(parsed).length > 0) return parsed;
+  }
+  return {};
+};
+
+const hasMeaningfulValue = (value: any): boolean => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'string') return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return true;
+};
+
+const CAREER_REPORT_KEYS = [
+  'current_positioning',
+  'cv_linkedin_cross_analysis',
+  'next_roles',
+  'development_plan',
+  'immediate_actions',
+  'long_term_vision',
+  'strategic_paths',
+  'strategic_comparison',
+  'tradeoffs',
+  'decision_recommendation',
+  'action_plan_by_path',
+  'market_context',
+  'career_potential_score',
+] as const;
+
+const CAREER_META_KEYS = [
+  'name',
+  'candidate_name',
+  'current_role',
+  'detected_name',
+  'detected_role',
+] as const;
+
+const mergeSelectedFields = (target: Record<string, any>, source: Record<string, any>, keys: readonly string[]) => {
+  for (const key of keys) {
+    if (!(key in source)) continue;
+    const incoming = source[key];
+    const existing = target[key];
+    if (hasMeaningfulValue(incoming) || !hasMeaningfulValue(existing)) {
+      target[key] = incoming;
+    }
+  }
+};
+
+const collectCareerReportAnalysis = (payload: any): Record<string, any> => {
+  const root = safeObject(payload);
+  const queue: any[] = [root];
+  const seen = new Set<any>();
+  const candidates: Record<string, any>[] = [];
+
+  while (queue.length > 0) {
+    const current = safeObject(queue.shift());
+    if (Object.keys(current).length === 0 || seen.has(current)) continue;
+    seen.add(current);
+    candidates.push(current);
+
+    for (const nestedKey of ['raw', 'data', 'analysis', 'career_path', 'career_intelligence']) {
+      const nested = safeObject(current[nestedKey]);
+      if (Object.keys(nested).length > 0 && !seen.has(nested)) {
+        queue.push(nested);
+      }
+    }
+  }
+
+  const analysis: Record<string, any> = {};
+  for (const candidate of candidates) {
+    mergeSelectedFields(analysis, candidate, CAREER_META_KEYS);
+    mergeSelectedFields(analysis, candidate, CAREER_REPORT_KEYS);
+  }
+
+  return Object.keys(analysis).length > 0 ? analysis : preferObject(...candidates, root);
+};
+
+const normalizeCareerReportPayload = (payload: any, language: SupportedLanguage, analysisType: 'career_path' | 'career_intelligence') => {
+  const raw = safeObject(payload);
+  const analysis = collectCareerReportAnalysis(raw);
+
+  return {
+    success: raw.success !== false,
+    analysis_type: analysisType,
+    language,
+    storage_version: STORAGE_VERSION,
+    analysis,
+    raw,
+  };
+};
+
+const normalizeCareerPathPayloadInternal = (payload: any, language: SupportedLanguage) => normalizeCareerReportPayload(payload, language, 'career_path');
+const normalizeCareerIntelligencePayloadInternal = (payload: any, language: SupportedLanguage) => normalizeCareerReportPayload(payload, language, 'career_intelligence');
+
+const normalizeCareerPathPayload = (payload: any, language?: string) => normalizeCareerPathPayloadInternal(payload, normalizeLanguage(language));
+const normalizeCareerIntelligencePayload = (payload: any, language?: string) => normalizeCareerIntelligencePayloadInternal(payload, normalizeLanguage(language));
+
+export { normalizeCareerPathPayload, normalizeCareerIntelligencePayload };
 
 export function normalizeLinkedinRoastPayload(payload: any, language?: string) {
   const lang = normalizeLanguage(language);
@@ -46,55 +168,6 @@ export function normalizeLinkedinRoastPayload(payload: any, language?: string) {
   };
 }
 
-export function normalizeCareerPathPayload(payload: any, language?: string) {
-  const lang = normalizeLanguage(language);
-  const raw = safeObject(payload);
-  const careerPath = safeObject(raw.career_path);
-  const analysis = preferObject(
-    careerPath.career_path,
-    careerPath.analysis,
-    careerPath.data,
-    raw.career_path,
-    raw.analysis,
-    raw.data,
-    raw,
-  );
-
-  return {
-    success: raw.success !== false,
-    analysis_type: 'career_path',
-    language: lang,
-    storage_version: STORAGE_VERSION,
-    analysis,
-    raw,
-  };
-}
-
-export function normalizeCareerIntelligencePayload(payload: any, language?: string) {
-  const lang = normalizeLanguage(language);
-  const raw = safeObject(payload);
-  const careerIntelligence = safeObject(raw.career_intelligence);
-  const analysis = preferObject(
-    careerIntelligence.career_intelligence,
-    careerIntelligence.career_path,
-    careerIntelligence.analysis,
-    careerIntelligence.data,
-    raw.career_intelligence,
-    raw.career_path,
-    raw.analysis,
-    raw.data,
-    raw,
-  );
-
-  return {
-    success: raw.success !== false,
-    analysis_type: 'career_intelligence',
-    language: lang,
-    storage_version: STORAGE_VERSION,
-    analysis,
-    raw,
-  };
-}
 
 function adaptStudentPackLegacyToUnified(params: {
   cv: any;
