@@ -188,7 +188,8 @@ export default function LinkedInRoasterResults() {
     try { return JSON.parse(sessionStorage.getItem('linkedinRoasterAnalysis') || '{}'); } catch { return {}; }
   }, []);
 
-  const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true';
+  const hasCachedAnalysis = Boolean(sessionStorage.getItem('linkedinRoasterAnalysis'));
+  const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true' && hasCachedAnalysis;
   const normalizedData = useMemo(() => {
     const storedLang = sessionStorage.getItem('analysisLang') || lang;
     return normalizeLinkedinRoastPayload(rawData, storedLang);

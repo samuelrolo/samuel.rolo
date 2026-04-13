@@ -102,6 +102,25 @@ export default function LinkedInRoasterHome() {
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
   const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
   const privacyPolicyPath = pick('/politica-privacidade/', '/en/politica-privacidade/', '/es/politica-privacidade/');
+
+  const verifyStripeSessionPayment = async (sessionId: string) => {
+    const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || pick('Não foi possível validar o pagamento.', 'Could not validate the payment.', 'No se pudo validar el pago.'));
+    }
+    if (!data.paid) {
+      throw new Error(pick('O pagamento ainda não foi confirmado pelo Stripe.', 'The payment has not yet been confirmed by Stripe.', 'Stripe aún no ha confirmado el pago.'));
+    }
+    localStorage.setItem('linkedinRoasterVerifiedTransactionId', sessionId);
+    localStorage.removeItem('linkedinRoasterPendingOrderId');
+    return data;
+  };
+
   const paymentModalTitle = pick(
     `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`,
     `Pay €${appliedCoupon ? finalPriceStr : PRICE}`,
@@ -132,7 +151,10 @@ export default function LinkedInRoasterHome() {
   };
 
   // Step 2: Run analysis
-  const runAnalysis = async () => {
+  const runAnalysis = async (options?: { emailOverride?: string; linkedinUrlOverride?: string }) => {
+    const currentEmail = (options?.emailOverride || email).trim().toLowerCase();
+    const currentLinkedinUrl = (options?.linkedinUrlOverride || linkedinUrl).trim();
+
     setError(null);
     setLoading(true);
     const startTime = Date.now();
@@ -160,7 +182,7 @@ export default function LinkedInRoasterHome() {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: lang }),
+            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: lang }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
@@ -183,8 +205,8 @@ export default function LinkedInRoasterHome() {
 
       const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(responseData, lang);
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
-      sessionStorage.setItem('linkedinRoasterEmail', email);
-      sessionStorage.setItem('linkedinRoasterUrl', linkedinUrl);
+      sessionStorage.setItem('linkedinRoasterEmail', currentEmail);
+      sessionStorage.setItem('linkedinRoasterUrl', currentLinkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
       sessionStorage.setItem('analysisLang', normalizedLinkedinAnalysis.language);
 
@@ -192,7 +214,7 @@ export default function LinkedInRoasterHome() {
         fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
-          body: JSON.stringify({ profile_url: linkedinUrl, user_email: email.trim().toLowerCase(), score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
+          body: JSON.stringify({ profile_url: currentLinkedinUrl, user_email: currentEmail, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
         }).catch(() => {});
       } catch (_) {}
 
@@ -201,7 +223,7 @@ export default function LinkedInRoasterHome() {
         fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email.trim().toLowerCase(), name: '', source: 'linkedin_roaster', language: lang })
+          body: JSON.stringify({ email: currentEmail, name: '', source: 'linkedin_roaster', language: lang })
         }).catch(() => {});
       } catch (_) {}
 
@@ -251,10 +273,11 @@ export default function LinkedInRoasterHome() {
     try {
       const orderId = `ROAST-${isPT ? '' : lang.toUpperCase() + '-'}${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const currentPath = lp('/linkedin-roaster');
+      localStorage.removeItem('linkedinRoasterVerifiedTransactionId');
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: email.split('@')[0], amount: isPT ? PRICE_NUM : finalPrice, currency: 'eur', product_type: 'linkedin_roast', language: lang, description: appliedCoupon ? `LinkedIn Roaster — Share2Inspire (${appliedCoupon.percent}% off)` : pick('LinkedIn Roaster — Roast Brutal — Share2Inspire', 'LinkedIn Roaster — Brutal Profile Roast — Share2Inspire', 'LinkedIn Roaster — Roast Brutal — Share2Inspire'), orderId, success_url: `${window.location.origin}${currentPath}?paid=true`, cancel_url: `${window.location.origin}${currentPath}` }),
+        body: JSON.stringify({ email, name: email.split('@')[0], amount: isPT ? PRICE_NUM : finalPrice, currency: 'eur', product_type: 'linkedin_roast', language: lang, description: appliedCoupon ? `LinkedIn Roaster — Share2Inspire (${appliedCoupon.percent}% off)` : pick('LinkedIn Roaster — Roast Brutal — Share2Inspire', 'LinkedIn Roaster — Brutal Profile Roast — Share2Inspire', 'LinkedIn Roaster — Roast Brutal — Share2Inspire'), orderId, success_url: `${window.location.origin}${currentPath}?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${window.location.origin}${currentPath}` }),
       });
       const data = await response.json();
       if (data.url) { localStorage.setItem('linkedinRoasterPendingOrderId', orderId); window.location.href = data.url; }
@@ -347,14 +370,39 @@ export default function LinkedInRoasterHome() {
   // Check for Stripe return
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('paid') === 'true') {
-      const currentPath = lp('/linkedin-roaster');
-      window.history.replaceState({}, '', currentPath);
-      const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
-      const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
-      if (savedUrl) { setLinkedinUrl(savedUrl); setEmail(savedEmail); setTimeout(() => runAnalysis(), 500); }
+    const sessionId = params.get('session_id');
+    if (!sessionId) return;
+
+    const currentPath = lp('/linkedin-roaster');
+    const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
+    const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
+
+    if (savedUrl) {
+      setLinkedinUrl(savedUrl);
+      setEmail(savedEmail);
     }
-  }, []);
+
+    const verifyStripeReturn = async () => {
+      setError(null);
+      setShowPaymentModal(true);
+      setPaymentStep('polling');
+      setPollingExpired(false);
+      setPollingMsg(pick('A verificar pagamento no servidor...', 'Checking payment on the server...', 'Verificando el pago en el servidor...'));
+
+      try {
+        await verifyStripeSessionPayment(sessionId);
+        window.history.replaceState({}, '', currentPath);
+        setShowPaymentModal(false);
+        await runAnalysis({ emailOverride: savedEmail, linkedinUrlOverride: savedUrl });
+      } catch (err: any) {
+        window.history.replaceState({}, '', currentPath);
+        setShowPaymentModal(false);
+        setError(err.message || pick('Erro ao validar o pagamento. Tenta novamente.', 'Error validating payment. Please try again.', 'Error al validar el pago. Inténtalo de nuevo.'));
+      }
+    };
+
+    verifyStripeReturn();
+  }, [lp]);
 
   return (
     <div className="min-h-screen bg-background">
