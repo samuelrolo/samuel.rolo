@@ -135,6 +135,33 @@ export default function StudentPackHome() {
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
   const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
 
+  const setStudentPackAccessType = (value: 'free' | 'paid_pending' | 'paid_verified') => {
+    localStorage.setItem('studentPackAccessType', value);
+  };
+
+  const getStudentPackTransactionId = () => (
+    localStorage.getItem('studentPackVerifiedTransactionId')
+    || currentOrderId
+    || localStorage.getItem('studentPackPendingOrderId')
+    || ''
+  );
+
+  const persistStudentPackAnalysis = async (payload: Record<string, any>) => {
+    const accessType = localStorage.getItem('studentPackAccessType');
+    const transactionId = getStudentPackTransactionId();
+    const paymentStatus = accessType === 'free' ? 'free' : 'pending';
+    await fetch(`${BACKEND_URL}/api/cv-analysis/log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...payload,
+        payment_status: paymentStatus,
+        payment_amount: accessType === 'free' ? 0 : finalPrice,
+        transaction_id: transactionId || null,
+      })
+    }).catch(() => {});
+  };
+
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
 
@@ -247,14 +274,24 @@ export default function StudentPackHome() {
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
         sessionStorage.setItem('analysisLang', 'pt');
+        const analyticsTransactionIdPT = getStudentPackTransactionId() || `STUDPACK-PT-${Date.now()}`;
         try {
           const cp = cvAnalysisSourcePT?.candidate_profile || {};
-          fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResultPT.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSourcePT), cv_text: cvText || null, payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-PT-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: email.trim().toLowerCase(), linkedin_url: linkedinUrl }) }).catch(() => {});
+          await persistStudentPackAnalysis({
+            score: cvAnalysisResultPT.overallScore || 0,
+            professional_area: cp.detected_role || null,
+            analysis_type: 'student_pack',
+            analysis_result: cvAnalysisSourcePT,
+            cv_text: cvText || null,
+            user_name: cp.name || null,
+            user_email: currentEmail.trim().toLowerCase(),
+            linkedin_url: currentLinkedinUrl,
+          });
         } catch (_) {}
-        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
-        trackPurchase('student_pack', finalPrice, `STUDPACK-PT-${Date.now()}`);
+        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentEmail.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
+        trackPurchase('student_pack', finalPrice, analyticsTransactionIdPT);
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
-        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-PT-${Date.now()}` });
+        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: currentEmail, transaction_id: analyticsTransactionIdPT });
         const elapsed = Date.now() - startTime;
         if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
         clearInterval(msgInterval);
@@ -309,13 +346,22 @@ export default function StudentPackHome() {
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
         sessionStorage.setItem('isPaid', 'true');
         sessionStorage.setItem('analysisLang', langCode);
+        const analyticsTransactionId = getStudentPackTransactionId() || `STUDPACK-${langCode.toUpperCase()}-${Date.now()}`;
         try {
           const cp = cvAnalysisSource?.candidate_profile || {};
-          fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }, body: JSON.stringify({ score: cvAnalysisResult.overallScore || 0, professional_area: cp.detected_role || null, analysis_type: 'student_pack', analysis_result: JSON.stringify(cvAnalysisSource), payment_status: 'paid', payment_amount: finalPrice, transaction_id: `STUDPACK-${langCode.toUpperCase()}-${Date.now()}`, domain: 'share2inspire.pt', user_name: cp.name || null, user_email: currentEmail, linkedin_url: currentLinkedinUrl }) }).catch(() => {});
+          await persistStudentPackAnalysis({
+            score: cvAnalysisResult.overallScore || 0,
+            professional_area: cp.detected_role || null,
+            analysis_type: 'student_pack',
+            analysis_result: cvAnalysisSource,
+            user_name: cp.name || null,
+            user_email: currentEmail.trim().toLowerCase(),
+            linkedin_url: currentLinkedinUrl,
+          });
         } catch (_) {}
-        trackPurchase('student_pack', finalPrice, `STUDPACK-${langCode.toUpperCase()}-${Date.now()}`);
+        trackPurchase('student_pack', finalPrice, analyticsTransactionId);
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: currencyCodeUpper });
-        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: email, transaction_id: `STUDPACK-${langCode.toUpperCase()}-${Date.now()}` });
+        trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: currentEmail, transaction_id: analyticsTransactionId });
         const elapsed = Date.now() - startTime;
         if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
         clearInterval(msgInterval);
@@ -341,6 +387,9 @@ export default function StudentPackHome() {
       const cleanPhone = phone.replace(/\s/g, '').replace(/\D/g, '');
       const formattedPhone = cleanPhone.startsWith('351') ? cleanPhone : (cleanPhone.length === 9 ? '351' + cleanPhone : cleanPhone);
       const orderId = `STUDPACK-${Date.now()}`;
+      localStorage.removeItem('studentPackVerifiedTransactionId');
+      localStorage.setItem('studentPackPendingOrderId', orderId);
+      setStudentPackAccessType('paid_pending');
       trackPaymentStart('student_pack', finalPrice);
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: finalPrice.toFixed(2), email, product: pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster'), description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster') }) });
       const data = await response.json();
@@ -354,12 +403,16 @@ export default function StudentPackHome() {
 
   const handlePayPalPayment = async () => {
     if (!email) { setPaymentError(pick('Introduz o teu email', 'Enter your email', 'Introduce tu email')); return; }
+    const paypalTransactionId = `STUDPACK-PAYPAL-${Date.now()}`;
+    localStorage.removeItem('studentPackVerifiedTransactionId');
+    localStorage.setItem('studentPackPendingOrderId', paypalTransactionId);
+    setStudentPackAccessType('paid_pending');
     trackPaymentStart('student_pack', finalPrice);
     window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
     setPaymentStep('success');
     if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: currencyCodeUpper });
-    trackPurchase('student_pack', finalPrice, `STUDPACK-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `STUDPACK-PAYPAL-${Date.now()}` });
+    trackPurchase('student_pack', finalPrice, paypalTransactionId);
+    trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: paypalTransactionId });
   };
 
   const handleStripePayment = async () => {
@@ -369,8 +422,10 @@ export default function StudentPackHome() {
     setPaymentError(null);
     try {
       const orderId = `STUDPACK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const successPath = localePath('/estudante') + '?paid=true';
+      const successPath = localePath('/estudante');
       const cancelPath = localePath('/estudante');
+      localStorage.removeItem('studentPackVerifiedTransactionId');
+      setStudentPackAccessType('paid_pending');
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, product_type: 'student_pack', language: lang, description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} — Share2Inspire (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Pack Estudiante — CV Analyser + LinkedIn Roaster — Share2Inspire'), orderId, success_url: `${window.location.origin}${successPath}`, cancel_url: `${window.location.origin}${cancelPath}` }) });
       const data = await response.json();
       if (data.url) { localStorage.setItem('studentPackPendingOrderId', orderId); localStorage.setItem('studentPackEmail', email); redirectToCheckout(data.url); }
@@ -408,7 +463,7 @@ export default function StudentPackHome() {
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
       const data = await res.json();
-      if (data.paid) { setShowPaymentModal(false); runBothEngines(); }
+      if (data.paid) { setStudentPackAccessType('paid_verified'); setShowPaymentModal(false); runBothEngines(); }
       else { setPollingExpired(true); setPollingMsg(pick('Pagamento ainda não confirmado.', 'Payment not yet confirmed.', 'Pago aún no confirmado.')); startPolling(currentOrderId); }
     } catch { setPollingMsg(pick('Erro ao verificar.', 'Error verifying.', 'Error al verificar.')); setPollingExpired(true); }
   };
@@ -430,7 +485,7 @@ export default function StudentPackHome() {
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite.', 'This code has reached its limit.', 'Este código ha alcanzado su límite.')); return; }
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('student_pack') && !products.includes('student')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'Code not applicable to this package.', 'Código no aplicable a este paquete.')); return; }
-        if (coupon.discount_percent === 100) { incrementCouponUsage(code); setShowDiscountModal(false); runBothEngines(); return; }
+        if (coupon.discount_percent === 100) { localStorage.removeItem('studentPackPendingOrderId'); localStorage.removeItem('studentPackVerifiedTransactionId'); setStudentPackAccessType('free'); incrementCouponUsage(code); setShowDiscountModal(false); runBothEngines(); return; }
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code);
         setShowDiscountModal(false);
@@ -444,6 +499,9 @@ export default function StudentPackHome() {
       if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já foi totalmente utilizado.', 'This code has been fully used.', 'Este código ya ha sido totalmente utilizado.')); return; }
       setShowDiscountModal(false);
       if (v.email) sessionStorage.setItem('paymentEmail', v.email);
+      localStorage.removeItem('studentPackPendingOrderId');
+      localStorage.removeItem('studentPackVerifiedTransactionId');
+      setStudentPackAccessType('free');
       runBothEngines();
     } catch { setDiscountError(pick('Erro ao verificar código.', 'Error verifying code.', 'Error al verificar el código.')); }
     finally { setDiscountLoading(false); }
@@ -452,12 +510,38 @@ export default function StudentPackHome() {
   // Check Stripe return
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('paid') === 'true') {
-      const savedEmail = localStorage.getItem('studentPackEmail');
-      if (savedEmail) setEmail(savedEmail);
-      window.history.replaceState({}, '', localePath('/estudante'));
-      runBothEngines();
-    }
+    const sessionId = params.get('session_id');
+    if (!sessionId) return;
+
+    const verifyStripeReturn = async () => {
+      setError(null);
+      setStep('analyzing');
+      setAnalysisProgress(0);
+      setAnalysisMsg(pick('A validar o pagamento no servidor...', 'Validating payment on the server...', 'Validando el pago en el servidor...'));
+      try {
+        const savedEmail = localStorage.getItem('studentPackEmail');
+        if (savedEmail) setEmail(savedEmail);
+        const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || pick('Não foi possível validar o pagamento.', 'Could not validate the payment.', 'No se pudo validar el pago.'));
+        if (!data.paid) throw new Error(pick('O pagamento ainda não foi confirmado pelo Stripe.', 'The payment has not yet been confirmed by Stripe.', 'Stripe aún no ha confirmado el pago.'));
+        localStorage.setItem('studentPackVerifiedTransactionId', sessionId);
+        localStorage.removeItem('studentPackPendingOrderId');
+        setStudentPackAccessType('paid_verified');
+        window.history.replaceState({}, '', localePath('/estudante'));
+        await runBothEngines();
+      } catch (err: any) {
+        window.history.replaceState({}, '', localePath('/estudante'));
+        setStep('upload');
+        setError(err.message || pick('Erro ao validar o pagamento. Tenta novamente.', 'Error validating payment. Please try again.', 'Error al validar el pago. Inténtalo de nuevo.'));
+      }
+    };
+
+    verifyStripeReturn();
   }, []);
 
   useEffect(() => {
