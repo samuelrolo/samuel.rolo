@@ -111,7 +111,7 @@ const COPY: Record<Lang, Copy> = {
   },
 };
 
-const MEMBER_AREA_REDIRECT = '/area-cliente';
+const MEMBER_AREA_REDIRECT = '/area-cliente/membros';
 
 function GoogleLogo() {
   return (

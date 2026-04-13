@@ -1,10 +1,12 @@
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Router as WouterRouter, Redirect } from "wouter";
+import { Route, Switch, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { I18nProvider } from "./contexts/I18nContext";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import Header from "./components/Header";
@@ -17,11 +19,33 @@ import MemberArea from "./pages/MemberArea";
 import ProfilePage from "./pages/ProfilePage";
 import ClientAreaLanding from "./pages/ClientAreaLanding";
 
+function RootRoute() {
+  const { user, loading, hasActiveSubscription } = useAuth();
+  const [, navigate] = useLocation();
+  const shouldRedirectToMembers = !loading && Boolean(user) && hasActiveSubscription();
+
+  useEffect(() => {
+    if (shouldRedirectToMembers) {
+      navigate("/membros");
+    }
+  }, [navigate, shouldRedirectToMembers]);
+
+  if (shouldRedirectToMembers) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+      </div>
+    );
+  }
+
+  return <Home />;
+}
+
 function Routes() {
   return (
     <Switch>
-      <Route path="" component={Home} />
-      <Route path="/" component={Home} />
+      <Route path="" component={RootRoute} />
+      <Route path="/" component={RootRoute} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/contactos" component={ClientAreaLanding} />
       <Route path="/planos" component={Plans} />
