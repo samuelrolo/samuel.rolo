@@ -20,8 +20,9 @@ import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro
 import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
-import { getMemberPlanTier } from "@/lib/memberAuth";
+import { getValidatedMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { fetchPaymentStatus } from "@/lib/paymentAccess";
 import { redirectToCheckout } from '../lib/webviewPayment';
 import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
@@ -517,18 +518,29 @@ export default function Results() {
     const storedCvText = sessionStorage.getItem('cvText');
     if (storedCvText) setCvText(storedCvText);
 
-    // Check if already paid (from previous session)
-    const paidStatus = sessionStorage.getItem('isPaid');
-    if (paidStatus === 'true') {
-      setIsPaid(true);
-    }
+    const hydratePremiumAccess = async () => {
+      const memberTier = await getValidatedMemberPlanTier();
+      if (memberTier) {
+        setIsPaid(true);
+        sessionStorage.setItem('isPaid', 'true');
+        return;
+      }
 
-    // Auto-unlock for active members (Essential, Growth, or Pro)
-    const memberTier = getMemberPlanTier();
-    if (memberTier) {
-      setIsPaid(true);
-      sessionStorage.setItem('isPaid', 'true');
-    }
+      const paymentStatus = await fetchPaymentStatus({
+        orderId: sessionStorage.getItem('orderId'),
+        sessionId: sessionStorage.getItem('stripeSessionId'),
+        expectedProductTypes: ['cv_analysis', 'bundle'],
+      });
+
+      if (paymentStatus.success && paymentStatus.paid) {
+        setIsPaid(true);
+        sessionStorage.setItem('isPaid', 'true');
+      } else {
+        sessionStorage.removeItem('isPaid');
+      }
+    };
+
+    hydratePremiumAccess();
 
     // Restore applied coupon from sessionStorage (set by Home.tsx / HomeEN.tsx)
     const savedCouponCode = sessionStorage.getItem('appliedCouponCode');
@@ -586,13 +598,13 @@ export default function Results() {
         sessionStorage.removeItem('selectedPlanBeforeStripe');
       }
 
-      // Verify payment with backend
-      fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId })
+      sessionStorage.setItem('stripeSessionId', sessionId);
+
+      fetchPaymentStatus({
+        orderId: sessionStorage.getItem('orderId'),
+        sessionId,
+        expectedProductTypes: ['cv_analysis', 'bundle'],
       })
-        .then(res => res.json())
         .then(data => {
           if (data.success && data.paid) {
             setIsPaid(true);
@@ -604,17 +616,14 @@ export default function Results() {
             trackAffiliateConversion({ product: productName, amount: priceVal, currency: t('eur'), payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
             updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
 
-            // If bundle plan, auto-trigger Career Path flow
             if (restoredPlan?.includes_career_path) {
               sessionStorage.setItem('careerPathIncluded', 'true');
               const savedEmail = sessionStorage.getItem('paymentEmail') || '';
               setCareerPathEmail(savedEmail);
-              // Show payment modal in success state with LinkedIn input
               setPaymentStep('success');
               setShowPaymentModal(true);
             }
 
-            // Clean URL
             window.history.replaceState({}, '', window.location.pathname);
           }
         })
@@ -623,18 +632,25 @@ export default function Results() {
     // Auto-generate Career Path when coming from Bundle flow
     const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid');
     if (bundleCareerPathPaid === 'true') {
-      sessionStorage.setItem('careerPathIncluded', 'true');
-      const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
-      const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
-      setCareerPathLinkedin(bundleLinkedin);
-      setCareerPathEmail(bundleEmail);
-      setCareerPathPaymentStep('generating');
-      // Remove flag so it doesn't re-trigger on refresh
-      sessionStorage.removeItem('careerPathPaid');
-      // DEFINITIVE FIX: Call the Career Path API directly here, reading all data
-      // from sessionStorage (not React state) to avoid race conditions.
-      // We use a self-invoking async function to call the API immediately.
       (async () => {
+        const bundlePaymentStatus = await fetchPaymentStatus({
+          orderId: sessionStorage.getItem('orderId'),
+          sessionId: sessionStorage.getItem('stripeSessionId'),
+          expectedProductTypes: ['bundle'],
+        });
+
+        if (!(bundlePaymentStatus.success && bundlePaymentStatus.paid)) {
+          sessionStorage.removeItem('careerPathPaid');
+          return;
+        }
+
+        sessionStorage.setItem('careerPathIncluded', 'true');
+        const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
+        const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
+        setCareerPathLinkedin(bundleLinkedin);
+        setCareerPathEmail(bundleEmail);
+        setCareerPathPaymentStep('generating');
+        sessionStorage.removeItem('careerPathPaid');
         console.log('[Bundle→CareerPath] Auto-generating Career Path...');
         try {
           // Use the actual CV text stored by BundleHome, NOT the transformed analysis JSON

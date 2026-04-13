@@ -22,6 +22,7 @@ import { localePath } from '@/i18n/useTranslation';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerIntelligencePayload } from "@/lib/analysisPayload";
+import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
@@ -211,7 +212,6 @@ export default function CareerIntelligenceResults() {
 
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
-    const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid'));
     const savedData = readCareerIntelligenceData();
 
     if (!cvData && !isStripeReturn) {
@@ -247,24 +247,34 @@ export default function CareerIntelligenceResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
-    if (paidFlag === 'true') {
-      const ciFullFlag = (localStorage.getItem('careerIntelligenceFull') || sessionStorage.getItem('careerIntelligenceFull'));
+    const hydratePaidAccess = async () => {
+      const paymentVerification = await fetchPaymentStatus({
+        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
+        sessionId: getFirstStoredValue(['stripeSessionId']),
+        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
+      });
+
+      if (!(paymentVerification.success && paymentVerification.paid)) {
+        localStorage.removeItem('careerPathPaid');
+        sessionStorage.removeItem('careerPathPaid');
+        localStorage.removeItem('careerIntelligenceFull');
+        sessionStorage.removeItem('careerIntelligenceFull');
+        return;
+      }
+
       const ciNeedsRegen = (localStorage.getItem('ciNeedsRegeneration') || sessionStorage.getItem('ciNeedsRegeneration'));
-      
-      if (ciFullFlag === 'true' && (ciNeedsRegen === 'true' || !savedData)) {
-        // Career Intelligence was paid — always generate fresh analysis with the
-        // country/region the user selected in the CI form (not from Career Path).
-        (localStorage.removeItem('ciNeedsRegeneration'), sessionStorage.removeItem('ciNeedsRegeneration'));
+      if (ciNeedsRegen === 'true' || !savedData) {
+        localStorage.removeItem('ciNeedsRegeneration');
+        sessionStorage.removeItem('ciNeedsRegeneration');
         setIsPaid(true);
         setTimeout(() => { generateAnalysis(); }, 300);
-      } else if (savedData) {
+      } else {
         setCareerData(savedData);
         setIsPaid(true);
-      } else if (ciFullFlag === 'true') {
-        setIsPaid(true);
-        setTimeout(() => { generateAnalysis(); }, 300);
       }
-    }
+    };
+
+    hydratePaidAccess();
 
     // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
     if (paymentStatus === 'cancelled') {
@@ -274,15 +284,18 @@ export default function CareerIntelligenceResults() {
     }
 
     if (paymentStatus === 'success' && sessionId) {
-      fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId }),
-      }).then(res => res.json()).then(data => {
+      localStorage.setItem('stripeSessionId', sessionId);
+      sessionStorage.setItem('stripeSessionId', sessionId);
+
+      fetchPaymentStatus({
+        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
+        sessionId,
+        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
+      }).then(data => {
         if (data.success && data.paid) {
           const stripeAmount = data.amount || 49;
           const productType = data.product_type || 'career_intelligence_full';
-          if (productType === 'career_intelligence_full') {
+          if (productType === 'career_intelligence_full' || productType === 'career_intelligence_pro') {
             localStorage.setItem('careerPathPaid', 'true');
             localStorage.setItem('careerIntelligenceProPaid', 'true');
             localStorage.setItem('careerIntelligenceFull', 'true');

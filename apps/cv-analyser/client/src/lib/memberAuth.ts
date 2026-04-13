@@ -12,6 +12,54 @@
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
+type MemberPlanTier = 'essential' | 'growth' | 'pro';
+
+type MemberAccessResult = {
+  valid: boolean;
+  tier: MemberPlanTier | null;
+};
+
+function deriveMemberPlanTier(plan: string): MemberPlanTier {
+  const planField = (plan || '').toLowerCase();
+  if (planField.includes('pro') || planField === 'annual') return 'pro';
+  if (planField.includes('growth') || planField === 'semiannual') return 'growth';
+  return 'essential';
+}
+
+async function verifyStoredMemberAccess(token: string, memberId: string): Promise<MemberAccessResult> {
+  const userRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!userRes.ok) return { valid: false, tier: null };
+  const userData = await userRes.json();
+  if (!userData?.id || userData.id !== memberId) return { valid: false, tier: null };
+
+  const subRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/subscriptions?user_id=eq.${memberId}&status=eq.active&select=expires_at,plan`,
+    {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!subRes.ok) return { valid: false, tier: null };
+  const subscriptions = await subRes.json();
+  if (!Array.isArray(subscriptions) || subscriptions.length === 0) return { valid: false, tier: null };
+
+  const sub = subscriptions[0];
+  if (!sub?.expires_at || new Date(sub.expires_at) <= new Date()) {
+    return { valid: false, tier: null };
+  }
+
+  return { valid: true, tier: deriveMemberPlanTier(sub.plan || '') };
+}
+
 /**
  * Verifica o token de membro passado como parâmetro na URL.
  * Chama o Supabase para confirmar que o utilizador tem uma subscrição ativa e não expirada.
@@ -27,47 +75,10 @@ export async function checkMemberToken(): Promise<boolean> {
 
     if (!token || !memberId) return false;
 
-    // Verificar o utilizador com o token Supabase
-    const userRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const verification = await verifyStoredMemberAccess(token, memberId);
+    if (!verification.valid || !verification.tier) return false;
 
-    if (!userRes.ok) return false;
-    const userData = await userRes.json();
-
-    // Confirmar que o member_id corresponde ao utilizador do token
-    if (!userData?.id || userData.id !== memberId) return false;
-
-    // Verificar subscrição ativa e não expirada
-    const subRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/subscriptions?user_id=eq.${memberId}&status=eq.active&select=expires_at,plan`,
-      {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!subRes.ok) return false;
-    const subscriptions = await subRes.json();
-
-    if (!Array.isArray(subscriptions) || subscriptions.length === 0) return false;
-
-    const sub = subscriptions[0];
-    if (!sub.expires_at) return false;
-
-    const isValid = new Date(sub.expires_at) > new Date();
-    if (!isValid) return false;
-
-    // Determine plan tier from subscription plan field
-    const planField = (sub.plan || '').toLowerCase();
-    let memberPlanTier = 'essential';
-    if (planField.includes('pro') || planField === 'annual') memberPlanTier = 'pro';
-    else if (planField.includes('growth') || planField === 'semiannual') memberPlanTier = 'growth';
+    const memberPlanTier = verification.tier;
 
     // Tudo válido: definir flags de pagamento no sessionStorage
     // Estas são as mesmas flags que os fluxos existentes verificam
@@ -75,6 +86,7 @@ export async function checkMemberToken(): Promise<boolean> {
     sessionStorage.setItem('careerPathPaid', 'true');
     sessionStorage.setItem('isMember', 'true');
     sessionStorage.setItem('memberId', memberId);
+    sessionStorage.setItem('memberToken', token);
     sessionStorage.setItem('memberPlanTier', memberPlanTier);
 
     // Limpar os parâmetros da URL para não expor o token
@@ -104,4 +116,27 @@ export function getMemberPlanTier(): 'essential' | 'growth' | 'pro' | null {
   const tier = sessionStorage.getItem('memberPlanTier');
   if (tier === 'pro' || tier === 'growth' || tier === 'essential') return tier;
   return 'essential';
+}
+
+export async function getValidatedMemberPlanTier(): Promise<MemberPlanTier | null> {
+  const token = sessionStorage.getItem('memberToken');
+  const memberId = sessionStorage.getItem('memberId');
+  if (!token || !memberId) return null;
+
+  try {
+    const verification = await verifyStoredMemberAccess(token, memberId);
+    if (!verification.valid || !verification.tier) {
+      sessionStorage.removeItem('isMember');
+      sessionStorage.removeItem('memberId');
+      sessionStorage.removeItem('memberToken');
+      sessionStorage.removeItem('memberPlanTier');
+      return null;
+    }
+
+    sessionStorage.setItem('isMember', 'true');
+    sessionStorage.setItem('memberPlanTier', verification.tier);
+    return verification.tier;
+  } catch {
+    return null;
+  }
 }

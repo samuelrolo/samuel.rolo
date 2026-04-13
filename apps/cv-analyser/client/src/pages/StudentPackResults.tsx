@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -401,8 +402,41 @@ export default function StudentPackResults() {
     } catch { return {}; }
   }, []);
 
-  const isPaid = sessionStorage.getItem('studentPackPaid') === 'true';
-  useEffect(() => { if (!isPaid) window.location.href = localePath('/estudante'); }, [isPaid]);
+  const [isPaid, setIsPaid] = useState(false);
+  const [accessChecked, setAccessChecked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const verifyAccess = async () => {
+      const hasAnalysis = Boolean(sessionStorage.getItem('studentPackAnalysis') || sessionStorage.getItem('studentPackCvAnalysis'));
+      if (!hasAnalysis) {
+        if (!cancelled) {
+          setAccessChecked(true);
+          window.location.href = localePath('/estudante');
+        }
+        return;
+      }
+
+      const paymentStatus = await fetchPaymentStatus({
+        orderId: getFirstStoredValue(['studentPackVerifiedOrderId', 'studentPackPendingOrderId']),
+        sessionId: getFirstStoredValue(['studentPackVerifiedTransactionId']),
+        expectedProductTypes: ['student_pack'],
+      });
+
+      if (!cancelled) {
+        if (paymentStatus.success && paymentStatus.paid) {
+          setIsPaid(true);
+        } else {
+          window.location.href = localePath('/estudante');
+        }
+        setAccessChecked(true);
+      }
+    };
+
+    verifyAccess();
+    return () => { cancelled = true; };
+  }, []);
 
   // For legacy EN/ES data, adapt to unified format; otherwise use as-is
   const unified = useMemo(() => rawData?._legacy ? adaptLegacyToUnified(rawData) : null, [rawData]);
@@ -427,7 +461,7 @@ export default function StudentPackResults() {
   const [expandedCargo, setExpandedCargo] = useState<number | null>(0);
   const [expandedProblema, setExpandedProblema] = useState<number | null>(null);
 
-  if (!isPaid) return null;
+  if (!accessChecked || !isPaid) return null;
 
   const hasData = globalScore > 0 || perfil?.nome || Object.keys(auditoria).length > 0;
 

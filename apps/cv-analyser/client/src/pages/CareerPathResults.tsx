@@ -23,6 +23,7 @@ import { localePath } from '@/i18n/useTranslation';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerPathPayload } from "@/lib/analysisPayload";
+import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
@@ -376,7 +377,6 @@ export default function CareerPathResults() {
 
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
-    const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid'));
     const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
 
     if (!cvData && !isStripeReturn) {
@@ -402,18 +402,35 @@ export default function CareerPathResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
-    if (paidFlag === 'true' && savedData) {
-      try {
-        const normalizedStored = normalizeCareerPathPayload(JSON.parse(savedData), localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
-        setCareerPathData(normalizedStored.analysis);
-        setIsPaid(true);
-      } catch { /* ignore */ }
-    } else if (paidFlag === 'true' && !savedData) {
-      // Coming from homepage payment — paid but analysis not yet generated
+    const hydratePaidAccess = async () => {
+      const paymentVerification = await fetchPaymentStatus({
+        orderId: getFirstStoredValue(['cpOrderId']),
+        sessionId: getFirstStoredValue(['stripeSessionId']),
+        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
+      });
+
+      if (!(paymentVerification.success && paymentVerification.paid)) {
+        localStorage.removeItem('careerPathPaid');
+        sessionStorage.removeItem('careerPathPaid');
+        return;
+      }
+
+      if (savedData) {
+        try {
+          const normalizedStored = normalizeCareerPathPayload(JSON.parse(savedData), localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
+          setCareerPathData(normalizedStored.analysis);
+          setIsPaid(true);
+          return;
+        } catch {
+          // fall through to regeneration
+        }
+      }
+
       setIsPaid(true);
-      // Auto-generate after a small delay to ensure component is fully mounted
       setTimeout(() => { generateCareerPath(); }, 300);
-    }
+    };
+
+    hydratePaidAccess();
 
     // Handle cancelled payment — clean URL and redirect to the localized Career Path entry page
     if (paymentStatus === 'cancelled') {
@@ -423,12 +440,14 @@ export default function CareerPathResults() {
     }
 
     if (paymentStatus === 'success' && sessionId) {
-      fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId })
+      localStorage.setItem('stripeSessionId', sessionId);
+      sessionStorage.setItem('stripeSessionId', sessionId);
+
+      fetchPaymentStatus({
+        orderId: getFirstStoredValue(['cpOrderId']),
+        sessionId,
+        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
       })
-        .then(res => res.json())
         .then(data => {
           if (data.success && data.paid) {
             const stripeAmount = data.amount ? data.amount / 100 : 0;
@@ -437,7 +456,6 @@ export default function CareerPathResults() {
             trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
             trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: t('eur'), payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
             window.history.replaceState({}, '', window.location.pathname);
-            // Auto-generate career path after successful payment
             generateCareerPath();
           }
         })

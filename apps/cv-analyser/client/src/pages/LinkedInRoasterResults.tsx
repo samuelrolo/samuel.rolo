@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
+import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
 
 // ─── Types ───
@@ -188,16 +189,45 @@ export default function LinkedInRoasterResults() {
     try { return JSON.parse(sessionStorage.getItem('linkedinRoasterAnalysis') || '{}'); } catch { return {}; }
   }, []);
 
-  const hasCachedAnalysis = Boolean(sessionStorage.getItem('linkedinRoasterAnalysis'));
-  const isPaid = sessionStorage.getItem('linkedinRoasterPaid') === 'true' && hasCachedAnalysis;
+  const [isPaid, setIsPaid] = useState(false);
+  const [accessChecked, setAccessChecked] = useState(false);
   const normalizedData = useMemo(() => {
     const storedLang = sessionStorage.getItem('analysisLang') || lang;
     return normalizeLinkedinRoastPayload(rawData, storedLang);
   }, [rawData, lang]);
 
   useEffect(() => {
-    if (!isPaid) { window.location.href = localePath('/linkedin-roaster'); }
-  }, [isPaid]);
+    let cancelled = false;
+
+    const verifyAccess = async () => {
+      const hasCachedAnalysis = Boolean(sessionStorage.getItem('linkedinRoasterAnalysis'));
+      if (!hasCachedAnalysis) {
+        if (!cancelled) {
+          setAccessChecked(true);
+          window.location.href = localePath('/linkedin-roaster');
+        }
+        return;
+      }
+
+      const paymentStatus = await fetchPaymentStatus({
+        orderId: getFirstStoredValue(['linkedinRoasterVerifiedOrderId', 'linkedinRoasterPendingOrderId']),
+        sessionId: getFirstStoredValue(['linkedinRoasterVerifiedTransactionId']),
+        expectedProductTypes: ['linkedin_roast'],
+      });
+
+      if (!cancelled) {
+        if (paymentStatus.success && paymentStatus.paid) {
+          setIsPaid(true);
+        } else {
+          window.location.href = localePath('/linkedin-roaster');
+        }
+        setAccessChecked(true);
+      }
+    };
+
+    verifyAccess();
+    return () => { cancelled = true; };
+  }, []);
 
   // Extract teaser & analysis
   const teaser = deepSanitize(normalizedData.teaser || {});
@@ -223,7 +253,7 @@ export default function LinkedInRoasterResults() {
   const [expandedMelhoria, setExpandedMelhoria] = useState<number | null>(null);
   const [seoTab, setSeoTab] = useState('headline');
 
-  if (!isPaid) return null;
+  if (!accessChecked || !isPaid) return null;
 
   const hasData = notaGeral > 0 || sumario || Object.keys(dimensoes).length > 0;
 
