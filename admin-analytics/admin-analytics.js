@@ -5,8 +5,12 @@
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
-// Configure a anon key via variável de ambiente injetada ou ficheiro de configuração.
-const SUPABASE_KEY = window.__ADMIN_ANALYTICS_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const SUPABASE_ANON_KEY_FALLBACK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+// A anon key pode ser injetada em runtime, mas precisa de ser uma string válida e não vazia.
+const RUNTIME_SUPABASE_KEY = typeof window !== 'undefined' && typeof window.__ADMIN_ANALYTICS_SUPABASE_KEY === 'string'
+    ? window.__ADMIN_ANALYTICS_SUPABASE_KEY.trim()
+    : '';
+const SUPABASE_KEY = RUNTIME_SUPABASE_KEY || SUPABASE_ANON_KEY_FALLBACK;
 const ADMIN_EMAIL = 'samuelrolo@gmail.com';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
 
@@ -123,11 +127,26 @@ let nurturingRecipients = [];
 // ═══════════════════════════════════════════════════════════════
 //  SUPABASE HELPERS
 // ═══════════════════════════════════════════════════════════════
+function buildSupabaseRestUrl(table, query = '') {
+    const params = new URLSearchParams(query || '');
+    if (!params.has('select')) params.set('select', '*');
+    const qs = params.toString();
+    return `${SUPABASE_URL}/rest/v1/${table}${qs ? `?${qs}` : ''}`;
+}
+
+function getSupabaseHeaders(useAnon = false, extraHeaders = {}) {
+    const token = useAnon ? SUPABASE_KEY : getAuthToken();
+    return {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${token}`,
+        ...extraHeaders
+    };
+}
+
 async function supaFetch(table, query = '', useAnon = false) {
     try {
-        const token = useAnon ? SUPABASE_KEY : getAuthToken();
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
+        const res = await fetch(buildSupabaseRestUrl(table, query), {
+            headers: getSupabaseHeaders(useAnon)
         });
         if (!res.ok) return [];
         return res.json();
@@ -135,13 +154,12 @@ async function supaFetch(table, query = '', useAnon = false) {
 }
 
 async function supaInsert(table, data) {
-    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
         method: 'POST',
-        headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json', 'Prefer': 'return=representation'
-        },
+        headers: getSupabaseHeaders(false, {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        }),
         body: JSON.stringify(data)
     });
     if (!res.ok) {
@@ -152,13 +170,12 @@ async function supaInsert(table, data) {
 }
 
 async function supaUpdate(table, id, data) {
-    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
         method: 'PATCH',
-        headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-        },
+        headers: getSupabaseHeaders(false, {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+        }),
         body: JSON.stringify(data)
     });
     if (!res.ok) throw new Error(await res.text());
@@ -168,10 +185,9 @@ async function supaUpdate(table, id, data) {
 async function supaDelete(table, id) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
         method: 'DELETE',
-        headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+        headers: getSupabaseHeaders(false, {
             'Prefer': 'return=minimal'
-        }
+        })
     });
     if (!res.ok) throw new Error(await res.text());
     return true;
@@ -2354,7 +2370,10 @@ async function refreshHealthCheck() {
     try {
         await fetch(`${SUPABASE_URL}/rest/v1/backend_health_log`, {
             method: 'POST',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            headers: getSupabaseHeaders(false, {
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            }),
             body: JSON.stringify(results)
         });
     } catch (e) { console.error('Erro ao guardar health check:', e); }
