@@ -21,7 +21,6 @@ if [ ! -f "$MAIN_INDEX" ]; then
   exit 1
 fi
 
-rm -rf "$DIST_DIR/auth" "$PUBLISHED_DIR/auth"
 
 echo "📋 Copying index.html to dist/public sub-route folders..."
 for route in "${ROUTES[@]}"; do
@@ -31,8 +30,8 @@ for route in "${ROUTES[@]}"; do
 done
 
 echo "📦 Syncing published area-cliente assets..."
-rm -rf "$PUBLISHED_DIR/assets"
-cp -r "$DIST_DIR/assets" "$PUBLISHED_DIR/assets"
+mkdir -p "$PUBLISHED_DIR/assets"
+cp -r "$DIST_DIR/assets/." "$PUBLISHED_DIR/assets/"
 cp "$MAIN_INDEX" "$PUBLISHED_DIR/index.html"
 
 echo "📄 Copying published index.html to static area-cliente routes..."
