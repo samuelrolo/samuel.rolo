@@ -11,7 +11,7 @@
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLocation } from 'wouter';
+import { useLoginModal } from '@/contexts/LoginModalContext';
 import { supabase } from '@/lib/supabase';
 import {
   Check, ChevronDown, ChevronUp, Sparkles, ArrowRight, Lock,
@@ -113,7 +113,7 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 export default function Plans() {
   const { t } = useI18n();
   const { user, subscription, hasActiveSubscription, refreshProfile } = useAuth();
-  const [, navigate] = useLocation();
+  const { openLoginModal } = useLoginModal();
   const [period, setPeriod] = useState<Period>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -196,7 +196,10 @@ export default function Plans() {
   const currentTier = hasActiveSubscription() ? getPlanTier(subscription?.plan) : null;
 
   function handleSubscribe(tier: Tier) {
-    if (!user) { navigate('/auth'); return; }
+    if (!user) {
+      openLoginModal();
+      return;
+    }
     setSelectedPlan(`${tier}_${period}`);
   }
 
@@ -240,7 +243,7 @@ export default function Plans() {
           {!user && (
             <div className="mt-8 p-4 border border-[#e5e5e5] rounded-lg max-w-md mx-auto">
               <p className="text-sm text-[#555] font-light mb-3">{t('sub.freeCtaText')}</p>
-              <button onClick={() => navigate('/auth')}
+              <button onClick={openLoginModal}
                 className="inline-flex items-center gap-2 px-5 py-2 border border-gold/30 text-gold text-sm font-medium rounded hover:bg-gold/10 transition-all duration-300">
                 {t('sub.freeCtaBtn')} <ArrowRight className="w-3.5 h-3.5" />
               </button>

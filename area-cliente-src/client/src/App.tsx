@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Router as WouterRouter, useLocation, Redirect } from "wouter";
+import { Route, Switch, Router as WouterRouter, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -12,7 +12,6 @@ import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CareerBotWidget from "./components/CareerBotWidget";
 import Home from "./pages/Home";
-import Auth from "./pages/Auth";
 import Plans from "./pages/Plans";
 import MemberArea from "./pages/MemberArea";
 import ProfilePage from "./pages/ProfilePage";
@@ -25,7 +24,6 @@ function Routes() {
       <Route path="/" component={Home} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/contactos" component={ClientAreaLanding} />
-      <Route path="/auth" component={Auth} />
       <Route path="/planos" component={Plans} />
       <Route path="/perfil">
         <ProtectedRoute>
@@ -54,16 +52,13 @@ function Routes() {
 }
 
 function Layout() {
-  const [location] = useLocation();
-  const isAuthPage = location === "/auth";
-
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
-      {!isAuthPage && <Header />}
+      <Header />
       <main className="flex-1">
         <Routes />
       </main>
-      {!isAuthPage && <Footer />}
+      <Footer />
       <CareerBotWidget />
     </div>
   );

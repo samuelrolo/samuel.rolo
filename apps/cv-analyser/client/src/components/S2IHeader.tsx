@@ -22,6 +22,7 @@ interface S2IHeaderProps {
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const SUPABASE_STORAGE_KEY = 'sb-cvlumvgrbuolrnwrtrgz-auth-token';
+const OPEN_LOGIN_MODAL_EVENT = 's2i:open-login-modal';
 
 function deriveInitials(firstName: string, lastName: string, email: string): string {
   if (firstName && lastName) return (firstName[0] + lastName[0]).toUpperCase();
@@ -215,6 +216,15 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
     closeAllMenus();
     setLoginModalOpen(true);
   }
+
+  useEffect(() => {
+    function handleOpenLoginModal() {
+      openLoginModal();
+    }
+
+    window.addEventListener(OPEN_LOGIN_MODAL_EVENT, handleOpenLoginModal);
+    return () => window.removeEventListener(OPEN_LOGIN_MODAL_EVENT, handleOpenLoginModal);
+  }, []);
 
   function toggleMobileMenu() {
     setLangDropdownOpen(false);

@@ -1728,7 +1728,7 @@ export default function CareerPathResults() {
               {!isLoggedIn ? (
                 <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
                   <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <a href={localePath('/area-cliente/auth')} className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</a></p>
+                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <button type="button" onClick={() => window.dispatchEvent(new Event('s2i:open-login-modal'))} className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</button></p>
                 </div>
               ) : savedToAccount ? (
                 <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">

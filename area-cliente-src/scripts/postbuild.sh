@@ -14,12 +14,14 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PUBLISHED_DIR="$REPO_ROOT/area-cliente"
 
 # All client-side routes that need their own index.html
-ROUTES=(auth perfil dashboard membros planos upgrade sobre vagas)
+ROUTES=(perfil dashboard membros planos upgrade sobre vagas)
 
 if [ ! -f "$MAIN_INDEX" ]; then
   echo "❌ Build output not found at $MAIN_INDEX"
   exit 1
 fi
+
+rm -rf "$DIST_DIR/auth" "$PUBLISHED_DIR/auth"
 
 echo "📋 Copying index.html to dist/public sub-route folders..."
 for route in "${ROUTES[@]}"; do
