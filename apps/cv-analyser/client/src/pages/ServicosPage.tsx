@@ -42,13 +42,19 @@ function ServiceCard({ svc, featured }: { svc: any; featured?: boolean }) {
           </p>
         )}
         {svc.price && <p className="text-lg font-bold text-slate-900 mb-3">{svc.price}</p>}
-        <a
-          href={svc.link}
-          {...(svc.isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961] to-[#B8943D] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity"
-        >
-          {svc.cta} <ArrowRight className="w-3.5 h-3.5" />
-        </a>
+        {svc.link && svc.cta ? (
+          <a
+            href={svc.link}
+            {...(svc.isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961] to-[#B8943D] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity"
+          >
+            {svc.cta} <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        ) : svc.comingSoonLabel ? (
+          <span className="inline-flex items-center rounded-lg border border-[#C9A961]/30 bg-[#C9A961]/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#B8943D]">
+            {svc.comingSoonLabel}
+          </span>
+        ) : null}
       </div>
     </div>
   );
@@ -577,6 +583,8 @@ export default function ServicosPage() {
     },
     {
       icon: <Rocket className="w-6 h-6" />,
+      badge: pick("Brevemente", "Coming Soon", "Próximamente"),
+      badgeColor: "bg-amber-100 text-amber-800",
       title: "KickStart Pro",
       desc: pick(
         "Precisas de clareza agora? 30 minutos com um especialista e sais com um plano.",
@@ -588,9 +596,7 @@ export default function ServicosPage() {
         pick("Acompanhamento pós-sessão incluído", "Post-session follow-up included", "Seguimiento post-sesión incluido"),
       ],
       price: pick("desde 35€", "from €35", "desde 35€"),
-      cta: pick("Agendar sessão", "Book session", "Reservar sesión"),
-      link: "https://calendly.com/share2inspire",
-      isExternal: true,
+      comingSoonLabel: pick("Brevemente", "Coming Soon", "Próximamente"),
     },
   ];
 

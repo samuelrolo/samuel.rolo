@@ -55,13 +55,13 @@ export default function Home() {
                 {t('home.heroWelcomeDesc')}
               </motion.p>
               <motion.div variants={fadeUp} custom={3}>
-                <a
-                  href="/area-cliente/membros"
+                <Link
+                  href="/membros"
                   className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-[#1a1a1a] font-medium rounded hover:bg-gold-light transition-all duration-300"
                 >
                   {t('nav.member')}
                   <ArrowRight className="w-4 h-4" />
-                </a>
+                </Link>
               </motion.div>
             </motion.div>
           ) : (

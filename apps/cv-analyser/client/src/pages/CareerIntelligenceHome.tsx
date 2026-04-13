@@ -135,8 +135,8 @@ export default function CareerIntelligenceHome() {
       return {
         detected_name: analysis.detected_name,
         detected_role: analysis.detected_role,
-        seniority: analysis.seniority || analysis.seniority_level,
-        total_years_exp: analysis.total_years_exp,
+        seniority: analysis.seniority || analysis.seniority_level || analysis.nivel_senioridad || null,
+        total_years_exp: analysis.total_years_exp || analysis.years_experience || analysis.experience || null,
         key_skills: analysis.key_skills || analysis.ats_keywords || [],
         likely_next_role: analysis.likely_next_role || null,
       };
