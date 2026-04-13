@@ -44,7 +44,6 @@ function RootRoute() {
 function Routes() {
   return (
     <Switch>
-      <Route path="" component={RootRoute} />
       <Route path="/" component={RootRoute} />
       <Route path="/sobre" component={ClientAreaLanding} />
       <Route path="/contactos" component={ClientAreaLanding} />
