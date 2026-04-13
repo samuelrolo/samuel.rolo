@@ -100,7 +100,19 @@ export default function CareerPathHome() {
     window.location.href = localePath('/career-path/results');
   };
   const getCareerPathProfile = (analysis: any) => {
-    return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
+    const cp = analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile;
+    if (cp) return cp;
+    if (analysis?.detected_name || analysis?.detected_role) {
+      return {
+        detected_name: analysis.detected_name,
+        detected_role: analysis.detected_role,
+        seniority: analysis.seniority || analysis.seniority_level,
+        total_years_exp: analysis.total_years_exp,
+        key_skills: analysis.key_skills || analysis.ats_keywords || [],
+        likely_next_role: analysis.likely_next_role || null,
+      };
+    }
+    return {};
   };
   const [file, setFile] = useState<File | null>(null);
   const profileCvAutofillRef = useRef(false);

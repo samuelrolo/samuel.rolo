@@ -2885,9 +2885,9 @@ REGLAS CRÍTICAS:
 
         try {
 
-          const roleToNormalize = hasJob ? analysis.job_match?.job_title || analysis.candidate_profile?.detected_role || 'N/A' : analysis.candidate_profile?.detected_role || 'N/A';
+          const roleToNormalize = hasJob ? analysis.job_match?.job_title || analysis.candidate_profile?.detected_role || analysis.detected_role || 'N/A' : analysis.candidate_profile?.detected_role || analysis.detected_role || 'N/A';
 
-          const skillsContext = (analysis.candidate_profile?.key_skills || []).slice(0, 8).join(', ');
+          const skillsContext = (analysis.candidate_profile?.key_skills || analysis.key_skills || analysis.ats_keywords || []).slice(0, 8).join(', ');
 
           if (roleToNormalize && roleToNormalize !== 'N/A') {
 
