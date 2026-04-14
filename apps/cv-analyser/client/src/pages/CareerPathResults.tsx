@@ -3,7 +3,7 @@
 // Career Path only — no bundle
 
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -205,6 +205,7 @@ export default function CareerPathResults() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const bootstrapGenerationKeyRef = useRef<string | null>(null);
 
 
   const genMessages = [
@@ -395,13 +396,27 @@ export default function CareerPathResults() {
       }
     };
 
-    if (paidFlag && hydrateStoredCareerPathData()) {
-      return;
-    }
-
-    if (paidFlag) {
+    const bootstrapPaidAccess = (generationKey: string) => {
       setIsPaid(true);
+      localStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('careerPathPaid', 'true');
+
+      if (hydrateStoredCareerPathData()) {
+        return;
+      }
+
+      if (bootstrapGenerationKeyRef.current === generationKey) {
+        return;
+      }
+
+      bootstrapGenerationKeyRef.current = generationKey;
       setTimeout(() => { generateCareerPath(); }, 300);
+    };
+
+    // Handle cancelled payment — clean URL and redirect to the localized Career Path entry page
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(careerPathHomePath);
       return;
     }
 
@@ -428,6 +443,40 @@ export default function CareerPathResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
+    if (paidFlag) {
+      bootstrapPaidAccess(`stored-paid:${getFirstStoredValue(['cpOrderId', 'stripeSessionId']) || 'career-path'}`);
+      return;
+    }
+
+    if (isStripeReturn && sessionId) {
+      localStorage.setItem('stripeSessionId', sessionId);
+      sessionStorage.setItem('stripeSessionId', sessionId);
+
+      // Stripe success must never fall back to the legacy preview screen.
+      // Optimistically restore paid access and generate the full report,
+      // while keeping server verification in the background for analytics.
+      bootstrapPaidAccess(`stripe-return:${sessionId}`);
+
+      fetchPaymentStatus({
+        orderId: getFirstStoredValue(['cpOrderId']),
+        sessionId,
+        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
+      })
+        .then(data => {
+          if (data.success && data.paid) {
+            const stripeAmount = data.amount ? data.amount / 100 : 0;
+            trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
+            trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: t('eur'), payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
+          }
+        })
+        .catch(err => console.error('Stripe verify error:', err))
+        .finally(() => {
+          window.history.replaceState({}, '', window.location.pathname);
+        });
+
+      return;
+    }
+
     const hydratePaidAccess = async () => {
       const paymentVerification = await fetchPaymentStatus({
         orderId: getFirstStoredValue(['cpOrderId']),
@@ -439,49 +488,11 @@ export default function CareerPathResults() {
         return;
       }
 
-      if (hydrateStoredCareerPathData()) {
-        return;
-      }
-
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      sessionStorage.setItem('careerPathPaid', 'true');
-      setTimeout(() => { generateCareerPath(); }, 300);
+      bootstrapPaidAccess(`verified:${paymentVerification.session_id || paymentVerification.order_id || 'career-path'}`);
     };
 
     hydratePaidAccess();
-
-    // Handle cancelled payment — clean URL and redirect to the localized Career Path entry page
-    if (paymentStatus === 'cancelled') {
-      window.history.replaceState({}, '', window.location.pathname);
-      setLocation(careerPathHomePath);
-      return;
-    }
-
-    if (paymentStatus === 'success' && sessionId) {
-      localStorage.setItem('stripeSessionId', sessionId);
-      sessionStorage.setItem('stripeSessionId', sessionId);
-
-      fetchPaymentStatus({
-        orderId: getFirstStoredValue(['cpOrderId']),
-        sessionId,
-        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
-      })
-        .then(data => {
-          if (data.success && data.paid) {
-            const stripeAmount = data.amount ? data.amount / 100 : 0;
-            setIsPaid(true);
-            localStorage.setItem('careerPathPaid', 'true');
-            trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: t('eur'), payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
-            window.history.replaceState({}, '', window.location.pathname);
-            generateCareerPath();
-          }
-        })
-        .catch(err => console.error('Stripe verify error:', err));
-    }
-
-  }, [setLocation]);
+  }, [careerPathHomePath, generateCareerPath, lang, setLocation]);
 
   const generateCareerPath = useCallback(async () => {
     setIsGenerating(true);
