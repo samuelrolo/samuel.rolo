@@ -665,6 +665,7 @@ export default function Results() {
             },
             body: JSON.stringify({
               mode: 'career_path',
+              email: bundleEmail.trim().toLowerCase(),
               cv_text: cvTextForCP,
               linkedin_url: linkedinForCP || undefined,
               language: lang,
@@ -733,6 +734,7 @@ export default function Results() {
 
             const requestBody: any = {
               mode: 'cv_extraction',
+              email: (sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail'))?.trim().toLowerCase() || '',
               language: lang,
               country,
               region: region || undefined,
@@ -1443,6 +1445,7 @@ export default function Results() {
         },
         body: JSON.stringify({
           mode: 'career_path',
+          email: (sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail'))?.trim().toLowerCase() || '',
           cv_text: cvData || '',
           linkedin_url: linkedinUrl || undefined,
           language: lang,

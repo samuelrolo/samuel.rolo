@@ -480,6 +480,7 @@ export default function CareerPathResults() {
 
       const requestBody: any = {
         mode: 'career_path',
+        email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail')) || '',
         cv_text: cvText,
         linkedin_url: linkedinUrl || undefined,
         language: currentLanguage,

@@ -355,6 +355,7 @@ export default function CareerIntelligenceResults() {
         },
         body: JSON.stringify({
           mode: 'career_intelligence',
+          email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail')) || '',
           cv_text: cvText,
           linkedin_url: linkedinUrl || undefined,
           language: getAnalysisLanguage(),

@@ -234,7 +234,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const body: any = { mode: 'cv_extraction', language: 'pt', country: currentCountry, region: currentRegion };
+            const body: any = { mode: 'cv_extraction', email: currentEmail.trim().toLowerCase(), language: 'pt', country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
             const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
@@ -249,7 +249,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));

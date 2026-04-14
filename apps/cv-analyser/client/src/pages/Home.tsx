@@ -510,6 +510,7 @@ export default function Home() {
         try {
           const requestBody: any = {
             mode: 'cv_extraction',
+            email: analysisEmail.trim().toLowerCase(),
             language: lang,
             country: selectedCountry,
             region: selectedRegion || undefined,

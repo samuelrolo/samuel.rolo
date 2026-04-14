@@ -376,6 +376,12 @@ export default function CareerIntelligenceHome() {
       setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
+    // Validate mandatory email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError(pick('Por favor, introduz um email válido para continuar.', 'Please enter a valid email to continue.', 'Por favor, introduce un email válido para continuar.'));
+      return;
+    }
     const pageLang = persistAnalysisContext();
     clearCareerIntelligenceRunData();
     trackAnalysisStart('career_intelligence_full');
@@ -412,6 +418,7 @@ export default function CareerIntelligenceHome() {
         try {
           const requestBody: any = {
             mode: 'cv_extraction',
+            email: email.trim().toLowerCase(),
             language: lang,
             country,
             region: region || undefined,

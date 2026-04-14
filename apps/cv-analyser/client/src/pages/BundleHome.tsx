@@ -232,6 +232,7 @@ export default function BundleHome() {
         try {
           const requestBody: any = {
             mode: 'cv_extraction',
+            email: currentEmail.trim().toLowerCase(),
             language: lang,
             country: currentCountry,
             region: currentRegion || undefined,

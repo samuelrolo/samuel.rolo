@@ -331,6 +331,12 @@ export default function CareerPathHome() {
       setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
+    // Validate mandatory email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError(pick('Por favor, introduz um email válido para continuar.', 'Please enter a valid email to continue.', 'Por favor, introduce un email válido para continuar.'));
+      return;
+    }
     trackAnalysisStart('career_path');
     setLoading(true);
     setError(null);
@@ -369,7 +375,7 @@ export default function CareerPathHome() {
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         try {
-          const requestBody: any = { mode: 'cv_extraction', language: lang };
+          const requestBody: any = { mode: 'cv_extraction', email: email.trim().toLowerCase(), language: lang };
           if (useServerExtraction) {
             // Send base64 file for server-side Gemini Vision extraction
             requestBody.file = base64Content;

@@ -1487,17 +1487,29 @@ async function enrichWithCompanyData(cvText: string, language: string): Promise<
 serve(async (req)=>{
 
   if (req.method === 'OPTIONS') {
-
     return new Response('ok', {
-
       headers: corsHeaders
-
     });
+  }
 
+  // 1. Validate Origin
+  const origin = req.headers.get('origin');
+  const allowedOrigins = [
+    'https://share2inspire.pt',
+    'https://www.share2inspire.pt',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ];
+
+  if (origin && !allowedOrigins.includes(origin)) {
+    console.error(`❌ Origin bloqueada: ${origin}`);
+    return jsonResponse({
+      success: false,
+      error: 'Acesso negado: Origem não autorizada'
+    }, 403);
   }
 
   try {
-
     let body;
 
     try {
@@ -1518,9 +1530,22 @@ serve(async (req)=>{
 
     }
 
-    const { mode: rawMode, cv_text, file, filename, message, history } = body;
+    const { mode: rawMode, cv_text, file, filename, message, history, email: userEmail } = body;
 
     const mode = typeof rawMode === 'string' ? rawMode.trim().toLowerCase().replace(/-/g, '_') : rawMode;
+
+    // 2. Mandatory Email Validation for analysis modes
+    const analysisModes = ['cv_analysis', 'career_path', 'career_intelligence', 'linkedin_roast', 'student_pack', 'cv_extraction'];
+    if (analysisModes.includes(mode)) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!userEmail || typeof userEmail !== 'string' || !emailRegex.test(userEmail.trim())) {
+        console.error(`❌ Pedido anónimo ou email inválido bloqueado para modo: ${mode}`);
+        return jsonResponse({
+          success: false,
+          error: 'Email obrigatório para realizar esta análise.'
+        }, 400);
+      }
+    }
 
     // NEW: Extract language, country, region for internationalisation
 
