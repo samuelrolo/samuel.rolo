@@ -3235,6 +3235,7 @@ export default function Results() {
                 <div className="flex gap-3">
                   <input
                     type="email"
+                    aria-label={pick('Email para receber o relatório', 'Email to receive the report', 'Email para recibir el informe')}
                     value={reportEmail || email || sessionStorage.getItem('paymentEmail') || ''}
                     onChange={(e) => setReportEmail(e.target.value)}
                     placeholder={t('seuemailcom')}
@@ -3735,6 +3736,7 @@ export default function Results() {
                       </div>
                       <input
                         type="url"
+                        aria-label={pick('Perfil LinkedIn para o plano de carreira', 'LinkedIn profile for the career path', 'Perfil de LinkedIn para el plan de carrera')}
                         value={careerPathLinkedin}
                         onChange={(e) => setCareerPathLinkedin(e.target.value)}
                         placeholder={t('httpslinkedincominteuperfil')}
@@ -3828,6 +3830,7 @@ export default function Results() {
             <div className="space-y-2">
               <input
                 type="text"
+                aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')}
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
                 placeholder={t('inserir_cdigo')}
@@ -3881,6 +3884,7 @@ export default function Results() {
                 <p className="text-sm text-muted-foreground">{t('para_uma_anlise_mais_completa')}</p>
                 <input
                   type="url"
+                  aria-label={pick('Perfil LinkedIn para o plano de carreira', 'LinkedIn profile for the career path', 'Perfil de LinkedIn para el plan de carrera')}
                   value={careerPathLinkedin}
                   onChange={(e) => setCareerPathLinkedin(e.target.value)}
                   placeholder={t('httpslinkedincominteuperfil')}
@@ -3908,6 +3912,7 @@ export default function Results() {
                 <div className="space-y-3">
                   <input
                     type="email"
+                    aria-label={pick('Email para pagamento do plano de carreira', 'Email for career path payment', 'Email para el pago del plan de carrera')}
                     value={careerPathEmail}
                     onChange={(e) => setCareerPathEmail(e.target.value)}
                     placeholder={t('o_teu_email')}
@@ -3938,6 +3943,7 @@ export default function Results() {
                   {careerPathPaymentMethod === 'mbway' && (
                     <input
                       type="tel"
+                      aria-label={pick('Telemóvel MB WAY para pagamento do plano de carreira', 'MB WAY phone for career path payment', 'Móvil MB WAY para el pago del plan de carrera')}
                       value={careerPathPhone}
                       onChange={(e) => setCareerPathPhone(e.target.value)}
                       placeholder={t('nmero_de_telemvel')}
