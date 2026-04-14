@@ -1403,6 +1403,7 @@ export default function Home() {
               <div className="flex gap-2">
                 <input
                   type="email"
+                  aria-label={pick('Email para receber o link da análise', 'Email to receive the analysis link', 'Email para recibir el enlace del análisis')}
                   value={emailForLink}
                   onChange={(e) => setEmailForLink(e.target.value)}
                   placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
@@ -1476,6 +1477,7 @@ export default function Home() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <input
                       type="email"
+                      aria-label={pick('Email para receber o voucher', 'Email to receive the voucher', 'Email para recibir el voucher')}
                       value={voucherEmail}
                       onChange={(e) => setVoucherEmail(e.target.value)}
                       placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
@@ -1483,6 +1485,7 @@ export default function Home() {
                     />
                     <input
                       type="tel"
+                      aria-label={pick('Telemóvel MB Way para compra do voucher', 'MB Way phone for voucher purchase', 'Móvil MB Way para comprar el voucher')}
                       value={voucherPhone}
                       onChange={(e) => setVoucherPhone(e.target.value)}
                       placeholder={pick('Telemóvel MB Way (9xxxxxxxx)', 'MB Way phone (9xxxxxxxx)', 'Móvil MB Way (9xxxxxxxx)')}
@@ -1557,12 +1560,14 @@ export default function Home() {
 
           {/* Country/Region Selector */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-foreground flex items-center gap-1">
+            <label htmlFor="analysis-country" className="text-sm font-medium text-foreground flex items-center gap-1">
               <Globe className="w-4 h-4 text-[#C9A961]" />
               {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-1 gap-2">
               <select
+                id="analysis-country"
+                aria-label={pick('País para análise', 'Country for analysis', 'País para análisis')}
                 value={selectedCountry}
                 onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(''); }}
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
@@ -1575,6 +1580,8 @@ export default function Home() {
               </select>
               {regionOptions.length > 1 && (
                 <select
+                  id="analysis-region"
+                  aria-label={pick('Região para análise', 'Region for analysis', 'Región para análisis')}
                   value={selectedRegion}
                   onChange={(e) => setSelectedRegion(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
@@ -1678,6 +1685,7 @@ export default function Home() {
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    aria-label={pick('Código de desconto para análise LinkedIn', 'Discount code for LinkedIn analysis', 'Código de descuento para análisis de LinkedIn')}
                     value={linkedInVoucherCode}
                     onChange={(e) => setLinkedInVoucherCode(e.target.value.toUpperCase())}
                     placeholder={pick('Inserir código', 'Enter code', 'Introducir código')}
@@ -1755,6 +1763,7 @@ export default function Home() {
 
                   <input
                     type="email"
+                    aria-label={pick('Email para compra da análise LinkedIn', 'Email for LinkedIn analysis purchase', 'Correo para comprar el análisis de LinkedIn')}
                     value={liPaywallEmail}
                     onChange={(e) => setLiPaywallEmail(e.target.value)}
                     placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
@@ -1762,6 +1771,7 @@ export default function Home() {
                   />
                   <input
                     type="tel"
+                    aria-label={pick('Telemóvel MB Way para compra da análise LinkedIn', 'MB Way phone for LinkedIn analysis purchase', 'Móvil MB Way para comprar el análisis de LinkedIn')}
                     value={liPaywallPhone}
                     onChange={(e) => setLiPaywallPhone(e.target.value)}
                     placeholder={pick('Telemóvel MB Way (9xxxxxxxx)', 'MB Way phone (9xxxxxxxx)', 'Móvil MB Way (9xxxxxxxx)')}

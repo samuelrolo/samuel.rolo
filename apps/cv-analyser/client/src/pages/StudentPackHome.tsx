@@ -690,9 +690,9 @@ export default function StudentPackHome() {
           </div>
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2"><FileText className="w-4 h-4 inline mr-1" /> {pick("Currículo (PDF ou DOCX)", "CV (PDF or DOCX)", "Currículum (PDF o DOCX)")}</label>
+              <label htmlFor="student-pack-cv-upload" className="block text-sm font-semibold text-slate-700 mb-2"><FileText className="w-4 h-4 inline mr-1" /> {pick("Currículo (PDF ou DOCX)", "CV (PDF or DOCX)", "Currículum (PDF o DOCX)")}</label>
               <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-emerald-500 bg-white'}`}>
-                <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) { profileCvAutofillRef.current = true; setFile(e.target.files[0]); } }} />
+                <input id="student-pack-cv-upload" type="file" accept=".pdf,.docx" aria-label={pick('Carregar currículo', 'Upload CV', 'Subir currículum')} className="hidden" onChange={(e) => { if (e.target.files?.[0]) { profileCvAutofillRef.current = true; setFile(e.target.files[0]); } }} />
                 {file ? (<div className="flex items-center gap-2 text-green-700"><CheckCircle2 className="w-5 h-5" /><span className="text-sm font-medium">{file.name}</span></div>) : (<div className="text-center"><Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" /><p className="text-sm text-slate-500">{pick("Clica ou arrasta o teu CV", "Click or drag your CV", "Haz clic o arrastra tu CV")}</p></div>)}
               </label>
               {!file && savedCvInfo && (
@@ -720,28 +720,28 @@ export default function StudentPackHome() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> {pick("Perfil LinkedIn", "LinkedIn Profile", "Perfil de LinkedIn")}</label>
-              <input type="url" placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')} value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
+              <label htmlFor="student-pack-linkedin" className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> {pick("Perfil LinkedIn", "LinkedIn Profile", "Perfil de LinkedIn")}</label>
+              <input id="student-pack-linkedin" type="url" aria-label={pick('Perfil LinkedIn', 'LinkedIn profile', 'Perfil de LinkedIn')} placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')} value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> {pick('E-mail', 'Email', 'Correo electrónico')}</label>
-              <input type="email" placeholder={pick("o-teu@email.com", "your@email.com", "tu@email.com")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
+              <label htmlFor="student-pack-email" className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> {pick('E-mail', 'Email', 'Correo electrónico')}</label>
+              <input id="student-pack-email" type="email" aria-label={pick('E-mail', 'Email', 'Correo electrónico')} placeholder={pick("o-teu@email.com", "your@email.com", "tu@email.com")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-700"><Globe className="w-4 h-4 inline mr-1 text-emerald-600" /> {pick("País", "Country", "País")} <span className="text-slate-400 font-normal text-xs">({pick("para dados salariais", "for salary data", "para datos salariales")})</span></label>
-              <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
+              <label htmlFor="student-pack-country" className="block text-sm font-semibold text-slate-700"><Globe className="w-4 h-4 inline mr-1 text-emerald-600" /> {pick("País", "Country", "País")} <span className="text-slate-400 font-normal text-xs">({pick("para dados salariais", "for salary data", "para datos salariales")})</span></label>
+              <select id="student-pack-country" aria-label={pick('País', 'Country', 'País')} value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
                 <option value="">{pick("Selecciona o teu país...", "Select your country...", "Selecciona tu país...")}</option>
                 {countries.map(c => (<option key={c.code} value={c.value}>{c.label}</option>))}
               </select>
               {regionOptions.length > 1 && (
-                <select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
+                <select id="student-pack-region" aria-label={pick('Região', 'Region', 'Región')} value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
                   <option value="">{pick("Selecciona a região (opcional)...", "Select region (optional)...", "Selecciona la región (opcional)...")}</option>
                   {regionOptions.map(r => (<option key={r.value} value={r.value}>{r.label}</option>))}
                 </select>
               )}
             </div>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+            <label htmlFor="student-pack-terms" className="flex items-start gap-3 cursor-pointer">
+              <input id="student-pack-terms" type="checkbox" aria-label={pick('Aceitar política de privacidade e termos', 'Accept privacy policy and terms', 'Aceptar política de privacidad y términos')} checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
               <span className="text-xs text-slate-500">
                 {pick("Li e aceito a ", "I accept the ", "Acepto la ")}
                 <a href={localePath('/politica-privacidade')} target="_blank" className="text-emerald-600 underline">{pick("Política de Privacidade", "Privacy Policy", "Política de Privacidad")}</a>
@@ -831,7 +831,7 @@ export default function StudentPackHome() {
               </div>
               {paymentMethod === 'mbway' && isPT && (
                 <div className="space-y-3">
-                  <input type="tel" placeholder={pick('Número de telemóvel', 'Phone number', 'Número de teléfono')} value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" />
+                  <input type="tel" aria-label={pick('Número de telemóvel', 'Phone number', 'Número de teléfono')} placeholder={pick('Número de telemóvel', 'Phone number', 'Número de teléfono')} value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" />
                   <Button onClick={handleMBWayPayment} disabled={paymentLoading} className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl">
                     {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : pick(`Pagar ${finalPriceStr}€ com MB WAY`, `Pay ${finalPriceStr}€ with MB WAY`, `Pagar ${finalPriceStr}€ con MB WAY`)}
                   </Button>
@@ -871,7 +871,7 @@ export default function StudentPackHome() {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle className="text-center">{pick("Código de desconto", "Discount code", "Código de descuento")}</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <input type="text" placeholder={pick("Introduz o código", "Enter code", "Introduce el código")} value={discountCode} onChange={(e) => setDiscountCode(e.target.value.toUpperCase())} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-center tracking-widest font-mono focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" onKeyDown={(e) => e.key === 'Enter' && handleDiscountCode()} />
+            <input type="text" aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')} placeholder={pick("Introduz o código", "Enter code", "Introduce el código")} value={discountCode} onChange={(e) => setDiscountCode(e.target.value.toUpperCase())} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-center tracking-widest font-mono focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none" onKeyDown={(e) => e.key === 'Enter' && handleDiscountCode()} />
             {discountError && (<p className="text-red-600 text-sm text-center">{discountError}</p>)}
             <Button onClick={handleDiscountCode} disabled={discountLoading} className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl">
               {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : pick('Validar código', 'Validate code', 'Validar código')}

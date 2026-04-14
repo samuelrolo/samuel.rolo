@@ -502,10 +502,12 @@ export default function LinkedInRoasterHome() {
 
             <div className="max-w-lg mx-auto space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("URL do LinkedIn", "LinkedIn URL", "URL de LinkedIn")}</label>
+                <label htmlFor="linkedin-roaster-url" className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("URL do LinkedIn", "LinkedIn URL", "URL de LinkedIn")}</label>
                 <div className="relative">
                   <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 md:left-4" />
                   <input
+                    id="linkedin-roaster-url"
+                    aria-label={pick('URL do LinkedIn', 'LinkedIn URL', 'URL de LinkedIn')}
                     type="url"
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
@@ -519,8 +521,10 @@ export default function LinkedInRoasterHome() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("Email para receber o roast", "Email to receive the roast", "Email para recibir el roast")}</label>
+                <label htmlFor="linkedin-roaster-email" className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("Email para receber o roast", "Email to receive the roast", "Email para recibir el roast")}</label>
                 <input
+                  id="linkedin-roaster-email"
+                  aria-label={pick('Email para receber o roast', 'Email to receive the roast', 'Email para recibir el roast')}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -529,8 +533,8 @@ export default function LinkedInRoasterHome() {
                 />
               </div>
 
-              <label className="flex items-start gap-2 cursor-pointer pt-1">
-                <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
+              <label htmlFor="linkedin-roaster-terms" className="flex items-start gap-2 cursor-pointer pt-1">
+                <input id="linkedin-roaster-terms" type="checkbox" aria-label={pick('Aceitar política de privacidade e termos', 'Accept privacy policy and terms', 'Aceptar política de privacidad y términos')} checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
                 <span className="text-xs text-slate-500">{pick(
                   <>Aceito a <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidade</a> e os termos e condições. O perfil é analisado de forma confidencial.</>,
                   <>I accept the <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Privacy Policy</a> and the terms and conditions. The profile is analysed confidentially.</>,
@@ -701,7 +705,7 @@ export default function LinkedInRoasterHome() {
                 {paymentMethod === 'mbway' && isPT && (
                   <div>
                     <label className="text-sm font-medium text-slate-700 mb-1 block">{pick("Número de telemóvel", "Phone number", "Número de teléfono")}</label>
-                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={pick('912 345 678', '912 345 678', '912 345 678')} className="w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
+                      <input type="tel" aria-label={pick('Número de telemóvel para pagamento MB WAY', 'Phone number for MB WAY payment', 'Número de teléfono para pago MB WAY')} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={pick('912 345 678', '912 345 678', '912 345 678')} className="w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                 )}
 
@@ -749,7 +753,7 @@ export default function LinkedInRoasterHome() {
               <button onClick={() => setShowDiscountModal(false)} className="p-1 hover:bg-slate-100 rounded-full" aria-label={pick("Fechar", "Close", "Cerrar")}><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
-              <input type="text" value={discountCode} onChange={e => setDiscountCode(e.target.value.toUpperCase())} placeholder={pick("Introduz o código", "Enter your code", "Introduce el código")} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm uppercase tracking-wider focus:ring-2 focus:ring-orange-500 outline-none" />
+              <input type="text" aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')} value={discountCode} onChange={e => setDiscountCode(e.target.value.toUpperCase())} placeholder={pick("Introduz o código", "Enter your code", "Introduce el código")} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm uppercase tracking-wider focus:ring-2 focus:ring-orange-500 outline-none" />
               {discountError && <p className="text-sm text-red-600">{discountError}</p>}
               <button onClick={handleDiscountCode} disabled={discountLoading || !discountCode.trim()} className="w-full py-3 rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold disabled:opacity-50 transition-all">
                 {discountLoading ? pick('A verificar...', 'Verifying...', 'Verificando...') : pick('Aplicar código', 'Apply code', 'Aplicar código')}

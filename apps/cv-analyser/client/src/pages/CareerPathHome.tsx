@@ -942,13 +942,15 @@ export default function CareerPathHome() {
 
               {/* LinkedIn URL */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <label htmlFor="career-path-linkedin" className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <Linkedin className="w-4 h-4 text-[#0077B5]" />
                   {pick('2. LinkedIn', '2. LinkedIn', '2. LinkedIn')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Linkedin className="hidden sm:block absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <input
+                    id="career-path-linkedin"
+                    aria-label={pick('Perfil LinkedIn', 'LinkedIn profile', 'Perfil de LinkedIn')}
                     type="url"
                     placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                     value={linkedinUrl}
@@ -998,9 +1000,11 @@ export default function CareerPathHome() {
 
               {/* País e Região */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">4. {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span></p>
+                <label htmlFor="career-path-country" className="text-sm font-medium">4. {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span></label>
                 <div className="grid grid-cols-1 gap-3">
                   <select
+                    id="career-path-country"
+                    aria-label={pick('País', 'Country', 'País')}
                     value={country}
                     onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
@@ -1012,6 +1016,8 @@ export default function CareerPathHome() {
                   </select>
                   {regionOptions.length > 1 && (
                     <select
+                      id="career-path-region"
+                      aria-label={pick('Região', 'Region', 'Región')}
                       value={region}
                       onChange={(e) => setRegion(e.target.value)}
                       className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
@@ -1027,8 +1033,10 @@ export default function CareerPathHome() {
 
               {/* Email */}
               <div className="space-y-2">
-                <p className="text-sm font-medium">{pick('5. E-mail', '5. Email', '5. Correo electrónico')} <span className="text-red-500">*</span></p>
+                <label htmlFor="career-path-email" className="text-sm font-medium">{pick('5. E-mail', '5. Email', '5. Correo electrónico')} <span className="text-red-500">*</span></label>
                 <input
+                  id="career-path-email"
+                  aria-label={pick('E-mail', 'Email', 'Correo electrónico')}
                   type="email"
                     placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                   value={email}
@@ -1234,6 +1242,7 @@ export default function CareerPathHome() {
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')}
                     value={discountCode}
                     onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); }}
                     placeholder={pick('CÓDIGO', 'CODE', 'CÓDIGO')}
@@ -1258,6 +1267,7 @@ export default function CareerPathHome() {
                 <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
                 <input
                   type="email"
+                  aria-label={pick('Email para pagamento', 'Email for payment', 'Correo para el pago')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={pick('seu@email.com', 'your@email.com', 'tu@email.com')}
@@ -1293,6 +1303,7 @@ export default function CareerPathHome() {
                       <label className="text-xs font-semibold text-foreground">{pick('Telemóvel (MB WAY)', 'Phone (MB WAY)', 'Móvil (MB WAY)')}</label>
                       <input
                         type="tel"
+                        aria-label={pick('Número de telemóvel para pagamento MB WAY', 'Phone number for MB WAY payment', 'Número de teléfono para pago MB WAY')}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
