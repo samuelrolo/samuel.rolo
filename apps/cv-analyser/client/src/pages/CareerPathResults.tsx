@@ -478,9 +478,10 @@ export default function CareerPathResults() {
       localStorage.setItem('analysisLang', currentLanguage);
       sessionStorage.setItem('analysisLang', currentLanguage);
 
+      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
       const requestBody: any = {
         mode: 'career_path',
-        email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail')) || '',
+        email: cpEmail,
         cv_text: cvText,
         linkedin_url: linkedinUrl || undefined,
         language: currentLanguage,

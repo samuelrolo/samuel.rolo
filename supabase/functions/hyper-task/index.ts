@@ -1603,6 +1603,58 @@ serve(async (req)=>{
 
     }
 
+    const origin = req.headers.get('origin') || req.headers.get('referer') || '';
+
+    const allowedOrigins = ['https://share2inspire.pt', 'https://www.share2inspire.pt', 'http://localhost'];
+
+    if (!allowedOrigins.some((o)=>origin.startsWith(o))) {
+
+      return jsonResponse({
+
+        success: false,
+
+        error: 'Unauthorized origin'
+
+      }, 403);
+
+    }
+
+    const analysisModesRequiringEmail = new Set([
+
+      'cv_analysis',
+
+      'career_path',
+
+      'career_intelligence',
+
+      'linkedin_roast',
+
+      'linkedin_roaster',
+
+      'student_pack',
+
+      'bundle'
+
+    ]);
+
+    if (analysisModesRequiringEmail.has(mode)) {
+
+      const email = String(body.email || body.user_email || '').trim().toLowerCase();
+
+      if (!email || !email.includes('@') || email === 'anónimo' || email === 'anonymous') {
+
+        return jsonResponse({
+
+          success: false,
+
+          error: 'Email is required for analysis'
+
+        }, 400);
+
+      }
+
+    }
+
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {

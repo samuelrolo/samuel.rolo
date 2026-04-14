@@ -665,7 +665,7 @@ export default function Results() {
             },
             body: JSON.stringify({
               mode: 'career_path',
-              email: bundleEmail.trim().toLowerCase(),
+              email: (bundleEmail || sessionStorage.getItem('paymentEmail') || sessionStorage.getItem('bundleEmail') || '').trim().toLowerCase(),
               cv_text: cvTextForCP,
               linkedin_url: linkedinForCP || undefined,
               language: lang,
@@ -1445,7 +1445,7 @@ export default function Results() {
         },
         body: JSON.stringify({
           mode: 'career_path',
-          email: (sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail'))?.trim().toLowerCase() || '',
+          email: (careerPathEmail || sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('bundleEmail') || '').trim().toLowerCase(),
           cv_text: cvData || '',
           linkedin_url: linkedinUrl || undefined,
           language: lang,

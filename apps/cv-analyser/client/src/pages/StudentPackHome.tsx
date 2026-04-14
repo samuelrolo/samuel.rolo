@@ -321,7 +321,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));

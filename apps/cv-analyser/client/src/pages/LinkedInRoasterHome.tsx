@@ -185,7 +185,7 @@ export default function LinkedInRoasterHome() {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail, linkedin_url: currentLinkedinUrl, language: lang, country: analysisCountry, region: analysisRegion || undefined }),
+            body: JSON.stringify({ mode: 'linkedin_roast', email: (currentEmail || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: lang, country: analysisCountry, region: analysisRegion || undefined }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
