@@ -78,6 +78,12 @@ export default function CareerIntelligenceResults() {
     }
   }, []);
 
+  useEffect(() => {
+    const analysisLanguage = getAnalysisLanguage();
+    localStorage.setItem('analysisLang', analysisLanguage);
+    sessionStorage.setItem('analysisLang', analysisLanguage);
+  }, [lang]);
+
   const handleSaveToAccount = async () => {
     setSavingToAccount(true);
     setSaveError(null);
@@ -125,6 +131,7 @@ export default function CareerIntelligenceResults() {
   const lang = getLang();
   const isEN = lang === 'en';
   const isES = lang === 'es';
+  const getAnalysisLanguage = () => ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
   const careerIntelligenceHomePath = '/';
   const getCareerIntelligenceProfile = (analysis: any) => {
     return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
@@ -152,7 +159,7 @@ export default function CareerIntelligenceResults() {
 
     try {
       const parsed = JSON.parse(raw);
-      const normalized = normalizeCareerIntelligencePayload(parsed, (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang);
+      const normalized = normalizeCareerIntelligencePayload(parsed, getAnalysisLanguage());
       return hasCareerIntelligenceStructure(normalized.analysis) ? normalized.analysis : null;
     } catch {
       return null;
@@ -243,7 +250,7 @@ export default function CareerIntelligenceResults() {
     if (cvData) {
       try {
         const parsedCv = JSON.parse(cvData);
-        const analysisLanguage = ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
+        const analysisLanguage = getAnalysisLanguage();
         const rawCvAnalysis = parsedCv?.analysis || parsedCv;
         const normalizedCv = transformGeminiResponse(rawCvAnalysis, analysisLanguage);
         setCvAnalysis({
@@ -350,7 +357,7 @@ export default function CareerIntelligenceResults() {
           mode: 'career_intelligence',
           cv_text: cvText,
           linkedin_url: linkedinUrl || undefined,
-          language: (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang,
+          language: getAnalysisLanguage(),
           country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
           region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
         }),
@@ -361,7 +368,7 @@ export default function CareerIntelligenceResults() {
         throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
       }
 
-      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang);
+      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, getAnalysisLanguage());
       const ciData = normalizedCareerIntelligence.analysis;
       setCareerData(ciData);
       setIsPaid(true);
@@ -534,7 +541,7 @@ export default function CareerIntelligenceResults() {
           name: email.split('@')[0],
           product_type: 'career_intelligence_full',
           orderId,
-          language: lang,
+          language: getAnalysisLanguage(),
           currency: CURRENCY_CODE.toLowerCase(),
           amount: CI_PRICE,
           success_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,

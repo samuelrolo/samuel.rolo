@@ -150,6 +150,7 @@ export default function CareerIntelligenceHome() {
 
   const [, setLocation] = useLocation();
   const goToResults = () => {
+    persistAnalysisContext();
     window.location.href = localePath('/career-intelligence/results');
   };
   const getCareerIntelligenceProfile = (analysis: any) => {
