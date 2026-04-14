@@ -138,6 +138,46 @@ export default function AboutPage() {
     ),
   ];
 
+  const founderTestimonials = [
+    {
+      quote: pick(
+        '"Capacidade consistente de liderar projetos complexos, combinando visão estratégica com execução focada em resultados."',
+        '"A consistent ability to lead complex projects, combining strategic vision with execution focused on results."',
+        '"Capacidad constante para liderar proyectos complejos, combinando visión estratégica con una ejecución enfocada en resultados."'
+      ),
+      name: "José Subtil",
+      role: pick("Banking & Insurance Leader", "Banking & Insurance Leader", "Banking & Insurance Leader"),
+    },
+    {
+      quote: pick(
+        '"Eleva não só os resultados, mas também as pessoas com quem trabalha, através de exigência, foco e liderança próxima."',
+        '"He elevates not only results, but also the people he works with through high standards, focus and close leadership."',
+        '"Eleva no solo los resultados, sino también a las personas con las que trabaja, mediante exigencia, foco y liderazgo cercano."'
+      ),
+      name: "Tomás Alegria Aguiar",
+      role: pick(
+        "HR Solution Architect Senior Manager",
+        "HR Solution Architect Senior Manager",
+        "HR Solution Architect Senior Manager"
+      ),
+    },
+    {
+      quote: pick(
+        '"Entrega soluções com elevada rapidez e qualidade, combinando eficiência operacional com uma visão moderna e orientada ao futuro."',
+        '"He delivers solutions with outstanding speed and quality, combining operational efficiency with a modern, future-oriented vision."',
+        '"Entrega soluciones con gran rapidez y calidad, combinando eficiencia operativa con una visión moderna y orientada al futuro."'
+      ),
+      name: "Marlene Ruivo",
+      role: pick("Cliente", "Client", "Cliente"),
+    },
+  ];
+
+  const founderTestimonialsTitle = pick(
+    "Impacto reconhecido por quem trabalhou comigo",
+    "Impact recognised by people who worked with me",
+    "Impacto reconocido por quienes trabajaron conmigo"
+  );
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <S2IHeader activePage="sobre" />
@@ -368,6 +408,43 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="pb-8 md:pb-10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="rounded-[30px] border border-[#C9A961]/22 bg-[#fcfbf8] px-7 py-8 md:px-9 md:py-9 lg:px-10 lg:py-10 shadow-[0_22px_70px_-52px_rgba(15,23,42,0.28)]">
+              <div className="max-w-3xl mb-7 md:mb-8">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[#C9A961] mb-3">
+                  {pick("Testemunhos", "Testimonials", "Testimonios")}
+                </p>
+                <h2 className="text-2xl md:text-3xl font-bold mb-4">{founderTestimonialsTitle}</h2>
+                <p className="text-slate-600 leading-8">
+                  {pick(
+                    "Três perspetivas curtas sobre a forma como lidero, executo e colaboro em contexto profissional.",
+                    "Three concise perspectives on how I lead, execute and collaborate in professional contexts.",
+                    "Tres perspectivas breves sobre cómo lidero, ejecuto y colaboro en contextos profesionales."
+                  )}
+                </p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                {founderTestimonials.map((testimonial) => (
+                  <figure
+                    key={testimonial.name}
+                    className="rounded-2xl border border-[#C9A961]/18 bg-white px-5 py-5 md:px-6 md:py-6"
+                  >
+                    <blockquote className="text-base leading-7 text-slate-700 mb-5">
+                      <p>{testimonial.quote}</p>
+                    </blockquote>
+                    <figcaption className="border-t border-slate-200/80 pt-4">
+                      <p className="text-sm font-semibold text-slate-900">{testimonial.name}</p>
+                      <p className="text-sm leading-6 text-slate-500">{testimonial.role}</p>
+                    </figcaption>
+                  </figure>
+                ))}
               </div>
             </div>
           </div>
