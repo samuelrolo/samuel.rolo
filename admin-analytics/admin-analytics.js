@@ -2138,7 +2138,7 @@ function getStatusLabel(status) {
 
 function getRecommendation(entry) {
     if (entry.status === 'down') {
-        if (entry.error_message?.includes('Bundle JS em falta')) return { text: 'PÁGINA EM BRANCO: O bundle JavaScript não existe no servidor (404). A app não renderiza. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
+        if (entry.error_message?.includes('Bundle JS em falta') || entry.error_message?.includes('Asset em falta')) return { text: 'PÁGINA EM BRANCO: Um asset crítico não existe no servidor. A app pode responder 200 no HTML mas não renderizar. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
         if (entry.error_message?.includes('timed out')) return { text: 'Timeout detetado. Verificar se o serviço está a correr e se não há cold starts excessivos.', severity: 'critical' };
         return { text: 'Serviço indisponível. Verificar logs do servidor e reiniciar se necessário.', severity: 'critical' };
     }
@@ -2156,6 +2156,110 @@ function getRecommendation(entry) {
     return { text: 'Tudo normal. Sem ação necessária.', severity: 'ok' };
 }
 
+function getHealthUptime(entry) {
+    const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === entry.endpoint_name);
+    const totalChecks = endpointHistory.length;
+    const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
+    return totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
+}
+
+function getFrontendHealthMeta(entry) {
+    const prefix = 'Frontend ';
+    const rawName = (entry?.endpoint_name || '').startsWith(prefix) ? entry.endpoint_name.slice(prefix.length) : (entry?.endpoint_name || '');
+    const parts = rawName.split(' ');
+    const lang = parts.pop() || '--';
+    return {
+        app: parts.join(' '),
+        lang,
+        uptime: getHealthUptime(entry)
+    };
+}
+
+function buildFrontendMatrix(frontendServices) {
+    if (!frontendServices.length) return '';
+    const appOrder = ['CV Analyser', 'Career Intelligence', 'Career Path', 'LinkedIn Roaster', 'Student Pack', 'Bundle'];
+    const langs = ['PT', 'EN', 'ES'];
+    const rows = new Map();
+
+    frontendServices.forEach(service => {
+        const meta = getFrontendHealthMeta(service);
+        if (!rows.has(meta.app)) rows.set(meta.app, {});
+        rows.get(meta.app)[meta.lang] = { ...service, uptime: meta.uptime };
+    });
+
+    const orderedApps = [
+        ...appOrder.filter(app => rows.has(app)),
+        ...Array.from(rows.keys()).filter(app => !appOrder.includes(app)).sort()
+    ];
+
+    function buildCell(entry) {
+        if (!entry) {
+            return '<td style="padding:10px 8px;text-align:center;color:var(--text-muted);font-size:12px;">—</td>';
+        }
+        const isHealthy = entry.status === 'healthy';
+        const isWarning = entry.status === 'warning';
+        const color = getStatusColor(entry.status);
+        const bg = isHealthy ? 'rgba(16,185,129,0.10)' : isWarning ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.10)';
+        const border = isHealthy ? 'rgba(16,185,129,0.25)' : isWarning ? 'rgba(245,158,11,0.3)' : 'rgba(239,68,68,0.25)';
+        const icon = isHealthy ? 'fa-check-circle' : isWarning ? 'fa-exclamation-circle' : 'fa-times-circle';
+        const mainText = entry.http_code ? `${entry.http_code}` : getStatusLabel(entry.status);
+        const ttfb = entry.ttfb_ms != null ? `${entry.ttfb_ms}ms` : 'N/A';
+        const uptime = `${entry.uptime}%`;
+        const errorHtml = entry.error_message ? `<div style="margin-top:6px;color:var(--red);font-size:11px;line-height:1.4;">${esc(entry.error_message)}</div>` : '';
+        return `<td style="padding:8px;vertical-align:top;">
+            <details style="background:${bg};border:1px solid ${border};border-radius:8px;padding:8px 10px;">
+                <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:${color};font-weight:700;font-size:12px;">
+                    <i class="fas ${icon}"></i>
+                    <span>${mainText}</span>
+                </summary>
+                <div style="margin-top:8px;font-size:11px;color:var(--text-muted);line-height:1.5;">
+                    <div><strong style="color:var(--dark);">Estado:</strong> ${getStatusLabel(entry.status)}</div>
+                    <div><strong style="color:var(--dark);">TTFB:</strong> ${ttfb}</div>
+                    <div><strong style="color:var(--dark);">Uptime:</strong> ${uptime}</div>
+                    <div><strong style="color:var(--dark);">HTTP:</strong> ${entry.http_code || 'N/A'}</div>
+                    ${errorHtml}
+                </div>
+            </details>
+        </td>`;
+    }
+
+    const totalApps = orderedApps.length;
+    const downCount = frontendServices.filter(s => s.status === 'down').length;
+    const statusText = downCount > 0
+        ? `<span style="color:var(--red);font-weight:600;">${downCount} endpoint${downCount > 1 ? 's' : ''} com erro</span>`
+        : `<span style="color:var(--green);font-weight:600;">${frontendServices.filter(s => s.status === 'healthy').length}/${frontendServices.length} endpoints operacionais</span>`;
+
+    return `<div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--blue);gap:12px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-globe" style="color:var(--blue);font-size:16px;"></i>
+                <span style="font-size:14px;font-weight:700;color:var(--dark);">Frontend</span>
+                <span style="font-size:12px;color:var(--text-muted);">(${totalApps} apps · PT/EN/ES)</span>
+            </div>
+            <div style="font-size:12px;">${statusText}</div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table" style="width:100%;font-size:12px;min-width:680px;">
+                <thead>
+                    <tr>
+                        <th style="width:28%;">App</th>
+                        <th style="text-align:center;">PT</th>
+                        <th style="text-align:center;">EN</th>
+                        <th style="text-align:center;">ES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${orderedApps.map(app => `<tr>
+                        <td style="font-weight:600;color:var(--dark);vertical-align:middle;">${esc(app)}</td>
+                        ${langs.map(lang => buildCell(rows.get(app)?.[lang])).join('')}
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">Clica em cada estado para ver TTFB, uptime, HTTP e mensagem detalhada.</div>
+    </div>`;
+}
+
 function renderHealthLogs() {
     if (!allHealthLogs.length) {
         document.getElementById('healthSummaryTitle').textContent = 'Sem dados de monitorização';
@@ -2166,7 +2270,6 @@ function renderHealthLogs() {
         return;
     }
 
-    // Group by run_id, get latest run
     const byRun = {};
     allHealthLogs.forEach(h => {
         if (!byRun[h.run_id]) byRun[h.run_id] = [];
@@ -2176,7 +2279,6 @@ function renderHealthLogs() {
     const latestRun = byRun[runIds[0]] || [];
     const latestDate = latestRun[0]?.checked_at ? new Date(latestRun[0].checked_at).toLocaleString('pt-PT') : '--';
 
-    // Executive Summary
     const downCount = latestRun.filter(h => h.status === 'down').length;
     const warnCount = latestRun.filter(h => h.status === 'warning').length;
     const healthyCount = latestRun.filter(h => h.status === 'healthy').length;
@@ -2205,9 +2307,7 @@ function renderHealthLogs() {
     }
     summaryDesc.textContent = `Último check: ${latestDate} · ${healthyCount}/${totalServices} saudáveis`;
 
-    // Service Cards
     const cardsEl = document.getElementById('healthServiceCards');
-    // Group services by category
     const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
     const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
     const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend'));
@@ -2219,10 +2319,7 @@ function renderHealthLogs() {
         const rec = getRecommendation(h);
         const ttfb = h.ttfb_ms != null ? `${h.ttfb_ms}ms` : 'N/A';
         const httpBadge = h.http_code ? (h.http_code >= 200 && h.http_code < 300 ? `<span style="color:var(--green);font-weight:600;">${h.http_code}</span>` : `<span style="color:var(--orange);font-weight:600;">${h.http_code}</span>`) : '<span style="color:var(--red);font-weight:600;">N/A</span>';
-        const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === h.endpoint_name);
-        const totalChecks = endpointHistory.length;
-        const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
-        const uptime = totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
+        const uptime = getHealthUptime(h);
         const uptimeColor = uptime >= 95 ? 'var(--green)' : uptime >= 85 ? 'var(--orange)' : 'var(--red)';
         const recIcon = rec.severity === 'critical' ? '🚨' : rec.severity === 'warning' ? '⚠️' : rec.severity === 'info' ? 'ℹ️' : '✅';
         return `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:4px solid ${color};">
@@ -2264,11 +2361,10 @@ function renderHealthLogs() {
     }
 
     cardsEl.innerHTML =
-        buildSection('Frontend', 'fa-globe', frontendServices, 'var(--blue)') +
+        buildFrontendMatrix(frontendServices) +
         buildSection('Backend', 'fa-server', backendServices, 'var(--orange)') +
         buildSection('Edge Functions', 'fa-bolt', edgeServices, 'var(--purple)');
 
-    // Populate history filter
     const filterEl = document.getElementById('healthHistoryFilter');
     if (filterEl) {
         const names = [...new Set(allHealthLogs.map(h => h.endpoint_name))];
@@ -2388,14 +2484,22 @@ async function refreshHealthCheck() {
     const endpoints = [
         { name: 'Frontend CV Analyser PT', url: 'https://www.share2inspire.pt/cv-analyser', category: 'frontend' },
         { name: 'Frontend CV Analyser EN', url: 'https://www.share2inspire.pt/en/cv-analyser', category: 'frontend' },
+        { name: 'Frontend CV Analyser ES', url: 'https://www.share2inspire.pt/es/cv-analyser', category: 'frontend' },
         { name: 'Frontend Career Path PT', url: 'https://www.share2inspire.pt/career-path', category: 'frontend' },
         { name: 'Frontend Career Path EN', url: 'https://www.share2inspire.pt/en/career-path', category: 'frontend' },
+        { name: 'Frontend Career Path ES', url: 'https://www.share2inspire.pt/es/career-path', category: 'frontend' },
         { name: 'Frontend Career Intelligence PT', url: 'https://www.share2inspire.pt/career-intelligence', category: 'frontend' },
         { name: 'Frontend Career Intelligence EN', url: 'https://www.share2inspire.pt/en/career-intelligence', category: 'frontend' },
+        { name: 'Frontend Career Intelligence ES', url: 'https://www.share2inspire.pt/es/career-intelligence', category: 'frontend' },
         { name: 'Frontend LinkedIn Roaster PT', url: 'https://www.share2inspire.pt/linkedin-roaster', category: 'frontend' },
         { name: 'Frontend LinkedIn Roaster EN', url: 'https://www.share2inspire.pt/en/linkedin-roaster', category: 'frontend' },
+        { name: 'Frontend LinkedIn Roaster ES', url: 'https://www.share2inspire.pt/es/linkedin-roaster', category: 'frontend' },
+        { name: 'Frontend Student Pack PT', url: 'https://www.share2inspire.pt/estudante', category: 'frontend' },
+        { name: 'Frontend Student Pack EN', url: 'https://www.share2inspire.pt/en/student-pack', category: 'frontend' },
+        { name: 'Frontend Student Pack ES', url: 'https://www.share2inspire.pt/es/student-pack', category: 'frontend' },
         { name: 'Frontend Bundle PT', url: 'https://www.share2inspire.pt/bundle', category: 'frontend' },
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
+        { name: 'Frontend Bundle ES', url: 'https://www.share2inspire.pt/es/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
         { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/rest/v1/', category: 'edge_function' }
