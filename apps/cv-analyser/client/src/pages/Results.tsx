@@ -35,8 +35,8 @@ const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 function isLinkedInJobUrl(text: string): boolean {
-  if (!text) return false;
-  const t = text.trim().toLowerCase();
+  const t = String(text || '').trim().toLowerCase();
+  if (!t) return false;
   return (t.includes('linkedin.com/jobs') || t.includes('linkedin.com/job')) && t.startsWith('http');
 }
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -863,7 +863,7 @@ export default function Results() {
           language: lang,
           country,
           region,
-          currency: CURRENCY_CODE.toLowerCase(),
+          currency: (CURRENCY_CODE || 'eur').toLowerCase(),
           amount: getDiscountedPriceNum(selectedPlan.price),
           description: `CV Analyser — ${selectedPlan.name} — Share2Inspire`,
           success_url: `${window.location.origin}${t('cvanalyser')}/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
