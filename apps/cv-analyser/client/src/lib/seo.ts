@@ -18,8 +18,8 @@ export type SEOConfig = {
 };
 
 const SITE_NAME = "Share2Inspire";
-const SITE_URL = "https://www.share2inspire.pt";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-share2inspire.webp`;
+const SITE_URL = "https://share2inspire.pt";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-share2inspire.png`;
 const DEFAULT_ROBOTS = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 const NOINDEX_ROBOTS = "noindex, nofollow, noarchive";
 
