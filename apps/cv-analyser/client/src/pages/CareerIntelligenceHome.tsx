@@ -369,7 +369,12 @@ export default function CareerIntelligenceHome() {
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         try {
-          const requestBody: any = { mode: 'cv_extraction', language: lang };
+          const requestBody: any = {
+            mode: 'cv_extraction',
+            language: lang,
+            country,
+            region: region || undefined,
+          };
           if (useServerExtraction) {
             requestBody.file = base64Content;
             requestBody.filename = file.name;
@@ -489,6 +494,10 @@ export default function CareerIntelligenceHome() {
           paymentMethod: 'mbway',
           description: 'Share2Inspire - Career Intelligence',
           name: email.split('@')[0],
+          product_type: memberProductType,
+          language: getPageLang(),
+          country,
+          region,
         }),
       });
 

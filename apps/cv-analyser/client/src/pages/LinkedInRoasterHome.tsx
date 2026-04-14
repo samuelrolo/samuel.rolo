@@ -14,6 +14,7 @@ import { getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
+import { getDefaultCountryByLanguage } from "@/data/countries";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -179,10 +180,12 @@ export default function LinkedInRoasterHome() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
         try {
+          const analysisCountry = localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang);
+          const analysisRegion = localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '';
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: lang }),
+            body: JSON.stringify({ mode: 'linkedin_roast', linkedin_url: currentLinkedinUrl, language: lang, country: analysisCountry, region: analysisRegion || undefined }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
@@ -209,6 +212,8 @@ export default function LinkedInRoasterHome() {
       sessionStorage.setItem('linkedinRoasterUrl', currentLinkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
       sessionStorage.setItem('analysisLang', normalizedLinkedinAnalysis.language);
+      sessionStorage.setItem('analysisCountry', localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang));
+      sessionStorage.setItem('analysisRegion', localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '');
 
       try {
         fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {

@@ -1532,9 +1532,11 @@ serve(async (req)=>{
 
     const jobDescription = body.job_description || '';
 
-    const country = body.country || '';
+    const fallbackCountry = language === 'es' ? 'Spain' : language === 'en' ? 'United Kingdom' : 'Portugal';
 
-    const region = body.region || '';
+    const country = String(body.country || '').trim() || fallbackCountry;
+
+    const region = String(body.region || '').trim();
 
     const isPT = language === 'pt' || language === 'PT';
 
@@ -7839,6 +7841,8 @@ ${cvText.substring(0, 8000)}
 
 ${roastCompanyContext}
 
+${getLocalisationInstructions(country, region, currency, language)}
+
 Área de Destino/Alvo: ${targetArea || 'Não especificada (avaliar com base na trajectória actual)'}
 
 
@@ -8206,6 +8210,8 @@ PROFILE DATA INPUT:
 ${cvText.substring(0, 8000)}
 
 ${roastCompanyContext}
+
+${getLocalisationInstructions(country, region, currency, language)}
 
 
 
@@ -8576,6 +8582,8 @@ DATOS DE ENTRADA DEL PERFIL:
 ${cvText.substring(0, 8000)}
 
 ${roastCompanyContext}
+
+${getLocalisationInstructions(country, region, currency, language)}
 
 Área Objetivo: ${targetArea || 'No especificada (evalúa según la trayectoria profesional actual)'}
 
