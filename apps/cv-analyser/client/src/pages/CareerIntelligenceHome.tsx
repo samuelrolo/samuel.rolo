@@ -36,6 +36,30 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 const getPageLang = () => window.location.pathname.startsWith('/en/') ? 'en' : window.location.pathname.startsWith('/es/') ? 'es' : 'pt';
 
+const clearCareerIntelligenceRunData = () => {
+  [
+    'careerIntelligenceData',
+    'ciAnalysisData',
+    'analysisResult',
+    'careerPathData',
+    'careerPathPaid',
+    'careerIntelligenceProPaid',
+    'careerIntelligenceFull',
+    'ciNeedsRegeneration',
+    'careerPathCvAnalysis',
+    'careerPathCvText',
+    'careerPathCvFile',
+    'careerPathCvFilename',
+    'careerPathLinkedinUrl',
+    'cpOrderId',
+    'ciOrderId',
+    'stripeSessionId',
+  ].forEach((key) => {
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  });
+};
+
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -187,14 +211,28 @@ export default function CareerIntelligenceHome() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  // Sync country/region to sessionStorage in real-time.
-  // This ensures CareerIntelligenceResults always uses the country the user
-  // selected in THIS form, overriding any value left by a previous Career Path
-  // session — which is the root cause of the upgrade-flow country bug.
+  // Sync language, country and region in real time so payment/results always
+  // use the context selected in THIS Career Intelligence session.
   useEffect(() => {
+    const pageLang = getPageLang();
+    localStorage.setItem('analysisLang', pageLang);
+    sessionStorage.setItem('analysisLang', pageLang);
     localStorage.setItem('analysisCountry', country);
+    sessionStorage.setItem('analysisCountry', country);
     localStorage.setItem('analysisRegion', region || '');
-  }, [country, region]);
+    sessionStorage.setItem('analysisRegion', region || '');
+  }, [lang, country, region]);
+
+  const persistAnalysisContext = () => {
+    const pageLang = getPageLang();
+    localStorage.setItem('analysisLang', pageLang);
+    sessionStorage.setItem('analysisLang', pageLang);
+    localStorage.setItem('analysisCountry', country);
+    sessionStorage.setItem('analysisCountry', country);
+    localStorage.setItem('analysisRegion', region || '');
+    sessionStorage.setItem('analysisRegion', region || '');
+    return pageLang;
+  };
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -337,6 +375,8 @@ export default function CareerIntelligenceHome() {
       setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
+    const pageLang = persistAnalysisContext();
+    clearCareerIntelligenceRunData();
     trackAnalysisStart('career_intelligence_full');
     setLoading(true);
     setError(null);
@@ -421,15 +461,24 @@ export default function CareerIntelligenceHome() {
         cvText = analysisSource.raw_text;
       }
 
-      const pageLang = getPageLang();
       localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
       localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       localStorage.setItem('careerPathCvFile', base64Content);
+      sessionStorage.setItem('careerPathCvFile', base64Content);
       localStorage.setItem('careerPathCvFilename', file.name);
+      sessionStorage.setItem('careerPathCvFilename', file.name);
       localStorage.setItem('analysisLang', pageLang);
+      sessionStorage.setItem('analysisLang', pageLang);
       localStorage.setItem('analysisCountry', country);
+      sessionStorage.setItem('analysisCountry', country);
       localStorage.setItem('analysisRegion', region || '');
-      if (linkedinUrl) localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('analysisRegion', region || '');
+      if (linkedinUrl) {
+        localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+        sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      }
 
       const profile = getCareerIntelligenceProfile(analysisSource);
       const normalizedCv = transformGeminiResponse(analysisSource, lang as 'pt' | 'en' | 'es');
@@ -465,6 +514,8 @@ export default function CareerIntelligenceHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
+    const pageLang = persistAnalysisContext();
+
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
       const orderId = `CI-FREE-${Date.now()}`;
@@ -495,7 +546,7 @@ export default function CareerIntelligenceHome() {
           description: 'Share2Inspire - Career Intelligence',
           name: email.split('@')[0],
           product_type: memberProductType,
-          language: getPageLang(),
+          language: pageLang,
           country,
           region,
         }),
@@ -519,6 +570,8 @@ export default function CareerIntelligenceHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
+    persistAnalysisContext();
+
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
       localStorage.setItem('cpPaymentEmail', email);
@@ -541,6 +594,8 @@ export default function CareerIntelligenceHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError(pick('Email inválido', 'Invalid email', 'Email inválido')); return; }
 
+    const pageLang = persistAnalysisContext();
+
     // If price is 0 (100% discount), skip payment entirely
     if (FINAL_PRICE <= 0) {
       localStorage.setItem('cpPaymentEmail', email);
@@ -553,7 +608,6 @@ export default function CareerIntelligenceHome() {
     setPaymentError(null);
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const pageLang = getPageLang();
       const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

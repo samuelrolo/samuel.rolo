@@ -7514,7 +7514,9 @@ REGRAS CRÍTICAS:
 
               topP: 0.95,
 
-              maxOutputTokens: 65536
+              maxOutputTokens: 65536,
+
+              thinkingConfig: { thinkingBudget: 16384 }
 
             }
 

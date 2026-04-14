@@ -184,6 +184,27 @@ export default function CareerIntelligenceResults() {
     return cleaned;
   };
 
+  const formatSalaryBand = (minValue: unknown, maxValue: unknown) => {
+    const formatter = new Intl.NumberFormat(isEN ? 'en-US' : isES ? 'es-ES' : 'pt-PT', {
+      style: 'currency',
+      currency: isEN ? 'USD' : 'EUR',
+      maximumFractionDigits: 0,
+    });
+
+    const formatValue = (value: unknown) => {
+      if (value === null || value === undefined || value === '') return '';
+      const numericValue = typeof value === 'number' ? value : Number(String(value).replace(/[^\d.-]/g, ''));
+      if (Number.isFinite(numericValue)) return formatter.format(numericValue);
+      return cleanCurrency(String(value));
+    };
+
+    const minLabel = formatValue(minValue);
+    const maxLabel = formatValue(maxValue);
+
+    if (minLabel && maxLabel) return `${minLabel} - ${maxLabel}`;
+    return minLabel || maxLabel || '';
+  };
+
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -890,6 +911,16 @@ export default function CareerIntelligenceResults() {
                           <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('ideal_para')}</p>
                           <p className="text-xs text-muted-foreground">{path.ideal_for}</p>
                         </div>
+                        {(path.salary_range_entry || path.salary_range_3y || path.salary_range_5y) && (
+                          <div className="p-2 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/10">
+                            <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{pick('FAIXAS SALARIAIS', 'SALARY RANGES', 'RANGOS SALARIALES')}</p>
+                            <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
+                              {path.salary_range_entry && <div><span className="font-medium">{pick('Entrada:', 'Entry:', 'Entrada:')}</span> {cleanCurrency(String(path.salary_range_entry))}</div>}
+                              {path.salary_range_3y && <div><span className="font-medium">{pick('3 anos:', '3 years:', '3 años:')}</span> {cleanCurrency(String(path.salary_range_3y))}</div>}
+                              {path.salary_range_5y && <div><span className="font-medium">{pick('5 anos:', '5 years:', '5 años:')}</span> {cleanCurrency(String(path.salary_range_5y))}</div>}
+                            </div>
+                          </div>
+                        )}
                         {path.associated_roles && path.associated_roles.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-1">
                             {path.associated_roles.map((role: string, j: number) => (
@@ -968,15 +999,24 @@ export default function CareerIntelligenceResults() {
                         { key: 'effort_level', label: t('esforo'), suffix: '' },
                         { key: 'risk_level', label: t('risco'), suffix: '' },
                         { key: 'salary_impact', label: t('impacto_salarial'), suffix: '' },
+                        { key: 'salary_range', label: pick('Faixa salarial', 'Salary range', 'Rango salarial'), suffix: '' },
                         { key: 'profile_fit', label: t('alinhamento'), suffix: '' },
                       ].map((row) => (
                         <tr key={row.key} className="border-b border-border/50">
                           <td className="py-2 pr-3 text-muted-foreground font-medium">{row.label}</td>
-                          {careerData.strategic_comparison.map((item: any, i: number) => (
-                            <td key={i} className="text-center py-2 px-2 text-foreground">
-                              {row.key === 'salary_impact' ? cleanCurrency(String(item[row.key] || '')) : item[row.key]}{row.suffix}
-                            </td>
-                          ))}
+                          {careerData.strategic_comparison.map((item: any, i: number) => {
+                            const rawValue = row.key === 'salary_impact'
+                              ? cleanCurrency(String(item[row.key] || ''))
+                              : row.key === 'salary_range'
+                                ? formatSalaryBand(item.salary_range_min, item.salary_range_max)
+                                : item[row.key];
+                            const displayValue = rawValue === null || rawValue === undefined || rawValue === '' ? '—' : rawValue;
+                            return (
+                              <td key={i} className="text-center py-2 px-2 text-foreground">
+                                {displayValue}{row.suffix}
+                              </td>
+                            );
+                          })}
                         </tr>
                       ))}
                     </tbody>
