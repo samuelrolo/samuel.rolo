@@ -298,7 +298,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 lg:h-14 flex items-center justify-between">
           <a href={homeHref} className="shrink-0">
             <img
-              src="/logo-s2i.png"
+              src="/logo-s2i.webp"
               alt={labels.logoAlt}
               width="240"
               height="64"
@@ -396,7 +396,7 @@ export default function S2IHeader({ activePage = '' }: S2IHeaderProps) {
         <div id="mobile-navigation-drawer" className="lg:hidden fixed inset-0 z-[60] bg-white" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <div className="flex items-center justify-between px-4 h-11 border-b border-slate-200/80">
             <a href={homeHref} className="shrink-0">
-              <img src="/logo-s2i.png" alt={labels.logoAlt} width="240" height="64" decoding="async" className="h-10 w-auto object-contain" style={{ width: 'auto' }} />
+              <img src="/logo-s2i.webp" alt={labels.logoAlt} width="240" height="64" decoding="async" className="h-10 w-auto object-contain" style={{ width: 'auto' }} />
             </a>
             <button type="button" onClick={closeAllMenus} className="p-2 -mr-2 text-slate-800" aria-label={labels.closeMenu}>
               <X className="w-5 h-5" />

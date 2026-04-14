@@ -24,7 +24,7 @@ export default function Footer() {
       <div className="gold-line" />
       <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-5">
         <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-          <img src="/logo-s2i.png" alt="Share2Inspire" className="h-9 sm:h-10 w-auto object-contain" />
+          <img src="/logo-s2i.webp" alt="Share2Inspire" className="h-9 sm:h-10 w-auto object-contain" />
           <div>
             <p className="text-sm font-semibold text-white">Share2Inspire</p>
             <p className="text-sm text-white">{slogan}</p>

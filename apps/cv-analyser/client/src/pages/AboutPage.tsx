@@ -147,7 +147,7 @@ export default function AboutPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 md:py-18">
             <div className="max-w-4xl mx-auto text-center">
               <img
-                src="/logo-s2i.png"
+                src="/logo-s2i.webp"
                 alt={pick("Logótipo Share2Inspire", "Share2Inspire logo", "Logotipo Share2Inspire")}
                 loading="lazy"
                 decoding="async"
