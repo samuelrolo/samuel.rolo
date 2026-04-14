@@ -233,11 +233,14 @@ export default function CareerPathResults() {
   const isEN = lang === 'en';
   const careerPathHomePath = '/';
   const isES = lang === 'es';
+  const selectedCountry = getFirstStoredValue(['analysisCountry'], localStorage, sessionStorage) || '';
+  const selectedRegion = getFirstStoredValue(['analysisRegion'], localStorage, sessionStorage) || '';
+  const selectedLocation = getFirstStoredValue(['analysisLocation'], localStorage, sessionStorage) || (selectedRegion && selectedCountry ? `${selectedRegion}, ${selectedCountry}` : selectedCountry || selectedRegion || '');
   const [selectedPlan, setSelectedPlan] = useState(getPlans(isEN)[0]);
   const [paymentStep, setPaymentStep] = useState<'select' | 'payment' | 'polling' | 'success'>('select');
   const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'multibanco' | 'paypal' | 'stripe'>('mbway');
 
-  // Currency & pricing: PT = EUR, EN = USD
+  // Currency & pricing for checkout UI only
   const CUR = t('bca53fde');
   const P = isEN
     ? { cv: '9.99', cp: '19.99' }
@@ -247,23 +250,19 @@ export default function CareerPathResults() {
   /** Format price with correct symbol position: EN = $19.99, PT = 19,99€ */
   const fmtPrice = (price: string | number) => pick(`${price}€`, `$${price}`, `${price}€`);
 
-  /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
+  /** Clean salary strings without rewriting the backend currency/market */
   const cleanCurrency = (s: string) => {
     if (!s) return s;
-    let cleaned = s.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
-    if (!isEN) {
-      // PT context: convert any USD references to EUR
-      cleaned = cleaned.replace(/\$/g, '€');
-      cleaned = cleaned.replace(/USD/gi, 'EUR');
-      // Fix numbers that look American (e.g. 150,000) — keep as-is since they're salary figures
-    } else {
-      // EN context: convert any EUR references to USD
-      cleaned = cleaned.replace(/€/g, '$');
-      cleaned = cleaned.replace(/EUR/gi, 'USD');
-    }
-    // Remove duplicate symbols again after conversion
-    cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
-    return cleaned;
+    return s
+      .replace(/€€+/g, '€')
+      .replace(/\$\$+/g, '$')
+      .replace(/\bEUR\s+EUR\b/gi, 'EUR')
+      .replace(/\bUSD\s+USD\b/gi, 'USD')
+      .replace(/\bGBP\s+GBP\b/gi, 'GBP')
+      .replace(/\bSGD\s+SGD\b/gi, 'SGD')
+      .replace(/\bMXN\s+MXN\b/gi, 'MXN')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
   };
 
   const translateConsistencyLabel = (value?: string) => {
@@ -1409,7 +1408,7 @@ export default function CareerPathResults() {
                         {/* LinkedIn Search Button */}
                         <div className="mt-3 pt-3 border-t border-border">
                           <a
-                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}&location=Portugal`}
+                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}${selectedLocation ? `&location=${encodeURIComponent(selectedLocation)}` : selectedCountry ? `&location=${encodeURIComponent(selectedCountry)}` : ''}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5]/10 text-[#0077B5] text-xs font-semibold hover:bg-[#0077B5]/20 transition-colors border border-[#0077B5]/20"

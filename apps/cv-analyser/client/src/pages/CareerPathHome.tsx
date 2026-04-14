@@ -383,7 +383,15 @@ export default function CareerPathHome() {
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         try {
-          const requestBody: any = { mode: 'cv_extraction', email: email.trim().toLowerCase(), language: lang };
+          const computedLocation = region ? `${region}, ${country}` : country;
+          const requestBody: any = {
+            mode: 'cv_extraction',
+            email: email.trim().toLowerCase(),
+            language: lang,
+            country,
+            region: region || undefined,
+            location: computedLocation || undefined,
+          };
           if (useServerExtraction) {
             // Send base64 file for server-side Gemini Vision extraction
             requestBody.file = base64Content;

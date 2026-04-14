@@ -6584,7 +6584,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
       "secondary_domains": ["4-6 complementary domains, each specific to what appears in the CV — not generic labels"],
 
-      "market_value_assessment": "Minimum 120 words. Assess the professional's market value in ${marketCtx} by name, referencing their specific combination of employers, credentials and skills. Compare to typical market positioning for this profile. Explain what makes this profile above or below average and why.",
+      "market_value_assessment": "Minimum 120 words. Assess the professional's market value in ${authoritativeMarketCtx} by name, referencing their specific combination of employers, credentials and skills. Compare to typical market positioning for this profile. Explain what makes this profile above or below average and why.",
 
       "competitive_advantages": ["5-7 competitive advantages — each must be a specific statement tied to the CV, not a generic tag, and each item must be at least 40 words. Example: 'Big 4 pedigree combined with pharma sector experience creates a rare cross-industry profile that most HR Directors lack'"],
 
@@ -6620,13 +6620,13 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
         "what_you_need": ["minimum 6 specific items — be granular. Name specific certifications, tools, frameworks, experience types or knowledge areas. Example: 'SHRM-SCP certification' not 'HR certification'"],
 
-        "typical_companies": ["5-7 real specific companies operating in ${country || 'the international market'} — include sector labels. Example: 'AstraZeneca (pharma)', 'Deloitte Portugal (consulting)', 'Millennium BCP (banking)'"],
+        "typical_companies": ["5-7 real specific companies operating in ${authoritativeCountry || explicitLocationLabel || 'the target market'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — include sector labels. Example: 'AstraZeneca (pharma)', 'Deloitte Portugal (consulting)', 'Millennium BCP (banking)'"],
 
-        "salary_range": "Annual gross in ${currency.symbol} (${currency.code}). Format: '${currency.symbol}75,000 – ${currency.symbol}110,000/year gross'. Plain integers also in salary_min and salary_max.",
+        "salary_range": "Annual gross in ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}). Format: '${authoritativeCurrency.symbol}75,000 – ${authoritativeCurrency.symbol}110,000/year gross'. Plain integers also in salary_min and salary_max.",
 
-        "salary_min": "<integer annual gross in ${currency.code}, e.g. 75000>",
+        "salary_min": "<integer annual gross in ${authoritativeCurrency.code}, e.g. 75000>",
 
-        "salary_max": "<integer annual gross in ${currency.code}, e.g. 110000>",
+        "salary_max": "<integer annual gross in ${authoritativeCurrency.code}, e.g. 110000>",
 
         "salary_period": "annual"
 
@@ -6668,7 +6668,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
           "investment": "Estimated cost and time",
 
-          "impact": "2-3 sentences on the specific career impact this certification would have for this professional in ${marketCtx}",
+          "impact": "2-3 sentences on the specific career impact this certification would have for this professional in ${authoritativeMarketCtx}",
 
           "priority": "High/Medium/Low"
 
@@ -6792,11 +6792,11 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
         "logic": "Minimum 300 words. Explain why this path makes strategic sense for THIS person right now: reference their current employer, career stage, strongest skills, market timing, personal trajectory, salary trajectory, and trade-offs. Make the case for why this path is coherent with who they are professionally and why it is strategically viable over the next 3-5 years.",
 
-        "salary_range_entry": "Entry salary range on this path in ${currency.symbol} (annual gross)",
+        "salary_range_entry": "Entry salary range on this path in ${authoritativeCurrency.symbol} (annual gross)",
 
-        "salary_range_3y": "Salary range after 3 years on this path in ${currency.symbol} (annual gross)",
+        "salary_range_3y": "Salary range after 3 years on this path in ${authoritativeCurrency.symbol} (annual gross)",
 
-        "salary_range_5y": "Salary range after 5 years on this path in ${currency.symbol} (annual gross)",
+        "salary_range_5y": "Salary range after 5 years on this path in ${authoritativeCurrency.symbol} (annual gross)",
 
         "ideal_for": "2-3 sentences describing the professional mindset, risk appetite, and personal priorities that make someone well-suited to this path — then note how this person fits or diverges from that ideal",
 
@@ -6826,7 +6826,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
         "salary_range_max": "<integer>",
 
-        "salary_currency": "${currency.code}",
+        "salary_currency": "${authoritativeCurrency.code}",
 
         "profile_fit": "Integer percentage + 2-sentence justification referencing the specific CV"
 
@@ -6936,13 +6936,13 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
       },
 
-      "aligned_companies_note": "IMPORTANT: aligned_companies MUST be an OBJECT where keys are sector/industry names and values are arrays of 2-4 real company names per sector. Include 4-5 sectors with 3-4 companies each, all operating in ${country || 'the target market'}. Companies must be REAL and relevant to this person's profile.",
+      "aligned_companies_note": "IMPORTANT: aligned_companies MUST be an OBJECT where keys are sector/industry names and values are arrays of 2-4 real company names per sector. Include 4-5 sectors with 3-4 companies each, all operating in ${authoritativeCountry || explicitLocationLabel || 'the target market'}. Companies must be REAL and relevant to this person's profile.",
 
-      "demand_level": "Minimum 180 words. Assess current demand for this person's specific skill combination in ${marketCtx}: is it growing or declining, what is driving it, and what does that mean for their negotiating power and options in the next 12-24 months.",
+      "demand_level": "Minimum 180 words. Assess current demand for this person's specific skill combination in ${authoritativeMarketCtx}: is it growing or declining, what is driving it, and what does that mean for their negotiating power and options in the next 12-24 months.",
 
       "competitiveness": "Minimum 180 words. How saturated is this market for this profile type: who are the competing profiles, what makes them different, and where does this person stand relative to the competition.",
 
-      "differentiator": "Minimum 180 words. What specifically and concretely sets this person apart — reference specific employers, certifications, experiences or combinations that are rare in ${marketCtx} and valuable to hiring managers"
+      "differentiator": "Minimum 180 words. What specifically and concretely sets this person apart — reference specific employers, certifications, experiences or combinations that are rare in ${authoritativeMarketCtx} and valuable to hiring managers"
 
     }
 
@@ -6978,11 +6978,11 @@ CRITICAL RULES:
 
 - Be VERY specific and personalised — nothing generic
 
-- ALL results MUST be localised to ${marketCtx}: companies, training, certifications, salary ranges, networking events — everything must reflect the reality of ${country}${region ? ` (${region})` : ''}
+- ALL results MUST be localised to ${authoritativeMarketCtx}: companies, training, certifications, salary ranges, networking events — everything must reflect the reality of ${authoritativeCountry || explicitLocationLabel || 'the target market'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''}
 
-- Salary ranges MUST be in ${currency.symbol} (${currency.code}) and realistic for the local market
+- Salary ranges MUST be in ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}) and realistic for the local market
 
-- If reliable data is not available for ${country}, state it explicitly rather than inventing figures
+- If reliable data is not available for ${authoritativeCountry || explicitLocationLabel || 'the target market'}, state it explicitly rather than inventing figures
 
 - If no LinkedIn data is available, omit the cv_linkedin_cross_analysis section and focus only on the CV
 
@@ -7004,8 +7004,8 @@ CRITICAL RULES:
 ${careerPathOutputLanguageInstruction}
 REGLA OBLIGATORIA DE IDIOMA: Responde enteramente en ${requestedLanguageLabel}. No mezcles idiomas en ninguna sección del informe.
 REGLA NULL: Para datos personales (nombre, email, teléfono, empleador actual) — copia exactamente del CV o usa null. Para campos analíticos (análisis de mercado, rangos salariales, empresas típicas, ventajas competitivas) — usa tu conocimiento para producir contenido rico, específico y personalizado. Prefiere profundidad y especificidad en lugar de brevedad.
-REGLA DE EMPRESAS: En typical_companies y alternative_companies, lista solo empresas que ESTÉS SEGURO que existen y operan activamente en ${marketCtx}. En caso de duda, usa multinacionales conocidas con oficinas confirmadas en el país en lugar de inventar nombres locales.
-FORMATO SALARIAL: Todos los valores de salary_range son anuales brutos en ${currency.code}, como enteros simples. Ejemplo: 45000, no "45.000 EUR" ni "45k".
+REGLA DE EMPRESAS: En typical_companies y alternative_companies, lista solo empresas que ESTÉS SEGURO que existen y operan activamente en ${authoritativeMarketCtx}. En caso de duda, usa multinacionales conocidas con oficinas confirmadas en el país en lugar de inventar nombres locales.
+FORMATO SALARIAL: Todos los valores de salary_range son anuales brutos en ${authoritativeCurrency.code}, como enteros simples. Ejemplo: 45000, no "45.000 EUR" ni "45k".
 REGLA SALARIAL OBLIGATORIA: DEBES rellenar salary_range_entry, salary_range_3y y salary_range_5y para CADA camino estratégico. Usa rangos salariales realistas para el país y nivel de función detectados. Formato: "€XX.000 - €YY.000" (o moneda local equivalente). NUNCA dejes estos campos vacíos o null.
 REGLA DE DENSIDAD PREMIUM: Este es un informe premium de 49€. Cada campo narrativo DEBE cumplir o exceder el word count mínimo. Respuestas cortas y genéricas son INACEPTABLES. Escribe como un consultor de carrera sénior que cobra 200€/hora — con profundidad, especificidad y personalización.
 REGLA DE RIQUEZA: Este es un informe premium de pago. Cada sección debe ser detallada, personalizada y fundamentada. Trata al profesional por su nombre de pila a lo largo del informe. Respuestas genéricas o cortas NO son aceptables.
@@ -7014,7 +7014,7 @@ ANALIZA EL SIGUIENTE CV:
 ${sanitized}
 ${cpCompanyContext}
 ${linkedinData ? `LINKEDIN DATA:\n${linkedinData}\n` : ''}${linkedinUrl ? `LINKEDIN URL: ${linkedinUrl}\n` : ''}
-${getLocalisationInstructions(country, region, currency, language)}
+${getLocalisationInstructions(authoritativeCountry, authoritativeRegion, authoritativeCurrency, language)}
 REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIAS):
 - Escribe como un asesor de carrera de élite en conversación directa con el profesional — trátalo por su nombre de pila en todo momento.
 - Cada campo analítico debe ser un párrafo narrativo elaborado, no una respuesta de formulario.
@@ -7029,7 +7029,7 @@ REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIAS):
 - CONTEXTO SALARIAL: Todos los rangos salariales deben incluir contexto de mercado — cómo se compara con la franja salarial actual, qué determina el rango (tamaño de empresa, sector, ubicación), y cuál es la trayectoria realista a lo largo de 3-5 años.
 - PROFUNDIDAD DE LA DECISIÓN: La justificación de la decision_recommendation debe leerse como un memo de consultoría convincente — cruzando las fortalezas de la persona, timing de mercado, perfil de riesgo personal y oportunidades específicas. El when_to_switch debe nombrar disparadores concretos (ej: "si después de 18 meses no has sido promovido a X", "si la empresa anuncia reestructuración en la división Y").
 PRODUCE UN INFORME "CAREER PATH" COMPLETO EN JSON CON LA SIGUIENTE ESTRUCTURA:
-{ "name": "Nombre EXACTO completo tal como está escrito en el CV — NO inventar ni adivinar", "candidate_name": "Nombre EXACTO completo tal como está escrito en el CV — debe ser igual al campo 'name' arriba", "current_role": "Cargo actual o más reciente tal como está escrito en el CV", "career_path": { "current_positioning": { "seniority_level": "Junior/Mid-level/Senior/Lead/Director/VP/C-Level", "seniority_justification": "Mínimo 150 palabras. Justifica el nivel de seniority referenciando: total de años de experiencia, ejemplos concretos de complejidad y alcance de los proyectos del CV, tamaño de equipos o presupuestos gestionados, nivel organizacional de los stakeholders involucrados, e impacto de negocio demostrado con ejemplos concretos de su trayectoria real.", "primary_domain": "Área principal de actuación (ej: Human Capital, Digital Transformation, Finance)", "secondary_domains": ["4-6 dominios complementarios específicos a lo que aparece en el CV — no etiquetas genéricas"], "market_value_assessment": "Mínimo 120 palabras. Evalúa el valor de mercado del profesional en ${marketCtx}, tratándolo por su nombre, referenciando la combinación específica de empleadores, credenciales y competencias. Compara con el posicionamiento típico de mercado para este perfil. Explica qué hace que este perfil esté por encima o por debajo de la media y por qué.", "competitive_advantages": ["5-7 ventajas competitivas — cada una debe ser una afirmación específica ligada al CV, no una etiqueta genérica, y cada ítem debe tener al menos 40 palabras."], "blind_spots": ["3-4 puntos ciegos — cada uno debe ser un ítem de 2 frases: nombra la laguna y explica el riesgo específico que crea para la carrera de esta persona"] }, "cv_linkedin_cross_analysis": { "consistency_score": "Alta/Media/Baja", "gaps_identified": ["Competencias o experiencias visibles en LinkedIn pero ausentes del CV — mínimo 3 ítems"], "cv_strengths_not_on_linkedin": ["Elementos específicos del CV que deberían ser más visibles en LinkedIn — mínimo 3 ítems"], "optimization_suggestions": ["Sugerencias concretas y accionables para alinear ambos perfiles — mínimo 3 ítems"] }, "next_roles": [ { "role_title": "Título del cargo sugerido", "timeline": "Corto plazo (6-12 meses) / Medio plazo (1-3 años) / Largo plazo (3-5 años)", "fit_percentage": 85, "why_this_role": "Mínimo 120 palabras. Explica específicamente por qué ESTE cargo encaja en ESTA persona.", "what_you_already_have": ["mínimo 6 ítems específicos extraídos directamente del CV"], "what_you_need": ["mínimo 6 ítems específicos — sé granular"], "typical_companies": ["5-7 empresas reales operando en ${country || 'España'}${region ? ` (${region})` : ''}"], "salary_range": "Bruto anual en ${currency.symbol} (${currency.code}). Formato: '${currency.symbol}75.000 – ${currency.symbol}110.000/año bruto'.", "salary_min": 75000, "salary_max": 110000, "salary_period": "annual" } ], "development_plan": { "formations": [ { "name": "Nombre específico del curso/programa", "provider": "Institución real (priorizar instituciones en ${marketCtx} o globales reconocidas)", "duration": "Duración estimada", "cost": "Coste estimado o Gratuito", "relevance": "2-3 frases explicando por qué ESTE curso aborda una laguna específica para ESTA persona", "priority": "Alta/Media/Baja", "url": "Enlace si disponible, sino null" } ], "certifications": [ { "name": "Nombre exacto de la certificación", "body": "Entidad emisora", "investment": "Coste y tiempo estimados", "impact": "2-3 frases sobre el impacto específico en la carrera de este profesional en ${marketCtx}", "priority": "Alta/Media/Baja" } ], "visibility_exercises": [ { "activity": "Actividad específica vinculada a la experiencia de esta persona", "platform": "Plataforma y formato específicos", "frequency": "Frecuencia recomendada", "expected_impact": "2-3 frases sobre el impacto de posicionamiento", "concrete_first_step": "Un primer paso accionable con detalle concreto" } ], "networking_strategy": [ { "action": "Acción de networking específica adaptada al perfil de esta persona", "target": "Tipo y seniority específicos de contactos a buscar, con justificación", "entities": [ { "name": "Nombre de la organización, comunidad, evento o conferencia", "type": "community|event|association|conference", "description": "4 frases mínimo: (1) Qué es esta entidad y su relevancia. (2) Por qué es valiosa para este profesional. (3) Qué tipo de participación es posible. (4) Un primer paso concreto para involucrarse.", "website": "URL oficial si conocida, sino null", "location": "Ciudad/País u Online", "frequency": "Frecuencia (anual, mensual, trimestral, continuo)" } ] } ], "free_courses": [ { "name": "Nombre real de curso gratuito específico", "platform": "Nombre de la plataforma", "provider": "Proveedor del curso/universidad", "duration": "Duración corta", "relevance": "2 frases sobre por qué este curso gratuito aborda una laguna específica", "search_url": "URL de búsqueda directa en la plataforma" } ] }, "immediate_actions": [ { "priority": 1, "action": "Paso accionable específico con suficiente detalle para actuar inmediatamente", "timeframe": "Plazo específico (ej: 'Próximos 7 días', 'Este mes')", "expected_outcome": "2 frases: qué desbloquea esta acción y cómo avanza el camino de carrera recomendado" } ], "long_term_vision": { "five_year_narrative": "Mínimo 300 palabras en segunda persona, dirigiéndose al profesional por su nombre. Pinta un cuadro específico, inspirador pero realista de dónde puede estar en 5 años si sigue este plan.", "key_milestones": [ { "year": "Año 1", "milestone": "Hito específico con contexto — no genérico" } ] }, "strategic_paths": [ { "name": "Nombre del camino estratégico (ej: Crecimiento Corporativo Vertical, Pivot a Consultoría, Carrera Emprendedora / Portfolio)", "success_probability": 78, "logic": "Mínimo 300 palabras. Explica por qué este camino tiene sentido estratégico para ESTA persona ahora.", "salary_range_entry": "Rango salarial de entrada en este camino en ${currency.symbol} (bruto anual)", "salary_range_3y": "Rango salarial después de 3 años en este camino en ${currency.symbol} (bruto anual)", "salary_range_5y": "Rango salarial después de 5 años en este camino en ${currency.symbol} (bruto anual)", "ideal_for": "2-3 frases describiendo la mentalidad profesional ideal para este camino", "associated_roles": ["4-6 títulos de cargo específicos ordenados del más cercano al más lejano"] } ], "strategic_comparison": [ { "path_name": "Debe coincidir con name arriba", "success_probability": 78, "estimated_time": "Tiempo para ver resultados significativos", "effort_level": "Medio/Alto/Muy Alto", "risk_level": "Bajo/Medio/Alto", "salary_impact": "Rango o porcentaje específico con contexto", "salary_range_min": "<integer>", "salary_range_max": "<integer>", "salary_currency": "${currency.code}", "profile_fit": "Porcentaje entero + justificación de 2 frases" } ], "tradeoffs": [ { "path_name": "Debe coincidir con name arriba", "you_gain": "Mínimo 150 palabras. Ser específico y personal.", "you_give_up": "Mínimo 150 palabras. Ser honesto y concreto.", "hidden_risk": "Mínimo 120 palabras sobre un riesgo no obvio específico al perfil de esta persona", "real_scenario": "Mínimo 180 palabras pintando un cuadro realista de los primeros 6 meses" } ], "action_plan_by_path": [ { "path_name": "Debe coincidir con name arriba", "is_recommended": true, "actions": [ { "timeframe": "Mes 1", "action": "Acción específica con suficiente detalle para actuar", "is_critical": true }, { "timeframe": "Mes 2-3", "action": "Acción de seguimiento específica", "is_critical": false }, { "timeframe": "Mes 4-6", "action": "Acción a medio plazo específica", "is_critical": false }, { "timeframe": "Mes 6-12", "action": "Acción a horizonte más largo", "is_critical": false } ] } ], "decision_recommendation": { "recommended_path": "Nombre del camino recomendado (debe coincidir exactamente con uno de los strategic_paths)", "justification": "Mínimo 350 palabras. Justificación detallada cruzando las fortalezas del CV con la realidad del mercado en ${marketCtx}.", "when_to_switch": "Mínimo 200 palabras. Indicadores claros de cuándo pivotar a un camino alternativo.", "why_better_than_others": "Mínimo 150 palabras comparando explícitamente este camino con los otros dos" }, "market_context": { "aligned_companies": { "Nombre del Sector 1 (ej: Farmacéutica)": ["Empresa A", "Empresa B", "Empresa C"], "Nombre del Sector 2 (ej: Consultoría)": ["Empresa D", "Empresa E", "Empresa F"], "Nombre del Sector 3 (ej: Tecnología)": ["Empresa G", "Empresa H"], "Nombre del Sector 4 (ej: Banca)": ["Empresa I", "Empresa J", "Empresa K"], "Nombre del Sector 5 (ej: FMCG & Retail)": ["Empresa L", "Empresa M"] }, "aligned_companies_note": "IMPORTANTE: aligned_companies DEBE ser un OBJETO donde las claves son nombres de sector/industria y los valores son arrays de 2-4 empresas reales por sector. Incluir 4-5 sectores con 3-4 empresas cada uno, todas operando en ${country || 'España'}.", "demand_level": "Mínimo 180 palabras. Evalúa la demanda actual para esta combinación de competencias en ${marketCtx}.", "competitiveness": "Mínimo 180 palabras. Cuán saturado está este mercado para este tipo de perfil.", "differentiator": "Mínimo 180 palabras. Qué distingue específicamente a esta persona — referencia empleadores, certificaciones o experiencias concretas" } } }
+{ "name": "Nombre EXACTO completo tal como está escrito en el CV — NO inventar ni adivinar", "candidate_name": "Nombre EXACTO completo tal como está escrito en el CV — debe ser igual al campo 'name' arriba", "current_role": "Cargo actual o más reciente tal como está escrito en el CV", "career_path": { "current_positioning": { "seniority_level": "Junior/Mid-level/Senior/Lead/Director/VP/C-Level", "seniority_justification": "Mínimo 150 palabras. Justifica el nivel de seniority referenciando: total de años de experiencia, ejemplos concretos de complejidad y alcance de los proyectos del CV, tamaño de equipos o presupuestos gestionados, nivel organizacional de los stakeholders involucrados, e impacto de negocio demostrado con ejemplos concretos de su trayectoria real.", "primary_domain": "Área principal de actuación (ej: Human Capital, Digital Transformation, Finance)", "secondary_domains": ["4-6 dominios complementarios específicos a lo que aparece en el CV — no etiquetas genéricas"], "market_value_assessment": "Mínimo 120 palabras. Evalúa el valor de mercado del profesional en ${authoritativeMarketCtx}, tratándolo por su nombre, referenciando la combinación específica de empleadores, credenciales y competencias. Compara con el posicionamiento típico de mercado para este perfil. Explica qué hace que este perfil esté por encima o por debajo de la media y por qué.", "competitive_advantages": ["5-7 ventajas competitivas — cada una debe ser una afirmación específica ligada al CV, no una etiqueta genérica, y cada ítem debe tener al menos 40 palabras."], "blind_spots": ["3-4 puntos ciegos — cada uno debe ser un ítem de 2 frases: nombra la laguna y explica el riesgo específico que crea para la carrera de esta persona"] }, "cv_linkedin_cross_analysis": { "consistency_score": "Alta/Media/Baja", "gaps_identified": ["Competencias o experiencias visibles en LinkedIn pero ausentes del CV — mínimo 3 ítems"], "cv_strengths_not_on_linkedin": ["Elementos específicos del CV que deberían ser más visibles en LinkedIn — mínimo 3 ítems"], "optimization_suggestions": ["Sugerencias concretas y accionables para alinear ambos perfiles — mínimo 3 ítems"] }, "next_roles": [ { "role_title": "Título del cargo sugerido", "timeline": "Corto plazo (6-12 meses) / Medio plazo (1-3 años) / Largo plazo (3-5 años)", "fit_percentage": 85, "why_this_role": "Mínimo 120 palabras. Explica específicamente por qué ESTE cargo encaja en ESTA persona.", "what_you_already_have": ["mínimo 6 ítems específicos extraídos directamente del CV"], "what_you_need": ["mínimo 6 ítems específicos — sé granular"], "typical_companies": ["5-7 empresas reales operando en ${authoritativeCountry || explicitLocationLabel || 'el mercado objetivo'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''}"], "salary_range": "Bruto anual en ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}). Formato: '${authoritativeCurrency.symbol}75.000 – ${authoritativeCurrency.symbol}110.000/año bruto'.", "salary_min": 75000, "salary_max": 110000, "salary_period": "annual" } ], "development_plan": { "formations": [ { "name": "Nombre específico del curso/programa", "provider": "Institución real (priorizar instituciones en ${authoritativeMarketCtx} o globales reconocidas)", "duration": "Duración estimada", "cost": "Coste estimado o Gratuito", "relevance": "2-3 frases explicando por qué ESTE curso aborda una laguna específica para ESTA persona", "priority": "Alta/Media/Baja", "url": "Enlace si disponible, sino null" } ], "certifications": [ { "name": "Nombre exacto de la certificación", "body": "Entidad emisora", "investment": "Coste y tiempo estimados", "impact": "2-3 frases sobre el impacto específico en la carrera de este profesional en ${authoritativeMarketCtx}", "priority": "Alta/Media/Baja" } ], "visibility_exercises": [ { "activity": "Actividad específica vinculada a la experiencia de esta persona", "platform": "Plataforma y formato específicos", "frequency": "Frecuencia recomendada", "expected_impact": "2-3 frases sobre el impacto de posicionamiento", "concrete_first_step": "Un primer paso accionable con detalle concreto" } ], "networking_strategy": [ { "action": "Acción de networking específica adaptada al perfil de esta persona", "target": "Tipo y seniority específicos de contactos a buscar, con justificación", "entities": [ { "name": "Nombre de la organización, comunidad, evento o conferencia", "type": "community|event|association|conference", "description": "4 frases mínimo: (1) Qué es esta entidad y su relevancia. (2) Por qué es valiosa para este profesional. (3) Qué tipo de participación es posible. (4) Un primer paso concreto para involucrarse.", "website": "URL oficial si conocida, sino null", "location": "Ciudad/País u Online", "frequency": "Frecuencia (anual, mensual, trimestral, continuo)" } ] } ], "free_courses": [ { "name": "Nombre real de curso gratuito específico", "platform": "Nombre de la plataforma", "provider": "Proveedor del curso/universidad", "duration": "Duración corta", "relevance": "2 frases sobre por qué este curso gratuito aborda una laguna específica", "search_url": "URL de búsqueda directa en la plataforma" } ] }, "immediate_actions": [ { "priority": 1, "action": "Paso accionable específico con suficiente detalle para actuar inmediatamente", "timeframe": "Plazo específico (ej: 'Próximos 7 días', 'Este mes')", "expected_outcome": "2 frases: qué desbloquea esta acción y cómo avanza el camino de carrera recomendado" } ], "long_term_vision": { "five_year_narrative": "Mínimo 300 palabras en segunda persona, dirigiéndose al profesional por su nombre. Pinta un cuadro específico, inspirador pero realista de dónde puede estar en 5 años si sigue este plan.", "key_milestones": [ { "year": "Año 1", "milestone": "Hito específico con contexto — no genérico" } ] }, "strategic_paths": [ { "name": "Nombre del camino estratégico (ej: Crecimiento Corporativo Vertical, Pivot a Consultoría, Carrera Emprendedora / Portfolio)", "success_probability": 78, "logic": "Mínimo 300 palabras. Explica por qué este camino tiene sentido estratégico para ESTA persona ahora.", "salary_range_entry": "Rango salarial de entrada en este camino en ${authoritativeCurrency.symbol} (bruto anual)", "salary_range_3y": "Rango salarial después de 3 años en este camino en ${authoritativeCurrency.symbol} (bruto anual)", "salary_range_5y": "Rango salarial después de 5 años en este camino en ${authoritativeCurrency.symbol} (bruto anual)", "ideal_for": "2-3 frases describiendo la mentalidad profesional ideal para este camino", "associated_roles": ["4-6 títulos de cargo específicos ordenados del más cercano al más lejano"] } ], "strategic_comparison": [ { "path_name": "Debe coincidir con name arriba", "success_probability": 78, "estimated_time": "Tiempo para ver resultados significativos", "effort_level": "Medio/Alto/Muy Alto", "risk_level": "Bajo/Medio/Alto", "salary_impact": "Rango o porcentaje específico con contexto", "salary_range_min": "<integer>", "salary_range_max": "<integer>", "salary_currency": "${authoritativeCurrency.code}", "profile_fit": "Porcentaje entero + justificación de 2 frases" } ], "tradeoffs": [ { "path_name": "Debe coincidir con name arriba", "you_gain": "Mínimo 150 palabras. Ser específico y personal.", "you_give_up": "Mínimo 150 palabras. Ser honesto y concreto.", "hidden_risk": "Mínimo 120 palabras sobre un riesgo no obvio específico al perfil de esta persona", "real_scenario": "Mínimo 180 palabras pintando un cuadro realista de los primeros 6 meses" } ], "action_plan_by_path": [ { "path_name": "Debe coincidir con name arriba", "is_recommended": true, "actions": [ { "timeframe": "Mes 1", "action": "Acción específica con suficiente detalle para actuar", "is_critical": true }, { "timeframe": "Mes 2-3", "action": "Acción de seguimiento específica", "is_critical": false }, { "timeframe": "Mes 4-6", "action": "Acción a medio plazo específica", "is_critical": false }, { "timeframe": "Mes 6-12", "action": "Acción a horizonte más largo", "is_critical": false } ] } ], "decision_recommendation": { "recommended_path": "Nombre del camino recomendado (debe coincidir exactamente con uno de los strategic_paths)", "justification": "Mínimo 350 palabras. Justificación detallada cruzando las fortalezas del CV con la realidad del mercado en ${authoritativeMarketCtx}.", "when_to_switch": "Mínimo 200 palabras. Indicadores claros de cuándo pivotar a un camino alternativo.", "why_better_than_others": "Mínimo 150 palabras comparando explícitamente este camino con los otros dos" }, "market_context": { "aligned_companies": { "Nombre del Sector 1 (ej: Farmacéutica)": ["Empresa A", "Empresa B", "Empresa C"], "Nombre del Sector 2 (ej: Consultoría)": ["Empresa D", "Empresa E", "Empresa F"], "Nombre del Sector 3 (ej: Tecnología)": ["Empresa G", "Empresa H"], "Nombre del Sector 4 (ej: Banca)": ["Empresa I", "Empresa J", "Empresa K"], "Nombre del Sector 5 (ej: FMCG & Retail)": ["Empresa L", "Empresa M"] }, "aligned_companies_note": "IMPORTANTE: aligned_companies DEBE ser un OBJETO donde las claves son nombres de sector/industria y los valores son arrays de 2-4 empresas reales por sector. Incluir 4-5 sectores con 3-4 empresas cada uno, todas operando en ${authoritativeCountry || explicitLocationLabel || 'el mercado objetivo'}.", "demand_level": "Mínimo 180 palabras. Evalúa la demanda actual para esta combinación de competencias en ${authoritativeMarketCtx}.", "competitiveness": "Mínimo 180 palabras. Cuán saturado está este mercado para este tipo de perfil.", "differentiator": "Mínimo 180 palabras. Qué distingue específicamente a esta persona — referencia empleadores, certificaciones o experiencias concretas" } } }
 REGLAS FINALES:
 - OBLIGATORIO: Mínimo 5 cargos sugeridos en next_roles (mezcla de corto, medio y largo plazo)
 - OBLIGATORIO: Mínimo 4 formaciones y 3 certificaciones en development_plan
@@ -7039,9 +7039,9 @@ REGLAS FINALES:
 - OBLIGATORIO: Para cada cargo en next_roles, "what_you_already_have" DEBE tener mínimo 5 ítems del CV. "what_you_need" DEBE tener mínimo 5 ítems específicos.
 - OBLIGATORIO: networking_strategy DEBE tener exactamente 3 acciones. Cada acción DEBE tener exactamente 3 entidades. La descripción de cada entidad DEBE tener 3-4 frases.
 - Sé MUY específico y personalizado — nada genérico
-- TODOS los resultados DEBEN estar localizados para ${marketCtx}: empresas, formaciones, certificaciones, rangos salariales, eventos de networking
-- Los rangos salariales DEBEN estar en ${currency.symbol} (${currency.code}) y ser realistas para el mercado local
-- Si no existen datos fiables para ${country || 'España'}, dilo explícitamente en lugar de inventar valores
+- TODOS los resultados DEBEN estar localizados para ${authoritativeMarketCtx}: empresas, formaciones, certificaciones, rangos salariales, eventos de networking
+- Los rangos salariales DEBEN estar en ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}) y ser realistas para el mercado local
+- Si no existen datos fiables para ${authoritativeCountry || explicitLocationLabel || 'el mercado objetivo'}, dilo explícitamente en lugar de inventar valores
 - Si no hay datos de LinkedIn, omite la sección cv_linkedin_cross_analysis y céntrate solo en el CV
 - OBLIGATORIO: DEBES generar exactamente 3 strategic_paths — cada uno representando una dirección de carrera distinta
 - OBLIGATORIO: strategic_comparison DEBE tener exactamente 3 ítems correspondientes a los 3 strategic_paths
@@ -7055,9 +7055,9 @@ REGRA OBRIGATÓRIA DE IDIOMA: Responde inteiramente em ${requestedLanguageLabel}
 
 REGRA NULL: Para dados pessoais (nome, email, telefone, empregador actual) — copia exactamente do CV ou usa null. Para campos analíticos (análises de mercado, faixas salariais, empresas típicas, vantagens competitivas) — usa o teu conhecimento para produzir conteúdo rico, específico e personalizado. Prefere profundidade e especificidade em vez de brevidade.
 
-REGRA DE EMPRESAS: Em typical_companies e alternative_companies, lista apenas empresas que TENS A CERTEZA que existem e operam activamente em ${marketCtx}. Em caso de dúvida, usa multinacionais conhecidas com escritórios confirmados no país em vez de inventar nomes locais.
+REGRA DE EMPRESAS: Em typical_companies e alternative_companies, lista apenas empresas que TENS A CERTEZA que existem e operam activamente em ${authoritativeMarketCtx}. Em caso de dúvida, usa multinacionais conhecidas com escritórios confirmados no país em vez de inventar nomes locais.
 
-FORMATO SALARIAL: Todos os valores de salary_range são anuais brutos em ${currency.code}, como inteiros simples. Exemplo: 45000, não "45.000 EUR" nem "45k".
+FORMATO SALARIAL: Todos os valores de salary_range são anuais brutos em ${authoritativeCurrency.code}, como inteiros simples. Exemplo: 45000, não "45.000 EUR" nem "45k".
 
 REGRA SALARIAL OBRIGATÓRIA: DEVES preencher salary_range_entry, salary_range_3y e salary_range_5y para CADA caminho estratégico. Usa faixas salariais realistas para o país e nível de função detectados. Formato: "€XX.000 - €YY.000" (ou moeda local equivalente). NUNCA deixes estes campos vazios ou null.
 
@@ -7075,7 +7075,7 @@ ${cpCompanyContext}
 
 ${linkedinData ? `DADOS DO LINKEDIN:\n${linkedinData}\n` : ''}${linkedinUrl ? `URL DO LINKEDIN: ${linkedinUrl}\n` : ''}
 
-${getLocalisationInstructions(country, region, currency, 'pt')}
+${getLocalisationInstructions(authoritativeCountry, authoritativeRegion, authoritativeCurrency, 'pt')}
 
 REGRAS DE PROFUNDIDADE NARRATIVA (OBRIGATÓRIO):
 
@@ -7127,7 +7127,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
       "secondary_domains": ["4-6 domínios complementares específicos ao que aparece no CV — não rótulos genéricos"],
 
-      "market_value_assessment": "Mínimo 120 palavras. Avalia o valor de mercado do profissional em ${getMarketContext(country, region)}, tratando-o pelo nome, referenciando a combinação específica de empregadores, credenciais e competências. Compara com o posicionamento típico de mercado para este perfil. Explica o que torna este perfil acima ou abaixo da média e porquê.",
+      "market_value_assessment": "Mínimo 120 palavras. Avalia o valor de mercado do profissional em ${authoritativeMarketCtx}, tratando-o pelo nome, referenciando a combinação específica de empregadores, credenciais e competências. Compara com o posicionamento típico de mercado para este perfil. Explica o que torna este perfil acima ou abaixo da média e porquê.",
 
       "competitive_advantages": ["5-7 vantagens competitivas — cada uma deve ser uma afirmação específica ligada ao CV, não um rótulo genérico, e cada item deve ter pelo menos 40 palavras. Exemplo: 'Pedigree Big 4 combinado com experiência no sector farmacêutico cria um perfil cross-industry raro que a maioria dos Directores de RH não possui'"],
 
@@ -7163,13 +7163,13 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
         "what_you_need": ["mínimo 6 itens específicos — ser granular. Nomeia certificações, ferramentas, frameworks, tipos de experiência ou áreas de conhecimento específicas. Exemplo: 'Certificação SHRM-SCP' não 'certificação de RH'"],
 
-        "typical_companies": ["5-7 empresas reais e específicas a operar em ${country || 'Portugal'}${region ? ` (${region})` : ''} — incluir rótulo de sector. Exemplo: 'AstraZeneca (farmacêutica)', 'Deloitte Portugal (consultoria)', 'Millennium BCP (banca)'"],
+        "typical_companies": ["5-7 empresas reais e específicas a operar em ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — incluir rótulo de sector. Exemplo: 'AstraZeneca (farmacêutica)', 'Deloitte Portugal (consultoria)', 'Millennium BCP (banca)'"],
 
-        "salary_range": "Bruto anual em ${currency.symbol} (${currency.code}). Formato: '${currency.symbol}75.000 – ${currency.symbol}110.000/ano bruto'. Inteiros simples também em salary_min e salary_max.",
+        "salary_range": "Bruto anual em ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}). Formato: '${authoritativeCurrency.symbol}75.000 – ${authoritativeCurrency.symbol}110.000/ano bruto'. Inteiros simples também em salary_min e salary_max.",
 
-        "salary_min": "<inteiro bruto anual em ${currency.code}, ex: 75000>",
+        "salary_min": "<inteiro bruto anual em ${authoritativeCurrency.code}, ex: 75000>",
 
-        "salary_max": "<inteiro bruto anual em ${currency.code}, ex: 110000>",
+        "salary_max": "<inteiro bruto anual em ${authoritativeCurrency.code}, ex: 110000>",
 
         "salary_period": "anual"
 
@@ -7211,7 +7211,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
           "investment": "Custo e tempo estimados",
 
-          "impact": "2-3 frases sobre o impacto específico na carreira que esta certificação teria para este profissional em ${getMarketContext(country, region)}",
+          "impact": "2-3 frases sobre o impacto específico na carreira que esta certificação teria para este profissional em ${authoritativeMarketCtx}",
 
           "priority": "Alta/Média/Baixa"
 
@@ -7335,11 +7335,11 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
         "logic": "Mínimo 300 palavras. Explica porque este caminho faz sentido estratégico para ESTA pessoa agora: referencia o empregador actual, estágio de carreira, competências mais fortes, timing de mercado, trajectória pessoal, trajectória salarial e trade-offs. Constrói o argumento de porque este caminho é coerente com quem são profissionalmente e porque é viável nos próximos 3-5 anos.",
 
-        "salary_range_entry": "Faixa salarial de entrada neste caminho em ${currency.symbol} (anual bruto)",
+        "salary_range_entry": "Faixa salarial de entrada neste caminho em ${authoritativeCurrency.symbol} (anual bruto)",
 
-        "salary_range_3y": "Faixa salarial após 3 anos neste caminho em ${currency.symbol} (anual bruto)",
+        "salary_range_3y": "Faixa salarial após 3 anos neste caminho em ${authoritativeCurrency.symbol} (anual bruto)",
 
-        "salary_range_5y": "Faixa salarial após 5 anos neste caminho em ${currency.symbol} (anual bruto)",
+        "salary_range_5y": "Faixa salarial após 5 anos neste caminho em ${authoritativeCurrency.symbol} (anual bruto)",
 
         "ideal_for": "2-3 frases descrevendo a mentalidade profissional, apetite ao risco e prioridades pessoais que tornam alguém adequado para este caminho — depois nota como esta pessoa se encaixa ou diverge desse ideal",
 
@@ -7369,7 +7369,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
         "salary_range_max": "<integer>",
 
-        "salary_currency": "${currency.code}",
+        "salary_currency": "${authoritativeCurrency.code}",
 
         "profile_fit": "Percentagem inteira + justificação de 2 frases referenciando o CV específico"
 
@@ -7479,13 +7479,13 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
       },
 
-      "aligned_companies_note": "IMPORTANTE: aligned_companies DEVE ser um OBJECTO onde as chaves são nomes de sectores/indústrias e os valores são arrays de 3-4 nomes de empresas reais por sector. Incluir 4-5 sectores com 3-4 empresas cada, todas a operar em ${country || 'Portugal'}. As empresas devem ser REAIS e relevantes para o perfil desta pessoa.",
+      "aligned_companies_note": "IMPORTANTE: aligned_companies DEVE ser um OBJECTO onde as chaves são nomes de sectores/indústrias e os valores são arrays de 3-4 nomes de empresas reais por sector. Incluir 4-5 sectores com 3-4 empresas cada, todas a operar em ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}. As empresas devem ser REAIS e relevantes para o perfil desta pessoa.",
 
-      "demand_level": "Mínimo 180 palavras. Avalia a procura actual pela combinação específica de competências desta pessoa em ${getMarketContext(country, region)}: está a crescer ou a diminuir, o que a está a impulsionar, e o que isso significa para o poder negocial e as opções nos próximos 12-24 meses.",
+      "demand_level": "Mínimo 180 palavras. Avalia a procura actual pela combinação específica de competências desta pessoa em ${authoritativeMarketCtx}: está a crescer ou a diminuir, o que a está a impulsionar, e o que isso significa para o poder negocial e as opções nos próximos 12-24 meses.",
 
       "competitiveness": "Mínimo 180 palavras. Quão saturado está este mercado para este tipo de perfil: quem são os perfis concorrentes, o que os diferencia, e onde se posiciona esta pessoa face à concorrência.",
 
-      "differentiator": "Mínimo 180 palavras. O que especificamente e concretamente distingue esta pessoa — referencia empregadores, certificações, experiências ou combinações específicas que são raras em ${getMarketContext(country, region)} e valiosas para os decisores de contratação"
+      "differentiator": "Mínimo 180 palavras. O que especificamente e concretamente distingue esta pessoa — referencia empregadores, certificações, experiências ou combinações específicas que são raras em ${authoritativeMarketCtx} e valiosas para os decisores de contratação"
 
     }
 
@@ -7521,11 +7521,11 @@ REGRAS CRÍTICAS:
 
 - Ser MUITO específico e personalizado — nada genérico
 
-- TODOS os resultados DEVEM ser localizados para ${getMarketContext(country, region)}: empresas, formações, certificações, faixas salariais, eventos de networking — tudo deve reflectir a realidade de ${country || 'Portugal'}${region ? ` (${region})` : ''}
+- TODOS os resultados DEVEM ser localizados para ${authoritativeMarketCtx}: empresas, formações, certificações, faixas salariais, eventos de networking — tudo deve reflectir a realidade de ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''}
 
-- Faixas salariais DEVEM ser em ${currency.symbol} (${currency.code}) e realistas para o mercado local
+- Faixas salariais DEVEM ser em ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}) e realistas para o mercado local
 
-- Se não existirem dados fiáveis para ${country || 'Portugal'}, dizer explicitamente em vez de inventar valores
+- Se não existirem dados fiáveis para ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}, dizer explicitamente em vez de inventar valores
 
 - Se não houver dados do LinkedIn, omitir a secção cv_linkedin_cross_analysis e focar apenas no CV
 
@@ -7770,7 +7770,7 @@ Generate ONLY this JSON (no other text):
     "key_milestones": [{"year": "Year 1", "milestone": "..."}]
   }
 }
-Rules: min 4 formations, 3 certifications, 3 free_courses, 4 visibility_exercises, 3 networking actions. All localized for ${marketCtx}. Return ONLY the JSON.`
+Rules: min 4 formations, 3 certifications, 3 free_courses, 4 visibility_exercises, 3 networking actions. All localized for ${authoritativeMarketCtx}. Return ONLY the JSON.`
               : isES
               ? `Eres un Career Advisor de élite. Basándote en este CV, genera SOLO las secciones faltantes del informe Career Path en JSON.
 
@@ -7794,7 +7794,7 @@ Genera SOLO este JSON (sin otro texto):
     "key_milestones": [{"year": "Año 1", "milestone": "..."}]
   }
 }
-Reglas: mín. 4 formaciones, 3 certificaciones, 3 cursos gratuitos, 4 ejercicios de visibilidad, 3 acciones de networking. Todo localizado para ${marketCtx}. Devuelve SOLO el JSON.`
+Reglas: mín. 4 formaciones, 3 certificaciones, 3 cursos gratuitos, 4 ejercicios de visibilidad, 3 acciones de networking. Todo localizado para ${authoritativeMarketCtx}. Devuelve SOLO el JSON.`
               : `És um Career Advisor de elite. Com base neste CV, gera APENAS as secções em falta do relatório Career Path em JSON.
 
 CV:
@@ -7817,7 +7817,7 @@ Gera APENAS este JSON (sem outro texto):
     "key_milestones": [{"year": "Ano 1", "milestone": "..."}]
   }
 }
-Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercícios de visibilidade, 3 acções de networking. Tudo localizado para ${marketCtx}. Retorna APENAS o JSON.`;
+Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercícios de visibilidade, 3 acções de networking. Tudo localizado para ${authoritativeMarketCtx}. Retorna APENAS o JSON.`;
 
             const sp2Response = await fetch(geminiUrl, {
               method: 'POST',
@@ -7993,7 +7993,6 @@ ${cvText.substring(0, 8000)}
 ${roastCompanyContext}
 
 ${getLocalisationInstructions(country, region, currency, language)}
-
 Área de Destino/Alvo: ${targetArea || 'Não especificada (avaliar com base na trajectória actual)'}
 
 
@@ -8363,9 +8362,6 @@ ${cvText.substring(0, 8000)}
 ${roastCompanyContext}
 
 ${getLocalisationInstructions(country, region, currency, language)}
-
-
-
 Target Professional Area: ${targetArea || 'Not specified (evaluate based on current career trajectory)'}
 
 
@@ -8735,7 +8731,6 @@ ${cvText.substring(0, 8000)}
 ${roastCompanyContext}
 
 ${getLocalisationInstructions(country, region, currency, language)}
-
 Área Objetivo: ${targetArea || 'No especificada (evalúa según la trayectoria profesional actual)'}
 
 
