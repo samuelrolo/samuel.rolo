@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share2Inspire</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="icons/icon32.png" alt="Logo" class="logo">
+      <h1>Share2Inspire</h1>
+    </header>
+
+    <!-- Login Section -->
+    <div id="login-section" class="section">
+      <p class="subtitle">Entra na tua área de membro</p>
+      <form id="login-form">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="o.teu@email.com">
+        </div>
+        <div class="input-group">
+          <label for="password">Palavra-passe</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <div id="error-message" class="error hidden"></div>
+        <button type="submit" id="login-btn">Entrar</button>
+      </form>
+    </div>
+
+    <!-- Tools Section -->
+    <div id="tools-section" class="section hidden">
+      <div class="user-info">
+        <p>Olá, <span id="user-name">Membro</span>!</p>
+        <button id="logout-btn" class="text-btn">Sair</button>
+      </div>
+      
+      <div class="tools-grid">
+        <a href="https://www.share2inspire.pt/cv-analyser/" target="_blank" class="tool-card">
+          <span class="icon">📊</span>
+          <span class="label">CV Analyser</span>
+        </a>
+        <a href="https://www.share2inspire.pt/linkedin-roaster/" target="_blank" class="tool-card">
+          <span class="icon">🔗</span>
+          <span class="label">LinkedIn Roaster</span>
+        </a>
+        <a href="https://www.share2inspire.pt/career-path/" target="_blank" class="tool-card">
+          <span class="icon">🛣️</span>
+          <span class="label">Career Path</span>
+        </a>
+        <a href="https://www.share2inspire.pt/career-intelligence/" target="_blank" class="tool-card">
+          <span class="icon">💡</span>
+          <span class="label">Career Intelligence</span>
+        </a>
+        <a href="https://www.share2inspire.pt/area-cliente/membros" target="_blank" class="tool-card full">
+          <span class="icon">🎓</span>
+          <span class="label">Student Pack / Área de Membro</span>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://www.share2inspire.pt" target="_blank">share2inspire.pt</a>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
