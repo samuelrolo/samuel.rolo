@@ -23,6 +23,7 @@ import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -282,7 +283,7 @@ export default function CareerPathHome() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ya expiró.')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite de utilizações.', 'This code has reached the usage limit.', 'Este código alcanzó el límite de usos.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError(pick('Este código não é aplicável ao Career Path.', 'This code is not applicable to Career Path.', 'Este código no es aplicable al Career Path.')); return; }
+        if (!couponSupportsProduct(products, 'career_path')) { setDiscountError(pick('Este código não é aplicável ao Career Path.', 'This code is not applicable to Career Path.', 'Este código no es aplicable al Career Path.')); return; }
         setDiscountPercent(coupon.discount_percent);
         setDiscountValid(true);
         // If 100% discount, unlock immediately

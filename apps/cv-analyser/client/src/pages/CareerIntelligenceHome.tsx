@@ -24,6 +24,7 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -308,12 +309,13 @@ export default function CareerIntelligenceHome() {
     setDiscountLoading(true);
     setDiscountError(null);
     const code = discountCode.trim().toUpperCase();
+    const requestedProducts = [memberProductType, 'career_intelligence_full', 'career_intelligence_pro'];
     try {
       // Step 1: Check discount_coupons via backend
       const couponRes = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, product: 'career_intelligence_full' }),
+        body: JSON.stringify({ code, product: memberProductType }),
       });
       const couponData = await couponRes.json();
       if (couponData.valid && couponData.discount_percent > 0) {
@@ -323,7 +325,38 @@ export default function CareerIntelligenceHome() {
         return;
       }
 
-      // Step 2: Check vouchers table directly
+      // Step 2: Fallback to direct coupon validation against the real discount_coupons labels stored in Supabase
+      const directCouponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const couponRows = await directCouponRes.json();
+      if (Array.isArray(couponRows) && couponRows.length > 0) {
+        const coupon = couponRows[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) {
+          setDiscountError(pick('Este código ainda não está ativo.', 'This code is not active yet.', 'Este código aún no está activo.'));
+          return;
+        }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) {
+          setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ya expiró.'));
+          return;
+        }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) {
+          setDiscountError(pick('Este código atingiu o limite.', 'This code has reached its limit.', 'Este código alcanzó el límite.'));
+          return;
+        }
+        if (!couponSupportsProduct(coupon.applicable_products || [], requestedProducts)) {
+          setDiscountError(pick('Este código não é válido para o Career Intelligence', 'This code is not valid for Career Intelligence', 'Este código no es válido para Career Intelligence'));
+          return;
+        }
+        setDiscountPercent(coupon.discount_percent);
+        setDiscountValid(true);
+        setDiscountType('coupon');
+        return;
+      }
+
+      // Step 3: Check vouchers table directly
       const voucherRes = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }

@@ -28,7 +28,8 @@ import { finishAndClean } from "@/lib/storageCleanup";
 import { t, pick, getLang } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
-import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
+import { saveToUserAnalyses } from '@/lib/saveToUserAnalyses';
+import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -1227,7 +1228,7 @@ export default function Results() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(t('este_cdigo_j_expirou')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(t('este_cdigo_atingiu_o_limite')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('cv_report')) { setDiscountError(t('este_cdigo_no_aplicvel_aqui')); return; }
+        if (!couponSupportsProduct(products, 'cv_analyser')) { setDiscountError(t('este_cdigo_no_aplicvel_aqui')); return; }
         if (coupon.discount_percent === 100) {
           setDiscountSuccess(t('cdigo_vlido_anlise_desbloqueada'));
           unlockFullReport();

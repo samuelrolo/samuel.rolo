@@ -15,6 +15,7 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
 import { getDefaultCountryByLanguage } from "@/data/countries";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -347,7 +348,7 @@ export default function LinkedInRoasterHome() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Código expirado.', 'This code has expired.', 'Código expirado.')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Código atingiu o limite.', 'This code has reached its usage limit.', 'Código alcanzó el límite.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster') && !products.includes('roaster')) { setDiscountError(pick('Código não aplicável.', 'Code not applicable to this product.', 'Código no aplicable.')); return; }
+        if (!couponSupportsProduct(products, 'linkedin_roaster')) { setDiscountError(pick('Código não aplicável.', 'Code not applicable to this product.', 'Código no aplicable.')); return; }
         if (coupon.discount_percent === 100) { incrementCouponUsage(code); setShowDiscountModal(false); runAnalysis(); return; }
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code); setShowDiscountModal(false); return;

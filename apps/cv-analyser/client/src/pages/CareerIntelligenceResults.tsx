@@ -24,7 +24,8 @@ import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerIntelligencePayload } from "@/lib/analysisPayload";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
-import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
+import { saveToUserAnalyses } from '@/lib/saveToUserAnalyses';
+import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -423,7 +424,7 @@ export default function CareerIntelligenceResults() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(t('este_cdigo_j_expirou')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(t('este_cdigo_atingiu_o_limite')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('career_intelligence') && !products.includes('career_intelligence_full')) {
+        if (!couponSupportsProduct(products, ['career_intelligence_full', 'career_intelligence_pro'])) {
           setDiscountError(t('este_cdigo_no_aplicvel_aqui')); return;
         }
         if (coupon.discount_percent === 100) {

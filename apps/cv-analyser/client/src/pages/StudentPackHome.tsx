@@ -17,6 +17,7 @@ import { redirectToCheckout } from '../lib/webviewPayment';
 import PromoBanner from "@/components/PromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
@@ -484,7 +485,7 @@ export default function StudentPackHome() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ha expirado.')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite.', 'This code has reached its limit.', 'Este código ha alcanzado su límite.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('student_pack') && !products.includes('student')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'Code not applicable to this package.', 'Código no aplicable a este paquete.')); return; }
+        if (!couponSupportsProduct(products, 'student_pack')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'Code not applicable to this package.', 'Código no aplicable a este paquete.')); return; }
         if (coupon.discount_percent === 100) { localStorage.removeItem('studentPackPendingOrderId'); localStorage.removeItem('studentPackVerifiedTransactionId'); setStudentPackAccessType('free'); incrementCouponUsage(code); setShowDiscountModal(false); runBothEngines(); return; }
         setAppliedCoupon({ code, percent: coupon.discount_percent });
         incrementCouponUsage(code);

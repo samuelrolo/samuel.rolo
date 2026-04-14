@@ -11,6 +11,7 @@ import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 import { getDefaultCountryByLanguage, getCountries, getRegions } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
@@ -561,7 +562,7 @@ export default function BundleHome() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick('Este código já expirou.', 'This code has expired.', 'Este código ya expiró.')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick('Este código atingiu o limite.', 'This code has reached its limit.', 'Este código alcanzó el límite.')); return; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('bundle') && !products.includes('complete')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'This code is not applicable to this bundle.', 'Este código no es aplicable a este paquete.')); return; }
+        if (!couponSupportsProduct(products, 'bundle')) { setDiscountError(pick('Este código não é aplicável a este pacote.', 'This code is not applicable to this bundle.', 'Este código no es aplicable a este paquete.')); return; }
         if (coupon.discount_percent === 100) {
           incrementCouponUsage(code);
           trackAffiliateConversion({ product: 'bundle', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });

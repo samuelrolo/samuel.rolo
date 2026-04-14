@@ -25,6 +25,7 @@ import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
+import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -655,8 +656,9 @@ export default function Home() {
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError(pick('Este código já expirou.', 'This code has already expired.', 'Este código ya ha expirado.')); return false; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError(pick('Este código atingiu o limite de utilizações.', 'This code has reached its usage limit.', 'Este código ha alcanzado su límite de usos.')); return false; }
         const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_analysis')) {
-          setLinkedInVoucherError(pick('Este código não é aplicável a esta análise.', 'This code is not applicable to this analysis.', 'Este código no es aplicable a este análisis.')); return false;
+        if (!couponSupportsProduct(products, 'cv_analyser')) {
+          setLinkedInVoucherError(pick('Este código não é aplicável a esta análise.', 'This code is not applicable to this analysis.', 'Este código no es aplicable a este análisis.'));
+          return false;
         }
         if (coupon.discount_percent === 100) {
           // 100% discount = free access, same as voucher
