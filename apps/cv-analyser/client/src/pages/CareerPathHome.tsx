@@ -145,6 +145,14 @@ export default function CareerPathHome() {
     if (country) {
       localStorage.setItem('analysisCountry', country);
       sessionStorage.setItem('analysisCountry', country);
+      const computedLocation = region ? `${region}, ${country}` : country;
+      localStorage.setItem('analysisLocation', computedLocation);
+      sessionStorage.setItem('analysisLocation', computedLocation);
+    } else {
+      localStorage.removeItem('analysisCountry');
+      sessionStorage.removeItem('analysisCountry');
+      localStorage.removeItem('analysisLocation');
+      sessionStorage.removeItem('analysisLocation');
     }
 
     if (region) {
@@ -436,6 +444,7 @@ export default function CareerPathHome() {
 
       // Store CV data and LinkedIn URL for the results page
       const currentLanguage = lang;
+      const currentLocation = region ? `${region}, ${country}` : country;
       localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
       localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       localStorage.setItem('careerPathCvFile', base64Content);
@@ -444,6 +453,8 @@ export default function CareerPathHome() {
       sessionStorage.setItem('analysisLang', currentLanguage);
       localStorage.setItem('analysisCountry', country);
       sessionStorage.setItem('analysisCountry', country);
+      localStorage.setItem('analysisLocation', currentLocation);
+      sessionStorage.setItem('analysisLocation', currentLocation);
       if (region) {
         localStorage.setItem('analysisRegion', region);
         sessionStorage.setItem('analysisRegion', region);

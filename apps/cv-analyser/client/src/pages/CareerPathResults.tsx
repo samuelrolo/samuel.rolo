@@ -474,9 +474,18 @@ export default function CareerPathResults() {
       const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
       const currentCountry = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined;
       const currentRegion = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined;
+      const currentLocation = (localStorage.getItem('analysisLocation') || sessionStorage.getItem('analysisLocation')) || (currentRegion && currentCountry ? `${currentRegion}, ${currentCountry}` : currentCountry || currentRegion || undefined);
 
       localStorage.setItem('analysisLang', currentLanguage);
       sessionStorage.setItem('analysisLang', currentLanguage);
+      if (currentCountry) {
+        localStorage.setItem('analysisCountry', currentCountry);
+        sessionStorage.setItem('analysisCountry', currentCountry);
+      }
+      if (currentLocation) {
+        localStorage.setItem('analysisLocation', currentLocation);
+        sessionStorage.setItem('analysisLocation', currentLocation);
+      }
 
       const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
       const requestBody: any = {
@@ -487,6 +496,7 @@ export default function CareerPathResults() {
         language: currentLanguage,
         country: currentCountry,
         region: currentRegion,
+        location: currentLocation,
       };
       // If cv_text is too short but we have the file base64, send it as fallback
       if (cvText.trim().length < 50 && cvFile) {

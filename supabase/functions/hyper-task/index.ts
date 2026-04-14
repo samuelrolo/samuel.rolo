@@ -1553,15 +1553,21 @@ serve(async (req)=>{
 
     const language = rawLanguage.startsWith('es') ? 'es' : rawLanguage.startsWith('en') ? 'en' : 'pt';
 
+    const requestedCountry = String(body.country || '').trim();
+
+    const requestedRegion = String(body.region || '').trim();
+
+    const requestedLocation = String(body.location || '').trim() || (requestedRegion && requestedCountry ? `${requestedRegion}, ${requestedCountry}` : requestedRegion || requestedCountry || '');
+
     // NEW: Extract optional job description for CV vs Job matching
 
     const jobDescription = body.job_description || '';
 
     const fallbackCountry = language === 'es' ? 'Spain' : language === 'en' ? 'United Kingdom' : 'Portugal';
 
-    const country = String(body.country || '').trim() || fallbackCountry;
+    const country = requestedCountry || fallbackCountry;
 
-    const region = String(body.region || '').trim();
+    const region = requestedRegion;
 
     const isPT = language === 'pt' || language === 'PT';
 
@@ -6484,21 +6490,33 @@ USING COMPANY DATA:
 
         const careerPathOutputLanguageInstruction = getLanguageOutputInstruction(language);
         const requestedLanguageLabel = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese (Portugal)';
+        const explicitLocationLabel = requestedLocation || (requestedRegion && requestedCountry ? `${requestedRegion}, ${requestedCountry}` : requestedCountry || requestedRegion || 'not specified');
+        const authoritativeCountry = requestedCountry || country;
+        const authoritativeRegion = requestedRegion || region;
+        const authoritativeMarketCtx = requestedCountry
+          ? getMarketContext(requestedCountry, requestedRegion)
+          : requestedLocation
+            ? `the ${requestedLocation} job market`
+            : marketCtx;
+        const authoritativeCurrency = getCurrency(authoritativeCountry);
 
         const careerPathPrompt = isEN ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
 
 ${careerPathOutputLanguageInstruction}
 MANDATORY LANGUAGE RULE: Respond entirely in ${requestedLanguageLabel}. Never mix languages in the analytical output.
-
-
+AUTHORITATIVE USER LANGUAGE: ${requestedLanguageLabel}
+AUTHORITATIVE USER LOCATION: ${explicitLocationLabel}
+AUTHORITATIVE USER COUNTRY: ${requestedCountry || 'not specified'}
+AUTHORITATIVE USER REGION/CITY: ${requestedRegion || 'not specified'}
+LOCALISATION OVERRIDE RULE: If AUTHORITATIVE USER LOCATION / COUNTRY / REGION is provided, treat it as the only valid market context for the whole report. Do NOT default to California, London, the United Kingdom, Spain, Portugal, the United States, or any other market unless it was explicitly provided by the user. If location data is missing, stay generic and state that the location was not specified instead of inventing a city, region, or country.
 
 NULL RULE: For personal data fields (name, email, phone, current employer) — copy exactly from the CV or use null. For analytical fields (market assessments, salary ranges, typical companies, competitive advantages) — use your knowledge to produce rich, specific, personalised content. Prefer depth and specificity over brevity.
 
-COMPANY RULE: In typical_companies and alternative_companies, only list companies you are CERTAIN exist and actively operate in ${marketCtx}. When in doubt, use well-known multinationals with confirmed offices there rather than inventing local names.
+COMPANY RULE: In typical_companies and alternative_companies, only list companies you are CERTAIN exist and actively operate in ${authoritativeMarketCtx}. When in doubt, use well-known multinationals with confirmed offices there rather than inventing local names.
 
-SALARY FORMAT: All salary_range values are annual gross in ${currency.code}, as plain integers. Example: 45000, not "45,000 EUR" and not "45k".
+SALARY FORMAT: All salary_range values are annual gross in ${authoritativeCurrency.code}, as plain integers. Example: 45000, not "45,000 EUR" and not "45k".
 
-MANDATORY SALARY RULE: You MUST populate salary_range_entry, salary_range_3y, and salary_range_5y for EVERY strategic path. Use realistic salary ranges for the detected country and role level. Format as "€XX,000 - €YY,000" (or equivalent local currency). NEVER leave these fields empty or null.
+MANDATORY SALARY RULE: You MUST populate salary_range_entry, salary_range_3y, and salary_range_5y for EVERY strategic path. Use realistic salary ranges for the detected country and role level. Format as "${authoritativeCurrency.symbol}XX,000 - ${authoritativeCurrency.symbol}YY,000" (or equivalent local currency). NEVER leave these fields empty or null.
 
 PREMIUM DENSITY RULE: This is a €49 premium report. Every narrative field MUST meet or exceed its minimum word count. Short, generic answers are UNACCEPTABLE. Write as a senior career consultant charging €200/hour — with depth, specificity, and personalisation.
 
@@ -6518,7 +6536,7 @@ ${linkedinData ? `LINKEDIN DATA:\n${linkedinData}\n` : ''}${linkedinUrl ? `LINKE
 
 
 
-${getLocalisationInstructions(country, region, currency, language)}
+${getLocalisationInstructions(authoritativeCountry, authoritativeRegion, authoritativeCurrency, language)}
 
 NARRATIVE DEPTH RULES (MANDATORY):
 
