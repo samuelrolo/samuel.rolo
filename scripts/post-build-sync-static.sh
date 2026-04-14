@@ -37,6 +37,12 @@ fi
 
 updated_count=0
 
+PYTHON_BIN="$(command -v python3.11 || command -v python3 || command -v python || true)"
+if [ -z "$PYTHON_BIN" ]; then
+  echo "ERRO: Nenhum interpretador Python disponível para sincronizar os assets estáticos." >&2
+  exit 1
+fi
+
 should_skip() {
   local path="$1"
   case "$path" in
@@ -63,7 +69,7 @@ while IFS= read -r -d '' html_file; do
   export CSS_TAG="$css_tag"
   export PRELOAD_BLOCK="$preload_block"
 
-  python3.11 <<'PY'
+  "$PYTHON_BIN" <<'PY'
 import os, re, pathlib
 path = pathlib.Path(os.environ['HTML_FILE'])
 text = path.read_text(encoding='utf-8')
