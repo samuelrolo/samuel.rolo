@@ -80,6 +80,11 @@ export default function CareerIntelligenceResults() {
     }
   }, []);
 
+  const lang = getLang();
+  const isEN = lang === 'en';
+  const isES = lang === 'es';
+  const getAnalysisLanguage = () => ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
+
   useEffect(() => {
     const analysisLanguage = getAnalysisLanguage();
     localStorage.setItem('analysisLang', analysisLanguage);
@@ -130,10 +135,6 @@ export default function CareerIntelligenceResults() {
     return () => clearInterval(interval);
   }, [isGenerating]);
 
-  const lang = getLang();
-  const isEN = lang === 'en';
-  const isES = lang === 'es';
-  const getAnalysisLanguage = () => ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
   const careerIntelligenceHomePath = '/';
   const getCareerIntelligenceProfile = (analysis: any) => {
     return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
