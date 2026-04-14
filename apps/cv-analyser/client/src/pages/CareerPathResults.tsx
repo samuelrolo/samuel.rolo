@@ -377,7 +377,33 @@ export default function CareerPathResults() {
 
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
+    const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid')) === 'true';
     const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
+
+    const hydrateStoredCareerPathData = () => {
+      if (!savedData) return false;
+      try {
+        const normalizedStored = normalizeCareerPathPayload(
+          JSON.parse(savedData),
+          localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang
+        );
+        setCareerPathData(normalizedStored.analysis);
+        setIsPaid(true);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    if (paidFlag && hydrateStoredCareerPathData()) {
+      return;
+    }
+
+    if (paidFlag) {
+      setIsPaid(true);
+      setTimeout(() => { generateCareerPath(); }, 300);
+      return;
+    }
 
     if (!cvData && !isStripeReturn) {
       setLocation(careerPathHomePath);
@@ -410,23 +436,16 @@ export default function CareerPathResults() {
       });
 
       if (!(paymentVerification.success && paymentVerification.paid)) {
-        localStorage.removeItem('careerPathPaid');
-        sessionStorage.removeItem('careerPathPaid');
         return;
       }
 
-      if (savedData) {
-        try {
-          const normalizedStored = normalizeCareerPathPayload(JSON.parse(savedData), localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
-          setCareerPathData(normalizedStored.analysis);
-          setIsPaid(true);
-          return;
-        } catch {
-          // fall through to regeneration
-        }
+      if (hydrateStoredCareerPathData()) {
+        return;
       }
 
       setIsPaid(true);
+      localStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('careerPathPaid', 'true');
       setTimeout(() => { generateCareerPath(); }, 300);
     };
 
