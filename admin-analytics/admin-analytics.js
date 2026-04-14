@@ -2676,20 +2676,31 @@ function editAffiliate(id) {
     document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
 }
 
+function getAffiliateProductPaths(product) {
+    const defaultPath = product;
+    return {
+        pt: product === 'student-pack' ? 'estudante' : defaultPath,
+        en: product === 'student-pack' ? 'student-pack' : defaultPath,
+        es: product === 'student-pack' ? 'student-pack' : defaultPath
+    };
+}
+
 function updateAffLinkPreview() {
     const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
     const code = document.getElementById('affCode').value.trim().toLowerCase();
     const el = document.getElementById('affLinkPreview');
     if (!el) return;
     if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster'};
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster','bundle':'Bundle'};
     const slug = code || '...';
     el.innerHTML = products.map(p => {
-        const ptPath = p === 'student-pack' ? 'estudante' : p;
-        const enPath = p === 'student-pack' ? 'student-pack' : p;
-        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`];
-        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${enPath}?ref=${slug}`);
-        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
+        const paths = getAffiliateProductPaths(p);
+        const links = [
+            `share2inspire.pt/${paths.pt}?ref=${slug}`,
+            `share2inspire.pt/en/${paths.en}?ref=${slug}`,
+            `share2inspire.pt/es/${paths.es}?ref=${slug}`
+        ];
+        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p] || p}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
     }).join('');
 }
 
@@ -2733,10 +2744,10 @@ function copyAffLink(code, product) {
     const products = (product || 'cv-analyser').split(',');
     const allLinks = [];
     products.forEach(p => {
-        const ptPath = p === 'student-pack' ? 'estudante' : p;
-        const enPath = p === 'student-pack' ? 'student-pack' : p;
-        allLinks.push(`${base}/${ptPath}?ref=${code}`);
-        if (p !== 'linkedin-roaster') allLinks.push(`${base}/en/${enPath}?ref=${code}`);
+        const paths = getAffiliateProductPaths(p);
+        allLinks.push(`${base}/${paths.pt}?ref=${code}`);
+        allLinks.push(`${base}/en/${paths.en}?ref=${code}`);
+        allLinks.push(`${base}/es/${paths.es}?ref=${code}`);
     });
     navigator.clipboard.writeText(allLinks.join('\n')).then(() => showToast(`${allLinks.length} link(s) copiado(s)`, 'success')).catch(() => prompt('Copia:', allLinks.join('\n')));
 }
