@@ -877,7 +877,7 @@ export default function CareerPathResults() {
               <span className="hidden sm:inline">{t('voltar')}</span>
             </button>
             <a href={localePath('/')} className="flex items-center" aria-label={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')}>
-              <img src="/logo-transparent.png" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
+              <img src="/logo-transparent.webp" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
             </a>
             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
               <GoldIcon size="w-6 h-6 sm:w-7 sm:h-7">
