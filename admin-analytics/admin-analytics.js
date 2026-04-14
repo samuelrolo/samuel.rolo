@@ -2305,6 +2305,84 @@ function renderHealthHistory() {
     }).join('');
 }
 
+function extractFrontendAssetPaths(html) {
+    if (!html || typeof html !== 'string') return [];
+    const paths = new Set();
+    const scriptRegex = /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi;
+    const cssRegex = /<link\b[^>]*\bhref=["']([^"']+)["'][^>]*>/gi;
+    let match;
+
+    while ((match = scriptRegex.exec(html)) !== null) {
+        const src = (match[1] || '').trim();
+        if (src) paths.add(src);
+    }
+
+    while ((match = cssRegex.exec(html)) !== null) {
+        const fullTag = match[0] || '';
+        const href = (match[1] || '').trim();
+        if (!href) continue;
+        const relMatch = fullTag.match(/\brel=["']([^"']+)["']/i);
+        const relValue = (relMatch?.[1] || '').toLowerCase();
+        const asMatch = fullTag.match(/\bas=["']([^"']+)["']/i);
+        const asValue = (asMatch?.[1] || '').toLowerCase();
+        if (relValue.includes('stylesheet') || (relValue.includes('preload') && asValue === 'style')) {
+            paths.add(href);
+        }
+    }
+
+    return Array.from(paths);
+}
+
+function getFrontendAssetDisplayPath(assetPath, pageUrl) {
+    try {
+        const assetUrl = new URL(assetPath, pageUrl);
+        return `${assetUrl.pathname}${assetUrl.search || ''}`;
+    } catch {
+        return assetPath;
+    }
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+async function validateFrontendAssets(pageUrl, html) {
+    const assetPaths = extractFrontendAssetPaths(html);
+    if (!assetPaths.length) {
+        return { ok: false, message: 'Nenhum asset JS/CSS encontrado no HTML.', httpCode: null };
+    }
+
+    for (const assetPath of assetPaths) {
+        const assetUrl = new URL(assetPath, pageUrl).href;
+        let assetRes;
+        try {
+            assetRes = await fetchWithTimeout(assetUrl, { method: 'GET', cache: 'no-store' }, 15000);
+        } catch {
+            return {
+                ok: false,
+                message: `Asset em falta: ${getFrontendAssetDisplayPath(assetPath, pageUrl)}`,
+                httpCode: null
+            };
+        }
+
+        if (!assetRes.ok) {
+            return {
+                ok: false,
+                message: `Asset em falta: ${getFrontendAssetDisplayPath(assetPath, pageUrl)}`,
+                httpCode: assetRes.status || null
+            };
+        }
+    }
+
+    return { ok: true, message: null, httpCode: 200 };
+}
+
 async function refreshHealthCheck() {
     showToast('A verificar serviços... isto pode demorar alguns segundos.', 'info');
     const endpoints = [
@@ -2327,40 +2405,34 @@ async function refreshHealthCheck() {
     for (const ep of endpoints) {
         const start = Date.now();
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 15000);
-            const res = await fetch(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', signal: controller.signal });
-            clearTimeout(timeout);
+            const res = await fetchWithTimeout(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', cache: 'no-store' }, 15000);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
             let status = elapsed > 2000 ? 'warning' : 'healthy';
             let errorMsg = null;
+            let resultHttpCode = httpCode;
 
-            // Deep check for frontend React apps: verify JS bundle exists
-            if (ep.category === 'frontend' && res.type !== 'opaque') {
-                try {
+            if (ep.category === 'frontend') {
+                if (res.type === 'opaque') {
+                    status = 'down';
+                    errorMsg = 'Não foi possível validar o HTML do frontend.';
+                } else if (!res.ok) {
+                    status = 'down';
+                    errorMsg = `HTML indisponível (${res.status})`;
+                } else {
                     const html = await res.text();
-                    const scriptMatch = html.match(/src="([^"]*assets\/index-[^"]+\.js)"/);
-                    if (scriptMatch) {
-                        const bundlePath = scriptMatch[1];
-                        const bundleUrl = bundlePath.startsWith('http') ? bundlePath : new URL(bundlePath, ep.url).href;
-                        const bundleRes = await fetch(bundleUrl, { method: 'HEAD' });
-                        if (bundleRes.status === 404) {
-                            status = 'down';
-                            errorMsg = `Bundle JS em falta (404): ${bundlePath}`;
-                        }
+                    const assetCheck = await validateFrontendAssets(ep.url, html);
+                    if (!assetCheck.ok) {
+                        status = 'down';
+                        errorMsg = assetCheck.message;
+                        if (assetCheck.httpCode) resultHttpCode = assetCheck.httpCode;
+                    } else {
+                        status = elapsed > 2000 ? 'warning' : 'healthy';
                     }
-                    // Also check if root div has content (basic render check)
-                    if (!errorMsg && html.includes('id="root"') && !html.includes('<div id="root">')) {
-                        // HTML loads but root is empty - this is expected for SPA, bundle check is more reliable
-                    }
-                } catch (deepErr) {
-                    // Deep check failed, keep original status
-                    console.warn('Deep check failed for', ep.name, deepErr.message);
                 }
             }
 
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: resultHttpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
