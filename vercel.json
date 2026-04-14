@@ -41,6 +41,16 @@
       "permanent": true
     },
     {
+      "source": "/pages/criacao-conteudos",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/criacao-conteudos.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
       "source": "/area-cliente/membro",
       "destination": "/area-cliente/membros",
       "permanent": true
