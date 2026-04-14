@@ -220,6 +220,7 @@ export default function LiveMatchPanel({
       {/* JD Input */}
       <div className="relative">
         <textarea
+          aria-label={t('live_match_placeholder', lang)}
           value={jdText}
           onChange={(e) => handleJDChange(e.target.value)}
           placeholder={t('live_match_placeholder', lang)}

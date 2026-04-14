@@ -354,6 +354,7 @@ export default function KnowledgeHubPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
+              aria-label={pick('Pesquisar artigos, guias e vídeos', 'Search articles, guides and videos', 'Buscar artículos, guías y vídeos')}
               placeholder={pick("Procurar artigos, guias e vídeos...", "Search articles, guides and videos...", "Buscar artículos, guías y vídeos...")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -811,17 +812,19 @@ export default function KnowledgeHubPage() {
               );
             }}
           >
-            <input
-              type="text"
-              placeholder={pick("Nome", "Name", "Nombre")}
-              value={subscriberName}
+              <input
+                type="text"
+                aria-label={pick('Nome para subscrição da newsletter', 'Name for newsletter subscription', 'Nombre para la suscripción a la newsletter')}
+                placeholder={pick("Nome", "Name", "Nombre")}
+                value={subscriberName}
               onChange={(e) => setSubscriberName(e.target.value)}
               className="px-4 py-3 rounded-lg text-sm bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-[#C9A961] flex-1"
             />
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={subscriberEmail}
+              <input
+                type="email"
+                aria-label={pick('Email para subscrição da newsletter', 'Email for newsletter subscription', 'Email para la suscripción a la newsletter')}
+                placeholder="E-mail"
+                value={subscriberEmail}
               onChange={(e) => setSubscriberEmail(e.target.value)}
               className="px-4 py-3 rounded-lg text-sm bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-[#C9A961] flex-1"
             />

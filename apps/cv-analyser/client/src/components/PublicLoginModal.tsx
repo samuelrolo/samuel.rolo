@@ -301,10 +301,12 @@ export default function PublicLoginModal({ open, lang, onClose }: Props) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+            <label htmlFor="public-login-email" className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
               {copy.email}
             </label>
             <input
+              id="public-login-email"
+              aria-label={copy.email}
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -315,11 +317,13 @@ export default function PublicLoginModal({ open, lang, onClose }: Props) {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+            <label htmlFor="public-login-password" className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
               {copy.password}
             </label>
             <div className="relative">
               <input
+                id="public-login-password"
+                aria-label={copy.password}
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -339,10 +343,12 @@ export default function PublicLoginModal({ open, lang, onClose }: Props) {
 
           {mode === 'register' ? (
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+              <label htmlFor="public-login-confirm-password" className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
                 {copy.confirmPassword}
               </label>
               <input
+                id="public-login-confirm-password"
+                aria-label={copy.confirmPassword}
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}

@@ -848,10 +848,12 @@ export default function BundleHome() {
 
             {/* LinkedIn URL */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label htmlFor="bundle-linkedin-url" className="block text-sm font-semibold text-slate-700 mb-2">
                 <Linkedin className="w-4 h-4 inline mr-1" /> {pick('Perfil LinkedIn', 'LinkedIn Profile', 'Perfil LinkedIn')}
               </label>
               <input
+                id="bundle-linkedin-url"
+                aria-label={pick('Perfil LinkedIn', 'LinkedIn profile', 'Perfil de LinkedIn')}
                 type="url"
                 placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')}
                 value={linkedinUrl}
@@ -862,10 +864,12 @@ export default function BundleHome() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label htmlFor="bundle-email" className="block text-sm font-semibold text-slate-700 mb-2">
                 <CreditCard className="w-4 h-4 inline mr-1" /> Email
               </label>
               <input
+                id="bundle-email"
+                aria-label={pick('Email para pagamento', 'Email for payment', 'Correo para el pago')}
                 type="email"
                 placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
                 value={email}
@@ -876,11 +880,13 @@ export default function BundleHome() {
 
             {/* Country/Region Selector */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-700">
+              <label htmlFor="bundle-country" className="block text-sm font-semibold text-slate-700">
                 <Globe className="w-4 h-4 inline mr-1 text-[#C9A961]" /> {pick('País', 'Country', 'País')} <span className="text-slate-400 font-normal text-xs">{pick('(para dados salariais e recomendações localizadas)', '(for salary data and localised recommendations)', '(para datos salariales y recomendaciones localizadas)')}</span>
               </label>
               <div className="grid grid-cols-1 gap-3">
                 <select
+                  id="bundle-country"
+                  aria-label={pick('País para análise', 'Country for analysis', 'País para análisis')}
                   value={selectedCountry}
                   onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }}
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
@@ -892,6 +898,8 @@ export default function BundleHome() {
                 </select>
                 {regionOptions.length > 1 && (
                   <select
+                    id="bundle-region"
+                    aria-label={pick('Região para análise', 'Region for analysis', 'Región para análisis')}
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
@@ -909,6 +917,7 @@ export default function BundleHome() {
             <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
+                aria-label={pick('Aceito a Política de Privacidade e os Termos e Condições', 'I accept the Privacy Policy and Terms and Conditions', 'Acepto la Política de Privacidad y los Términos y Condiciones')}
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
                 className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]"

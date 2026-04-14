@@ -1714,6 +1714,7 @@ export default function CareerPathResults() {
                   <div className="flex gap-3">
                     <input
                       type="email"
+                      aria-label={pick('Email para receber o relatório do Career Path', 'Email to receive the Career Path report', 'Email para recibir el informe de Career Path')}
                       value={reportEmail || email || (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || ''}
                       onChange={(e) => setReportEmail(e.target.value)}
                       placeholder={t('seuemailcom')}
@@ -2120,6 +2121,7 @@ export default function CareerPathResults() {
                 <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
                 <input
                   type="email"
+                  aria-label={pick('Email para pagamento do Career Path', 'Email for Career Path payment', 'Email para el pago de Career Path')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                       placeholder={t('seuemailcom')}
@@ -2167,9 +2169,10 @@ export default function CareerPathResults() {
               {paymentMethod === 'mbway' && (
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-foreground">{t('telemvel_mb_way')}</label>
-                  <input
-                    type="tel"
-                    value={phone}
+                    <input
+                      type="tel"
+                      aria-label={pick('Telemóvel MB WAY para pagamento do Career Path', 'MB WAY phone for Career Path payment', 'Móvil MB WAY para el pago de Career Path')}
+                      value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
@@ -2263,6 +2266,7 @@ export default function CareerPathResults() {
             </p>
             <input
               type="text"
+              aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')}
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
               placeholder={t('inserir_cdigo')}
