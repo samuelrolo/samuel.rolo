@@ -24,7 +24,11 @@ function jsonResponse(data, status = 200) {
 
       ...corsHeaders,
 
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+
+      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+
+      'Pragma': 'no-cache'
 
     }
 
@@ -2005,11 +2009,11 @@ Return ONLY this JSON (all score/salary values are integers, not strings):
 
     "detected_phone": "Exact phone or null",
 
-    "total_years_exp": "X years — calculated from career start to present",
+    "total_years_exp": "X years — integer + unit only (example: '13 years'), calculated from career start to present. NEVER append breakdown, ranges, parentheses, or justification.",
 
     "detected_role": "Current or most recent role as written in CV",
 
-    "seniority": "Junior/Mid-level/Senior/Lead/Director",
+    "seniority": "Junior/Mid-level/Senior/Lead/Director — label only. NEVER include years, ranges, parentheses, slashes, or explanations.",
 
     "key_skills": ["8-12 specific skills drawn directly from the CV — tools, methodologies, domains, languages. Not generic labels."]
 
@@ -2347,11 +2351,11 @@ Retorna APENAS este JSON (todos os valores de score/salário são inteiros, não
 
     "detected_phone": "Telefone exacto ou null",
 
-    "total_years_exp": "X anos — calculado desde o início de carreira até ao presente",
+    "total_years_exp": "X anos — apenas inteiro + unidade (exemplo: '13 anos'), calculado desde o início de carreira até ao presente. NUNCA acrescentar breakdown, intervalos, parênteses ou justificação.",
 
     "detected_role": "Cargo actual ou mais recente tal como escrito no CV",
 
-    "seniority": "Júnior/Pleno/Sénior/Lead/Director",
+    "seniority": "Júnior/Pleno/Sénior/Lead/Director — apenas rótulo. NUNCA incluir anos, intervalos, parênteses, barras ou explicações.",
 
     "key_skills": ["8-12 competências específicas retiradas directamente do CV — ferramentas, metodologias, domínios, línguas. Não rótulos genéricos."]
 
@@ -2635,8 +2639,8 @@ PRODUCE UN JSON CON LA SIGUIENTE ESTRUCTURA EXACTA:
   "detected_email": "Email",
   "detected_phone": "Teléfono",
   "detected_role": "Cargo actual o principal",
-  "seniority": "Junior/Medio/Senior/Lead/Director",
-  "total_years_exp": "X años — calculado desde el inicio de carrera hasta el presente",
+  "seniority": "Junior/Intermedio/Senior/Lead/Director — solo etiqueta. NUNCA incluir años, rangos, paréntesis, barras ni explicaciones.",
+  "total_years_exp": "X años — solo entero + unidad (ejemplo: '13 años'), calculado desde el inicio de carrera hasta el presente. NUNCA añadir desglose, rangos, paréntesis ni justificación.",
   "key_skills": ["8-12 competencias específicas del CV — herramientas, metodologías, dominios, idiomas. No etiquetas genéricas."],
   "detected_professional_field": "Área profesional real (ej: Fisioterapia, Retail, Ingeniería Civil, IT)",
   "global_score": <entero 0-100>,
@@ -2834,9 +2838,7 @@ REGLAS CRÍTICAS:
             console.log('🔄 Retrying with simplified prompt...');
 
             try {
-
-              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nReturn JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp, detected_role, seniority, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[3] specific to role), cv_problems[3] (title, description). STRICT scoring: most CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nRetorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp, detected_role, seniority, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[3] específicas à profissão), cv_problems[3] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
-
+              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nReturn JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp as \"X years\" only, detected_role, seniority as one label only from Junior/Mid-level/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[3] specific to role), cv_problems[3] (title, description). STRICT scoring: most CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nRetorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp apenas como \"X anos\", detected_role, seniority apenas como um rótulo de Júnior/Pleno/Sénior/Lead/Director, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[3] específicas à profissão), cv_problems[3] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
               const retryResponse = await fetch(geminiUrl, {
 
                 method: 'POST',
@@ -4338,7 +4340,7 @@ RETURN EXACTLY this JSON (no text before or after):
 
   "perceivedRole": "<role a recruiter would perceive>",
 
-  "perceivedSeniority": "<Junior|Mid-level|Senior|Director|C-Level>",
+  "perceivedSeniority": "<Junior|Mid-level|Senior|Director|C-Level — label only, never include years or commentary>",
 
   "recruiterDeepAnalysis": {
 
@@ -4692,7 +4694,7 @@ DEVUELVE EXACTAMENTE este JSON (sin texto antes ni después):
 
   "perceivedRole": "<función que un reclutador percibiría>",
 
-  "perceivedSeniority": "<Junior|Intermedio|Senior|Director|C-Level>",
+  "perceivedSeniority": "<Junior|Intermedio|Senior|Director|C-Level — solo etiqueta, nunca incluir años ni comentarios>",
 
   "recruiterDeepAnalysis": {
 
@@ -5037,7 +5039,7 @@ RETORNA EXACTAMENTE este JSON (sem texto antes ou depois):
 
   "perceivedRole": "<função que um recrutador perceberia ao ler este CV — baseada no conteúdo real>",
 
-  "perceivedSeniority": "<Júnior|Pleno|Sénior|Director|C-Level — baseada nos anos e progressão reais>",
+  "perceivedSeniority": "<Júnior|Pleno|Sénior|Director|C-Level — apenas rótulo, baseada nos anos e progressão reais; nunca incluir anos nem comentários>",
 
   "recruiterDeepAnalysis": {
 
@@ -7613,7 +7615,7 @@ REGRAS CRÍTICAS:
 
             generationConfig: {
 
-              temperature: 0.4,
+              temperature: 0.2,
 
               topK: 40,
 
@@ -7879,8 +7881,6 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
           analysis: careerPath,
 
           career_intelligence: careerPath,
-
-          career_path: careerPath,
 
           ...careerPath
 
@@ -11247,7 +11247,7 @@ Cargo Objetivo: ${target_role || 'No especificado'}${targetCompanyMI ? `\nEmpres
 
             generationConfig: {
 
-              temperature: 0.4,
+              temperature: 0.2,
 
               responseMimeType: 'application/json'
 

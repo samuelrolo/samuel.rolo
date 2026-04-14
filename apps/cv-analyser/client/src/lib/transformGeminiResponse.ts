@@ -12,6 +12,37 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
   const isEN = lang === 'en';
   const isES = lang === 'es';
   const localize = (pt: string, en: string, es: string) => pick(pt, en, es, lang);
+  const parseYearsOfExperience = (value: any): number | null => {
+    if (value === null || value === undefined) return null;
+    const match = String(value).match(/(\d+)/);
+    if (!match) return null;
+    const years = parseInt(match[1], 10);
+    return Number.isFinite(years) ? years : null;
+  };
+  const inferSeniorityFromYears = (years: number) => {
+    if (years >= 7) return localize('Sénior', 'Senior', 'Senior');
+    if (years >= 3) return localize('Pleno', 'Mid-level', 'Intermedio');
+    return localize('Júnior', 'Junior', 'Junior');
+  };
+  const normalizeSeniorityLabel = (value: any, totalYearsExp?: any) => {
+    const raw = typeof value === 'string' ? value.trim() : '';
+    const normalized = raw.toLowerCase();
+
+    if (normalized) {
+      if (/(^|\b)(junior|júnior)(\b|$)/i.test(normalized)) return localize('Júnior', 'Junior', 'Junior');
+      if (/(mid|mid-level|mid level|pleno|medio|intermedio)/i.test(normalized)) return localize('Pleno', 'Mid-level', 'Intermedio');
+      if (/(^|\b)(senior|sénior)(\b|$)/i.test(normalized)) return localize('Sénior', 'Senior', 'Senior');
+      if (/(^|\b)lead(\b|$)/i.test(normalized)) return 'Lead';
+      if (/(^|\b)director(\b|$)/i.test(normalized)) return 'Director';
+      if (/(^|\b)vp(\b|$)|vice president/i.test(normalized)) return 'VP';
+      if (/(c-level|c level|c-suite|c suite|ceo|cfo|coo|cto|cio|cmo|chro)/i.test(normalized)) return 'C-Level';
+    }
+
+    const years = parseYearsOfExperience(raw || totalYearsExp);
+    if (years !== null) return inferSeniorityFromYears(years);
+
+    return undefined;
+  };
   let atsRejectionRate = 35;
   let atsTopFactor: string | undefined;
   let quadrants: any[] = [];
@@ -236,18 +267,10 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       perceivedRole = keywords[0];
     }
 
-    if (analysis.candidate_profile?.seniority) {
-      perceivedSeniority = analysis.candidate_profile.seniority;
-    } else if (analysis.seniority_level) {
-      perceivedSeniority = analysis.seniority_level;
-    } else if (analysis.candidate_profile?.total_years_exp) {
-      const yearsStr = analysis.candidate_profile.total_years_exp;
-      const yearsMatch = yearsStr.match(/(\d+)/);
-      if (yearsMatch) {
-        const years = parseInt(yearsMatch[1]);
-        perceivedSeniority = years > 10 ? 'Senior' : years > 5 ? 'Mid-Senior' : years > 2 ? 'Mid-level' : 'Junior';
-      }
-    }
+    perceivedSeniority = normalizeSeniorityLabel(
+      analysis.candidate_profile?.seniority || analysis.seniority_level,
+      analysis.candidate_profile?.total_years_exp
+    );
 
     // ─── 6. SALARY — prefer Gemini-provided data ────────────────────────
     if (analysis.salaryDetailed && typeof analysis.salaryDetailed === 'object' && analysis.salaryDetailed.median) {

@@ -2,7 +2,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 export type SupportedLanguage = 'pt' | 'en' | 'es';
 
-const STORAGE_VERSION = '2026-04-12';
+const STORAGE_VERSION = '2026-04-14';
 
 const normalizeLanguage = (language?: string): SupportedLanguage => {
   if (language === 'en' || language === 'es') return language;
@@ -100,8 +100,19 @@ const mergeSelectedFields = (target: Record<string, any>, source: Record<string,
   }
 };
 
-const collectCareerReportAnalysis = (payload: any): Record<string, any> => {
+const collectCareerReportAnalysis = (
+  payload: any,
+  analysisType: 'career_path' | 'career_intelligence'
+): Record<string, any> => {
   const root = safeObject(payload);
+  const nestedReportKey = analysisType === 'career_intelligence' ? 'career_intelligence' : 'career_path';
+  const explicitAnalysisType = typeof root.analysis_type === 'string' ? root.analysis_type : '';
+  const hasNestedReportPayload = Object.keys(safeObject(root[nestedReportKey])).length > 0;
+
+  if (explicitAnalysisType && explicitAnalysisType !== analysisType && !hasNestedReportPayload) {
+    return {};
+  }
+
   const queue: any[] = [root];
   const seen = new Set<any>();
   const candidates: Record<string, any>[] = [];
@@ -112,7 +123,7 @@ const collectCareerReportAnalysis = (payload: any): Record<string, any> => {
     seen.add(current);
     candidates.push(current);
 
-    for (const nestedKey of ['raw', 'data', 'analysis', 'career_path', 'career_intelligence']) {
+    for (const nestedKey of ['raw', 'data', 'analysis', nestedReportKey]) {
       const nested = safeObject(current[nestedKey]);
       if (Object.keys(nested).length > 0 && !seen.has(nested)) {
         queue.push(nested);
@@ -131,7 +142,7 @@ const collectCareerReportAnalysis = (payload: any): Record<string, any> => {
 
 const normalizeCareerReportPayload = (payload: any, language: SupportedLanguage, analysisType: 'career_path' | 'career_intelligence') => {
   const raw = safeObject(payload);
-  const analysis = collectCareerReportAnalysis(raw);
+  const analysis = collectCareerReportAnalysis(raw, analysisType);
 
   return {
     success: raw.success !== false,

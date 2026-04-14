@@ -30,6 +30,7 @@ import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+const CAREER_INTELLIGENCE_STORAGE_VERSION = '2026-04-14';
 
 /* ─── Gold Icon wrapper ─── */
 function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode; size?: string }) {
@@ -152,14 +153,15 @@ export default function CareerIntelligenceResults() {
   const readCareerIntelligenceData = () => {
     const raw =
       localStorage.getItem('careerIntelligenceData') ||
-      sessionStorage.getItem('careerIntelligenceData') ||
-      localStorage.getItem('careerPathData') ||
-      sessionStorage.getItem('careerPathData');
+      sessionStorage.getItem('careerIntelligenceData');
 
     if (!raw) return null;
 
     try {
       const parsed = JSON.parse(raw);
+      if (parsed?.storage_version !== CAREER_INTELLIGENCE_STORAGE_VERSION) {
+        return null;
+      }
       const normalized = normalizeCareerIntelligencePayload(parsed, getAnalysisLanguage());
       return hasCareerIntelligenceStructure(normalized.analysis) ? normalized.analysis : null;
     } catch {
@@ -366,7 +368,7 @@ export default function CareerIntelligenceResults() {
       });
 
       const data = await response.json();
-      if (!data.success && !data.career_intelligence && !data.career_path) {
+      if (!data.success && !data.career_intelligence) {
         throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
       }
 
@@ -377,8 +379,6 @@ export default function CareerIntelligenceResults() {
       localStorage.setItem('careerPathPaid', 'true');
       localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
       sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
-      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerIntelligence));
-      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerIntelligence));
 
       // Save to user_analyses for area-cliente
       // Delay to capture HTML after React renders the full results
