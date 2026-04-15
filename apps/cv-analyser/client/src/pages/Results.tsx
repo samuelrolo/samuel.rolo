@@ -519,6 +519,14 @@ export default function Results() {
     const storedCvText = sessionStorage.getItem('cvText');
     if (storedCvText) setCvText(storedCvText);
 
+    const storedPaidFlag = sessionStorage.getItem('isPaid') === 'true';
+    const hasStoredUnlockedAnalysis = Boolean(sessionStorage.getItem('cvAnalysis'));
+    const bundleOrderId = sessionStorage.getItem('bundlePendingOrderId') || localStorage.getItem('bundlePendingOrderId');
+
+    if (storedPaidFlag && hasStoredUnlockedAnalysis) {
+      setIsPaid(true);
+    }
+
     const hydratePremiumAccess = async () => {
       const memberTier = await getValidatedMemberPlanTier();
       if (memberTier) {
@@ -528,7 +536,7 @@ export default function Results() {
       }
 
       const paymentStatus = await fetchPaymentStatus({
-        orderId: sessionStorage.getItem('orderId'),
+        orderId: sessionStorage.getItem('orderId') || bundleOrderId,
         sessionId: sessionStorage.getItem('stripeSessionId'),
         expectedProductTypes: ['cv_analysis', 'bundle'],
       });
@@ -536,7 +544,7 @@ export default function Results() {
       if (paymentStatus.success && paymentStatus.paid) {
         setIsPaid(true);
         sessionStorage.setItem('isPaid', 'true');
-      } else {
+      } else if (!(storedPaidFlag && hasStoredUnlockedAnalysis)) {
         sessionStorage.removeItem('isPaid');
       }
     };
@@ -601,8 +609,12 @@ export default function Results() {
 
       sessionStorage.setItem('stripeSessionId', sessionId);
 
+      // Successful Stripe return should restore premium UI immediately while backend verification catches up.
+      setIsPaid(true);
+      sessionStorage.setItem('isPaid', 'true');
+
       fetchPaymentStatus({
-        orderId: sessionStorage.getItem('orderId'),
+        orderId: sessionStorage.getItem('orderId') || sessionStorage.getItem('bundlePendingOrderId') || localStorage.getItem('bundlePendingOrderId'),
         sessionId,
         expectedProductTypes: ['cv_analysis', 'bundle'],
       })
@@ -635,7 +647,7 @@ export default function Results() {
     if (bundleCareerPathPaid === 'true') {
       (async () => {
         const bundlePaymentStatus = await fetchPaymentStatus({
-          orderId: sessionStorage.getItem('orderId'),
+          orderId: sessionStorage.getItem('orderId') || sessionStorage.getItem('bundlePendingOrderId') || localStorage.getItem('bundlePendingOrderId'),
           sessionId: sessionStorage.getItem('stripeSessionId'),
           expectedProductTypes: ['bundle'],
         });

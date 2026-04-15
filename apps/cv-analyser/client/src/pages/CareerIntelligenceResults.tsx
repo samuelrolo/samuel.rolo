@@ -2,7 +2,7 @@
 // Dedicated results page for Career Intelligence — fully independent from Career Path
 // Shows: Profile, Market Context, 3 Strategic Paths, Action Plan, Comparison, Trade-offs, Decision
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -54,6 +54,7 @@ export default function CareerIntelligenceResults() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const bootstrapGenerationKeyRef = useRef<string | null>(null);
 
   // Post sharing
   const [postCopied, setPostCopied] = useState(false);
@@ -245,6 +246,48 @@ export default function CareerIntelligenceResults() {
     const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
     const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
     const savedData = readCareerIntelligenceData();
+    const paidFlag = (getFirstStoredValue(['careerIntelligenceFull', 'careerIntelligenceProPaid', 'careerPathPaid'], localStorage, sessionStorage) || '') === 'true';
+
+    const hydrateStoredCareerIntelligenceData = () => {
+      if (!savedData) return false;
+      setCareerData(savedData);
+      setIsPaid(true);
+      return true;
+    };
+
+    const bootstrapPaidAccess = (generationKey: string) => {
+      setIsPaid(true);
+      localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerIntelligenceProPaid', 'true');
+      localStorage.setItem('careerIntelligenceFull', 'true');
+      sessionStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+      sessionStorage.setItem('careerIntelligenceFull', 'true');
+
+      const ciNeedsRegen = (localStorage.getItem('ciNeedsRegeneration') || sessionStorage.getItem('ciNeedsRegeneration'));
+      if (ciNeedsRegen === 'true') {
+        localStorage.removeItem('ciNeedsRegeneration');
+        sessionStorage.removeItem('ciNeedsRegeneration');
+      }
+
+      if (ciNeedsRegen !== 'true' && hydrateStoredCareerIntelligenceData()) {
+        return;
+      }
+
+      if (bootstrapGenerationKeyRef.current === generationKey) {
+        return;
+      }
+
+      bootstrapGenerationKeyRef.current = generationKey;
+      setTimeout(() => { generateAnalysis(); }, 300);
+    };
+
+    // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(careerIntelligenceHomePath);
+      return;
+    }
 
     if (!cvData && !isStripeReturn) {
       setLocation(careerIntelligenceHomePath);
@@ -279,45 +322,17 @@ export default function CareerIntelligenceResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
-    const hydratePaidAccess = async () => {
-      const paymentVerification = await fetchPaymentStatus({
-        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
-        sessionId: getFirstStoredValue(['stripeSessionId']),
-        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
-      });
-
-      if (!(paymentVerification.success && paymentVerification.paid)) {
-        localStorage.removeItem('careerPathPaid');
-        sessionStorage.removeItem('careerPathPaid');
-        localStorage.removeItem('careerIntelligenceFull');
-        sessionStorage.removeItem('careerIntelligenceFull');
-        return;
-      }
-
-      const ciNeedsRegen = (localStorage.getItem('ciNeedsRegeneration') || sessionStorage.getItem('ciNeedsRegeneration'));
-      if (ciNeedsRegen === 'true' || !savedData) {
-        localStorage.removeItem('ciNeedsRegeneration');
-        sessionStorage.removeItem('ciNeedsRegeneration');
-        setIsPaid(true);
-        setTimeout(() => { generateAnalysis(); }, 300);
-      } else {
-        setCareerData(savedData);
-        setIsPaid(true);
-      }
-    };
-
-    hydratePaidAccess();
-
-    // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
-    if (paymentStatus === 'cancelled') {
-      window.history.replaceState({}, '', window.location.pathname);
-      setLocation(careerIntelligenceHomePath);
+    if (paidFlag && !isStripeReturn) {
+      bootstrapPaidAccess(`stored-paid:${getFirstStoredValue(['ciOrderId', 'cpOrderId', 'stripeSessionId']) || 'career-intelligence'}`);
       return;
     }
 
-    if (paymentStatus === 'success' && sessionId) {
+    if (isStripeReturn && sessionId) {
       localStorage.setItem('stripeSessionId', sessionId);
       sessionStorage.setItem('stripeSessionId', sessionId);
+
+      // Stripe success must bypass the legacy preview and restore full access immediately.
+      bootstrapPaidAccess(`stripe-return:${sessionId}`);
 
       fetchPaymentStatus({
         orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
@@ -337,12 +352,28 @@ export default function CareerIntelligenceResults() {
             trackPurchase('career_intelligence_full', stripeAmount, `CI-STRIPE-${sessionId}`);
             trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: t('eur'), payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
           }
-          setIsPaid(true);
-          generateAnalysis();
-          window.history.replaceState({}, '', window.location.pathname);
         }
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => {
+        window.history.replaceState({}, '', window.location.pathname);
+      });
+      return;
     }
+
+    const hydratePaidAccess = async () => {
+      const paymentVerification = await fetchPaymentStatus({
+        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
+        sessionId: getFirstStoredValue(['stripeSessionId']),
+        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
+      });
+
+      if (!(paymentVerification.success && paymentVerification.paid)) {
+        return;
+      }
+
+      bootstrapPaidAccess(`verified:${paymentVerification.session_id || paymentVerification.order_id || 'career-intelligence'}`);
+    };
+
+    hydratePaidAccess();
   }, []);
 
   // ─── Generate Career Intelligence analysis ───
@@ -378,6 +409,11 @@ export default function CareerIntelligenceResults() {
       setCareerData(ciData);
       setIsPaid(true);
       localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerIntelligenceProPaid', 'true');
+      localStorage.setItem('careerIntelligenceFull', 'true');
+      sessionStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+      sessionStorage.setItem('careerIntelligenceFull', 'true');
       localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
       sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
 
@@ -486,8 +522,8 @@ export default function CareerIntelligenceResults() {
   };
 
   // ─── Payment handlers ───
-  const CI_PRICE = getLang() === 'en' ? 49 : 49;
-  const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `$${CI_PRICE}`, `${CI_PRICE}€`);
+  const CI_PRICE = 49;
+  const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `€${CI_PRICE}`, `${CI_PRICE}€`);
 
   const openPaymentModal = () => {
     setPaymentStep('payment');
@@ -635,6 +671,9 @@ export default function CareerIntelligenceResults() {
     localStorage.setItem('careerPathPaid', 'true');
     localStorage.setItem('careerIntelligenceProPaid', 'true');
     localStorage.setItem('careerIntelligenceFull', 'true');
+    sessionStorage.setItem('careerPathPaid', 'true');
+    sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+    sessionStorage.setItem('careerIntelligenceFull', 'true');
     trackPurchase('career_intelligence_full', CI_PRICE, orderId);
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: CI_PRICE, currency: t('eur'), payment_method: paymentMethod, transaction_id: orderId });
     setIsPaid(true);
