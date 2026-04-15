@@ -208,7 +208,9 @@ export default function StudentPackResults() {
       }
 
       try {
-        setData(JSON.parse(raw));
+        const parsed = JSON.parse(raw);
+        const normalized = parsed?.analysis && typeof parsed.analysis === 'object' ? parsed.analysis : parsed;
+        setData(normalized);
       } catch {
         setLocation(localePath('/estudante'));
         return;
