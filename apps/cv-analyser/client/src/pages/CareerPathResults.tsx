@@ -225,9 +225,13 @@ function getPlans(en: boolean, cur = '€', p = en ? { cv: '19.99', cp: '19.99' 
         pick('Formações e certificações recomendadas', 'Recommended training and certifications', 'Formaciones y certificaciones recomendadas'),
         pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking'),
         pick('Acções imediatas priorizadas (30/60/90 dias)', 'Prioritised immediate actions (30/60/90 days)', 'Acciones inmediatas priorizadas (30/60/90 días)'),
-        pick('Visão a 5 anos', '5-year vision', 'Visión a 5 años'),
+        pick('Simulação de percepção do recrutador', 'Recruiter perception simulation', 'Simulación de percepción del reclutador'),
+        pick('Análise de risco de automação por IA', 'AI automation risk analysis', 'Análisis de riesgo de automatización por IA'),
+        pick('Estimativa salarial detalhada', 'Detailed salary estimate', 'Estimación salarial detallada'),
+        pick('Acesso vitalício ao relatório', 'Lifetime access to the report', 'Acceso de por vida al informe'),
       ],
-    },
+      cta: pick('Desbloquear Agora', 'Unlock Now', 'Desbloquear Ahora'),
+    }
   ];
 }
 
@@ -240,131 +244,18 @@ export default function CareerPathResults() {
   const [cvAnalysis, setCvAnalysis] = useState<any>(null);
   const [linkedinUrl, setLinkedinUrl] = useState<string>('');
   const [careerPathData, setCareerPathData] = useState<any>(null);
-  const [isPaid, setIsPaid] = useState(false);
+  const [isPaid, setIsPaid] = useState(() => {
+    const cpPaid = localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid');
+    return cpPaid === 'true';
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
-  const bootstrapGenerationKeyRef = useRef<string | null>(null);
 
-
-  const genMessages = [
-    t('career_path_results_loading_profile'),
-    t('career_path_results_loading_skills_experience'),
-    t('career_path_results_loading_opportunities'),
-    t('career_path_results_loading_automation_risk'),
-    t('career_path_results_loading_salary_ranges'),
-    t('career_path_results_loading_roadmap'),
-    t('career_path_results_loading_training'),
-    t('career_path_results_loading_networking'),
-    t('career_path_results_loading_recommendations'),
-    t('career_path_results_loading_finalizing')
-  ];
-
-  useEffect(() => {
-    if (!isGenerating) { setGenStep(0); return; }
-    const interval = setInterval(() => {
-      setGenStep(prev => prev < genMessages.length - 1 ? prev + 1 : prev);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [isGenerating]);
-
-  // Payment modal
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const lang = getLang();
-  const isEN = lang === 'en';
-  const careerPathHomePath = '/';
-  const isES = lang === 'es';
-  const selectedCountry = getFirstStoredValue(['analysisCountry'], localStorage, sessionStorage) || '';
-  const selectedRegion = getFirstStoredValue(['analysisRegion'], localStorage, sessionStorage) || '';
-  const selectedLocation = getFirstStoredValue(['analysisLocation'], localStorage, sessionStorage) || (selectedRegion && selectedCountry ? `${selectedRegion}, ${selectedCountry}` : selectedCountry || selectedRegion || '');
-  const [selectedPlan, setSelectedPlan] = useState(getPlans(isEN)[0]);
-  const [paymentStep, setPaymentStep] = useState<'select' | 'payment' | 'polling' | 'success'>('select');
-  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'multibanco' | 'paypal' | 'stripe'>('mbway');
-
-  // Currency & pricing for checkout UI only
-  const CUR = t('bca53fde');
-  const P = isEN
-    ? { cv: '9.99', cp: '19.99' }
-    : { cv: '9,99', cp: '19,99' };
-  const CURRENCY_CODE = t('eur');
-
-  /** Format price with correct symbol position per locale, always in EUR */
-  const fmtPrice = (price: string | number) => pick(`${price}€`, `€${price}`, `${price}€`);
-
-  /** Clean salary strings without rewriting the backend currency/market */
-  const cleanCurrency = (s: string) => {
-    if (!s) return s;
-    return s
-      .replace(/€€+/g, '€')
-      .replace(/\$\$+/g, '$')
-      .replace(/\bEUR\s+EUR\b/gi, 'EUR')
-      .replace(/\bUSD\s+USD\b/gi, 'EUR')
-      .replace(/\bGBP\s+GBP\b/gi, 'GBP')
-      .replace(/\bSGD\s+SGD\b/gi, 'SGD')
-      .replace(/\bMXN\s+MXN\b/gi, 'MXN')
-      .replace(/\s{2,}/g, ' ')
-      .trim();
-  };
-
-  const translateConsistencyLabel = (value?: string) => {
-    const normalized = (value || '').trim().toLowerCase();
-    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
-    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
-    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
-    return value || '';
-  };
-
-  const translatePriorityLabel = (value?: string) => {
-    const normalized = (value || '').trim().toLowerCase();
-    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
-    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
-    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
-    return value || '';
-  };
-
-  const getPriorityTone = (value?: string) => {
-    const normalized = (value || '').trim().toLowerCase();
-    if (['alta', 'high'].includes(normalized)) return 'bg-red-500/10 text-red-500 border border-red-500/20';
-    if (['média', 'media', 'medium'].includes(normalized)) return 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
-    return 'bg-green-500/10 text-green-600 border border-green-500/20';
-  };
-
-  const PLANS = getPlans(isEN, CUR, P);
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [pollingMsg, setPollingMsg] = useState('');
-  const [paymentLoading, setPaymentLoading] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem('analysisLang', lang);
-    sessionStorage.setItem('analysisLang', lang);
-  }, [lang]);
-
-  // Unified discount code modal for Career Path
-  const [showDiscountModal, setShowDiscountModal] = useState(false);
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountError, setDiscountError] = useState<string | null>(null);
-  const [discountLoading, setDiscountLoading] = useState(false);
-  const [discountSuccess, setDiscountSuccess] = useState(false);
-  // Applied partial discount coupon
-  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
-  const getDiscountedPriceNum = (price: string) => {
-    const num = parseFloat(price.replace(',', '.'));
-    if (!appliedCoupon) return num;
-    return Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
-  };
-  const fmtDiscountedPrice = (price: string) => {
-    const discounted = getDiscountedPriceNum(price);
-    return pick(
-      discounted.toFixed(2).replace('.', ','),
-      discounted.toFixed(2),
-      discounted.toFixed(2).replace('.', ',')
-    );
-  };
+  // Post sharing
+  const [postCopied, setPostCopied] = useState(false);
 
   // Email report
-  const [postCopied, setPostCopied] = useState(false);
   const [reportEmail, setReportEmail] = useState('');
   const [reportSending, setReportSending] = useState(false);
   const [reportSent, setReportSent] = useState(false);
@@ -386,15 +277,26 @@ export default function CareerPathResults() {
     }
   }, []);
 
+  const lang = getLang();
+  const isEN = lang === 'en';
+  const isES = lang === 'es';
+  const getAnalysisLanguage = () => ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
+
+  useEffect(() => {
+    const analysisLanguage = getAnalysisLanguage();
+    localStorage.setItem('analysisLang', analysisLanguage);
+    sessionStorage.setItem('analysisLang', analysisLanguage);
+  }, [lang]);
+
   const handleSaveToAccount = async () => {
     setSavingToAccount(true);
     setSaveError(null);
     try {
       await saveToUserAnalyses('career_path', {
-        career_path: { title: careerPathData?.title || careerPathData?.career_title, summary: careerPathData?.summary || careerPathData?.executive_summary },
-        career_path_json: careerPathData,
+        career_potential_score: careerPathData?.career_potential_score || {},
+        strategic_paths: careerPathData?.strategic_paths || [],
+        action_plan_30_60_90: careerPathData?.action_plan_30_60_90 || {},
         results_html: document.querySelector('.career-path-results')?.innerHTML || '',
-        linkedin_url: (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl')) || '',
       });
       setSavedToAccount(true);
     } catch (err: any) {
@@ -409,508 +311,238 @@ export default function CareerPathResults() {
     }
   };
 
-  const generateCareerPath = useCallback(async () => {
-    setIsGenerating(true);
-    setGenerateError(null);
-    try {
-      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
-      const cvFile = (localStorage.getItem('careerPathCvFile') || sessionStorage.getItem('careerPathCvFile')) || '';
-      const cvFilename = (localStorage.getItem('careerPathCvFilename') || sessionStorage.getItem('careerPathCvFilename')) || 'cv.pdf';
-      const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
-      const currentCountry = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined;
-      const currentRegion = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined;
-      const currentLocation = (localStorage.getItem('analysisLocation') || sessionStorage.getItem('analysisLocation')) || (currentRegion && currentCountry ? `${currentRegion}, ${currentCountry}` : currentCountry || currentRegion || undefined);
+  const genMessages = [
+    pick("A analisar o teu perfil profissional...", "Analysing your professional profile...", "Analizando tu perfil profesional..."),
+    pick("A mapear competências e experiência...", "Mapping competencies and experience...", "Mapeando competencias y experiencia..."),
+    pick("A identificar oportunidades de carreira...", "Identifying career opportunities...", "Identificando oportunidades de carrera..."),
+    pick("A calcular risco de automação...", "Calculating automation risk...", "Calculando riesgo de automatización..."),
+    pick("A estimar faixas salariais para o teu perfil...", "Estimating salary ranges for your profile...", "Estimando rangos salariales para tu perfil..."),
+    pick("A construir o teu roadmap de desenvolvimento...", "Building your development roadmap...", "Construyendo tu roadmap de desarrollo..."),
+    pick("A selecionar formações e certificações...", "Selecting training and certifications...", "Seleccionando formaciones y certificaciones..."),
+    pick("A definir estratégia de networking...", "Defining networking strategy...", "Definiendo la estrategia de networking..."),
+    pick("A gerar recomendações personalizadas...", "Generating personalised recommendations...", "Generando recomendaciones personalizadas..."),
+    pick("A finalizar o teu Career Path...", "Finalising your Career Path...", "Finalizando tu Career Path..."),
+  ];
 
-      localStorage.setItem('analysisLang', currentLanguage);
-      sessionStorage.setItem('analysisLang', currentLanguage);
-      if (currentCountry) {
-        localStorage.setItem('analysisCountry', currentCountry);
-        sessionStorage.setItem('analysisCountry', currentCountry);
-      }
-      if (currentLocation) {
-        localStorage.setItem('analysisLocation', currentLocation);
-        sessionStorage.setItem('analysisLocation', currentLocation);
-      }
-
-      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
-      const requestBody: any = {
-        mode: 'career_path',
-        email: cpEmail,
-        cv_text: cvText,
-        linkedin_url: linkedinUrl || undefined,
-        language: currentLanguage,
-        country: currentCountry,
-        region: currentRegion,
-        location: currentLocation,
-      };
-      // If cv_text is too short but we have the file base64, send it as fallback
-      if (cvText.trim().length < 50 && cvFile) {
-        requestBody.file = cvFile;
-        requestBody.filename = cvFilename;
-      }
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      if (!data.success && !data.career_path) {
-        throw new Error(data.error || (t('erro_ao_gerar_career_path')));
-      }
-
-      const normalizedCareerPath = normalizeCareerPathPayload(data, currentLanguage);
-      const cpData = normalizedCareerPath.analysis;
-      setCareerPathData(cpData);
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
-      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
-
-      // Fire-and-forget: log to cv_analysis for dashboard
-      const orderId = (localStorage.getItem('cpOrderId') || sessionStorage.getItem('cpOrderId')) || undefined;
-      const cpLinkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl')) || undefined;
-      logCareerPathToSupabase(cpData, orderId, cpLinkedin);
-
-      // Save to user_analyses for area-cliente
-      // Delay to capture HTML after React renders the full results
-      setTimeout(async () => {
-        try {
-          await saveToUserAnalyses('career_path', {
-            career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
-            career_path_json: cpData,
-            results_html: document.querySelector('.career-path-results')?.innerHTML || '',
-            linkedin_url: cpLinkedin,
-          });
-          setSavedToAccount(true);
-        } catch (e: any) {
-          console.warn('[S2I] Auto-save after generation failed:', e?.message);
-        }
-      }, 1500);
-    } catch (err: any) {
-      setGenerateError(err.message || (t('erro_ao_gerar_career_path_2')));
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [linkedinUrl]);
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('payment');
-    const sessionId = urlParams.get('session_id');
-    const isStripeReturn = paymentStatus === 'success' && !!sessionId;
+    if (!isGenerating) { setGenStep(0); return; }
+    const interval = setInterval(() => {
+      setGenStep(prev => prev < genMessages.length - 1 ? prev + 1 : prev);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isGenerating]);
 
-    const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
-    const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
-    const paidFlag = (localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid')) === 'true';
-    const savedData = (localStorage.getItem('careerPathData') || sessionStorage.getItem('careerPathData'));
+  const careerPathHomePath = '/career-path';
+  const getCareerPathProfile = (analysis: any) => buildCandidateProfile(analysis);
+  const hasCareerPathStructure = (analysis: any) => {
+    if (!analysis || typeof analysis !== 'object') return false;
+    return Boolean(
+      analysis.career_potential_score ||
+      (Array.isArray(analysis.strategic_paths) && analysis.strategic_paths.length > 0) ||
+      (Array.isArray(analysis.action_plan_30_60_90) && analysis.action_plan_30_60_90.length > 0) ||
+      analysis.market_context ||
+      analysis.recruiter_perception
+    );
+  };
+  const readCareerPathData = () => {
+    const raw =
+      localStorage.getItem('careerPathData') ||
+      sessionStorage.getItem('careerPathData');
 
-    const hydrateStoredCareerPathData = () => {
-      if (!savedData) return false;
-      try {
-        const normalizedStored = normalizeCareerPathPayload(
-          JSON.parse(savedData),
-          localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang
-        );
-        setCareerPathData(normalizedStored.analysis);
-        setIsPaid(true);
-        return true;
-      } catch {
-        return false;
-      }
-    };
+    if (!raw) return null;
 
-    const bootstrapPaidAccess = (generationKey: string) => {
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      sessionStorage.setItem('careerPathPaid', 'true');
-
-      if (hydrateStoredCareerPathData()) {
-        return;
-      }
-
-      if (bootstrapGenerationKeyRef.current === generationKey) {
-        return;
-      }
-
-      bootstrapGenerationKeyRef.current = generationKey;
-      setTimeout(() => { generateCareerPath(); }, 300);
-    };
-
-    // Handle cancelled payment — clean URL and redirect to the localized Career Path entry page
-    if (paymentStatus === 'cancelled') {
-      window.history.replaceState({}, '', window.location.pathname);
-      setLocation(careerPathHomePath);
-      return;
-    }
-
-    if (!cvData && !isStripeReturn) {
-      setLocation(careerPathHomePath);
-      return;
-    }
-
-    if (cvData) {
-      try {
-        const parsedCvAnalysis = JSON.parse(cvData);
-        setCvAnalysis({
-          ...parsedCvAnalysis,
-          raw: parsedCvAnalysis?.raw || parsedCvAnalysis?.analysis || parsedCvAnalysis,
-          candidate_profile: buildCandidateProfile(parsedCvAnalysis),
-        });
-      } catch {
-        if (!isStripeReturn) {
-          setLocation(careerPathHomePath);
-          return;
-        }
-      }
-    }
-
-    if (!cvData && isStripeReturn) {
-      const savedEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail'));
-      if (savedEmail) setEmail(savedEmail);
-    }
-
-    if (linkedin) setLinkedinUrl(linkedin);
-
-    if (paidFlag) {
-      bootstrapPaidAccess(`stored-paid:${getFirstStoredValue(['cpOrderId', 'stripeSessionId']) || 'career-path'}`);
-      return;
-    }
-
-    if (isStripeReturn && sessionId) {
-      localStorage.setItem('stripeSessionId', sessionId);
-      sessionStorage.setItem('stripeSessionId', sessionId);
-
-      // Stripe success must never fall back to the legacy preview screen.
-      // Optimistically restore paid access and generate the full report,
-      // while keeping server verification in the background for analytics.
-      bootstrapPaidAccess(`stripe-return:${sessionId}`);
-
-      fetchPaymentStatus({
-        orderId: getFirstStoredValue(['cpOrderId']),
-        sessionId,
-        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
-      })
-        .then(data => {
-          if (data.success && data.paid) {
-            const stripeAmount = data.amount ? data.amount / 100 : 0;
-            trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: t('eur'), payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
-          }
-        })
-        .catch(err => console.error('Stripe verify error:', err))
-        .finally(() => {
-          window.history.replaceState({}, '', window.location.pathname);
-        });
-
-      return;
-    }
-
-    const hydratePaidAccess = async () => {
-      const paymentVerification = await fetchPaymentStatus({
-        orderId: getFirstStoredValue(['cpOrderId']),
-        sessionId: getFirstStoredValue(['stripeSessionId']),
-        expectedProductTypes: ['career_path', 'career_path_member_growth', 'career_path_member_pro', 'bundle'],
-      });
-
-      if (!(paymentVerification.success && paymentVerification.paid)) {
-        return;
-      }
-
-      bootstrapPaidAccess(`verified:${paymentVerification.session_id || paymentVerification.order_id || 'career-path'}`);
-    };
-
-    hydratePaidAccess();
-  }, [careerPathHomePath, generateCareerPath, lang, setLocation]);
-
-
-  /* ─── Unified discount code validation for Career Path ─── */
-  const handleDiscountSubmit = async () => {
-    if (!discountCode.trim()) {
-      setDiscountError(t('introduz_um_cdigo'));
-      return;
-    }
-    setDiscountLoading(true);
-    setDiscountError(null);
-    const code = discountCode.trim().toUpperCase();
     try {
-      // Step 1: Check discount_coupons
-      const couponRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      );
-      const coupons = await couponRes.json();
-      if (Array.isArray(coupons) && coupons.length > 0) {
-        const coupon = coupons[0];
-        const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) throw new Error(t('este_cdigo_ainda_no_est'));
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) throw new Error(t('este_cdigo_j_expirou'));
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) throw new Error(t('este_cdigo_atingiu_o_limite'));
-        const products = coupon.applicable_products || [];
-        if (!couponSupportsProduct(products, 'career_path')) throw new Error(t('este_cdigo_no_aplicvel_aqui'));
-        if (coupon.discount_percent === 100) {
-          incrementCouponUsage(code);
-          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
-          setDiscountSuccess(true);
-          setShowDiscountModal(false);
-          await new Promise(resolve => setTimeout(resolve, 350));
-          await generateCareerPath();
-          return;
-        }
-        // Partial discount — apply it
-        setAppliedCoupon({ code, percent: coupon.discount_percent });
-        incrementCouponUsage(code);
-        setShowDiscountModal(false);
-        return;
-      }
-
-      // Step 2: Check vouchers table
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      );
-      const rows = await res.json();
-      if (!rows.length) throw new Error(t('cdigo_invlido_ou_expirado'));
-      const v = rows[0];
-      if (!v.is_active) throw new Error(t('este_cdigo_j_foi_utilizado'));
-      if (v.used_analyses >= v.total_analyses) throw new Error(t('este_cdigo_j_no_tem_2'));
-      if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error(t('este_cdigo_no_vlido_para'));
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
-        }
-      );
-      setDiscountSuccess(true);
-      setShowDiscountModal(false);
-      await new Promise(resolve => setTimeout(resolve, 350));
-      await generateCareerPath();
-    } catch (err: any) {
-      setDiscountError(err.message || (t('cdigo_invlido')));
-    } finally {
-      setDiscountLoading(false);
+      const parsed = JSON.parse(raw);
+      const normalized = normalizeCareerPathPayload(parsed, getAnalysisLanguage());
+      return hasCareerPathStructure(normalized.analysis) ? normalized.analysis : null;
+    } catch {
+      return null;
     }
   };
+  const siteHomePath = pick('/', '/en/', '/es/');
+  const defaultPaymentMethod: 'mbway' | 'stripe' | 'paypal' = isEN ? 'stripe' : 'mbway';
+  const paymentMethodOptions: Array<'mbway' | 'stripe' | 'paypal'> = isEN
+    ? ['stripe', 'paypal']
+    : ['mbway', 'stripe', 'paypal'];
+  const paymentMethodLabel = (method: 'mbway' | 'stripe' | 'paypal') => method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal';
+  const paymentPhonePlaceholder = pick('9XXXXXXXX', '+1 555 123 4567', '6XXXXXXXX');
 
-  /* ─── Payment handlers ─── */
-  const openPaymentModal = (planId?: string) => {
-    // Always use career_path plan directly — no plan selection step
-    const plan = PLANS.find(p => p.id === 'career_path') || PLANS[0];
-    setSelectedPlan(plan);
-    setPaymentStep('payment');
-    setPaymentError(null);
+  const CUR = t('bca53fde');
+  const CURRENCY_CODE = t('eur');
+
+  /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
+  const cleanCurrency = (s: string) => {
+    if (!s) return s;
+    let cleaned = s.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+    if (!isEN) {
+      cleaned = cleaned.replace(/\$/g, '€');
+      cleaned = cleaned.replace(/USD/gi, 'EUR');
+    } else {
+      cleaned = cleaned.replace(/\$/g, '€');
+      cleaned = cleaned.replace(/USD/gi, 'EUR');
+    }
+    return cleaned;
+  };
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>(defaultPaymentMethod);
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [coupon, setCoupon] = useState('');
+  const [couponValidating, setCouponValidating] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  const CP_PRICE = 19.99;
+
+  const openPaymentModal = () => {
+    const storedEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || '';
+    const storedPhone = (localStorage.getItem('cpPaymentPhone') || sessionStorage.getItem('cpPaymentPhone')) || '';
+    setEmail(storedEmail);
+    setPhone(storedPhone);
     setShowPaymentModal(true);
   };
 
-  const handleMBWayPayment = async () => {
-    if (!email) { setPaymentError(t('introduz_o_teu_email')); return; }
-    if (!phone) { setPaymentError(t('introduz_o_teu_nmero_de')); return; }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError(t('email_invlido')); return; }
-
-    setPaymentLoading(true);
-    setPaymentError(null);
-
+  const validateCoupon = async () => {
+    if (!coupon) return;
+    setCouponValidating(true);
+    setCouponError(null);
     try {
-      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('cpOrderId', orderId);
-      localStorage.setItem('cpPaymentEmail', email);
-
-      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
-          orderId,
-          amount: getDiscountedPriceNum(selectedPlan.price).toFixed(2),
-          paymentMethod: 'mbway',
-          description: appliedCoupon ? `Share2Inspire - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `Share2Inspire - ${selectedPlan.name}`,
-          name: email.split('@')[0],
-        }),
-      });
-
-      const data = await response.json();
-      if (!data.success) throw new Error(data.error || (t('erro_ao_iniciar_pagamento')));
-
-      setPaymentStep('polling');
-      setPollingMsg(t('confirma_o_pagamento_na_app'));
-      startPolling(orderId);
-    } catch (err: any) {
-      setPaymentError(err.message || (t('erro_ao_processar_pagamento')));
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
-  const handlePayPalPayment = async () => {
-    if (!email) { setPaymentError(t('introduz_o_teu_email')); return; }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError(t('email_invlido')); return; }
-
-    localStorage.setItem('cpPaymentEmail', email);
-    window.open(`https://paypal.me/SamuelRolo/${getDiscountedPriceNum(selectedPlan.price)}${CURRENCY_CODE}`, '_blank');
-    setPaymentStep('success');
-  };
-
-  const handleStripePayment = async () => {
-    if (!email) { setPaymentError(pick('Por favor, introduz o teu email', 'Please enter your email', 'Por favor, introduce tu correo electrónico')); return; }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setPaymentError(pick('Por favor, introduz um email válido', 'Please enter a valid email', 'Por favor, introduce un correo electrónico válido')); return; }
-    setPaymentLoading(true);
-    setPaymentError(null);
-    try {
-      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const country = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || '';
-      const region = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || '';
-      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          name: email.split('@')[0],
-          product_type: 'career_path',
-          orderId,
-          language: lang,
-          country,
-          region,
-          currency: CURRENCY_CODE.toLowerCase(),
-          amount: getDiscountedPriceNum(selectedPlan.price),
-          success_url: `${window.location.origin}${localePath('/career-path/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}${localePath('/career-path/results')}?payment=cancelled`
-        })
-      });
-      const data = await response.json();
-      if (!data.success || !data.url) {
-        throw new Error(data.error || pick('Erro ao criar sessão de checkout', 'Error creating checkout session', 'Error al crear la sesión de checkout'));
-      }
-      localStorage.setItem('cpOrderId', orderId);
-      localStorage.setItem('cpPaymentEmail', email);
-      localStorage.setItem('stripeSessionId', data.sessionId);
-      if (appliedCoupon) localStorage.setItem('cpAppliedCoupon', JSON.stringify(appliedCoupon));
-      redirectToCheckout(data.url);
-    } catch (err: any) {
-      setPaymentError(err.message || pick('Erro ao processar pagamento', 'Error processing payment', 'Error al procesar el pago'));
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
-  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
-  const [pollingExpired, setPollingExpired] = useState(false);
-
-  const startPolling = (orderId: string) => {
-    let attempts = 0;
-    const maxAttempts = 60; // 60 * 5s = 5 minutes
-    let consecutiveErrors = 0;
-    const startTime = Date.now();
-    const MIN_BEFORE_EXPIRED = 90000; // Ignore 'expired' in first 90 seconds
-    setCurrentOrderId(orderId);
-    setPollingExpired(false);
-
-    const interval = setInterval(async () => {
-      attempts++;
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId }),
-        });
-        if (!res.ok) {
-          consecutiveErrors++;
-          if (consecutiveErrors >= 8) {
-            clearInterval(interval);
-            setPollingExpired(true);
-            setPollingMsg(t('no_foi_possvel_verificar_usa'));
-          }
-          return;
-        }
-        consecutiveErrors = 0;
-        const data = await res.json();
-
-        if (data.paid) {
-          clearInterval(interval);
-          // Auto-trigger career path generation after MB WAY payment
-          setShowPaymentModal(false);
-          setIsPaid(true);
-          localStorage.setItem('careerPathPaid', 'true');
-          // Small delay for modal close animation, then generate
-          setTimeout(() => { generateCareerPath(); }, 400);
-          return;
-        }
-
-        const elapsed = Date.now() - startTime;
-        if (data.expired) {
-          if (elapsed < MIN_BEFORE_EXPIRED) {
-            console.log(`[CP-POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s)`);
-            setPollingMsg(t('a_verificar_pagamento_confirma_na'));
-          } else {
-            clearInterval(interval);
-            setPollingExpired(true);
-            setPollingMsg(t('o_pagamento_expirou_usa_o'));
-          }
-          return;
-        }
-
-        // Update message based on time
-        if (elapsed < 30000) {
-          setPollingMsg(t('confirma_o_pagamento_na_app'));
-        } else if (elapsed < 60000) {
-          setPollingMsg(t('ainda_a_aguardar_verifica_a'));
-        } else {
-          setPollingMsg(t('a_aguardar_confirmao_se_j'));
-        }
-
-        if (attempts >= maxAttempts) {
-          clearInterval(interval);
-          setPollingExpired(true);
-          setPollingMsg(t('tempo_esgotado_se_j_pagaste_2'));
-        }
-      } catch { consecutiveErrors++; }
-    }, 5000);
-  };
-
-  // Manual re-check for "Já paguei" button
-  const handleManualCheck = async () => {
-    if (!currentOrderId) return;
-    setPollingMsg(t('a_verificar_pagamento'));
-    setPollingExpired(false);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: currentOrderId }),
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${coupon.toUpperCase()}&active=eq.true`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const data = await res.json();
-      if (data.paid) {
-        // Auto-trigger career path generation after manual check confirms payment
-        setShowPaymentModal(false);
-        setIsPaid(true);
-        localStorage.setItem('careerPathPaid', 'true');
-        setTimeout(() => { generateCareerPath(); }, 400);
+      if (data && data.length > 0) {
+        const v = data[0];
+        if (!couponSupportsProduct(v, 'career_path')) {
+          setCouponError(pick('Este código não é válido para este produto.', 'This code is not valid for this product.', 'Este código no es válido para este producto.'));
+          return;
+        }
+        if (v.type === 'free') {
+          unlockAndGenerate(`CP-VOUCHER-${v.code}-${Date.now()}`);
+          incrementCouponUsage(v.code);
+        } else {
+          setCouponError(pick('Cupão de desconto aplicado!', 'Discount coupon applied!', '¡Cupón de descuento aplicado!'));
+        }
       } else {
-        setPollingExpired(true);
-        setPollingMsg(t('pagamento_ainda_no_confirmado_aguarda'));
-        startPolling(currentOrderId);
+        setCouponError(pick('Código inválido ou expirado.', 'Invalid or expired code.', 'Código inválido o expirado.'));
       }
     } catch {
-      setPollingExpired(true);
-      setPollingMsg(t('erro_ao_verificar_tenta_novamente'));
+      setCouponError(pick('Erro ao validar código.', 'Error validating code.', 'Error al validar el código.'));
+    } finally {
+      setCouponValidating(false);
     }
+  };
+
+  const handlePayment = async () => {
+    if (!email || (paymentMethod === 'mbway' && !phone)) {
+      setPaymentError(pick('Preenche todos os campos.', 'Fill in all fields.', 'Rellena todos los campos.'));
+      return;
+    }
+    setPaymentLoading(true);
+    setPaymentError(null);
+    localStorage.setItem('cpPaymentEmail', email);
+    sessionStorage.setItem('cpPaymentEmail', email);
+    if (phone) {
+      localStorage.setItem('cpPaymentPhone', phone);
+      sessionStorage.setItem('cpPaymentPhone', phone);
+    }
+
+    try {
+      const res = await redirectToCheckout({
+        productType: 'career_path',
+        email,
+        phone: paymentMethod === 'mbway' ? phone : undefined,
+        method: paymentMethod,
+        amount: CP_PRICE,
+        originUrl: window.location.href,
+        metadata: { linkedinUrl, lang: getAnalysisLanguage() }
+      });
+      if (!res.success) setPaymentError(res.error || 'Payment failed');
+    } catch (err: any) {
+      setPaymentError(err.message || 'Payment error');
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
+
+  const generateCareerPath = async () => {
+    setIsGenerating(true);
+    setGenerateError(null);
+    try {
+      const analysisLang = getAnalysisLanguage();
+      const res = await fetch(t('careerpathapi'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cvAnalysis,
+          linkedinUrl,
+          lang: analysisLang,
+          isPaid: true
+        })
+      });
+      const data = await res.json();
+      if (data?.analysis) {
+        const normalized = normalizeCareerPathPayload(data, analysisLang);
+        setCareerPathData(normalized.analysis);
+        localStorage.setItem('careerPathData', JSON.stringify(data));
+        sessionStorage.setItem('careerPathData', JSON.stringify(data));
+        logCareerPathToSupabase(normalized.analysis, `CP-GEN-${Date.now()}`, linkedinUrl);
+      } else {
+        setGenerateError('Failed to generate career path');
+      }
+    } catch (err: any) {
+      setGenerateError(err.message || 'Generation error');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const unlockAndGenerate = (orderId: string) => {
+    setShowPaymentModal(false);
+    localStorage.setItem('careerPathPaid', 'true');
+    trackPurchase('career_path_full', CP_PRICE, orderId);
+    trackAffiliateConversion({ product: 'career_path_full', amount: CP_PRICE, currency: t('eur'), payment_method: paymentMethod, transaction_id: orderId });
+    setIsPaid(true);
+    setTimeout(() => { generateCareerPath(); }, 400);
+  };
+
+  const [pollingStatus, setPollingStatus] = useState<'idle' | 'polling' | 'success' | 'error'>('idle');
+  const [pollingMsg, setPollingMsg] = useState('');
+  const [pollingExpired, setPollingExpired] = useState(false);
+  const pollTimer = useRef<any>(null);
+
+  const startPolling = (orderId: string) => {
+    setPollingStatus('polling');
+    setPollingMsg(t('a_verificar_pagamento'));
+    let attempts = 0;
+    pollTimer.current = setInterval(async () => {
+      attempts++;
+      if (attempts > 30) {
+        clearInterval(pollTimer.current);
+        setPollingStatus('error');
+        setPollingExpired(true);
+        setPollingMsg(t('tempo_expirado_tenta_novamente'));
+        return;
+      }
+      try {
+        const res = await fetchPaymentStatus({ orderId, expectedProductTypes: ['career_path'] });
+        if (res.success && res.paid) {
+          clearInterval(pollTimer.current);
+          setPollingStatus('success');
+          unlockAndGenerate(orderId);
+        }
+      } catch {}
+    }, 4000);
   };
 
   const handlePaymentSuccess = async () => {
     setShowPaymentModal(false);
-    // Wait for Dialog close animation to finish before triggering
-    // re-render via generateCareerPath — prevents React removeChild error
     await new Promise(resolve => setTimeout(resolve, 350));
     await generateCareerPath();
   };
-
 
   /* ─── Send report by email ─── */
   const handleSendReport = async () => {
@@ -937,6 +569,28 @@ export default function CareerPathResults() {
     }
   };
 
+  useEffect(() => {
+    const cv = localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis');
+    const li = localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl');
+    if (cv) setCvAnalysis(JSON.parse(cv));
+    if (li) setLinkedinUrl(li);
+
+    const existing = readCareerPathData();
+    if (existing) setCareerPathData(existing);
+
+    const orderId = getFirstStoredValue(['careerPathVerifiedOrderId', 'careerPathPendingOrderId']);
+    const sessionId = getFirstStoredValue(['careerPathVerifiedTransactionId']);
+    if (orderId || sessionId) {
+      fetchPaymentStatus({ orderId, sessionId, expectedProductTypes: ['career_path'] }).then(res => {
+        if (res.success && res.paid) {
+          setIsPaid(true);
+          localStorage.setItem('careerPathPaid', 'true');
+          if (!existing && !isGenerating) generateCareerPath();
+        }
+      });
+    }
+  }, []);
+
   if (!cvAnalysis) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -945,9 +599,54 @@ export default function CareerPathResults() {
     );
   }
 
-  const cpProfile = buildCandidateProfile(cvAnalysis);
-  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('ups_tenta_novamente'));
-  const currentRole = cpProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('ups_tenta_novamente'));
+  const cpProfile = getCareerPathProfile(cvAnalysis);
+  
+  // Critical data check for full-page error state
+  const hasCriticalData = cpProfile && cpProfile.detected_name;
+
+  if (!hasCriticalData) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="border-b border-foreground/10 bg-background px-4 sm:px-6 py-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <a href={siteHomePath} className="flex items-center">
+              <img src="/logo-transparent.webp" alt="Share2Inspire" width="220" height="48" className="h-10 w-auto object-contain" />
+            </a>
+          </div>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-card rounded-3xl shadow-xl p-8 md:p-12 text-center border border-border">
+            <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl">😕</span>
+            </div>
+            <h1 className="text-2xl font-bold text-foreground mb-3">
+              {t('ups_tenta_novamente')}
+            </h1>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              {pick(
+                'Não conseguimos carregar os teus resultados. Por favor, volta a tentar ou contacta o suporte se o problema persistir.',
+                'We couldn\'t load your results. Please try again or contact support if the problem persists.',
+                'No pudimos cargar tus resultados. Por favor, inténtalo de nuevo o contacta con soporte si el problema persiste.'
+              )}
+            </p>
+            <Button 
+              onClick={() => setLocation(careerPathHomePath)} 
+              className="w-full py-6 bg-[#C9A961] hover:bg-[#A88B4E] text-white font-bold rounded-2xl transition-all shadow-lg shadow-[#C9A961]/20"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              {pick('Voltar atrás', 'Go back', 'Volver atrás')}
+            </Button>
+          </div>
+        </div>
+        <footer className="border-t border-foreground/10 py-8 text-center text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} Share2Inspire. All rights reserved.</p>
+        </footer>
+      </div>
+    );
+  }
+
+  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name;
+  const currentRole = cpProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole;
   const seniority = cpProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 
   return (
@@ -980,7 +679,6 @@ export default function CareerPathResults() {
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
                   <span className="text-xs sm:text-sm font-semibold text-green-600">{t('relatrio_completo')}</span>
                 </div>
-
               </div>
             ) : (
               <>
@@ -999,7 +697,7 @@ export default function CareerPathResults() {
                   size="sm"
                   className="bg-[#C9A961] hover:bg-[#A88B4E] text-white text-xs sm:text-sm font-semibold px-3 sm:px-5 py-1.5 sm:py-2"
                 >
-                  <span className="hidden sm:inline">{t('desbloquear_career_path')}</span>
+                  <span className="hidden sm:inline">{t('desbloquear_anlise')}</span>
                   <span className="sm:hidden">{t('desbloquear')}</span>
                 </Button>
               </>
@@ -1015,19 +713,17 @@ export default function CareerPathResults() {
       </header>
 
       <main className="max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8">
-        {/* Hero Profile Card — visually distinct from home page */}
+        {/* Hero Profile Card */}
         <div className="relative overflow-hidden rounded-2xl">
-          {/* Background with subtle pattern */}
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03]" />
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
           
           <div className="relative px-3 sm:px-8 py-5 sm:py-10">
-            {/* Status pill */}
             <div className="flex justify-between items-start mb-6">
               {isPaid ? (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-xs font-semibold text-green-600">{t('relatrio_completo')}</span>
+                  <span className="text-xs font-semibold text-green-600">{pick('Career Path Completo', 'Full Career Path', 'Career Path Completo')}</span>
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20">
@@ -1037,1344 +733,38 @@ export default function CareerPathResults() {
               )}
             </div>
 
-            {/* Name + Role hero */}
             <div className="mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1">{profileName}</h1>
               <p className="text-base sm:text-lg text-muted-foreground font-medium">
-                {currentRole}
-                {seniority && <span className="text-[#C9A961] font-semibold"> · {seniority}</span>}
+                {currentRole} {seniority && <span className="text-[#C9A961] mx-1.5">•</span>} {seniority}
               </p>
             </div>
 
-            {/* Quick stats row */}
-            <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-3 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
-                <Briefcase className="w-3.5 h-3.5 text-[#C9A961]" />
-                <span className="text-xs font-medium text-foreground">{currentRole}</span>
-              </div>
-              {seniority && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
-                  <TrendingUp className="w-3.5 h-3.5 text-[#C9A961]" />
-                  <span className="text-xs font-medium text-foreground">{seniority}</span>
+            <div className="flex flex-wrap gap-3 sm:gap-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
+                  <Globe className="w-4 h-4 text-muted-foreground" />
                 </div>
-              )}
-              {linkedinUrl && (
-                <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 hover:border-[#0077B5]/30 transition-colors">
-                  <Linkedin className="w-3.5 h-3.5 text-[#0077B5]" />
-                  <span className="text-xs font-medium text-[#0077B5]">{t('linkedin')}</span>
-                </a>
-              )}
+                <div>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{pick('Mercado', 'Market', 'Mercado')}</p>
+                  <p className="text-xs font-semibold text-foreground">{pick('Portugal', 'Portugal', 'Portugal')}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
+                  <Linkedin className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">LinkedIn</p>
+                  <p className="text-xs font-semibold text-foreground truncate max-w-[120px] sm:max-w-[200px]">{linkedinUrl ? linkedinUrl.replace('https://', '').replace('www.', '') : 'N/D'}</p>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Bottom accent line */}
-          <div className="h-[2px] bg-gradient-to-r from-transparent via-[#C9A961]/40 to-transparent" />
         </div>
 
-        {/* Generating state */}
-        {isGenerating && (
-          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/20 rounded-2xl p-4 sm:p-10 text-center space-y-6">
-            <div className="relative w-16 h-16 mx-auto">
-              <div className="absolute inset-0 rounded-full border-4 border-[#C9A961]/20" />
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#C9A961] animate-spin" />
-              <Compass className="absolute inset-0 m-auto w-6 h-6 text-[#C9A961]" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-lg font-bold text-foreground transition-all duration-500">
-                {genMessages[genStep]}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('career_path_results_step_of', undefined, { current: String(genStep + 1), total: String(genMessages.length) })}
-              </p>
-            </div>
-            <div className="max-w-sm mx-auto">
-              <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${Math.min(((genStep + 1) / genMessages.length) * 100, 95)}%` }}
-                />
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground/60">
-              {t('isto_pode_demorar_at_60')}
-            </p>
-          </div>
-        )}
-
-        {/* Error state */}
-        {generateError && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">{t('erro_ao_gerar_career_path')}</p>
-              <p>{generateError}</p>
-              <button onClick={generateCareerPath} className="mt-2 text-red-600 underline text-xs">{t('tentar_novamente')}</button>
-            </div>
-          </div>
-        )}
-
-        {/* FREE PREVIEW — visible to all */}
-        {!isGenerating && (
-          <>
-            {/* ═══ Career Energy Score (FREE) ═══ */}
-            {!isPaid && (() => {
-              // Derive a career energy score from CV data
-              const atsScore = cvAnalysis.atsRejectionRate != null ? (100 - cvAnalysis.atsRejectionRate) : null;
-              const energyScore = atsScore != null ? Math.min(Math.max(Math.round(atsScore * 0.7 + Math.random() * 10 + 20), 35), 88) : 64;
-              const salaryGrowth = energyScore < 50 ? '25–40' : energyScore < 70 ? '35–55' : '45–70';
-              const salaryGrowthEN = energyScore < 50 ? '25–40' : energyScore < 70 ? '35–55' : '45–70';
-              return (
-                <div className="space-y-6">
-                  {/* Career Energy Score */}
-                  <div className="bg-gradient-to-br from-card to-[#C9A961]/5 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-6">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-5 h-5 text-[#C9A961]" />
-                        <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('a_tua_energia_de_carreira')}</p>
-                      </div>
-                      {/* Circular gauge */}
-                      <div className="relative w-44 h-44">
-                        <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-                          <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" className="text-muted/30" strokeWidth="8" />
-                          <circle cx="60" cy="60" r="52" fill="none" stroke="url(#cpGrad)" strokeWidth="8" strokeLinecap="round"
-                            strokeDasharray={`${(energyScore / 100) * 327} 327`} />
-                          <defs><linearGradient id="cpGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#C9A961" /><stop offset="100%" stopColor="#E8D5A3" />
-                          </linearGradient></defs>
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <span className="text-4xl font-bold text-foreground">{energyScore}</span>
-                          <span className="text-xs text-muted-foreground">/100</span>
-                        </div>
-                      </div>
-                      <div className="text-center max-w-sm">
-                        <p className="text-sm text-muted-foreground">
-                          {pick(
-                            <>O teu perfil mostra potencial de crescimento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', mas existe desalinhamento entre competências atuais e as funções com maior progressão salarial.' : '.'}</>,
-                            <>Your profile shows <span className="font-bold text-foreground">{energyScore >= 70 ? 'high' : energyScore >= 50 ? 'moderate' : 'significant'}</span> growth potential{energyScore < 70 ? ', but there is misalignment between current skills and roles with the highest salary progression.' : '.'}</>,
-                            <>Tu perfil muestra un potencial de crecimiento <span className="font-bold text-foreground">{energyScore >= 70 ? 'elevado' : energyScore >= 50 ? 'moderado' : 'significativo'}</span>{energyScore < 70 ? ', pero existe desalineación entre competencias actuales y los roles con mayor progresión salarial.' : '.'}</>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Top 3 Compatible Paths */}
-                    <div className="border-t border-[#C9A961]/20 pt-5 space-y-3">
-                      <p className="text-xs font-semibold tracking-wider text-center text-muted-foreground">{t('caminhos_de_carreira_mais_compatveis')}</p>
-                      <div className="space-y-2">
-                        {[
-                          { path: cvAnalysis.perceivedRole ? pick(`Líder de ${cvAnalysis.perceivedRole}`, `${cvAnalysis.perceivedRole} Lead`, `Líder de ${cvAnalysis.perceivedRole}`) : pick('Transformação Digital Lead', 'Digital Transformation Lead', 'Líder de Transformación Digital'), fit: Math.min(energyScore + 15, 95) },
-                          { path: cvAnalysis.keywords?.[0] ? pick(`Especialista em ${cvAnalysis.keywords[0]}`, `${cvAnalysis.keywords[0]} Specialist`, `Especialista en ${cvAnalysis.keywords[0]}`) : pick('People Analytics', 'People Analytics', 'People Analytics'), fit: Math.min(energyScore + 8, 90) },
-                          { path: pick('Consultor Estratégico', 'Strategic Advisor', 'Asesor Estratégico'), fit: Math.min(energyScore + 2, 85) },
-                        ].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between p-3 bg-card rounded-xl border border-border">
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs font-bold text-white bg-[#C9A961] w-6 h-6 rounded-full flex items-center justify-center">#{i + 1}</span>
-                              <span className="text-sm font-medium text-foreground">{item.path}</span>
-                            </div>
-                            <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-1 rounded-full border border-green-500/20">
-                              {item.fit}% {t('compat')}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-[10px] text-muted-foreground text-center italic">
-                        {t('baseado_na_anlise_do_teu')}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Financial Impact / Salary Progression */}
-                  <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
-                    <div className="flex items-center gap-2 justify-center">
-                      <DollarSign className="w-4 h-4 text-[#C9A961]" />
-                      <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('progresso_salarial_estimada')}</p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                      <div className="p-3 bg-muted/30 rounded-xl border border-border">
-                        <p className="text-[10px] font-semibold text-muted-foreground mb-1">{t('actual')}</p>
-                        <p className="text-lg font-bold text-foreground">{t('32000')}</p>
-                        <p className="text-[10px] text-muted-foreground">{t('mdia_para_a_funo')}</p>
-                      </div>
-                      <div className="p-3 bg-[#C9A961]/5 rounded-xl border border-[#C9A961]/20">
-                        <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('em_3_anos')}</p>
-                        <p className="text-lg font-bold text-[#C9A961]">{t('45000')}</p>
-                        <p className="text-[10px] text-muted-foreground">{t('com_o_caminho_certo')}</p>
-                      </div>
-                      <div className="p-3 bg-green-500/5 rounded-xl border border-green-500/20">
-                        <p className="text-[10px] font-semibold text-green-600 mb-1">{t('em_6_anos')}</p>
-                        <p className="text-lg font-bold text-green-600">{t('65000')}</p>
-                        <p className="text-[10px] text-muted-foreground">{t('potencial_mximo')}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground text-center italic">
-                      {t('estimativas_salariais_baseadas_em_dados')}
-                    </p>
-                  </div>
-
-                  {/* Report Preview (✓ / 🔒) */}
-                  <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
-                    <div className="flex items-center gap-2">
-                      <Compass className="w-5 h-5 text-[#C9A961]" />
-                      <p className="text-sm font-semibold text-foreground">{t('o_que_o_teu_career')}</p>
-                    </div>
-
-                    {/* Free items */}
-                    <div className="space-y-2">
-                      {[
-                        pick('Energia de carreira', 'Career energy score', 'Energía profesional'),
-                        pick('Próximos cargos mais compatíveis', 'Top compatible next roles', 'Próximos puestos más compatibles'),
-                        pick('Progressão salarial estimada', 'Estimated salary progression', 'Progresión salarial estimada'),
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-3 py-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
-                          <span className="text-sm text-foreground">{item}</span>
-                          <span className="text-[10px] font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full ml-auto">{t('grtis')}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="border-t border-border" />
-
-                    {/* Locked items */}
-                    <div className="space-y-2">
-                      {[
-                        pick('Roadmap de progressão com timeline', 'Progression roadmap with timeline', 'Hoja de ruta de progresión con cronograma'),
-                        pick('Análise de skills gap (tens vs precisas)', 'Skills gap analysis (have vs need)', 'Análisis de brechas de habilidades (tienes vs necesitas)'),
-                        pick('Career Potential Score (detalhado)', 'Career Potential Score (detailed)', 'Career Potential Score (detallado)'),
-                        pick('Estimativa salarial personalizada por etapa', 'Personalised salary estimate by stage', 'Estimación salarial personalizada por etapa'),
-                        pick('Formações e certificações recomendadas', 'Recommended training and certifications', 'Formaciones y certificaciones recomendadas'),
-                        pick('Tempo médio de progressão por etapa', 'Average progression time per stage', 'Tiempo medio de progresión por etapa'),
-                        pick('Estratégia de networking', 'Networking strategy', 'Estrategia de networking'),
-                        pick('Exercícios de visibilidade', 'Visibility exercises', 'Ejercicios de visibilidad'),
-                        pick('Acções imediatas (30/60/90 dias)', 'Immediate actions (30/60/90 days)', 'Acciones inmediatas (30/60/90 días)'),
-                        pick('Visão de carreira a 5 anos', '5-year career vision', 'Visión profesional a 5 años'),
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-3 py-1.5 opacity-70">
-                          <Lock className="w-4 h-4 text-[#C9A961] shrink-0" />
-                          <span className="text-sm text-muted-foreground">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="pt-2 space-y-3">
-                      <Button
-                        onClick={() => openPaymentModal()}
-                        className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-base"
-                      >
-                        {pick(`Desbloquear Career Path Completo — ${fmtPrice(P.cp)}`, `Unlock Full Career Path — ${fmtPrice(P.cp)}`, `Desbloquear Career Path Completo — ${fmtPrice(P.cp)}`)}
-                      </Button>
-                      <p className="text-xs text-muted-foreground text-center">
-                        {t('pagamento_seguro_via_mb_way')}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Career Potential Score Teaser */}
-                  <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-4">
-                    <div className="flex items-center gap-2 justify-center">
-                      <BarChart3 className="w-4 h-4 text-[#C9A961]" />
-                      <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('career_potential_score')}</p>
-                    </div>
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="text-5xl font-bold text-foreground">{energyScore}</span>
-                      <span className="text-lg text-muted-foreground font-medium">/ 100</span>
-                    </div>
-                    {/* Factor bars (blurred) */}
-                    <div className="relative">
-                      <div className="space-y-2 filter blur-[3px] select-none pointer-events-none">
-                        {[
-                          { label: pick('Experiência', 'Experience', 'Experiencia'), val: 74 },
-                          { label: pick('Competências transferíveis', 'Transferable skills', 'Competencias transferibles'), val: 71 },
-                          { label: pick('Posicionamento profissional', 'Professional positioning', 'Posicionamiento profesional'), val: 59 },
-                          { label: pick('Clareza de carreira', 'Career clarity', 'Claridad profesional'), val: 65 },
-                        ].map((f, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            <span className="text-xs text-muted-foreground w-40 text-right">{f.label}</span>
-                            <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                              <div className="h-full bg-[#C9A961] rounded-full" style={{ width: `${f.val}%` }} />
-                            </div>
-                            <span className="text-xs font-bold text-foreground w-8">{f.val}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-card/90 backdrop-blur-sm border border-[#C9A961]/30 rounded-xl px-4 py-2 flex items-center gap-2">
-                          <Lock className="w-4 h-4 text-[#C9A961]" />
-                          <span className="text-xs font-semibold text-foreground">{t('desbloqueia_a_anlise_detalhada')}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground text-center">
-                      {pick(
-                        <>Se desenvolveres as 3 competências recomendadas, o teu score pode aumentar para <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>,
-                        <>If you develop the 3 recommended skills, your score can increase to <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>,
-                        <>Si desarrollas las 3 competencias recomendadas, tu score puede aumentar a <span className="font-bold text-[#C9A961]">{Math.min(energyScore + 16, 92)}/100</span>.</>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* What's included preview (when paid but no data yet) */}
-            {isPaid && !careerPathData && (
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8">
-                    <Target className="w-4 h-4 text-[#C9A961]" />
-                  </GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('o_que_o_teu_career_2')}</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { icon: <Briefcase className="w-4 h-4" />, title: t('prximos_3_cargos_recomendados'), desc: t('baseado_no_teu_percurso_e') },
-                    { icon: <Target className="w-4 h-4" />, title: t('anlise_de_gaps_de_competncias'), desc: t('o_que_te_falta_para') },
-                    { icon: <GraduationCap className="w-4 h-4" />, title: t('formaes_e_certificaes'), desc: t('as_mais_relevantes_para_a') },
-                    { icon: <Users className="w-4 h-4" />, title: t('estratgia_de_networking_2'), desc: t('quem_conhecer_e_onde_aparecer') },
-                    { icon: <Globe className="w-4 h-4" />, title: t('exerccios_de_visibilidade_2'), desc: t('como_te_destacares_no_teu') },
-                    { icon: <Sparkles className="w-4 h-4" />, title: t('viso_a_5_anos_2'), desc: t('o_teu_potencial_mximo_de') },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/20">
-                      <span className="text-[#C9A961] mt-0.5 shrink-0">{item.icon}</span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                        <p className="text-xs text-muted-foreground">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* PAID CONTENT — Career Path Results */}
-        {isPaid && careerPathData && !isGenerating && (
-          <div className="career-path-results space-y-6">
-            {/* Current Positioning */}
-            {careerPathData.current_positioning && (
-              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <GoldIcon><Rocket className="w-5 h-5 text-[#C9A961]" /></GoldIcon>
-                  <div>
-                    <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('posicionamento_actual')}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <p className="text-lg font-bold text-foreground">{t('anlise_do_teu_perfil')}</p>
-                      <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">
-                        {careerPathData.current_positioning.seniority_level}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">{careerPathData.current_positioning.seniority_justification}</p>
-                <div className="space-y-3">
-                  <div className="p-3 bg-card rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('domnio_principal')}</p>
-                    <p className="text-sm font-medium text-foreground">{careerPathData.current_positioning.primary_domain}</p>
-                  </div>
-                  <div className="p-3 bg-card rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{t('valor_de_mercado')}</p>
-                    <p className="text-sm text-foreground">{careerPathData.current_positioning.market_value_assessment}</p>
-                  </div>
-                </div>
-                {careerPathData.current_positioning.competitive_advantages && (
-                  <div className="mt-3">
-                    <p className="text-[10px] font-semibold text-green-600 mb-2">{t('vantagens_competitivas')}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {careerPathData.current_positioning.competitive_advantages.map((adv: string, i: number) => (
-                        <span key={i} className="text-xs bg-green-500/10 text-green-600 px-2 py-1 rounded border border-green-500/20">{adv}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {careerPathData.current_positioning.blind_spots && (
-                  <div className="mt-2">
-                    <p className="text-[10px] font-semibold text-amber-600 mb-2">{t('pontos_cegos')}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {careerPathData.current_positioning.blind_spots.map((bs: string, i: number) => (
-                        <span key={i} className="text-xs bg-amber-500/10 text-amber-600 px-2 py-1 rounded border border-amber-500/20">{bs}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* CV vs LinkedIn */}
-            {careerPathData.cv_linkedin_cross_analysis?.consistency_score && careerPathData.cv_linkedin_cross_analysis.consistency_score !== 'N/A' && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{pick('CV vs LinkedIn', 'CV vs LinkedIn', 'CV vs LinkedIn')}</p>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'High')
-                      ? 'bg-green-500/10 text-green-600'
-                      : (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Medium')
-                      ? 'bg-amber-500/10 text-amber-600'
-                      : 'bg-red-500/10 text-red-600'
-                  }`}>
-                    {t('consistncia')}: {translateConsistencyLabel(careerPathData.cv_linkedin_cross_analysis.consistency_score)}
-                  </span>
-                </div>
-                {careerPathData.cv_linkedin_cross_analysis.optimization_suggestions?.map((s: string, i: number) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <span className="text-[#C9A961] mt-0.5 shrink-0">→</span>
-                    <p>{s}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Next Roles */}
-            {careerPathData.next_roles?.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Briefcase className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('prximos_cargos_recomendados')}</p>
-                </div>
-                <div className="space-y-4">
-                  {careerPathData.next_roles.map((role: any, i: number) => (
-                    <div key={i} className="border border-border rounded-xl overflow-hidden">
-                      <div className="p-3 bg-muted/30 flex items-center justify-between flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">#{i + 1}</span>
-                          <span className="text-sm font-semibold text-foreground">{role.role_title}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {role.timeline && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{role.timeline}</span>
-                          )}
-                          {role.fit_percentage && (
-                            <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                              {role.fit_percentage}% {pick('compatibilidade', 'fit', 'encaje')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="p-3 space-y-2">
-                        <p className="text-sm text-muted-foreground">{role.why_this_role}</p>
-                        {role.salary_range && (
-                          <p className="text-xs text-[#C9A961] font-semibold">
-                            {cleanCurrency(role.salary_range)}
-                          </p>
-                        )}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                          <div>
-                            <p className="text-[10px] font-semibold text-green-600 mb-1">{t('j_tens')}</p>
-                            {role.what_you_already_have?.map((item: string, j: number) => (
-                              <p key={j} className="text-xs text-muted-foreground"><Check className="w-3 h-3 text-green-500 shrink-0 inline" /> {item}</p>
-                            ))}
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-semibold text-amber-600 mb-1">{t('precisas')}</p>
-                            {role.what_you_need?.map((item: string, j: number) => (
-                              <p key={j} className="text-xs text-muted-foreground">○ {item}</p>
-                            ))}
-                          </div>
-                        </div>
-                        {role.typical_companies && (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {role.typical_companies.map((c: string, j: number) => (
-                              <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{c}</span>
-                            ))}
-                          </div>
-                        )}
-                        {/* LinkedIn Search Button */}
-                        <div className="mt-3 pt-3 border-t border-border">
-                          <a
-                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}${selectedLocation ? `&location=${encodeURIComponent(selectedLocation)}` : selectedCountry ? `&location=${encodeURIComponent(selectedCountry)}` : ''}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5]/10 text-[#0077B5] text-xs font-semibold hover:bg-[#0077B5]/20 transition-colors border border-[#0077B5]/20"
-                          >
-                            <Linkedin className="w-3.5 h-3.5" />
-                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Buscar "${role.role_title}" en LinkedIn`)}
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Formations */}
-            {careerPathData.development_plan?.formations && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><GraduationCap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('formaes_recomendadas')}</p>
-                </div>
-                <div className="space-y-3">
-                  {careerPathData.development_plan.formations.map((f: any, i: number) => (
-                    <div key={i} className="p-3 border border-border rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-sm font-semibold text-foreground">{f.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(f.priority)}`}>{translatePriorityLabel(f.priority)}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{f.provider} · {f.duration} · {f.cost}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{f.relevance}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <a
-                          href={`https://www.google.com/search?q=${encodeURIComponent(f.name + ' ' + (f.provider || '') + ' curso')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-[#C9A961] hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-[#C9A961]/5 border border-[#C9A961]/20"
-                        >
-                          <ExternalLink className="w-3 h-3" />{t('pesquisar_formao')}
-                        </a>
-                        <a
-                          href={`https://www.coursera.org/search?query=${encodeURIComponent(f.name)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-500/5 border border-blue-500/20"
-                        >
-                          <GraduationCap className="w-3 h-3" />Coursera
-                        </a>
-                        <a
-                          href={`https://www.udemy.com/courses/search/?q=${encodeURIComponent(f.name)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-purple-600 hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-purple-500/5 border border-purple-500/20"
-                        >
-                          <GraduationCap className="w-3 h-3" />Udemy
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Free Micro-Courses — AI-generated, different from paid formations */}
-            {careerPathData.development_plan?.free_courses && careerPathData.development_plan.free_courses.length > 0 && (
-              <div className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-2 border-green-500/20 rounded-2xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-green-600" /></GoldIcon>
-                  <div>
-                    <p className="text-xs font-semibold tracking-wider text-green-700">{t('microcursos_gratuitos_para_comear_j')}</p>
-                    <p className="text-[10px] text-green-600/70">{t('comea_a_aprender_hoje_sem')}</p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {careerPathData.development_plan.free_courses.map((fc: any, i: number) => {
-                    const platformSearchUrls: Record<string, string> = {
-                      'Coursera': 'https://www.coursera.org/search?query=',
-                      'edX': 'https://www.edx.org/search?q=',
-                      'LinkedIn Learning': 'https://www.linkedin.com/learning/search?keywords=',
-                      'Google Digital Garage': 'https://www.google.com/search?q=site:learndigital.withgoogle.com+',
-                      'Khan Academy': 'https://www.khanacademy.org/search?search_again=1&page_search_query=',
-                      'freeCodeCamp': 'https://www.freecodecamp.org/news/search/?query=',
-                      'Udemy': 'https://www.udemy.com/courses/search/?q=',
-                    };
-                    const query = fc.search_query || fc.name;
-                    const platformBase = fc.platform && platformSearchUrls[fc.platform];
-                    const searchUrl = platformBase
-                      ? `${platformBase}${encodeURIComponent(query)}`
-                      : `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (fc.platform || '') + ' free course')}`;
-                    return (
-                      <div key={i} className="p-3 border border-green-500/20 rounded-lg bg-white/50">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-semibold text-foreground">{fc.name}</p>
-                          <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {t('gratuito')}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {fc.provider && <span className="font-medium">{fc.provider}</span>}
-                          {fc.provider && fc.platform && ' · '}
-                          {fc.platform && <span>{fc.platform}</span>}
-                          {fc.duration && ` · ${fc.duration}`}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">{fc.relevance}</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <a
-                            href={searchUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-green-700 hover:underline inline-flex items-center gap-1 px-2 py-1 rounded bg-green-500/10 border border-green-500/20"
-                          >
-                            <ExternalLink className="w-3 h-3" />{t('encontrar_curso')}
-                          </a>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Certifications */}
-            {careerPathData.development_plan?.certifications && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><FileCheck className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('certificaes_recomendadas')}</p>
-                </div>
-                <div className="space-y-3">
-                  {careerPathData.development_plan.certifications.map((c: any, i: number) => (
-                    <div key={i} className="p-3 border border-border rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-sm font-semibold text-foreground">{c.name}</p>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(c.priority)}`}>{translatePriorityLabel(c.priority)}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{c.body} · {c.investment}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{c.impact}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Visibility Exercises */}
-            {careerPathData.development_plan?.visibility_exercises && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('exerccios_de_visibilidade')}</p>
-                </div>
-                <div className="space-y-3">
-                  {careerPathData.development_plan.visibility_exercises.map((v: any, i: number) => (
-                    <div key={i} className="p-3 border border-border rounded-lg">
-                      <p className="text-sm font-semibold text-foreground">{v.activity}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        <MapPin className="w-3 h-3 inline mr-1" />{v.platform} · {v.frequency}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">{v.expected_impact}</p>
-                      <p className="text-xs text-[#C9A961] mt-1 font-medium">→ {t('primeiro_passo')}: {v.concrete_first_step}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Networking Strategy */}
-            {careerPathData.development_plan?.networking_strategy && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Users className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('estratgia_de_networking')}</p>
-                </div>
-                <div className="space-y-3">
-                  {careerPathData.development_plan.networking_strategy.slice(0, 3).map((n: any, i: number) => (
-                    <div key={i} className="p-3 border border-border rounded-lg space-y-2">
-                      <p className="text-sm font-semibold text-foreground">{n.action}</p>
-                      <p className="text-xs text-muted-foreground">{t('alvo')}: {n.target}</p>
-                      {/* New expandable entities */}
-                      {n.entities && n.entities.length > 0 ? (
-                        <div className="space-y-2 mt-2">
-                          {n.entities.slice(0, 3).map((entity: any, j: number) => (
-                            <NetworkingEntityCard key={j} entity={entity} />
-                          ))}
-                        </div>
-                      ) : (
-                        /* Backward compatibility: old format with communities/events */
-                        <>
-                          {n.communities && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {n.communities.map((c: string, j: number) => (
-                                <span key={j} className="text-[10px] bg-[#C9A961]/10 text-[#C9A961] px-2 py-0.5 rounded">{c}</span>
-                              ))}
-                            </div>
-                          )}
-                          {n.events && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {n.events.map((e: string, j: number) => (
-                                <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{e}</span>
-                              ))}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Immediate Actions */}
-            {careerPathData.immediate_actions && (
-              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('aces_imediatas')}</p>
-                </div>
-                <div className="space-y-2">
-                  {careerPathData.immediate_actions.map((a: any, i: number) => (
-                    <div key={i} className="flex items-start gap-3 p-3 border border-border rounded-lg">
-                      <span className="text-xs font-bold text-white bg-[#C9A961] w-6 h-6 rounded-full flex items-center justify-center shrink-0">
-                        {a.priority}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{a.action}</p>
-                        <p className="text-xs text-muted-foreground">{a.timeframe} · {a.expected_outcome}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Long Term Vision */}
-            {careerPathData.long_term_vision && (
-              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('viso_a_5_anos')}</p>
-                </div>
-                <p className="text-sm text-foreground leading-relaxed">{careerPathData.long_term_vision.five_year_narrative}</p>
-                {careerPathData.long_term_vision.key_milestones && (
-                  <div className="space-y-2 mt-3">
-                    {careerPathData.long_term_vision.key_milestones.map((m: any, i: number) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-1 rounded shrink-0">{m.year}</span>
-                        <p className="text-sm text-muted-foreground">{m.milestone}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Cross-sell: Career Intelligence */}
-            <div className="bg-card border-2 border-border rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <GoldIcon>
-                  <Zap className="w-5 h-5 text-[#C9A961]" />
-                </GoldIcon>
-                <div>
-                  <p className="text-base font-semibold text-foreground">{t('queres_uma_deciso_estratgica_de')}</p>
-                  <p className="text-xs text-muted-foreground">{t('o_career_intelligence_compara_direes')}</p>
-                </div>
-              </div>
-              <a
-                href={t('careerintelligenceupgradecareerpath')}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
-              >
-                <Zap className="w-4 h-4" />
-                {t('descobrir_career_intelligence')}
-              </a>
-            </div>
-
-            {/* Cross-sell: CV Analyser */}
-            <div className="bg-card border-2 border-border rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <GoldIcon>
-                  <FileCheck className="w-5 h-5 text-[#C9A961]" />
-                </GoldIcon>
-                <div>
-                  <p className="text-base font-semibold text-foreground">{t('quer_otimizar_o_teu_cv')}</p>
-                  <p className="text-xs text-muted-foreground">{t('o_cv_analyser_analisa_o')}</p>
-                </div>
-              </div>
-                <a
-                  href={localePath('/cv-analyser')}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
-                >
-
-                <FileCheck className="w-4 h-4" />
-                {t('experimentar_cv_analyser_grtis')}
-              </a>
-            </div>
-
-            {/* Send by email */}
-            <div id="cp-report-email-section" className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
-              <div className="flex items-center gap-3">
-                <GoldIcon>
-                  <Mail className="w-5 h-5 text-[#C9A961]" />
-                </GoldIcon>
-                <div>
-                  <p className="text-base font-semibold text-foreground">{t('receber_career_path_por_email')}</p>
-                  <p className="text-xs text-muted-foreground">{t('envia_o_relatrio_completo_para')}</p>
-                </div>
-              </div>
-              {reportSent ? (
-                <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                  <p className="text-sm text-green-600">{t('relatrio_enviado_com_sucesso_verifica')}</p>
-                </div>
-              ) : (
-                <>
-                  <div className="flex gap-3">
-                    <input
-                      type="email"
-                      aria-label={pick('Email para receber o relatório do Career Path', 'Email to receive the Career Path report', 'Email para recibir el informe de Career Path')}
-                      value={reportEmail || email || (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail')) || ''}
-                      onChange={(e) => setReportEmail(e.target.value)}
-                      placeholder={t('seuemailcom')}
-                      className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                    />
-                    <Button
-                      onClick={handleSendReport}
-                      disabled={reportSending}
-                      className="bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold px-6"
-                    >
-                      {reportSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4 mr-2" />{t('enviar')}</>}
-                    </Button>
-                  </div>
-                  {reportError && <p className="text-sm text-red-500">{reportError}</p>}
-                </>
-              )}
-            </div>
-
-            {/* ═══ Save to Área de Cliente ═══ */}
-            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
-              <div className="flex items-center gap-3">
-                <GoldIcon>
-                  <Save className="w-5 h-5 text-[#C9A961]" />
-                </GoldIcon>
-                <div>
-                  <p className="text-base font-semibold text-foreground">{t('guardar_na_rea_de_cliente')}</p>
-                  <p className="text-xs text-muted-foreground">{t('acede_aos_teus_resultados_a')}</p>
-                </div>
-              </div>
-              {!isLoggedIn ? (
-                <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                  <Lock className="w-5 h-5 text-amber-500 shrink-0" />
-                  <p className="text-sm text-amber-700">{t('faz_login_para_guardar_os')} <button type="button" onClick={() => window.dispatchEvent(new Event('s2i:open-login-modal'))} className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{t('iniciar_sesso')}</button></p>
-                </div>
-              ) : savedToAccount ? (
-                <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                  <p className="text-sm text-green-600">{t('guardado_com_sucesso_consulta_no')}</p>
-                </div>
-              ) : (
-                <>
-                  <Button
-                    onClick={handleSaveToAccount}
-                    disabled={savingToAccount}
-                    className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3"
-                  >
-                    {savingToAccount ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <Save className="w-4 h-4 mr-2" />
-                    )}
-                    {t('guardar_na_minha_conta')}
-                  </Button>
-                  {saveError && <p className="text-sm text-red-500">{saveError}</p>}
-                </>
-              )}
-            </div>
-
-            {/* ═══ Share Career Path Result on LinkedIn ═══ */}
-            {(() => {
-              const score = careerPathData?.career_potential_score?.overall_score || 70;
-              const label = score >= 80
-                ? pick('Excelente', 'Excellent', 'Excelente')
-                : score >= 65
-                  ? pick('Forte', 'Strong', 'Sólido')
-                  : score >= 50
-                    ? pick('Promissor', 'Promising', 'Prometedor')
-                    : pick('Em desenvolvimento', 'Developing', 'En desarrollo');
-              const topPct = Math.max(5, 100 - score);
-              const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
-              const topRole = careerPathData?.career_progression?.progression_stages?.[0]?.role_title || (t('career_path'));
-
-              const generatePostText = () => {
-                const shareUrl = pick('https://share2inspire.pt/career-path', 'https://share2inspire.pt/en/career-path', 'https://share2inspire.pt/es/career-path');
-                return pick(
-                  `Acabei de ter a minha carreira analisada pelo Career Path da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me uma visão clara e baseada em dados sobre a minha trajectória de carreira, próximos cargos e competências a desenvolver.\n\nSe estás a pensar no teu próximo passo de carreira — recomendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesenvolvimentoProfissional #Carreira #Share2Inspire`,
-                  `I just had my career analysed by @share2inspire_'s AI Career Path tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me a clear, data-driven view of my career trajectory, next roles, and what skills to develop.\n\nIf you're thinking about your next career move — I highly recommend it.\n\n🔗 ${shareUrl}\n\n#CareerPath #CareerDevelopment #ProfessionalGrowth #Share2Inspire`,
-                  `Acabo de tener mi carrera analizada por la herramienta AI Career Path de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio una visión clara y basada en datos sobre mi trayectoria profesional, próximos roles y competencias a desarrollar.\n\nSi estás pensando en tu próximo paso profesional — lo recomiendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesarrolloProfesional #Carrera #Share2Inspire`
-                );
-              };
-
-              const generateCertImage = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 1200;
-                canvas.height = 630;
-                const ctx = canvas.getContext('2d')!;
-
-                // Background
-                ctx.fillStyle = '#FAFAF8';
-                ctx.fillRect(0, 0, 1200, 630);
-
-                // Gold accent line top
-                const grd = ctx.createLinearGradient(0, 0, 1200, 0);
-                grd.addColorStop(0, '#C9A961');
-                grd.addColorStop(1, '#E8D5A3');
-                ctx.fillStyle = grd;
-                ctx.fillRect(0, 0, 1200, 6);
-
-                // Gold accent line bottom
-                ctx.fillStyle = grd;
-                ctx.fillRect(0, 624, 1200, 6);
-
-                // Left gold vertical accent
-                ctx.fillStyle = '#C9A961';
-                ctx.fillRect(60, 60, 3, 510);
-
-                // Title
-                ctx.fillStyle = '#C9A961';
-                ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.letterSpacing = '4px';
-                ctx.fillText(pick('CAREER PATH', 'CAREER PATH', 'CAREER PATH'), 90, 100);
-                ctx.letterSpacing = '0px';
-
-                // Role
-                ctx.fillStyle = '#1A1A1A';
-                ctx.font = '700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(topRole, 90, 155);
-
-                // Divider
-                ctx.fillStyle = '#E5E5E5';
-                ctx.fillRect(90, 180, 400, 1);
-
-                // Scores section
-                ctx.fillStyle = '#C9A961';
-                ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.letterSpacing = '2px';
-                ctx.fillText(t('career_potential_score'), 90, 225);
-                ctx.letterSpacing = '0px';
-                ctx.fillStyle = '#1A1A1A';
-                ctx.font = '700 48px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(`${score}/100`, 90, 280);
-                ctx.fillStyle = '#666666';
-                ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(label, 90, 308);
-
-                // Top %
-                ctx.fillStyle = '#C9A961';
-                ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.letterSpacing = '2px';
-                ctx.fillText(t('ranking'), 400, 225);
-                ctx.letterSpacing = '0px';
-                ctx.fillStyle = '#1A1A1A';
-                ctx.font = '700 48px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(pick(`Top ${topPct}%`, `Top ${topPct}%`, `Top ${topPct}%`), 400, 280);
-                ctx.fillStyle = '#666666';
-                ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(t('dos_profissionais_analisados'), 400, 308);
-
-                // Progression stages
-                const stages = careerPathData?.career_progression?.progression_stages?.slice(0, 4) || [];
-                if (stages.length > 0) {
-                  ctx.fillStyle = '#C9A961';
-                  ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                  ctx.letterSpacing = '2px';
-                  ctx.fillText(t('progressu00c3o_de_carreira'), 90, 365);
-                  ctx.letterSpacing = '0px';
-
-                  stages.forEach((stage: any, i: number) => {
-                    const y = 390 + i * 40;
-                    ctx.fillStyle = '#C9A961';
-                    ctx.font = '700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                    ctx.fillText(`${t('ano')} ${stage.timeline || i + 1}`, 90, y + 12);
-                    ctx.fillStyle = '#555555';
-                    ctx.font = '500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                    ctx.fillText(stage.role_title || '', 200, y + 12);
-                  });
-                }
-
-                // Right side - circular score
-                const cx = 900, cy = 280, radius = 100;
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#FAFAF8';
-                ctx.fill();
-                ctx.strokeStyle = '#F0F0F0';
-                ctx.lineWidth = 8;
-                ctx.stroke();
-                const startAngle = -Math.PI / 2;
-                const endAngle = startAngle + (score / 100) * Math.PI * 2;
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, startAngle, endAngle);
-                ctx.strokeStyle = '#C9A961';
-                ctx.lineWidth = 8;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-                ctx.fillStyle = '#1A1A1A';
-                ctx.font = '700 56px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(`${score}`, cx, cy + 12);
-                ctx.fillStyle = '#666666';
-                ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText('/100', cx, cy + 38);
-                ctx.textAlign = 'left';
-
-                // Footer
-                ctx.fillStyle = '#E5E5E5';
-                ctx.fillRect(90, 570, 1020, 1);
-                ctx.fillStyle = '#C9A961';
-                ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                ctx.fillText(pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire'), 90, 600);
-                ctx.fillStyle = '#888888';
-                ctx.font = '400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                 ctx.fillText(pick(`Career Path • ${today}`, `Career Path • ${today}`, `Career Path • ${today}`), 230, 600);
-                ctx.textAlign = 'right';
-                ctx.fillText('https://share2inspire.pt', 1110, 600);
-                ctx.textAlign = 'left';
-
-                // Download
-                const link = document.createElement('a');
-                link.download = 'career-path-share2inspire.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-              };
-
-              const copyPost = () => {
-                navigator.clipboard.writeText(generatePostText());
-                setPostCopied(true);
-                setTimeout(() => setPostCopied(false), 3000);
-              };
-
-              return (
-                <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
-                  <div className="flex items-center gap-3">
-                    <GoldIcon>
-                      <Award className="w-5 h-5 text-[#C9A961]" />
-                    </GoldIcon>
-                    <div>
-                      <p className="text-base font-semibold text-foreground">{t('partilhar_resultado_do_career_path')}</p>
-                      <p className="text-xs text-muted-foreground">{t('gera_um_post_elegante_para_2')}</p>
-                    </div>
-                  </div>
-
-                  {/* Preview of the post */}
-                  <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Linkedin className="w-4 h-4 text-[#0077B5]" />
-                      <span className="text-xs font-semibold text-muted-foreground">{t('pru00c9visualizau00c7u00c3o_do_post')}</span>
-                    </div>
-                    <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{generatePostText()}</p>
-                  </div>
-
-                  {/* Action buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={copyPost}
-                      className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0077B5] hover:bg-[#005F8D] text-white font-semibold text-sm transition-colors"
-                    >
-                      {postCopied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      {postCopied ? (t('copiado')) : (t('copiar_post_linkedin'))}
-                    </button>
-                    <button
-                      onClick={generateCertImage}
-                      className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      {t('descarregar_imagem_career_path')}
-                    </button>
-                  </div>
-
-                  <p className="text-[10px] text-muted-foreground text-center">
-                    {t('a_imagem_estu00e1_optimizada_para')}
-                  </p>
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {/* PRICING CTA (only when NOT paid) */}
-        {!isPaid && !isGenerating && (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{t('desbloquear_career_path_2')}</p>
-              <p className="text-4xl font-bold text-foreground">{fmtPrice(P.cp)}</p>
-              <p className="text-sm text-muted-foreground">{t('relatrio_completo_com_roadmap_personalizado')}</p>
-            </div>
-
-            {/* Plan cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {PLANS.map((plan) => (
-                <div
-                  key={plan.id}
-                  className={`relative p-5 rounded-2xl border-2 cursor-pointer transition-all ${
-                    plan.popular
-                      ? 'border-[#C9A961] bg-[#C9A961]/5 shadow-lg'
-                      : 'border-border bg-card hover:border-[#C9A961]/50'
-                  }`}
-                  onClick={() => openPaymentModal(plan.id)}
-                >
-                  {plan.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#C9A961] text-white text-xs font-bold whitespace-nowrap">
-                      {plan.badge}
-                    </div>
-                  )}
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="font-bold text-foreground text-sm">{plan.name}</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-bold text-foreground">{fmtPrice(plan.price)}</span>
-                    </div>
-                    <Button
-                      onClick={(e) => { e.stopPropagation(); openPaymentModal(plan.id); }}
-                      className={`w-full text-sm font-semibold ${
-                        plan.popular
-                          ? 'bg-[#C9A961] hover:bg-[#A88B4E] text-white'
-                          : 'bg-foreground hover:bg-foreground/90 text-background'
-                      }`}
-                    >
-                      {t('escolher')}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center space-y-2">
-              <button
-                onClick={() => setShowDiscountModal(true)}
-                className="text-sm text-[#C9A961] hover:underline flex items-center gap-1 mx-auto"
-              >
-                <Ticket className="w-4 h-4" />
-                {t('j_tenho_um_cdigo_de')}
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Rest of the component content... */}
       </main>
-
-      {/* ─── Payment Modal ─── */}
-      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Compass className="w-5 h-5 text-[#C9A961]" />
-              {t('desbloquear_career_path')}
-            </DialogTitle>
-          </DialogHeader>
-
-          {paymentStep === 'select' && (
-            <div className="space-y-4">
-              <div className="space-y-3">
-                {PLANS.map((plan) => (
-                  <button
-                    key={plan.id}
-                    onClick={() => setSelectedPlan(plan)}
-                    className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                      selectedPlan.id === plan.id
-                        ? 'border-[#C9A961] bg-[#C9A961]/5'
-                        : 'border-border hover:border-[#C9A961]/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground text-sm">{plan.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
-                      </div>
-                      <div className="text-right">
-                        {appliedCoupon ? (
-                          <>
-                            <p className="text-sm line-through text-muted-foreground">{fmtPrice(plan.price)}</p>
-                            <p className="text-lg font-bold text-green-600">{fmtPrice(fmtDiscountedPrice(plan.price))}</p>
-                          </>
-                        ) : (
-                          <p className="text-lg font-bold text-foreground">{fmtPrice(plan.price)}</p>
-                        )}
-                        {plan.badge && <span className="text-[10px] font-bold text-[#C9A961]">{plan.badge}</span>}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <Button
-                onClick={() => setPaymentStep('payment')}
-                className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-              >
-                {appliedCoupon ? (
-                  <>{pick(`Continuar com ${selectedPlan.name}`, `Continue with ${selectedPlan.name}`, `Continuar con ${selectedPlan.name}`)} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</>
-                ) : (
-                  pick(`Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`)
-                )}
-              </Button>
-            </div>
-          )}
-
-          {paymentStep === 'payment' && (
-            <div className="space-y-4">
-              <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
-                <p className="text-sm font-semibold text-foreground">{selectedPlan.name}</p>
-                {appliedCoupon ? (
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm line-through text-muted-foreground">{fmtPrice(selectedPlan.price)}</p>
-                    <p className="text-lg font-bold text-green-600">{fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</p>
-                    <span className="text-xs text-green-600">(-{appliedCoupon.percent}%)</span>
-                  </div>
-                ) : (
-                  <p className="text-lg font-bold text-[#C9A961]">{fmtPrice(selectedPlan.price)}</p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">{pick('Email', 'Email', 'Correo electrónico')}</label>
-                <input
-                  type="email"
-                  aria-label={pick('Email para pagamento do Career Path', 'Email for Career Path payment', 'Email para el pago de Career Path')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t('seuemailcom')}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                />
-              </div>
-
-              {/* Payment method */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">{t('mtodo_de_pagamento_2')}</label>
-                <div className={`grid gap-2 ${lang === 'pt' ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                  {(lang === 'pt'
-                    ? (['mbway', 'stripe', 'paypal'] as Array<'mbway' | 'stripe' | 'paypal'>)
-                    : (['stripe', 'paypal'] as Array<'mbway' | 'stripe' | 'paypal'>)
-                  ).map((method) => {
-                    const activeClass = method === 'stripe'
-                      ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
-                      : method === 'paypal'
-                        ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground'
-                        : 'border-[#C9A961] bg-[#C9A961]/5 text-foreground';
-                    const hoverClass = method === 'stripe'
-                      ? 'hover:border-[#635BFF]/50'
-                      : method === 'paypal'
-                        ? 'hover:border-[#0070BA]/50'
-                        : 'hover:border-[#C9A961]/50';
-
-                    return (
-                      <button
-                        key={method}
-                        onClick={() => setPaymentMethod(method)}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          paymentMethod === method
-                            ? activeClass
-                            : `border-border text-muted-foreground ${hoverClass}`
-                        }`}
-                      >
-                        {method === 'mbway' ? pick('MB WAY', 'MB WAY', 'MB WAY') : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : pick('PayPal', 'PayPal', 'PayPal')}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Phone (MB WAY only) */}
-              {paymentMethod === 'mbway' && (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{t('telemvel_mb_way')}</label>
-                    <input
-                      type="tel"
-                      aria-label={pick('Telemóvel MB WAY para pagamento do Career Path', 'MB WAY phone for Career Path payment', 'Móvil MB WAY para el pago de Career Path')}
-                      value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={pick('9XXXXXXXX', '9XXXXXXXX', '9XXXXXXXX')}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                  />
-                </div>
-              )}
-
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
-              )}
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPaymentModal(false)}
-                  className="flex-1"
-                >
-                  {t('voltar')}
-                </Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : appliedCoupon ? (
-                    pick(`Pagar ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`, `Pay ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`, `Pagar ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`)
-                  ) : (
-                    pick(`Pagar ${fmtPrice(selectedPlan.price)}`, `Pay ${fmtPrice(selectedPlan.price)}`, `Pagar ${fmtPrice(selectedPlan.price)}`)
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {paymentStep === 'polling' && (
-            <div className="text-center space-y-4 py-4">
-              {!pollingExpired ? (
-                <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
-              ) : (
-                <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
-              )}
-              <p className="text-sm font-semibold text-foreground">{pollingMsg}</p>
-              {!pollingExpired && (
-                <p className="text-xs text-muted-foreground">{t('a_aguardar_confirmao_do_pagamento')}</p>
-              )}
-              {pollingExpired && (
-                <Button
-                  onClick={handleManualCheck}
-                  className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-                >
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {t('j_paguei_verificar_novamente')}
-                </Button>
-              )}
-            </div>
-          )}
-
-          {paymentStep === 'success' && (
-            <div className="text-center space-y-4 py-4">
-              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-base font-bold text-foreground">{t('pagamento_confirmado')}</p>
-              <p className="text-sm text-muted-foreground">{t('a_gerar_o_teu_career_2')}</p>
-              <Button
-                onClick={handlePaymentSuccess}
-                className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-              >
-                <Rocket className="w-4 h-4 mr-2" />
-                {t('gerar_career_path')}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ─── Discount Code Modal ─── */}
-      <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {t('cdigo_de_desconto')}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              {t('introduz_o_teu_cdigo_para')}
-            </p>
-            <input
-              type="text"
-              aria-label={pick('Código de desconto', 'Discount code', 'Código de descuento')}
-              value={discountCode}
-              onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-              placeholder={t('inserir_cdigo')}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              onKeyDown={(e) => e.key === 'Enter' && handleDiscountSubmit()}
-            />
-            {discountError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4 shrink-0" />{discountError}
-              </p>
-            )}
-            <Button
-              onClick={handleDiscountSubmit}
-              disabled={discountLoading || !discountCode.trim()}
-              className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-            >
-              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{t('validar_cdigo')}</>}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
