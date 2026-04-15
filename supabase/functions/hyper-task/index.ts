@@ -6467,6 +6467,8 @@ USING COMPANY DATA:
     // MODE: Career Path (Add-on)
 
     if (mode === 'career_path' || mode === 'career_intelligence') {
+      const isEN = language === 'en';
+      const isES = language === 'es';
 
       const reportLabel = mode === 'career_intelligence' ? 'Career Intelligence' : 'Career Path';
 

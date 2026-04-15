@@ -412,6 +412,7 @@ const translations: Translations = {
   'sendcareerpathemail': { pt: 'send-career-path-email', en: 'send-career-path-email-en', es: 'send-career-path-email' },
   'erro_ao_enviar_email_tenta': { pt: 'Erro ao enviar email. Tenta novamente.', en: 'Error sending email. Try again.', es: 'Error al enviar el email. Intenta de nuevo.' },
   'o_teu_perfil': { pt: 'o teu perfil', en: 'your profile', es: 'tu perfil' },
+  'ups_tenta_novamente': { pt: '😕 Ups, tenta novamente', en: '😕 Ups, try again', es: '😕 Ups, intenta de nuevo' },
   'desbloquear_career_path': { pt: 'Desbloquear Career Path', en: 'Unlock Career Path', es: 'Desbloquear Career Path' },
   'prvisualizao': { pt: 'Pré-visualização', en: 'Preview', es: 'Vista previa' },
   'linkedin': { pt: 'LinkedIn', en: 'LinkedIn', es: 'LinkedIn' },

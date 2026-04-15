@@ -524,10 +524,10 @@ export default function CareerIntelligenceHome() {
       const profile = getCareerIntelligenceProfile(analysisSource);
       const normalizedCv = transformGeminiResponse(analysisSource, lang as 'pt' | 'en' | 'es');
       setPreviewData({
-        name: profile.detected_name || profile.name || 'N/A',
-        role: profile.detected_role || profile.primary_role || normalizedCv.perceivedRole || 'N/A',
-        seniority: profile.seniority || profile.level || normalizedCv.perceivedSeniority || 'N/A',
-        experience: profile.total_years_exp || profile.experience || 'N/A',
+        name: profile.detected_name || profile.name || t('ups_tenta_novamente'),
+        role: profile.detected_role || profile.primary_role || normalizedCv.perceivedRole || t('ups_tenta_novamente'),
+        seniority: profile.seniority || profile.level || normalizedCv.perceivedSeniority || t('ups_tenta_novamente'),
+        experience: profile.total_years_exp || profile.experience || t('ups_tenta_novamente'),
         skills: (profile.key_skills || normalizedCv.keywords || []).slice(0, 5),
         nextRole: profile.likely_next_role || null,
       });

@@ -749,8 +749,8 @@ export default function CareerIntelligenceResults() {
   }
 
   const candidateProfile = getCareerIntelligenceProfile(cvAnalysis);
-  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('o_teu_perfil'));
-  const currentRole = candidateProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('profissional'));
+  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('ups_tenta_novamente'));
+  const currentRole = candidateProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('ups_tenta_novamente'));
   const seniority = candidateProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 
   return (
