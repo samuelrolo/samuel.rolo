@@ -236,6 +236,64 @@ export default function CareerIntelligenceResults() {
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
   // ─── Load data from sessionStorage ───
+  const generateAnalysis = useCallback(async () => {
+    setIsGenerating(true);
+    setGenerateError(null);
+    try {
+      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mode: 'career_intelligence',
+          email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(),
+          cv_text: cvText,
+          linkedin_url: linkedinUrl || undefined,
+          language: getAnalysisLanguage(),
+          country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
+          region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
+        }),
+      });
+
+      const data = await response.json();
+      if (!data.success && !data.career_intelligence) {
+        throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
+      }
+
+      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, getAnalysisLanguage());
+      const ciData = normalizedCareerIntelligence.analysis;
+      setCareerData(ciData);
+      setIsPaid(true);
+      localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
+      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
+
+      // Save to user_analyses for area-cliente
+      // Delay to capture HTML after React renders the full results
+      setTimeout(async () => {
+        try {
+          await saveToUserAnalyses('career_intelligence', {
+            strategic_paths: ciData.strategic_paths || [],
+            decision_recommendation: ciData.decision_recommendation || {},
+            market_context: ciData.market_context || {},
+            career_potential_score: ciData.career_potential_score || {},
+            career_goal: (localStorage.getItem('careerGoal') || sessionStorage.getItem('careerGoal')) || '',
+            results_html: document.querySelector('.career-intelligence-results')?.innerHTML || '',
+          });
+          setSavedToAccount(true);
+        } catch (e: any) {
+          console.warn('[S2I] Auto-save after generation failed:', e?.message);
+        }
+      }, 1500);
+    } catch (err: any) {
+      setGenerateError(err.message || (t('erro_ao_gerar_career_intelligence_2')));
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [linkedinUrl]);
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
@@ -346,64 +404,6 @@ export default function CareerIntelligenceResults() {
   }, []);
 
   // ─── Generate Career Intelligence analysis ───
-  const generateAnalysis = useCallback(async () => {
-    setIsGenerating(true);
-    setGenerateError(null);
-    try {
-      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mode: 'career_intelligence',
-          email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(),
-          cv_text: cvText,
-          linkedin_url: linkedinUrl || undefined,
-          language: getAnalysisLanguage(),
-          country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
-          region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
-        }),
-      });
-
-      const data = await response.json();
-      if (!data.success && !data.career_intelligence) {
-        throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
-      }
-
-      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, getAnalysisLanguage());
-      const ciData = normalizedCareerIntelligence.analysis;
-      setCareerData(ciData);
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
-      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
-
-      // Save to user_analyses for area-cliente
-      // Delay to capture HTML after React renders the full results
-      setTimeout(async () => {
-        try {
-          await saveToUserAnalyses('career_intelligence', {
-            strategic_paths: ciData.strategic_paths || [],
-            decision_recommendation: ciData.decision_recommendation || {},
-            market_context: ciData.market_context || {},
-            career_potential_score: ciData.career_potential_score || {},
-            career_goal: (localStorage.getItem('careerGoal') || sessionStorage.getItem('careerGoal')) || '',
-            results_html: document.querySelector('.career-intelligence-results')?.innerHTML || '',
-          });
-          setSavedToAccount(true);
-        } catch (e: any) {
-          console.warn('[S2I] Auto-save after generation failed:', e?.message);
-        }
-      }, 1500);
-    } catch (err: any) {
-      setGenerateError(err.message || (t('erro_ao_gerar_career_intelligence_2')));
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [linkedinUrl]);
 
   // ─── Discount code validation ───
   const handleDiscountSubmit = async () => {
