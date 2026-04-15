@@ -123,7 +123,7 @@ const collectCareerReportAnalysis = (
     seen.add(current);
     candidates.push(current);
 
-    for (const nestedKey of ['raw', 'data', 'analysis', nestedReportKey]) {
+    for (const nestedKey of ['raw', 'data', 'analysis', nestedReportKey, 'career_path']) {
       const nested = safeObject(current[nestedKey]);
       if (Object.keys(nested).length > 0 && !seen.has(nested)) {
         queue.push(nested);
