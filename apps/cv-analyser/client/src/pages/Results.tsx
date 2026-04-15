@@ -1551,7 +1551,7 @@ export default function Results() {
     'Academic and continuous education': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
     'Formación académica y continua': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
   };
-  const translateQuadrantTitle = (title: string) => quadrantTitleMap[title]?.[lang] || title;
+  const translateQuadrantTitle = (title: string) => quadrantTitleMap[title]?.[lang] || title || '';
   const translateQuadrantInsight = (insight?: string) => {
     if (!insight) return insight;
     return quadrantInsightMap[insight]?.[lang] || insight;

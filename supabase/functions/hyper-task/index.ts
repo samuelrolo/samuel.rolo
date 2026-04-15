@@ -2633,7 +2633,13 @@ COMERCIO: Enfócate en experiencia del cliente, visual merchandising, competenci
 TECNOLOGÍA: Enfócate en frameworks emergentes, arquitectura cloud, competencias IA/ML, diseño de sistemas — apropiado al área
 CORPORATIVO: Liderazgo, pensamiento estratégico, transformación digital — SOLO para funciones realmente corporativas
 KEYWORDS ATS POR ÁREA: Las keywords detectadas y recomendadas DEBEN ser relevantes para el área profesional. Un enfermero necesita "cuidados al paciente, evaluación clínica, administración de medicación" — NO "gestión de stakeholders, ROI, KPIs". Un mecánico necesita "diagnóstico, mantenimiento preventivo, sistemas hidráulicos" — NO "gestión de proyectos, metodología agile". Un fisioterapeuta necesita "rehabilitación, terapia manual, evaluación funcional" — NO "transformación organizacional". Un técnico de radiología necesita "imagenología, protección radiológica, tomografía" — NO "gestión de equipos".
-PRODUCE UN JSON CON LA SIGUIENTE ESTRUCTURA EXACTA:
+REGLAS DE DENSIDAD Y CALIDAD (OBLIGATORIO):
+- Escribe como un analista sénior hablando directamente con el profesional, no como un formulario a rellenar.
+- Cada campo de texto debe leerse como una frase elaborada, no como un fragmento de bullet point o placeholder de template.
+- Mínimos de palabras: items de strengths/improvements = 25 palabras cada uno; market_positioning = 60 palabras; detailed_feedback de cada quadrant = 50 palabras; descripción de automationRisk = 60 palabras; priority_recommendations = 70 palabras; full_explanation de cv_problems = 80 palabras cada uno.
+- Referencia la función real del profesional, empleadores y etapa de carrera en TODOS los campos de texto analítico.
+- Evita empezar frases con "Este CV", "El candidato", "Debes" — varía los inicios de frase.
+Devuelve SOLO este JSON (todos los valores de score/salario son enteros, no strings):
 {
   "detected_name": "Nombre completo",
   "detected_email": "Email",
@@ -2651,7 +2657,7 @@ PRODUCE UN JSON CON LA SIGUIENTE ESTRUCTURA EXACTA:
   "ats_keywords": ["keyword1", "keyword2", "keyword3"],
   "missing_keywords": ["keyword_faltante1", "keyword_faltante2"],
   "executive_summary": "Resumen de 3-4 frases sobre el perfil",
-  "dimensions": [
+  "quadrants": [
     {
       "title": "Estructura y Formato",
       "score": <entero 0-100>,
@@ -2723,7 +2729,7 @@ PRODUCE UN JSON CON LA SIGUIENTE ESTRUCTURA EXACTA:
 }
 REGLAS CRÍTICAS:
 1. global_score DEBE ser calculado como media ponderada: Estructura 25% + Contenido 30% + Educación 15% + Experiencia 30%
-2. Las puntuaciones de las dimensiones DEBEN variar al menos 10 puntos entre la más alta y la más baja
+2. Las puntuaciones de los quadrants DEBEN variar al menos 10 puntos entre la más alta y la más baja
 3. TODOS los valores de benchmark y score DEBEN ser enteros simples (0-100), NO strings
 4. El salario DEBE ser realista para la profesión y mercado detectados
 5. Los beneficios DEBEN ser específicos para el área profesional detectada

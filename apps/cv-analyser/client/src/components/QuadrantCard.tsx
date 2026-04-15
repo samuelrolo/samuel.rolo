@@ -16,7 +16,7 @@ interface QuadrantCardProps {
 
 /** Map any dimension title (PT/EN/ES) to a canonical key for tooltip lookup */
 function dimKey(title: string): string {
-  const lower = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const lower = (title || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (lower.includes("experiencia") || lower === "experience") return "experiencia";
   if (lower.includes("conteudo") || lower === "content" || lower === "contenido") return "conteudo";
   if (lower.includes("estrutura") || lower === "structure" || lower === "estructura") return "estrutura";

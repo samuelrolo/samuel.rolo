@@ -97,10 +97,15 @@ export function transformGeminiResponse(analysis: any, lang: 'pt' | 'en' | 'es' 
       'estructura': t('estrutura', lang),
     };
 
-    if (Array.isArray(analysis.quadrants) && analysis.quadrants.length >= 3) {
-      // ✅ NEW FORMAT: Gemini returned quadrants directly
-      console.log('[CV_ENGINE] Using Gemini-provided quadrants');
-      for (const q of analysis.quadrants) {
+    const rawQuadrants = Array.isArray(analysis.quadrants) && analysis.quadrants.length >= 3
+      ? analysis.quadrants
+      : Array.isArray(analysis.dimensions) && analysis.dimensions.length >= 3
+        ? analysis.dimensions
+        : null;
+    if (rawQuadrants) {
+      // ✅ NEW FORMAT: Gemini returned quadrants/dimensions directly
+      console.log('[CV_ENGINE] Using Gemini-provided quadrants (source:', analysis.quadrants ? 'quadrants' : 'dimensions', ')');
+      for (const q of rawQuadrants) {
         const rawTitle = (q.title || '').toLowerCase().trim();
         const normalizedTitle = titleMapping[rawTitle] || q.title;
         const score = typeof q.score === 'string' ? parseInt(q.score, 10) : (q.score || 50);
