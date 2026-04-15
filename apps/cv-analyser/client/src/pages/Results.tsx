@@ -1596,6 +1596,23 @@ export default function Results() {
     'Experience': { pt: 'Experiência', en: 'Experience', es: 'Experiencia' },
     'Experiencia': { pt: 'Experiência', en: 'Experience', es: 'Experiencia' },
   };
+  const normalizeQuadrantTitle = (value?: string) => String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+  const normalizedQuadrantTitleMap = Object.fromEntries(
+    Object.entries(quadrantTitleMap).map(([key, value]) => [normalizeQuadrantTitle(key), value])
+  ) as Record<string, { pt: string; en: string; es: string }>;
+  const resolveDimensionLabel = (value: any, fallback = pick('Dimensão', 'Dimension', 'Dimensión')) => {
+    const rawValue = typeof value === 'string'
+      ? value
+      : [value?.title, value?.dimension, value?.name, value?.label].find((candidate) => typeof candidate === 'string' && candidate.trim()) || '';
+    const translatedValue = normalizedQuadrantTitleMap[normalizeQuadrantTitle(rawValue)]?.[lang]
+      || quadrantTitleMap[rawValue]?.[lang]
+      || String(rawValue || '').trim();
+    return translatedValue || fallback;
+  };
   const quadrantInsightMap: Record<string, { pt: string; en: string; es: string }> = {
     'Experiência profissional': { pt: 'Experiência profissional', en: 'Professional experience', es: 'Experiencia profesional' },
     'Professional experience': { pt: 'Experiência profissional', en: 'Professional experience', es: 'Experiencia profesional' },
@@ -1610,7 +1627,7 @@ export default function Results() {
     'Academic and continuous education': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
     'Formación académica y continua': { pt: 'Formação académica e contínua', en: 'Academic and continuous education', es: 'Formación académica y continua' },
   };
-  const translateQuadrantTitle = (title: string) => quadrantTitleMap[title]?.[lang] || title || '';
+  const translateQuadrantTitle = (title: string) => resolveDimensionLabel(title, '');
   const translateQuadrantInsight = (insight?: string) => {
     if (!insight) return insight;
     return quadrantInsightMap[insight]?.[lang] || insight;
@@ -1644,17 +1661,17 @@ export default function Results() {
       ],
     },
   ];
-  const dimensions = analysisData.quadrants.map((q: any) => ({
-    label: translateQuadrantTitle(q.title),
+  const dimensions = safeQuadrants.map((q: any) => ({
+    label: resolveDimensionLabel(q),
     score: q.score,
     benchmark: q.benchmark
   }));
   const priorityMatrixSource = (Array.isArray(analysisData.priorityMatrix) && analysisData.priorityMatrix.length > 0)
     ? analysisData.priorityMatrix
-    : analysisData.quadrants.map((q: any) => {
+    : safeQuadrants.map((q: any) => {
         const gap = Math.max(0, (q.benchmark || 0) - (q.score || 0));
         return {
-          dimension: translateQuadrantTitle(q.title),
+          dimension: resolveDimensionLabel(q),
           urgency: gap > 5 ? pick('Alta', 'High', 'Alta') : gap > 0 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja'),
           currentScore: q.score,
           potentialScore: Math.min(100, (q.score || 0) + (gap > 0 ? gap + 5 : 5)),
@@ -1752,7 +1769,7 @@ export default function Results() {
   };
   const improvementActionsByDimension = new Map(
     (Array.isArray(analysisData.improvementActions) ? analysisData.improvementActions : []).map((action: any) => {
-      const translatedDimension = translateQuadrantTitle(action.dimension || '');
+      const translatedDimension = resolveDimensionLabel(action, '');
       return [normalizeDimensionKey(translatedDimension || action.dimension || ''), action];
     })
   );
@@ -1763,7 +1780,7 @@ export default function Results() {
         const impactPoints = getImpactPoints(matchedAction?.impact, item.gain);
         return {
           ...item,
-          dimension: item.dimension || translateQuadrantTitle(matchedAction?.dimension || ''),
+          dimension: resolveDimensionLabel(item.dimension || matchedAction),
           actionText: matchedAction?.action || item.actionText || pick('Acção prioritária', 'Priority action', 'Acción prioritaria'),
           before: formatActionValue(
             matchedAction?.before,
@@ -1778,7 +1795,7 @@ export default function Results() {
         };
       })
     : (Array.isArray(analysisData.improvementActions) ? analysisData.improvementActions : []).map((action: any, index: number) => {
-        const translatedDimension = translateQuadrantTitle(action.dimension || '');
+        const translatedDimension = resolveDimensionLabel(action, '');
         const impactPoints = getImpactPoints(action.impact, 0);
         return {
           actionLetter: String.fromCharCode(65 + index),
@@ -2637,14 +2654,15 @@ export default function Results() {
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('anlise_detalhada_por_dimenso')}</p>
               </div>
               <div className="space-y-4">
-                {analysisData.quadrants.map((q: any, idx: number) => {
+                {safeQuadrants.map((q: any, idx: number) => {
                   const gap = q.score - q.benchmark;
                   const isStrong = gap >= 10;
                   const isWeak = gap <= 0;
+                  const dimensionLabel = resolveDimensionLabel(q, `${pick('Dimensão', 'Dimension', 'Dimensión')} ${idx + 1}`);
                   return (
-                    <div key={q.title} className="p-3 bg-muted/20 rounded-lg space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-foreground">{translateQuadrantTitle(q.title)}</span>
+                    <div key={`${dimensionLabel}-${idx}`} className="p-3 bg-muted/20 rounded-lg space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-sm font-semibold text-foreground shrink-0">{dimensionLabel}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-foreground">{q.score}/100</span>
                           <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
@@ -2696,77 +2714,6 @@ export default function Results() {
                 })}
               </div>
             </div>
-
-            {/* ═══ Acções Prioritárias Unificadas ═══ */}
-            {unifiedImprovementActions.length > 0 && (
-              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8">
-                    <Sparkles className="w-4 h-4 text-[#C9A961]" />
-                  </GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">
-                    {pick('Acções Prioritárias de Melhoria', 'Priority Improvement Actions', 'Acciones Prioritarias de Mejora')}
-                  </p>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {pick(
-                    'Cada carta reúne a prioridade, a acção recomendada, o antes/depois e o impacto estimado para facilitar a execução das melhorias.',
-                    'Each card combines the priority, recommended action, before/after view and estimated impact so the next improvements are easier to act on.',
-                    'Cada tarjeta reúne la prioridad, la acción recomendada, la vista antes/después y el impacto estimado para facilitar la ejecución de las mejoras.'
-                  )}
-                </p>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  {unifiedImprovementActions.map((item: any) => {
-                    const impactTone = /alto|high/i.test(item.impactLabel || '')
-                      ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
-                      : /m[eé]dio|medium|medio/i.test(item.impactLabel || '')
-                        ? 'bg-amber-500/10 text-amber-700 border-amber-500/20'
-                        : 'bg-slate-500/10 text-slate-700 border-slate-500/20';
-                    const isHighlighted = highlightedActionLetter === item.actionLetter;
-                    return (
-                      <div
-                        key={`${item.actionLetter}-${item.dimension}`}
-                        onMouseEnter={() => setHighlightedActionLetter(item.actionLetter)}
-                        onMouseLeave={() => setHighlightedActionLetter(null)}
-                        className={`rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${isHighlighted ? 'border-[#C9A961]/50 bg-[#C9A961]/[0.07] shadow-sm' : 'border-border bg-muted/15 hover:border-[#C9A961]/30'}`}
-                      >
-                        <div className="flex items-start justify-between gap-3 mb-4">
-                          <div className="flex items-start gap-3 min-w-0">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-200 ${isHighlighted ? 'bg-[#B89547] text-white shadow-lg scale-105' : 'bg-[#C9A961] text-white'}`}>
-                              {item.actionLetter}
-                            </div>
-                            <div className="min-w-0 space-y-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">{item.dimension}</p>
-                                <span className={`text-[10px] font-semibold px-2 py-1 rounded-full border ${impactTone}`}>
-                                  {item.impactLabel} · +{item.impactPoints} {t('pontos')}
-                                </span>
-                              </div>
-                              <p className="text-sm sm:text-base font-semibold text-foreground">{item.actionText}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="rounded-xl border border-border bg-background/70 p-3">
-                            <p className="text-[10px] font-semibold tracking-wide text-red-500 uppercase mb-1">{t('antes')}</p>
-                            <p className="text-sm text-muted-foreground">{item.before}</p>
-                          </div>
-                          <div className="rounded-xl border border-border bg-background/70 p-3">
-                            <p className="text-[10px] font-semibold tracking-wide text-green-600 uppercase mb-1">{t('depois')}</p>
-                            <p className="text-sm text-muted-foreground">{item.after}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
-                  <p className="text-sm text-foreground font-medium">
-                    {t('score_estimado_aps_melhorias')}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + unifiedImprovementActions.reduce((sum: number, action: any) => sum + action.impactPoints, 0))}/100</strong>
-                  </p>
-                </div>
-              </div>
-            )}
 
             {/* ═══ Matriz de Prioridades ═══ */}
             {priorityMatrixItems.length > 0 && (
@@ -2834,11 +2781,82 @@ export default function Results() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {pick(
-                    'Passa o cursor sobre cada letra para realçar a carta correspondente acima.',
-                    'Hover each letter to highlight the corresponding card above.',
-                    'Pasa el cursor sobre cada letra para resaltar la tarjeta correspondiente de arriba.'
+                    'Passa o cursor sobre cada letra para realçar a carta correspondente abaixo.',
+                    'Hover each letter to highlight the corresponding card below.',
+                    'Pasa el cursor sobre cada letra para resaltar la tarjeta correspondiente de abajo.'
                   )}
                 </p>
+              </div>
+            )}
+
+            {/* ═══ Acções Prioritárias Unificadas ═══ */}
+            {unifiedImprovementActions.length > 0 && (
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <GoldIcon size="w-8 h-8">
+                    <Sparkles className="w-4 h-4 text-[#C9A961]" />
+                  </GoldIcon>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">
+                    {pick('Acções Prioritárias de Melhoria', 'Priority Improvement Actions', 'Acciones Prioritarias de Mejora')}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {pick(
+                    'Cada carta reúne a prioridade, a acção recomendada, o antes/depois e o impacto estimado para facilitar a execução das melhorias.',
+                    'Each card combines the priority, recommended action, before/after view and estimated impact so the next improvements are easier to act on.',
+                    'Cada tarjeta reúne la prioridad, la acción recomendada, la vista antes/después y el impacto estimado para facilitar la ejecución de las mejoras.'
+                  )}
+                </p>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {unifiedImprovementActions.map((item: any) => {
+                    const impactTone = /alto|high/i.test(item.impactLabel || '')
+                      ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+                      : /m[eé]dio|medium|medio/i.test(item.impactLabel || '')
+                        ? 'bg-amber-500/10 text-amber-700 border-amber-500/20'
+                        : 'bg-slate-500/10 text-slate-700 border-slate-500/20';
+                    const isHighlighted = highlightedActionLetter === item.actionLetter;
+                    return (
+                      <div
+                        key={`${item.actionLetter}-${item.dimension}`}
+                        onMouseEnter={() => setHighlightedActionLetter(item.actionLetter)}
+                        onMouseLeave={() => setHighlightedActionLetter(null)}
+                        className={`rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${isHighlighted ? 'border-[#C9A961]/50 bg-[#C9A961]/[0.07] shadow-sm' : 'border-border bg-muted/15 hover:border-[#C9A961]/30'}`}
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                          <div className="flex items-start gap-3 min-w-0">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shrink-0 transition-all duration-200 border-2 ${isHighlighted ? 'bg-[#B89547] text-white shadow-xl scale-110 border-white/20' : 'bg-[#C9A961] text-white border-transparent'}`}>
+                              {item.actionLetter}
+                            </div>
+                            <div className="min-w-0 space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">{item.dimension}</p>
+                                <span className={`text-[10px] font-semibold px-2 py-1 rounded-full border ${impactTone}`}>
+                                  {item.impactLabel} · +{item.impactPoints} {t('pontos')}
+                                </span>
+                              </div>
+                              <p className="text-sm sm:text-base font-semibold text-foreground">{item.actionText}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="rounded-xl border border-border bg-background/70 p-3">
+                            <p className="text-[10px] font-semibold tracking-wide text-red-500 uppercase mb-1">{t('antes')}</p>
+                            <p className="text-sm text-muted-foreground">{item.before}</p>
+                          </div>
+                          <div className="rounded-xl border border-border bg-background/70 p-3">
+                            <p className="text-[10px] font-semibold tracking-wide text-green-600 uppercase mb-1">{t('depois')}</p>
+                            <p className="text-sm text-muted-foreground">{item.after}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
+                  <p className="text-sm text-foreground font-medium">
+                    {t('score_estimado_aps_melhorias')}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + unifiedImprovementActions.reduce((sum: number, action: any) => sum + action.impactPoints, 0))}/100</strong>
+                  </p>
+                </div>
               </div>
             )}
 
