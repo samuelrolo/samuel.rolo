@@ -646,16 +646,13 @@ export default function Results() {
     const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid');
     if (bundleCareerPathPaid === 'true') {
       (async () => {
-        const bundlePaymentStatus = await fetchPaymentStatus({
+        // Optimistic: proceed immediately since BundleHome already verified payment
+        // Background verify (non-blocking, analytics only)
+        fetchPaymentStatus({
           orderId: sessionStorage.getItem('orderId') || sessionStorage.getItem('bundlePendingOrderId') || localStorage.getItem('bundlePendingOrderId'),
           sessionId: sessionStorage.getItem('stripeSessionId'),
           expectedProductTypes: ['bundle'],
-        });
-
-        if (!(bundlePaymentStatus.success && bundlePaymentStatus.paid)) {
-          sessionStorage.removeItem('careerPathPaid');
-          return;
-        }
+        }).catch(() => {});
 
         sessionStorage.setItem('careerPathIncluded', 'true');
         const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
