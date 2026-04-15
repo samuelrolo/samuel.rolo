@@ -643,7 +643,7 @@ export default function Results() {
         .catch(err => console.error('Stripe verify error:', err));
     }
     // Auto-generate Career Path when coming from Bundle flow
-    const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid');
+    const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid') || localStorage.getItem('careerPathPaid');
     if (bundleCareerPathPaid === 'true') {
       (async () => {
         // Optimistic: proceed immediately since BundleHome already verified payment
@@ -655,17 +655,19 @@ export default function Results() {
         }).catch(() => {});
 
         sessionStorage.setItem('careerPathIncluded', 'true');
-        const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
-        const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
+        localStorage.setItem('careerPathIncluded', 'true');
+        const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || localStorage.getItem('careerPathLinkedinUrl') || '';
+        const bundleEmail = sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('bundleEmail') || localStorage.getItem('bundleEmail') || '';
         setCareerPathLinkedin(bundleLinkedin);
         setCareerPathEmail(bundleEmail);
         setCareerPathPaymentStep('generating');
         sessionStorage.removeItem('careerPathPaid');
+        localStorage.removeItem('careerPathPaid');
         console.log('[Bundle→CareerPath] Auto-generating Career Path...');
         try {
           // Use the actual CV text stored by BundleHome, NOT the transformed analysis JSON
-          const cvTextForCP = sessionStorage.getItem('careerPathCvText') || '';
-          const linkedinForCP = sessionStorage.getItem('careerPathLinkedinUrl') || bundleLinkedin || '';
+          const cvTextForCP = sessionStorage.getItem('careerPathCvText') || localStorage.getItem('careerPathCvText') || '';
+          const linkedinForCP = sessionStorage.getItem('careerPathLinkedinUrl') || localStorage.getItem('careerPathLinkedinUrl') || bundleLinkedin || '';
           console.log('[Bundle→CareerPath] cv_text length:', cvTextForCP.length, 'linkedin:', linkedinForCP ? 'yes' : 'no');
           const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
             method: 'POST',
@@ -675,12 +677,12 @@ export default function Results() {
             },
             body: JSON.stringify({
               mode: 'career_path',
-              email: (bundleEmail || sessionStorage.getItem('paymentEmail') || sessionStorage.getItem('bundleEmail') || '').trim().toLowerCase(),
+              email: (bundleEmail || sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('bundleEmail') || localStorage.getItem('bundleEmail') || '').trim().toLowerCase(),
               cv_text: cvTextForCP,
               linkedin_url: linkedinForCP || undefined,
               language: lang,
-              country: sessionStorage.getItem('analysisCountry') || (t('portugal')),
-              region: sessionStorage.getItem('analysisRegion') || '',
+              country: sessionStorage.getItem('analysisCountry') || localStorage.getItem('analysisCountry') || (t('portugal')),
+              region: sessionStorage.getItem('analysisRegion') || localStorage.getItem('analysisRegion') || '',
             })
           });
           const cpData = await cpResponse.json();

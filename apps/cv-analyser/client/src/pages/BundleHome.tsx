@@ -276,26 +276,36 @@ export default function BundleHome() {
       const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, lang);
 
       // Store CV Analyser results
+      const normalizedEmail = currentEmail.trim().toLowerCase();
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', cvFilename);
       sessionStorage.setItem('analysisLang', lang);
       sessionStorage.setItem('isPaid', 'true');
-      sessionStorage.setItem('paymentEmail', currentEmail.trim().toLowerCase());
+      sessionStorage.setItem('paymentEmail', normalizedEmail);
+      localStorage.setItem('paymentEmail', normalizedEmail);
       // Store country/region for Career Path localisation
       sessionStorage.setItem('analysisCountry', currentCountry);
       sessionStorage.setItem('analysisRegion', currentRegion);
+      localStorage.setItem('analysisCountry', currentCountry);
+      localStorage.setItem('analysisRegion', currentRegion);
       window.currentReportData = cvAnalysisSource;
 
       // ─── ENGINE 2: Career Path ───
       setAnalysisMsg(pick("A gerar o teu Career Path...", "Generating your Career Path...", "Generando tu Career Path..."));
 
       // Store Career Path data
+      localStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
       sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
+      localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      localStorage.setItem('careerPathCvFile', base64Content);
       sessionStorage.setItem('careerPathCvFile', base64Content);
+      localStorage.setItem('careerPathCvFilename', cvFilename);
       sessionStorage.setItem('careerPathCvFilename', cvFilename);
+      localStorage.setItem('careerPathLinkedinUrl', currentLinkedinUrl);
       sessionStorage.setItem('careerPathLinkedinUrl', currentLinkedinUrl);
+      localStorage.setItem('careerPathPaid', 'true');
       sessionStorage.setItem('careerPathPaid', 'true');
 
       // Save bundle analysis to Supabase (for Admin analytics)

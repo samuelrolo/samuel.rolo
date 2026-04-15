@@ -31,6 +31,45 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
+const buildCandidateProfile = (analysis: any) => {
+  const base = analysis?.raw || analysis?.analysis || analysis || {};
+  const nested = analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || base?.candidate_profile || analysis?.profile || base?.profile || {};
+
+  return {
+    ...nested,
+    detected_name:
+      nested?.detected_name ||
+      nested?.name ||
+      analysis?.detected_name ||
+      analysis?.name ||
+      analysis?.candidate_name ||
+      base?.detected_name ||
+      base?.name ||
+      base?.candidate_name ||
+      '',
+    detected_role:
+      nested?.detected_role ||
+      nested?.primary_role ||
+      analysis?.detected_role ||
+      analysis?.current_role ||
+      analysis?.perceivedRole ||
+      base?.detected_role ||
+      base?.current_role ||
+      '',
+    seniority:
+      nested?.seniority ||
+      analysis?.seniority ||
+      analysis?.perceivedSeniority ||
+      base?.seniority ||
+      '',
+    total_years_exp:
+      nested?.total_years_exp ||
+      analysis?.total_years_exp ||
+      base?.total_years_exp ||
+      '',
+  };
+};
+
 /**
  * Fire-and-forget: log career path purchase to cv_analysis table for dashboard.
  * Never blocks the user flow. Errors are silently caught.
@@ -514,7 +553,12 @@ export default function CareerPathResults() {
 
     if (cvData) {
       try {
-        setCvAnalysis(JSON.parse(cvData));
+        const parsedCvAnalysis = JSON.parse(cvData);
+        setCvAnalysis({
+          ...parsedCvAnalysis,
+          raw: parsedCvAnalysis?.raw || parsedCvAnalysis?.analysis || parsedCvAnalysis,
+          candidate_profile: buildCandidateProfile(parsedCvAnalysis),
+        });
       } catch {
         if (!isStripeReturn) {
           setLocation(careerPathHomePath);
@@ -901,10 +945,10 @@ export default function CareerPathResults() {
     );
   }
 
-  const cpProfile = cvAnalysis?.candidate_profile || cvAnalysis?.cv_analysis?.candidate_profile || {};
-  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
-  const currentRole = cpProfile.detected_role || cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
-  const seniority = cpProfile.seniority || cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
+  const cpProfile = buildCandidateProfile(cvAnalysis);
+  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('o_teu_perfil'));
+  const currentRole = cpProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('profissional'));
+  const seniority = cpProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 
   return (
     <div className="min-h-screen bg-background">

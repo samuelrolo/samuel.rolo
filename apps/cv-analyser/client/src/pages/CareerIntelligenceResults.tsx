@@ -32,6 +32,45 @@ const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const CAREER_INTELLIGENCE_STORAGE_VERSION = '2026-04-14';
 
+const buildCandidateProfile = (analysis: any) => {
+  const base = analysis?.raw || analysis?.analysis || analysis || {};
+  const nested = analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || base?.candidate_profile || analysis?.profile || base?.profile || {};
+
+  return {
+    ...nested,
+    detected_name:
+      nested?.detected_name ||
+      nested?.name ||
+      analysis?.detected_name ||
+      analysis?.name ||
+      analysis?.candidate_name ||
+      base?.detected_name ||
+      base?.name ||
+      base?.candidate_name ||
+      '',
+    detected_role:
+      nested?.detected_role ||
+      nested?.primary_role ||
+      analysis?.detected_role ||
+      analysis?.current_role ||
+      analysis?.perceivedRole ||
+      base?.detected_role ||
+      base?.current_role ||
+      '',
+    seniority:
+      nested?.seniority ||
+      analysis?.seniority ||
+      analysis?.perceivedSeniority ||
+      base?.seniority ||
+      '',
+    total_years_exp:
+      nested?.total_years_exp ||
+      analysis?.total_years_exp ||
+      base?.total_years_exp ||
+      '',
+  };
+};
+
 /* ─── Gold Icon wrapper ─── */
 function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode; size?: string }) {
   return (
@@ -141,9 +180,7 @@ export default function CareerIntelligenceResults() {
   }, [isGenerating]);
 
   const careerIntelligenceHomePath = '/';
-  const getCareerIntelligenceProfile = (analysis: any) => {
-    return analysis?.candidate_profile || analysis?.cv_analysis?.candidate_profile || analysis?.profile || {};
-  };
+  const getCareerIntelligenceProfile = (analysis: any) => buildCandidateProfile(analysis);
   const hasCareerIntelligenceStructure = (analysis: any) => {
     if (!analysis || typeof analysis !== 'object') return false;
     return Boolean(
@@ -324,7 +361,11 @@ export default function CareerIntelligenceResults() {
           ...parsedCv,
           ...normalizedCv,
           raw: rawCvAnalysis,
-          candidate_profile: parsedCv?.candidate_profile || parsedCv?.cv_analysis?.candidate_profile || rawCvAnalysis?.candidate_profile || {},
+          candidate_profile: buildCandidateProfile({
+            ...parsedCv,
+            ...normalizedCv,
+            raw: rawCvAnalysis,
+          }),
           profile: parsedCv?.profile || rawCvAnalysis?.profile || {},
         });
       } catch {
@@ -707,10 +748,10 @@ export default function CareerIntelligenceResults() {
     );
   }
 
-  const candidateProfile = getCareerIntelligenceProfile(cvAnalysis) || cvAnalysis?.raw?.candidate_profile || {};
-  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
-  const currentRole = candidateProfile.detected_role || cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
-  const seniority = candidateProfile.seniority || cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
+  const candidateProfile = getCareerIntelligenceProfile(cvAnalysis);
+  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('o_teu_perfil'));
+  const currentRole = candidateProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('profissional'));
+  const seniority = candidateProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 
   return (
     <div className="min-h-screen bg-background">
