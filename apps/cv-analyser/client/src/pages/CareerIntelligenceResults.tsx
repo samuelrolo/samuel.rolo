@@ -50,7 +50,12 @@ export default function CareerIntelligenceResults() {
   const [cvAnalysis, setCvAnalysis] = useState<any>(null);
   const [linkedinUrl, setLinkedinUrl] = useState<string>('');
   const [careerData, setCareerData] = useState<any>(null);
-  const [isPaid, setIsPaid] = useState(false);
+  const [isPaid, setIsPaid] = useState(() => {
+    const ciFull = localStorage.getItem('careerIntelligenceFull') || sessionStorage.getItem('careerIntelligenceFull');
+    const ciPro = localStorage.getItem('careerIntelligenceProPaid') || sessionStorage.getItem('careerIntelligenceProPaid');
+    const cpPaid = localStorage.getItem('careerPathPaid') || sessionStorage.getItem('careerPathPaid');
+    return ciFull === 'true' || ciPro === 'true' || cpPaid === 'true';
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
@@ -345,10 +350,13 @@ export default function CareerIntelligenceResults() {
       });
 
       if (!(paymentVerification.success && paymentVerification.paid)) {
-        localStorage.removeItem('careerPathPaid');
-        sessionStorage.removeItem('careerPathPaid');
-        localStorage.removeItem('careerIntelligenceFull');
-        sessionStorage.removeItem('careerIntelligenceFull');
+        // Only clear flags if we didn't already have a local paidFlag
+        if (!paidFlag) {
+          localStorage.removeItem('careerPathPaid');
+          sessionStorage.removeItem('careerPathPaid');
+          localStorage.removeItem('careerIntelligenceFull');
+          sessionStorage.removeItem('careerIntelligenceFull');
+        }
         return;
       }
 
