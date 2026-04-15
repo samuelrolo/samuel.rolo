@@ -1681,57 +1681,6 @@ export default function Results() {
           ].filter(Boolean),
         };
       });
-  const priorityMatrixItems = (() => {
-    const sorted = [...priorityMatrixSource]
-      .map((item: any, index: number) => {
-        const actions = Array.isArray(item.actions) ? item.actions.filter(Boolean) : [];
-        const currentScore = Number(item.currentScore || 0);
-        const potentialScore = Number(item.potentialScore || currentScore);
-        const gain = Math.max(1, potentialScore - currentScore);
-        const urgencyLabel = String(item.urgency || '').toLowerCase();
-        const isHighUrgency = /alta|high/.test(urgencyLabel);
-        const isMediumUrgency = /m[eé]dia|medium|media/.test(urgencyLabel);
-        const isHighImpact = gain >= 8;
-        const quadrantKey = isHighImpact
-          ? (isHighUrgency ? 'top' : 'secondary')
-          : ((isHighUrgency || isMediumUrgency) ? 'quick' : 'later');
-        return {
-          ...item,
-          actions,
-          currentScore,
-          potentialScore,
-          gain,
-          actionLetter: String.fromCharCode(65 + index),
-          actionText: actions[0] || item.dimension || pick('Acção prioritária', 'Priority action', 'Acción prioritaria'),
-          quadrantKey,
-        };
-      })
-      .sort((a: any, b: any) => {
-        const urgencyWeight = (value: string) => /alta|high/i.test(value) ? 0 : /m[eé]dia|medium|media/i.test(value) ? 1 : 2;
-        const urgencyDelta = urgencyWeight(a.urgency || '') - urgencyWeight(b.urgency || '');
-        if (urgencyDelta !== 0) return urgencyDelta;
-        return (b.gain || 0) - (a.gain || 0);
-      })
-      .slice(0, 4);
-
-    const quadrantSlots: Record<string, { left: string; top: string }[]> = {
-      top: [{ left: '26%', top: '24%' }, { left: '38%', top: '34%' }],
-      secondary: [{ left: '73%', top: '24%' }, { left: '84%', top: '34%' }],
-      quick: [{ left: '26%', top: '74%' }, { left: '38%', top: '84%' }],
-      later: [{ left: '73%', top: '74%' }, { left: '84%', top: '84%' }],
-    };
-    const quadrantUsage: Record<string, number> = { top: 0, secondary: 0, quick: 0, later: 0 };
-
-    return sorted.map((item: any) => {
-      const slotGroup = quadrantSlots[item.quadrantKey] || quadrantSlots.quick;
-      const slotIndex = Math.min(quadrantUsage[item.quadrantKey] || 0, slotGroup.length - 1);
-      quadrantUsage[item.quadrantKey] = (quadrantUsage[item.quadrantKey] || 0) + 1;
-      return {
-        ...item,
-        position: slotGroup[slotIndex],
-      };
-    });
-  })();
   const normalizeDimensionKey = (value?: string) => String(value || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -1767,12 +1716,121 @@ export default function Results() {
         ? pick('Médio', 'Medium', 'Medio')
         : pick('Baixo', 'Low', 'Bajo');
   };
+  const getImpactBucket = (impact: string | number | undefined, fallbackGain = 0): 'high' | 'medium' | 'low' => {
+    const rawImpact = String(impact || '').toLowerCase();
+    if (/alto|high/.test(rawImpact)) return 'high';
+    if (/m[eé]dio|medium|medio/.test(rawImpact)) return 'medium';
+    if (/baixo|low|bajo/.test(rawImpact)) return 'low';
+    const impactPoints = getImpactPoints(impact, fallbackGain);
+    return impactPoints >= 8 ? 'high' : impactPoints >= 5 ? 'medium' : 'low';
+  };
+  const getEffortBucket = (value: unknown): 'low' | 'medium' | 'high' | null => {
+    const rawValue = String(value || '').toLowerCase();
+    if (!rawValue) return null;
+    if (/baixo|low|baixa fric|baja fric|low friction|quick win|rápid|rapid/.test(rawValue)) return 'low';
+    if (/alto|high|maior esfor|mayor esfuerzo|higher effort|dif[ií]cil|hard/.test(rawValue)) return 'high';
+    if (/m[eé]dio|medium|medio/.test(rawValue)) return 'medium';
+    return null;
+  };
+  const resolveEffortBucket = (matchedAction: any, item: any): 'low' | 'high' => {
+    const explicitCandidates = [
+      matchedAction?.effort,
+      matchedAction?.effortLabel,
+      matchedAction?.estimatedEffort,
+      matchedAction?.difficulty,
+      matchedAction?.friction,
+      item?.effort,
+      item?.effortLabel,
+      item?.estimatedEffort,
+      item?.difficulty,
+      item?.friction,
+    ];
+    let mediumDetected = false;
+    for (const candidate of explicitCandidates) {
+      const bucket = getEffortBucket(candidate);
+      if (bucket === 'low' || bucket === 'high') return bucket;
+      if (bucket === 'medium') mediumDetected = true;
+    }
+
+    const rawQuadrant = String(item?.quadrantKey || item?.quadrant || item?.bucket || item?.category || '').toLowerCase();
+    if (/top|quick|low.?effort|baixa fric|baja fric|low friction/.test(rawQuadrant)) return 'low';
+    if (/secondary|later|high.?effort|maior esfor|mayor esfuerzo|higher effort/.test(rawQuadrant)) return 'high';
+
+    if (mediumDetected) {
+      const urgencyLabel = String(item?.urgency || '').toLowerCase();
+      return /alta|high/i.test(urgencyLabel) ? 'low' : 'high';
+    }
+
+    const urgencyLabel = String(item?.urgency || '').toLowerCase();
+    return /alta|high|m[eé]dia|medium|media/.test(urgencyLabel) ? 'low' : 'high';
+  };
+  const resolveMatrixQuadrantKey = (impactBucket: 'high' | 'medium' | 'low', effortBucket: 'low' | 'high') => {
+    if (impactBucket === 'high') return effortBucket === 'low' ? 'top' : 'secondary';
+    return effortBucket === 'low' ? 'quick' : 'later';
+  };
   const improvementActionsByDimension = new Map(
     (Array.isArray(analysisData.improvementActions) ? analysisData.improvementActions : []).map((action: any) => {
       const translatedDimension = resolveDimensionLabel(action, '');
       return [normalizeDimensionKey(translatedDimension || action.dimension || ''), action];
     })
   );
+  const priorityMatrixItems = (() => {
+    const sorted = [...priorityMatrixSource]
+      .map((item: any, index: number) => {
+        const actions = Array.isArray(item.actions) ? item.actions.filter(Boolean) : [];
+        const currentScore = Number(item.currentScore || 0);
+        const potentialScore = Number(item.potentialScore || currentScore);
+        const gain = Math.max(1, potentialScore - currentScore);
+        const matchedAction = improvementActionsByDimension.get(normalizeDimensionKey(resolveDimensionLabel(item.dimension || item, '')))
+          || (Array.isArray(analysisData.improvementActions) ? analysisData.improvementActions[index] : undefined);
+        const impactPoints = getImpactPoints(matchedAction?.impact, gain);
+        const impactLabel = getImpactLabel(matchedAction?.impact, gain);
+        const impactBucket = getImpactBucket(matchedAction?.impact, gain);
+        const effortBucket = resolveEffortBucket(matchedAction, item);
+        const quadrantKey = resolveMatrixQuadrantKey(impactBucket, effortBucket);
+        return {
+          ...item,
+          actions,
+          currentScore,
+          potentialScore,
+          gain,
+          actionLetter: String.fromCharCode(65 + index),
+          actionText: matchedAction?.action || actions[0] || item.dimension || pick('Acção prioritária', 'Priority action', 'Acción prioritaria'),
+          impactPoints,
+          impactLabel,
+          impactBucket,
+          effortBucket,
+          quadrantKey,
+        };
+      })
+      .sort((a: any, b: any) => {
+        const impactDelta = (b.impactPoints || 0) - (a.impactPoints || 0);
+        if (impactDelta !== 0) return impactDelta;
+        const urgencyWeight = (value: string) => /alta|high/i.test(value) ? 0 : /m[eé]dia|medium|media/i.test(value) ? 1 : 2;
+        const urgencyDelta = urgencyWeight(a.urgency || '') - urgencyWeight(b.urgency || '');
+        if (urgencyDelta !== 0) return urgencyDelta;
+        return (b.gain || 0) - (a.gain || 0);
+      })
+      .slice(0, 4);
+
+    const quadrantSlots: Record<string, { left: string; top: string }[]> = {
+      top: [{ left: '26%', top: '24%' }, { left: '38%', top: '34%' }],
+      secondary: [{ left: '73%', top: '24%' }, { left: '84%', top: '34%' }],
+      quick: [{ left: '26%', top: '74%' }, { left: '38%', top: '84%' }],
+      later: [{ left: '73%', top: '74%' }, { left: '84%', top: '84%' }],
+    };
+    const quadrantUsage: Record<string, number> = { top: 0, secondary: 0, quick: 0, later: 0 };
+
+    return sorted.map((item: any) => {
+      const slotGroup = quadrantSlots[item.quadrantKey] || quadrantSlots.quick;
+      const slotIndex = Math.min(quadrantUsage[item.quadrantKey] || 0, slotGroup.length - 1);
+      quadrantUsage[item.quadrantKey] = (quadrantUsage[item.quadrantKey] || 0) + 1;
+      return {
+        ...item,
+        position: slotGroup[slotIndex],
+      };
+    });
+  })();
   const unifiedImprovementActions = priorityMatrixItems.length > 0
     ? priorityMatrixItems.map((item: any, index: number) => {
         const matchedAction = improvementActionsByDimension.get(normalizeDimensionKey(item.dimension))
@@ -1797,6 +1855,8 @@ export default function Results() {
     : (Array.isArray(analysisData.improvementActions) ? analysisData.improvementActions : []).map((action: any, index: number) => {
         const translatedDimension = resolveDimensionLabel(action, '');
         const impactPoints = getImpactPoints(action.impact, 0);
+        const impactBucket = getImpactBucket(action.impact, 0);
+        const effortBucket = resolveEffortBucket(action, action);
         return {
           actionLetter: String.fromCharCode(65 + index),
           actionText: action.action || pick('Acção prioritária', 'Priority action', 'Acción prioritaria'),
@@ -1805,7 +1865,9 @@ export default function Results() {
           after: formatActionValue(action.after, pick('Sem detalhe posterior disponível', 'No after detail available', 'Sin detalle posterior disponible')),
           impactLabel: getImpactLabel(action.impact, 0),
           impactPoints,
-          quadrantKey: 'quick',
+          impactBucket,
+          effortBucket,
+          quadrantKey: resolveMatrixQuadrantKey(impactBucket, effortBucket),
         };
       });
   const translatedTopStrengths = analysisData.quadrants
