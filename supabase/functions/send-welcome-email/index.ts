@@ -288,6 +288,138 @@ function studentPackWelcomeBody(name: string, lang: string): string {
 <p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Se tiveres alguma dúvida, basta responder a este email.<br><strong>Equipa Share2Inspire</strong></p>`;
 }
 
+/* ─── Template: Welcome after LinkedIn Roaster Purchase ─── */
+function linkedinRoasterWelcomeBody(name: string, lang: string): string {
+  const isEn = lang === "en";
+  const isEs = lang === "es";
+  const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
+  const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
+
+  if (isEn) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Your LinkedIn Roast is ready! 🔥</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Thank you for using the <strong>LinkedIn Roaster</strong>. Your profile has been roasted and your results are now available.</p>
+
+<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">What you'll find in your report:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Brutally honest feedback on your profile</li>
+    <li>Recruiter's perspective on your first impression</li>
+    <li>SEO & Keyword analysis to boost your visibility</li>
+    <li>Ready-to-use headlines and quick fixes</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Check your results now and start transforming your LinkedIn presence:</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/en/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">View my LinkedIn Roast</a>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">Want to go even further? Explore our other career tools:</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/en/cv-analyser" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser</a>
+      <span style="font-size:13px;color:#777;"> — Get a deep scan of your resume</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/en/career-path" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🗺️ Career Path</a>
+      <span style="font-size:13px;color:#777;"> — Build your personalised career roadmap</span>
+    </td>
+  </tr>
+</table>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">If you have any questions, simply reply to this email.<br><strong>The Share2Inspire Team</strong></p>`;
+  }
+
+  if (isEs) {
+    return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Tu LinkedIn Roast está listo! 🔥</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por usar el <strong>LinkedIn Roaster</strong>. Tu perfil ha sido analizado y los resultados ya están disponibles.</p>
+
+<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">Lo que encontrarás en tu informe:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Feedback brutalmente honesto sobre tu perfil</li>
+    <li>Perspectiva del reclutador sobre tu primera impresión</li>
+    <li>Análisis de SEO y palabras clave para aumentar tu visibilidad</li>
+    <li>Titulares listos para usar y correcciones rápidas</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Consulta tus resultados ahora y empieza a transformar tu presencia en LinkedIn:</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/es/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver mi LinkedIn Roast</a>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">¿Quieres ir más allá? Explora nuestras otras herramientas de carrera:</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/cv-analyser" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser</a>
+      <span style="font-size:13px;color:#777;"> — Obtén un escaneo profundo de tu currículum</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/es/career-path" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🗺️ Career Path</a>
+      <span style="font-size:13px;color:#777;"> — Construye tu hoja de ruta profesional personalizada</span>
+    </td>
+  </tr>
+</table>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Si tienes alguna pregunta, simplemente responde a este correo.<br><strong>El equipo Share2Inspire</strong></p>`;
+  }
+
+  return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">O teu LinkedIn Roast está pronto! 🔥</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Obrigado por utilizares o <strong>LinkedIn Roaster</strong>. O teu perfil foi analisado e os resultados já estão disponíveis.</p>
+
+<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">O que vais encontrar no teu relatório:</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Feedback brutalmente honesto sobre o teu perfil</li>
+    <li>Perspetiva do recrutador sobre a tua primeira impressão</li>
+    <li>Análise de SEO e keywords para aumentares a tua visibilidade</li>
+    <li>Headlines prontas a usar e correções rápidas</li>
+  </ul>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;">Consulta os teus resultados agora e começa a transformar a tua presença no LinkedIn:</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver o meu LinkedIn Roast</a>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">Queres ir mais longe? Explora as nossas outras ferramentas de carreira:</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/cv-analyser" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser</a>
+      <span style="font-size:13px;color:#777;"> — Faz um scan profundo ao teu currículo</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;">
+      <a href="https://www.share2inspire.pt/career-path" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🗺️ Career Path</a>
+      <span style="font-size:13px;color:#777;"> — Constrói o teu roadmap de carreira personalizado</span>
+    </td>
+  </tr>
+</table>
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Se tiveres alguma dúvida, basta responder a este email.<br><strong>Equipa Share2Inspire</strong></p>`;
+}
+
 /* ─── Template: Welcome after Member Registration ─── */
 function memberWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
@@ -477,9 +609,9 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!type || !["cv_analysis", "member_signup", "student_pack"].includes(type)) {
+    if (!type || !["cv_analysis", "member_signup", "student_pack", "linkedin_roaster"].includes(type)) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Invalid type. Must be "cv_analysis", "member_signup" or "student_pack"' }),
+        JSON.stringify({ success: false, error: 'Invalid type. Must be "cv_analysis", "member_signup", "student_pack" or "linkedin_roaster"' }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -496,7 +628,9 @@ Deno.serve(async (req: Request) => {
       ? "welcome_cv_analysis"
       : type === "student_pack"
         ? "welcome_student_pack"
-        : "welcome_member_signup";
+        : type === "linkedin_roaster"
+          ? "welcome_linkedin_roaster"
+          : "welcome_member_signup";
     let subject: string;
     let bodyHtml: string;
 
@@ -514,6 +648,13 @@ Deno.serve(async (req: Request) => {
           ? "¡Bienvenido a Share2Inspire — Tu Student Pack Está Listo!"
           : "Bem-vindo ao Share2Inspire — O Teu Student Pack Está Pronto!";
       bodyHtml = studentPackWelcomeBody(name || "", language);
+    } else if (type === "linkedin_roaster") {
+      subject = language === "en"
+        ? "Your LinkedIn Roast is ready! 🔥"
+        : language === "es"
+          ? "¡Tu LinkedIn Roast está listo! 🔥"
+          : "O teu LinkedIn Roast está pronto! 🔥";
+      bodyHtml = linkedinRoasterWelcomeBody(name || "", language);
     } else {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
