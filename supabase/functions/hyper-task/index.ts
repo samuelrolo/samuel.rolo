@@ -2844,7 +2844,7 @@ REGLAS CRÍTICAS:
             console.log('🔄 Retrying with simplified prompt...');
 
             try {
-              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nReturn JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp as \"X years\" only, detected_role, seniority as one label only from Junior/Mid-level/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[3] specific to role), cv_problems[3] (title, description). STRICT scoring: most CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nRetorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp apenas como \"X anos\", detected_role, seniority apenas como um rótulo de Júnior/Pleno/Sénior/Lead/Director, key_skills), global_summary (strengths[3], improvements[3]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[3], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[3] específicas à profissão), cv_problems[3] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
+              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nReturn JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp as \"X years\" only, detected_role, seniority as one label only from Junior/Mid-level/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] with detailed explanations), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[4] specific to role), cv_problems[4] (title, description). STRICT scoring: most CVs 35-65.` : isES ? `Analiza este CV y devuelve JSON. Sé conciso, pero NO escueto.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nDevuelve JSON con: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp solo como \"X años\", detected_role, seniority solo como una etiqueta de Junior/Intermedio/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estructura/Contenido/Formación/Experiencia con score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] con explicaciones detalladas), salaryDetailed (percentile25, median, percentile75, topMax como números en ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica a la función, recommendations[4] específicas a la profesión), cv_problems[4] (title, description). Puntuación RIGUROSA: la mayoría de los CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nRetorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp apenas como \"X anos\", detected_role, seniority apenas como um rótulo de Júnior/Pleno/Sénior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] com explicações detalhadas), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[4] específicas à profissão), cv_problems[4] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
               const retryResponse = await fetch(geminiUrl, {
 
                 method: 'POST',
@@ -4790,6 +4790,18 @@ DEVUELVE EXACTAMENTE este JSON (sin texto antes ni después):
 
       "after": "<después sugerido>"
 
+    },
+
+    {
+
+      "action": "<acción 4>",
+
+      "impact": <1-10>,
+
+      "before": "<antes real>",
+
+      "after": "<después sugerido>"
+
     }
 
   ],
@@ -4918,7 +4930,21 @@ REGLAS CRÍTICAS:
 
   CORPORATE: Liderazgo, pensamiento estratégico, transformación digital — SOLO para funciones realmente corporativas
 
-16. KEYWORDS ATS POR ÁREA: Las keywords detectadas y recomendadas DEBEN ser relevantes para el área profesional. Un enfermero necesita "cuidados al paciente, evaluación clínica, administración de medicación" — NO "gestión de stakeholders, ROI, KPIs". Un mecánico necesita "diagnóstico, mantenimiento preventivo, sistemas hidráulicos" — NO "gestión de proyectos, metodología agile". Un fisioterapeuta necesita "rehabilitación, terapia manual, evaluación funcional" — NO "transformación organizacional". Un técnico de radiología necesita "imagenología, protección radiológica, tomografía" — NO "gestión de equipos".` : `Analisa o seguinte CV e retorna um JSON EXACTAMENTE com esta estrutura. CADA campo deve conter análise ESPECÍFICA ao CV — cita secções, frases e dados concretos do CV.
+16. KEYWORDS ATS POR ÁREA: Las keywords detectadas y recomendadas DEBEN ser relevantes para el área profesional. Un enfermero necesita "cuidados al paciente, evaluación clínica, administración de medicación" — NO "gestión de stakeholders, ROI, KPIs". Un mecánico necesita "diagnóstico, mantenimiento preventivo, sistemas hidráulicos" — NO "gestión de proyectos, metodología agile". Un fisioterapeuta necesita "rehabilitación, terapia manual, evaluación funcional" — NO "transformación organizacional". Un técnico de radiología necesita "imagenología, protección radiológica, tomografía" — NO "gestión de equipos".
+
+17. REGLAS DE DENSIDAD Y CANTIDAD (OBLIGATORIO):
+
+  - "detailedAtsAnalysis.factors" DEBE contener exactamente 6 factores distintos y cada "detail" debe tener al menos 35 palabras, con explicación concreta y específica al CV.
+
+  - "improvementActions" DEBE contener exactamente 4 acciones de mejora distintas y priorizadas. No devuelvas 2 ni 3.
+
+  - Cada "detailed_feedback" de quadrants debe tener 3-4 frases sustanciales y al menos 50 palabras.
+
+  - "automationRisk.description", "salaryDetailed.benefitsNote", "recruiterDeepAnalysis.firstImpression" e "interviewLikelihoodReason" deben ser sustanciales, específicas y no más cortas que 35 palabras cuando el campo lo permita.
+
+  - Todo el informe en español debe igualar la densidad de PT/EN: respuestas telegráficas, minimalistas o genéricas son inaceptables.
+
+18. TODO el texto analítico en español debe tener la misma profundidad, completitud y nivel de detalle que las versiones PT y EN.` : `Analisa o seguinte CV e retorna um JSON EXACTAMENTE com esta estrutura. CADA campo deve conter análise ESPECÍFICA ao CV — cita secções, frases e dados concretos do CV.
 
 
 
