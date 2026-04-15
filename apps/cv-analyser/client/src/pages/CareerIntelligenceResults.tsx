@@ -342,36 +342,55 @@ export default function CareerIntelligenceResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
-    const hydratePaidAccess = async () => {
-      const paymentVerification = await fetchPaymentStatus({
+    // ─── bootstrapPaidAccess: localStorage-first pattern (same as CareerPathResults) ───
+    const paidFlag = (
+      localStorage.getItem('careerIntelligenceFull') ||
+      sessionStorage.getItem('careerIntelligenceFull') ||
+      localStorage.getItem('careerIntelligenceProPaid') ||
+      sessionStorage.getItem('careerIntelligenceProPaid') ||
+      localStorage.getItem('careerPathPaid') ||
+      sessionStorage.getItem('careerPathPaid')
+    ) === 'true';
+
+    const bootstrapPaidAccess = () => {
+      setIsPaid(true);
+      localStorage.setItem('careerIntelligenceFull', 'true');
+      sessionStorage.setItem('careerIntelligenceFull', 'true');
+      if (savedData) {
+        setCareerData(savedData);
+        return;
+      }
+      // No saved data — need to generate
+      setTimeout(() => { generateAnalysis(); }, 300);
+    };
+
+    // If user already has a paid flag in localStorage, trust it immediately
+    if (paidFlag) {
+      bootstrapPaidAccess();
+      // Background verify (non-blocking) for analytics only
+      fetchPaymentStatus({
         orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
         sessionId: getFirstStoredValue(['stripeSessionId']),
         expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
-      });
+      }).catch(() => {});
+      return;
+    }
 
-      if (!(paymentVerification.success && paymentVerification.paid)) {
-        // Only clear flags if we didn't already have a local paidFlag
-        if (!paidFlag) {
-          localStorage.removeItem('careerPathPaid');
-          sessionStorage.removeItem('careerPathPaid');
-          localStorage.removeItem('careerIntelligenceFull');
-          sessionStorage.removeItem('careerIntelligenceFull');
+    // No local paid flag — try server verification as fallback
+    const hydratePaidAccess = async () => {
+      try {
+        const paymentVerification = await fetchPaymentStatus({
+          orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
+          sessionId: getFirstStoredValue(['stripeSessionId']),
+          expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
+        });
+        if (paymentVerification.success && paymentVerification.paid) {
+          bootstrapPaidAccess();
         }
-        return;
-      }
-
-      const ciNeedsRegen = (localStorage.getItem('ciNeedsRegeneration') || sessionStorage.getItem('ciNeedsRegeneration'));
-      if (ciNeedsRegen === 'true' || !savedData) {
-        localStorage.removeItem('ciNeedsRegeneration');
-        sessionStorage.removeItem('ciNeedsRegeneration');
-        setIsPaid(true);
-        setTimeout(() => { generateAnalysis(); }, 300);
-      } else {
-        setCareerData(savedData);
-        setIsPaid(true);
+      } catch {
+        // Server unreachable — don't clear flags
       }
     };
-
     hydratePaidAccess();
 
     // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
