@@ -364,7 +364,7 @@ function generateSuggestion(keyword: string, category: MatchedKeyword['category'
       `Destaque realizações mensuráveis relacionadas com ${keyword}.`,
     ],
     other: [
-      `Considere incluir "${keyword}" de forma natural no seu CV.`,
+      `Considere incluir "${keyword}" de forma natural no teu CV.`,
       `Adicione "${keyword}" onde for mais relevante para a função.`,
     ],
   } : {
@@ -603,7 +603,7 @@ export function runLiveMatch(cvText: string, jdText: string, lang: 'pt' | 'en' =
 
   // Generate summary
   const summary = lang === 'pt'
-    ? `O seu CV corresponde a ${foundCount} de ${totalCount} keywords da vaga (${partialCount} parciais, ${missingCount} em falta). ${
+    ? `O teu CV corresponde a ${foundCount} de ${totalCount} keywords da vaga (${partialCount} parciais, ${missingCount} em falta). ${
         globalScore >= 80 ? 'Excelente compatibilidade ATS!' :
         globalScore >= 60 ? 'Boa compatibilidade, mas há margem para melhorar.' :
         globalScore >= 40 ? 'Compatibilidade moderada — recomendamos ajustes.' :

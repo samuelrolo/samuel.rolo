@@ -169,7 +169,7 @@ function LockedPreview({ title, items }: { title: string; items: string[] }) {
 }
 
 /* ─── Plans ─── */
-function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp: '19.99' } : { cv: '9,99', cp: '19,99' }) {
+function getPlans(en: boolean, cur = '€', p = en ? { cv: '19.99', cp: '19.99' } : { cv: '19,99', cp: '19,99' }) {
   return [
     {
       id: 'career_path',
@@ -249,8 +249,8 @@ export default function CareerPathResults() {
     : { cv: '9,99', cp: '19,99' };
   const CURRENCY_CODE = t('eur');
 
-  /** Format price with correct symbol position: EN = $19.99, PT = 19,99€ */
-  const fmtPrice = (price: string | number) => pick(`${price}€`, `$${price}`, `${price}€`);
+  /** Format price with correct symbol position per locale, always in EUR */
+  const fmtPrice = (price: string | number) => pick(`${price}€`, `€${price}`, `${price}€`);
 
   /** Clean salary strings without rewriting the backend currency/market */
   const cleanCurrency = (s: string) => {
@@ -259,7 +259,7 @@ export default function CareerPathResults() {
       .replace(/€€+/g, '€')
       .replace(/\$\$+/g, '$')
       .replace(/\bEUR\s+EUR\b/gi, 'EUR')
-      .replace(/\bUSD\s+USD\b/gi, 'USD')
+      .replace(/\bUSD\s+USD\b/gi, 'EUR')
       .replace(/\bGBP\s+GBP\b/gi, 'GBP')
       .replace(/\bSGD\s+SGD\b/gi, 'SGD')
       .replace(/\bMXN\s+MXN\b/gi, 'MXN')

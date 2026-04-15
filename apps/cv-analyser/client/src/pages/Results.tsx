@@ -367,12 +367,12 @@ export default function Results() {
   });
   const isEN = lang === 'en';
 
-  // Currency & pricing: PT = EUR, EN = USD
+  // Currency & pricing: all locales use EUR
   const CUR = t('bca53fde');
   const P = isEN
     ? { cv: '9.99', cp: '19.99', career: '19.99' }
     : { cv: '9,99', cp: '19,99', career: '19,99' };
-  const CURRENCY_CODE = t('eur');
+  const CURRENCY_CODE = 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
     const pPT = !pEN && (window.location.pathname.startsWith('/cv-analyser') || window.location.pathname.startsWith('/career-path'));

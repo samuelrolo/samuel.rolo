@@ -188,8 +188,8 @@ export default function CareerIntelligenceResults() {
       cleaned = cleaned.replace(/\$/g, '€');
       cleaned = cleaned.replace(/USD/gi, 'EUR');
     } else {
-      cleaned = cleaned.replace(/€/g, '$');
-      cleaned = cleaned.replace(/EUR/gi, 'USD');
+      cleaned = cleaned.replace(/\$/g, '€');
+      cleaned = cleaned.replace(/USD/gi, 'EUR');
     }
     cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
     return cleaned;
@@ -198,7 +198,7 @@ export default function CareerIntelligenceResults() {
   const formatSalaryBand = (minValue: unknown, maxValue: unknown) => {
     const formatter = new Intl.NumberFormat(isEN ? 'en-US' : isES ? 'es-ES' : 'pt-PT', {
       style: 'currency',
-      currency: isEN ? 'USD' : 'EUR',
+      currency: 'EUR',
       maximumFractionDigits: 0,
     });
 

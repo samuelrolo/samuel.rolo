@@ -135,7 +135,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
   const scoreAdvice = avgScore >= 75 ? t('bom_desempenho') : avgScore >= 55 ? t('margem_melhoria') : t('prioritario_melhorar');
   const atsCompat = 100 - data.atsRejectionRate;
   const atsAdvice = atsCompat >= 70 ? t('boa_compatibilidade') : atsCompat >= 50 ? t('compatibilidade_media') : t('compatibilidade_baixa');
-  const currencySymbol = lang === 'en' ? '$' : '€';
+  const currencySymbol = '€';
 
   return (
     <div className="min-h-screen bg-background">

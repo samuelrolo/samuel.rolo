@@ -127,7 +127,7 @@ export default function CareerPathHome() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
+  const [step, setStep] = useState<'hero' | 'upload'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [region, setRegion] = useState<string>('');
@@ -475,7 +475,6 @@ export default function CareerPathHome() {
         localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
 
-      // Show preview before payment
       const profile = getCareerPathProfile(analysisSource);
       const normalizedCv = transformGeminiResponse(analysisSource, lang as 'pt' | 'en' | 'es');
       setPreviewData({
@@ -491,7 +490,9 @@ export default function CareerPathHome() {
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLoading(false);
-      setStep('preview');
+      setPaymentStep('payment');
+      setPaymentError(null);
+      setShowPaymentModal(true);
 
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -1296,7 +1297,7 @@ export default function CareerPathHome() {
                   aria-label={pick('Email para pagamento', 'Email for payment', 'Correo para el pago')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={pick('seu@email.com', 'your@email.com', 'tu@email.com')}
+                  placeholder={pick('teu@email.com', 'your@email.com', 'tu@email.com')}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>

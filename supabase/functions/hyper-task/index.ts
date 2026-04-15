@@ -482,9 +482,9 @@ function getCurrency(country) {
 
   return currencyMap[country] || {
 
-    symbol: '$',
+    symbol: '€',
 
-    code: 'USD'
+    code: 'EUR'
 
   };
 
@@ -566,11 +566,11 @@ function getLanguageOutputInstruction(lang) {
 
   if (lang === 'en') {
 
-    return 'OUTPUT LANGUAGE: Respond entirely in English. All AI-generated analytical content must be in clear, natural, professional English.';
+    return 'OUTPUT LANGUAGE: Respond entirely in English. All AI-generated analytical content must be in clear, natural, professional English. Use EUR for product pricing and avoid Brazil-specific Portuguese phrasing.';
 
   }
 
-  return 'LÍNGUA DE OUTPUT: Responde inteiramente em Português de Portugal (PT-PT). Todo o conteúdo analítico gerado pela IA deve estar em PT-PT rigoroso, sem gerúndios brasileiros.';
+  return 'LÍNGUA DE OUTPUT: Responde inteiramente em Português de Portugal (PT-PT). Todo o conteúdo analítico gerado pela IA deve estar em PT-PT rigoroso, sem gerúndios brasileiros, sem vocabulário PT-BR e sem referências de preço em Real brasileiro.';
 
 }
 
@@ -620,7 +620,7 @@ function getLocalisationInstructions(country, region, currency, lang) {
 
     base += `\nREGRAS DE LOCALIZAÇÃO (OBRIGATÓRIAS):\n`;
 
-    base += `1. TODOS os valores salariais DEVEM ser em ${currency.symbol} (${currency.code}), realistas para ${marketCtx}.\n`;
+    base += `1. TODOS os valores salariais DEVEM ser em ${currency.symbol} (${currency.code}), realistas para ${marketCtx}. Nunca uses Real brasileiro ou terminologia PT-BR por omissão.\n`;
 
     base += `2. "typical_companies" DEVEM listar empresas REAIS que operam em ${country}${region ? `, especificamente em ${region}` : ''}. Incluir empresas locais, multinacionais com escritórios lá, e empregadores relevantes do sector.\n`;
 
