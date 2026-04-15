@@ -6,9 +6,8 @@
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY_FALLBACK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
-// A anon key pode ser injetada em runtime, mas precisa de ser uma string válida e não vazia.
-const RUNTIME_SUPABASE_KEY = typeof window !== 'undefined' && typeof window.__ADMIN_ANALYTICS_SUPABASE_KEY === 'string'
-    ? window.__ADMIN_ANALYTICS_SUPABASE_KEY.trim()
+const RUNTIME_SUPABASE_KEY = typeof window !== 'undefined' && typeof window.__SUPABASE_ANON_KEY__ === 'string'
+    ? window.__SUPABASE_ANON_KEY__.trim()
     : '';
 const SUPABASE_KEY = RUNTIME_SUPABASE_KEY || SUPABASE_ANON_KEY_FALLBACK;
 const ADMIN_EMAIL = 'samuelrolo@gmail.com';
@@ -285,7 +284,7 @@ function isCareerIntelligence(a) {
 }
 function isLinkedinRoaster(a) {
     const type = (a?.analysis_type || a?.product || a?._source || '').toLowerCase();
-    return a?._source === 'linkedin_roaster' || type === 'linkedin_roaster' || type === 'linkedin-roaster';
+    return a?._source === 'linkedin_roaster' || type === 'linkedin_roaster' || type === 'linkedin-roaster' || type === 'linkedin_roast';
 }
 function isStudentPackVoucher(v) {
     const type = (v?.voucher_type || '').toLowerCase();
@@ -1380,8 +1379,8 @@ function renderAnalyses() {
     const email = (document.getElementById('filterSearch')?.value || '').toLowerCase();
     const period = document.getElementById('filterPeriod')?.value || 'all';
     if (type !== 'all') {
-        if (type === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
-        else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
+        if (type === 'linkedin_roaster') data = data.filter(a => isLinkedinRoaster(a));
+        else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && !isLinkedinRoaster(a));
         else if (type === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
         else if (type === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full' || a.analysis_type === 'career_intelligence');
         else data = data.filter(a => getAnalysisType(a) === type);
@@ -2138,7 +2137,7 @@ function getStatusLabel(status) {
 
 function getRecommendation(entry) {
     if (entry.status === 'down') {
-        if (entry.error_message?.includes('Bundle JS em falta') || entry.error_message?.includes('Asset em falta')) return { text: 'PÁGINA EM BRANCO: Um asset crítico não existe no servidor. A app pode responder 200 no HTML mas não renderizar. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
+        if (entry.error_message?.includes('Bundle JS em falta')) return { text: 'PÁGINA EM BRANCO: O bundle JavaScript não existe no servidor (404). A app não renderiza. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
         if (entry.error_message?.includes('timed out')) return { text: 'Timeout detetado. Verificar se o serviço está a correr e se não há cold starts excessivos.', severity: 'critical' };
         return { text: 'Serviço indisponível. Verificar logs do servidor e reiniciar se necessário.', severity: 'critical' };
     }
@@ -2156,110 +2155,6 @@ function getRecommendation(entry) {
     return { text: 'Tudo normal. Sem ação necessária.', severity: 'ok' };
 }
 
-function getHealthUptime(entry) {
-    const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === entry.endpoint_name);
-    const totalChecks = endpointHistory.length;
-    const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
-    return totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
-}
-
-function getFrontendHealthMeta(entry) {
-    const prefix = 'Frontend ';
-    const rawName = (entry?.endpoint_name || '').startsWith(prefix) ? entry.endpoint_name.slice(prefix.length) : (entry?.endpoint_name || '');
-    const parts = rawName.split(' ');
-    const lang = parts.pop() || '--';
-    return {
-        app: parts.join(' '),
-        lang,
-        uptime: getHealthUptime(entry)
-    };
-}
-
-function buildFrontendMatrix(frontendServices) {
-    if (!frontendServices.length) return '';
-    const appOrder = ['CV Analyser', 'Career Intelligence', 'Career Path', 'LinkedIn Roaster', 'Student Pack', 'Bundle'];
-    const langs = ['PT', 'EN', 'ES'];
-    const rows = new Map();
-
-    frontendServices.forEach(service => {
-        const meta = getFrontendHealthMeta(service);
-        if (!rows.has(meta.app)) rows.set(meta.app, {});
-        rows.get(meta.app)[meta.lang] = { ...service, uptime: meta.uptime };
-    });
-
-    const orderedApps = [
-        ...appOrder.filter(app => rows.has(app)),
-        ...Array.from(rows.keys()).filter(app => !appOrder.includes(app)).sort()
-    ];
-
-    function buildCell(entry) {
-        if (!entry) {
-            return '<td style="padding:10px 8px;text-align:center;color:var(--text-muted);font-size:12px;">—</td>';
-        }
-        const isHealthy = entry.status === 'healthy';
-        const isWarning = entry.status === 'warning';
-        const color = getStatusColor(entry.status);
-        const bg = isHealthy ? 'rgba(16,185,129,0.10)' : isWarning ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.10)';
-        const border = isHealthy ? 'rgba(16,185,129,0.25)' : isWarning ? 'rgba(245,158,11,0.3)' : 'rgba(239,68,68,0.25)';
-        const icon = isHealthy ? 'fa-check-circle' : isWarning ? 'fa-exclamation-circle' : 'fa-times-circle';
-        const mainText = entry.http_code ? `${entry.http_code}` : getStatusLabel(entry.status);
-        const ttfb = entry.ttfb_ms != null ? `${entry.ttfb_ms}ms` : 'N/A';
-        const uptime = `${entry.uptime}%`;
-        const errorHtml = entry.error_message ? `<div style="margin-top:6px;color:var(--red);font-size:11px;line-height:1.4;">${esc(entry.error_message)}</div>` : '';
-        return `<td style="padding:8px;vertical-align:top;">
-            <details style="background:${bg};border:1px solid ${border};border-radius:8px;padding:8px 10px;">
-                <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:${color};font-weight:700;font-size:12px;">
-                    <i class="fas ${icon}"></i>
-                    <span>${mainText}</span>
-                </summary>
-                <div style="margin-top:8px;font-size:11px;color:var(--text-muted);line-height:1.5;">
-                    <div><strong style="color:var(--dark);">Estado:</strong> ${getStatusLabel(entry.status)}</div>
-                    <div><strong style="color:var(--dark);">TTFB:</strong> ${ttfb}</div>
-                    <div><strong style="color:var(--dark);">Uptime:</strong> ${uptime}</div>
-                    <div><strong style="color:var(--dark);">HTTP:</strong> ${entry.http_code || 'N/A'}</div>
-                    ${errorHtml}
-                </div>
-            </details>
-        </td>`;
-    }
-
-    const totalApps = orderedApps.length;
-    const downCount = frontendServices.filter(s => s.status === 'down').length;
-    const statusText = downCount > 0
-        ? `<span style="color:var(--red);font-weight:600;">${downCount} endpoint${downCount > 1 ? 's' : ''} com erro</span>`
-        : `<span style="color:var(--green);font-weight:600;">${frontendServices.filter(s => s.status === 'healthy').length}/${frontendServices.length} endpoints operacionais</span>`;
-
-    return `<div style="margin-bottom:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--blue);gap:12px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:8px;">
-                <i class="fas fa-globe" style="color:var(--blue);font-size:16px;"></i>
-                <span style="font-size:14px;font-weight:700;color:var(--dark);">Frontend</span>
-                <span style="font-size:12px;color:var(--text-muted);">(${totalApps} apps · PT/EN/ES)</span>
-            </div>
-            <div style="font-size:12px;">${statusText}</div>
-        </div>
-        <div style="overflow-x:auto;">
-            <table class="data-table" style="width:100%;font-size:12px;min-width:680px;">
-                <thead>
-                    <tr>
-                        <th style="width:28%;">App</th>
-                        <th style="text-align:center;">PT</th>
-                        <th style="text-align:center;">EN</th>
-                        <th style="text-align:center;">ES</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${orderedApps.map(app => `<tr>
-                        <td style="font-weight:600;color:var(--dark);vertical-align:middle;">${esc(app)}</td>
-                        ${langs.map(lang => buildCell(rows.get(app)?.[lang])).join('')}
-                    </tr>`).join('')}
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">Clica em cada estado para ver TTFB, uptime, HTTP e mensagem detalhada.</div>
-    </div>`;
-}
-
 function renderHealthLogs() {
     if (!allHealthLogs.length) {
         document.getElementById('healthSummaryTitle').textContent = 'Sem dados de monitorização';
@@ -2270,6 +2165,7 @@ function renderHealthLogs() {
         return;
     }
 
+    // Group by run_id, get latest run
     const byRun = {};
     allHealthLogs.forEach(h => {
         if (!byRun[h.run_id]) byRun[h.run_id] = [];
@@ -2279,6 +2175,7 @@ function renderHealthLogs() {
     const latestRun = byRun[runIds[0]] || [];
     const latestDate = latestRun[0]?.checked_at ? new Date(latestRun[0].checked_at).toLocaleString('pt-PT') : '--';
 
+    // Executive Summary
     const downCount = latestRun.filter(h => h.status === 'down').length;
     const warnCount = latestRun.filter(h => h.status === 'warning').length;
     const healthyCount = latestRun.filter(h => h.status === 'healthy').length;
@@ -2307,7 +2204,9 @@ function renderHealthLogs() {
     }
     summaryDesc.textContent = `Último check: ${latestDate} · ${healthyCount}/${totalServices} saudáveis`;
 
+    // Service Cards
     const cardsEl = document.getElementById('healthServiceCards');
+    // Group services by category
     const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
     const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
     const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend'));
@@ -2319,7 +2218,10 @@ function renderHealthLogs() {
         const rec = getRecommendation(h);
         const ttfb = h.ttfb_ms != null ? `${h.ttfb_ms}ms` : 'N/A';
         const httpBadge = h.http_code ? (h.http_code >= 200 && h.http_code < 300 ? `<span style="color:var(--green);font-weight:600;">${h.http_code}</span>` : `<span style="color:var(--orange);font-weight:600;">${h.http_code}</span>`) : '<span style="color:var(--red);font-weight:600;">N/A</span>';
-        const uptime = getHealthUptime(h);
+        const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === h.endpoint_name);
+        const totalChecks = endpointHistory.length;
+        const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
+        const uptime = totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
         const uptimeColor = uptime >= 95 ? 'var(--green)' : uptime >= 85 ? 'var(--orange)' : 'var(--red)';
         const recIcon = rec.severity === 'critical' ? '🚨' : rec.severity === 'warning' ? '⚠️' : rec.severity === 'info' ? 'ℹ️' : '✅';
         return `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:4px solid ${color};">
@@ -2361,10 +2263,11 @@ function renderHealthLogs() {
     }
 
     cardsEl.innerHTML =
-        buildFrontendMatrix(frontendServices) +
+        buildSection('Frontend', 'fa-globe', frontendServices, 'var(--blue)') +
         buildSection('Backend', 'fa-server', backendServices, 'var(--orange)') +
         buildSection('Edge Functions', 'fa-bolt', edgeServices, 'var(--purple)');
 
+    // Populate history filter
     const filterEl = document.getElementById('healthHistoryFilter');
     if (filterEl) {
         const names = [...new Set(allHealthLogs.map(h => h.endpoint_name))];
@@ -2401,105 +2304,19 @@ function renderHealthHistory() {
     }).join('');
 }
 
-function extractFrontendAssetPaths(html) {
-    if (!html || typeof html !== 'string') return [];
-    const paths = new Set();
-    const scriptRegex = /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi;
-    const cssRegex = /<link\b[^>]*\bhref=["']([^"']+)["'][^>]*>/gi;
-    let match;
-
-    while ((match = scriptRegex.exec(html)) !== null) {
-        const src = (match[1] || '').trim();
-        if (src) paths.add(src);
-    }
-
-    while ((match = cssRegex.exec(html)) !== null) {
-        const fullTag = match[0] || '';
-        const href = (match[1] || '').trim();
-        if (!href) continue;
-        const relMatch = fullTag.match(/\brel=["']([^"']+)["']/i);
-        const relValue = (relMatch?.[1] || '').toLowerCase();
-        const asMatch = fullTag.match(/\bas=["']([^"']+)["']/i);
-        const asValue = (asMatch?.[1] || '').toLowerCase();
-        if (relValue.includes('stylesheet') || (relValue.includes('preload') && asValue === 'style')) {
-            paths.add(href);
-        }
-    }
-
-    return Array.from(paths);
-}
-
-function getFrontendAssetDisplayPath(assetPath, pageUrl) {
-    try {
-        const assetUrl = new URL(assetPath, pageUrl);
-        return `${assetUrl.pathname}${assetUrl.search || ''}`;
-    } catch {
-        return assetPath;
-    }
-}
-
-async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-        return await fetch(url, { ...options, signal: controller.signal });
-    } finally {
-        clearTimeout(timeout);
-    }
-}
-
-async function validateFrontendAssets(pageUrl, html) {
-    const assetPaths = extractFrontendAssetPaths(html);
-    if (!assetPaths.length) {
-        return { ok: false, message: 'Nenhum asset JS/CSS encontrado no HTML.', httpCode: null };
-    }
-
-    for (const assetPath of assetPaths) {
-        const assetUrl = new URL(assetPath, pageUrl).href;
-        let assetRes;
-        try {
-            assetRes = await fetchWithTimeout(assetUrl, { method: 'GET', cache: 'no-store' }, 15000);
-        } catch {
-            return {
-                ok: false,
-                message: `Asset em falta: ${getFrontendAssetDisplayPath(assetPath, pageUrl)}`,
-                httpCode: null
-            };
-        }
-
-        if (!assetRes.ok) {
-            return {
-                ok: false,
-                message: `Asset em falta: ${getFrontendAssetDisplayPath(assetPath, pageUrl)}`,
-                httpCode: assetRes.status || null
-            };
-        }
-    }
-
-    return { ok: true, message: null, httpCode: 200 };
-}
-
 async function refreshHealthCheck() {
     showToast('A verificar serviços... isto pode demorar alguns segundos.', 'info');
     const endpoints = [
         { name: 'Frontend CV Analyser PT', url: 'https://www.share2inspire.pt/cv-analyser', category: 'frontend' },
         { name: 'Frontend CV Analyser EN', url: 'https://www.share2inspire.pt/en/cv-analyser', category: 'frontend' },
-        { name: 'Frontend CV Analyser ES', url: 'https://www.share2inspire.pt/es/cv-analyser', category: 'frontend' },
         { name: 'Frontend Career Path PT', url: 'https://www.share2inspire.pt/career-path', category: 'frontend' },
         { name: 'Frontend Career Path EN', url: 'https://www.share2inspire.pt/en/career-path', category: 'frontend' },
-        { name: 'Frontend Career Path ES', url: 'https://www.share2inspire.pt/es/career-path', category: 'frontend' },
         { name: 'Frontend Career Intelligence PT', url: 'https://www.share2inspire.pt/career-intelligence', category: 'frontend' },
         { name: 'Frontend Career Intelligence EN', url: 'https://www.share2inspire.pt/en/career-intelligence', category: 'frontend' },
-        { name: 'Frontend Career Intelligence ES', url: 'https://www.share2inspire.pt/es/career-intelligence', category: 'frontend' },
         { name: 'Frontend LinkedIn Roaster PT', url: 'https://www.share2inspire.pt/linkedin-roaster', category: 'frontend' },
         { name: 'Frontend LinkedIn Roaster EN', url: 'https://www.share2inspire.pt/en/linkedin-roaster', category: 'frontend' },
-        { name: 'Frontend LinkedIn Roaster ES', url: 'https://www.share2inspire.pt/es/linkedin-roaster', category: 'frontend' },
-        { name: 'Frontend Student Pack PT', url: 'https://www.share2inspire.pt/estudante', category: 'frontend' },
-        { name: 'Frontend Student Pack EN', url: 'https://www.share2inspire.pt/en/student-pack', category: 'frontend' },
-        { name: 'Frontend Student Pack ES', url: 'https://www.share2inspire.pt/es/student-pack', category: 'frontend' },
         { name: 'Frontend Bundle PT', url: 'https://www.share2inspire.pt/bundle', category: 'frontend' },
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
-        { name: 'Frontend Bundle ES', url: 'https://www.share2inspire.pt/es/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
         { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/rest/v1/', category: 'edge_function' }
@@ -2509,34 +2326,40 @@ async function refreshHealthCheck() {
     for (const ep of endpoints) {
         const start = Date.now();
         try {
-            const res = await fetchWithTimeout(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', cache: 'no-store' }, 15000);
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000);
+            const res = await fetch(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', signal: controller.signal });
+            clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
             let status = elapsed > 2000 ? 'warning' : 'healthy';
             let errorMsg = null;
-            let resultHttpCode = httpCode;
 
-            if (ep.category === 'frontend') {
-                if (res.type === 'opaque') {
-                    status = 'down';
-                    errorMsg = 'Não foi possível validar o HTML do frontend.';
-                } else if (!res.ok) {
-                    status = 'down';
-                    errorMsg = `HTML indisponível (${res.status})`;
-                } else {
+            // Deep check for frontend React apps: verify JS bundle exists
+            if (ep.category === 'frontend' && res.type !== 'opaque') {
+                try {
                     const html = await res.text();
-                    const assetCheck = await validateFrontendAssets(ep.url, html);
-                    if (!assetCheck.ok) {
-                        status = 'down';
-                        errorMsg = assetCheck.message;
-                        if (assetCheck.httpCode) resultHttpCode = assetCheck.httpCode;
-                    } else {
-                        status = elapsed > 2000 ? 'warning' : 'healthy';
+                    const scriptMatch = html.match(/src="([^"]*assets\/index-[^"]+\.js)"/);
+                    if (scriptMatch) {
+                        const bundlePath = scriptMatch[1];
+                        const bundleUrl = bundlePath.startsWith('http') ? bundlePath : new URL(bundlePath, ep.url).href;
+                        const bundleRes = await fetch(bundleUrl, { method: 'HEAD' });
+                        if (bundleRes.status === 404) {
+                            status = 'down';
+                            errorMsg = `Bundle JS em falta (404): ${bundlePath}`;
+                        }
                     }
+                    // Also check if root div has content (basic render check)
+                    if (!errorMsg && html.includes('id="root"') && !html.includes('<div id="root">')) {
+                        // HTML loads but root is empty - this is expected for SPA, bundle check is more reliable
+                    }
+                } catch (deepErr) {
+                    // Deep check failed, keep original status
+                    console.warn('Deep check failed for', ep.name, deepErr.message);
                 }
             }
 
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: resultHttpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
@@ -2676,31 +2499,20 @@ function editAffiliate(id) {
     document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
 }
 
-function getAffiliateProductPaths(product) {
-    const defaultPath = product;
-    return {
-        pt: product === 'student-pack' ? 'estudante' : defaultPath,
-        en: product === 'student-pack' ? 'student-pack' : defaultPath,
-        es: product === 'student-pack' ? 'student-pack' : defaultPath
-    };
-}
-
 function updateAffLinkPreview() {
     const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
     const code = document.getElementById('affCode').value.trim().toLowerCase();
     const el = document.getElementById('affLinkPreview');
     if (!el) return;
     if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster','bundle':'Bundle'};
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster'};
     const slug = code || '...';
     el.innerHTML = products.map(p => {
-        const paths = getAffiliateProductPaths(p);
-        const links = [
-            `share2inspire.pt/${paths.pt}?ref=${slug}`,
-            `share2inspire.pt/en/${paths.en}?ref=${slug}`,
-            `share2inspire.pt/es/${paths.es}?ref=${slug}`
-        ];
-        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p] || p}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
+        const ptPath = p === 'student-pack' ? 'estudante' : p;
+        const enPath = p === 'student-pack' ? 'student-pack' : p;
+        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`];
+        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${enPath}?ref=${slug}`);
+        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
     }).join('');
 }
 
@@ -2744,10 +2556,10 @@ function copyAffLink(code, product) {
     const products = (product || 'cv-analyser').split(',');
     const allLinks = [];
     products.forEach(p => {
-        const paths = getAffiliateProductPaths(p);
-        allLinks.push(`${base}/${paths.pt}?ref=${code}`);
-        allLinks.push(`${base}/en/${paths.en}?ref=${code}`);
-        allLinks.push(`${base}/es/${paths.es}?ref=${code}`);
+        const ptPath = p === 'student-pack' ? 'estudante' : p;
+        const enPath = p === 'student-pack' ? 'student-pack' : p;
+        allLinks.push(`${base}/${ptPath}?ref=${code}`);
+        if (p !== 'linkedin-roaster') allLinks.push(`${base}/en/${enPath}?ref=${code}`);
     });
     navigator.clipboard.writeText(allLinks.join('\n')).then(() => showToast(`${allLinks.length} link(s) copiado(s)`, 'success')).catch(() => prompt('Copia:', allLinks.join('\n')));
 }
@@ -2792,17 +2604,13 @@ function renderCoupons() {
     setText('couponKpiUses', totalUses);
 
     const productLabels = {
-        'all': '<span class="badge" style="background:#374151;color:#fff;font-size:10px;">Todos</span>',
         'cv_analysis': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV</span>',
         'career_path': '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Career</span>',
         'career_intelligence_pro': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>',
         'career_intelligence_full': '<span class="badge" style="background:#5B21B6;color:#fff;font-size:10px;">CI Full</span>',
         'student_pack': '<span class="badge" style="background:#059669;color:#fff;font-size:10px;">Student Pack</span>',
         'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
-        'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>',
-        'linkedin_roast': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>',
-        'subscription': '<span class="badge" style="background:#D97706;color:#fff;font-size:10px;">Subscrição</span>',
-        'salary_reality_check_premium': '<span class="badge" style="background:#DC2626;color:#fff;font-size:10px;">Salary Check</span>'
+        'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>'
     };
     const tbody = document.getElementById('couponsTable');
     if (!tbody) return;

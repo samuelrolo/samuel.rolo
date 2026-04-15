@@ -284,7 +284,7 @@ function isCareerIntelligence(a) {
 }
 function isLinkedinRoaster(a) {
     const type = (a?.analysis_type || a?.product || a?._source || '').toLowerCase();
-    return a?._source === 'linkedin_roaster' || type === 'linkedin_roaster' || type === 'linkedin-roaster';
+    return a?._source === 'linkedin_roaster' || type === 'linkedin_roaster' || type === 'linkedin-roaster' || type === 'linkedin_roast';
 }
 function isStudentPackVoucher(v) {
     const type = (v?.voucher_type || '').toLowerCase();
@@ -1379,8 +1379,8 @@ function renderAnalyses() {
     const email = (document.getElementById('filterSearch')?.value || '').toLowerCase();
     const period = document.getElementById('filterPeriod')?.value || 'all';
     if (type !== 'all') {
-        if (type === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
-        else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
+        if (type === 'linkedin_roaster') data = data.filter(a => isLinkedinRoaster(a));
+        else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && !isLinkedinRoaster(a));
         else if (type === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
         else if (type === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full' || a.analysis_type === 'career_intelligence');
         else data = data.filter(a => getAnalysisType(a) === type);
