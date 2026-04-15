@@ -370,6 +370,93 @@ export default function CareerPathResults() {
     }
   };
 
+  const generateCareerPath = useCallback(async () => {
+    setIsGenerating(true);
+    setGenerateError(null);
+    try {
+      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
+      const cvFile = (localStorage.getItem('careerPathCvFile') || sessionStorage.getItem('careerPathCvFile')) || '';
+      const cvFilename = (localStorage.getItem('careerPathCvFilename') || sessionStorage.getItem('careerPathCvFilename')) || 'cv.pdf';
+      const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
+      const currentCountry = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined;
+      const currentRegion = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined;
+      const currentLocation = (localStorage.getItem('analysisLocation') || sessionStorage.getItem('analysisLocation')) || (currentRegion && currentCountry ? `${currentRegion}, ${currentCountry}` : currentCountry || currentRegion || undefined);
+
+      localStorage.setItem('analysisLang', currentLanguage);
+      sessionStorage.setItem('analysisLang', currentLanguage);
+      if (currentCountry) {
+        localStorage.setItem('analysisCountry', currentCountry);
+        sessionStorage.setItem('analysisCountry', currentCountry);
+      }
+      if (currentLocation) {
+        localStorage.setItem('analysisLocation', currentLocation);
+        sessionStorage.setItem('analysisLocation', currentLocation);
+      }
+
+      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
+      const requestBody: any = {
+        mode: 'career_path',
+        email: cpEmail,
+        cv_text: cvText,
+        linkedin_url: linkedinUrl || undefined,
+        language: currentLanguage,
+        country: currentCountry,
+        region: currentRegion,
+        location: currentLocation,
+      };
+      // If cv_text is too short but we have the file base64, send it as fallback
+      if (cvText.trim().length < 50 && cvFile) {
+        requestBody.file = cvFile;
+        requestBody.filename = cvFilename;
+      }
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      if (!data.success && !data.career_path) {
+        throw new Error(data.error || (t('erro_ao_gerar_career_path')));
+      }
+
+      const normalizedCareerPath = normalizeCareerPathPayload(data, currentLanguage);
+      const cpData = normalizedCareerPath.analysis;
+      setCareerPathData(cpData);
+      setIsPaid(true);
+      localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
+      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
+
+      // Fire-and-forget: log to cv_analysis for dashboard
+      const orderId = (localStorage.getItem('cpOrderId') || sessionStorage.getItem('cpOrderId')) || undefined;
+      const cpLinkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl')) || undefined;
+      logCareerPathToSupabase(cpData, orderId, cpLinkedin);
+
+      // Save to user_analyses for area-cliente
+      // Delay to capture HTML after React renders the full results
+      setTimeout(async () => {
+        try {
+          await saveToUserAnalyses('career_path', {
+            career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
+            career_path_json: cpData,
+            results_html: document.querySelector('.career-path-results')?.innerHTML || '',
+            linkedin_url: cpLinkedin,
+          });
+          setSavedToAccount(true);
+        } catch (e: any) {
+          console.warn('[S2I] Auto-save after generation failed:', e?.message);
+        }
+      }, 1500);
+    } catch (err: any) {
+      setGenerateError(err.message || (t('erro_ao_gerar_career_path_2')));
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [linkedinUrl]);
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
@@ -494,93 +581,6 @@ export default function CareerPathResults() {
     hydratePaidAccess();
   }, [careerPathHomePath, generateCareerPath, lang, setLocation]);
 
-  const generateCareerPath = useCallback(async () => {
-    setIsGenerating(true);
-    setGenerateError(null);
-    try {
-      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
-      const cvFile = (localStorage.getItem('careerPathCvFile') || sessionStorage.getItem('careerPathCvFile')) || '';
-      const cvFilename = (localStorage.getItem('careerPathCvFilename') || sessionStorage.getItem('careerPathCvFilename')) || 'cv.pdf';
-      const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
-      const currentCountry = (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined;
-      const currentRegion = (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined;
-      const currentLocation = (localStorage.getItem('analysisLocation') || sessionStorage.getItem('analysisLocation')) || (currentRegion && currentCountry ? `${currentRegion}, ${currentCountry}` : currentCountry || currentRegion || undefined);
-
-      localStorage.setItem('analysisLang', currentLanguage);
-      sessionStorage.setItem('analysisLang', currentLanguage);
-      if (currentCountry) {
-        localStorage.setItem('analysisCountry', currentCountry);
-        sessionStorage.setItem('analysisCountry', currentCountry);
-      }
-      if (currentLocation) {
-        localStorage.setItem('analysisLocation', currentLocation);
-        sessionStorage.setItem('analysisLocation', currentLocation);
-      }
-
-      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
-      const requestBody: any = {
-        mode: 'career_path',
-        email: cpEmail,
-        cv_text: cvText,
-        linkedin_url: linkedinUrl || undefined,
-        language: currentLanguage,
-        country: currentCountry,
-        region: currentRegion,
-        location: currentLocation,
-      };
-      // If cv_text is too short but we have the file base64, send it as fallback
-      if (cvText.trim().length < 50 && cvFile) {
-        requestBody.file = cvFile;
-        requestBody.filename = cvFilename;
-      }
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      if (!data.success && !data.career_path) {
-        throw new Error(data.error || (t('erro_ao_gerar_career_path')));
-      }
-
-      const normalizedCareerPath = normalizeCareerPathPayload(data, currentLanguage);
-      const cpData = normalizedCareerPath.analysis;
-      setCareerPathData(cpData);
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
-      sessionStorage.setItem('careerPathData', JSON.stringify(normalizedCareerPath));
-
-      // Fire-and-forget: log to cv_analysis for dashboard
-      const orderId = (localStorage.getItem('cpOrderId') || sessionStorage.getItem('cpOrderId')) || undefined;
-      const cpLinkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl')) || undefined;
-      logCareerPathToSupabase(cpData, orderId, cpLinkedin);
-
-      // Save to user_analyses for area-cliente
-      // Delay to capture HTML after React renders the full results
-      setTimeout(async () => {
-        try {
-          await saveToUserAnalyses('career_path', {
-            career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
-            career_path_json: cpData,
-            results_html: document.querySelector('.career-path-results')?.innerHTML || '',
-            linkedin_url: cpLinkedin,
-          });
-          setSavedToAccount(true);
-        } catch (e: any) {
-          console.warn('[S2I] Auto-save after generation failed:', e?.message);
-        }
-      }, 1500);
-    } catch (err: any) {
-      setGenerateError(err.message || (t('erro_ao_gerar_career_path_2')));
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [linkedinUrl]);
 
   /* ─── Unified discount code validation for Career Path ─── */
   const handleDiscountSubmit = async () => {
