@@ -47,27 +47,27 @@ export default function AboutPage() {
       icon: <Target className="w-4 h-4" />,
       title: pick("Missão", "Mission", "Misión"),
       text: pick(
-        "Acelerar a empregabilidade e o crescimento profissional, fornecendo uma análise inteligente, objectiva e localizada da carreira.",
-        "Accelerate employability and professional growth by providing intelligent, objective and locally grounded career analysis.",
-        "Acelerar la empleabilidad y el crecimiento profesional, proporcionando un análisis de carrera inteligente, objetivo y localizado."
+        "Acelerar a empregabilidade e o crescimento profissional, fornecendo uma análise inteligente, objectiva e adaptada aos principais mercados globais.",
+        "Accelerate employability and professional growth by providing intelligent, objective career analysis adapted to the world’s main labour markets.",
+        "Acelerar la empleabilidad y el crecimiento profesional, proporcionando un análisis de carrera inteligente, objetivo y adaptado a los principales mercados laborales del mundo."
       ),
     },
     {
       icon: <Eye className="w-4 h-4" />,
       title: pick("Visão", "Vision", "Visión"),
       text: pick(
-        "Tornar-se o ecossistema de referência onde profissionais percebem exactamente onde estão, o que precisam ajustar e qual o próximo passo estratégico, com base em dados reais.",
-        "Become the reference ecosystem where professionals understand exactly where they stand, what they need to adjust and what the next strategic step is, based on real data.",
-        "Convertirse en el ecosistema de referencia donde los profesionales entienden exactamente dónde están, qué necesitan ajustar y cuál es el siguiente paso estratégico, basándose en datos reales."
+        "Tornar-se o ecossistema de referência onde profissionais percebem exactamente onde estão, o que precisam ajustar e qual o próximo passo estratégico, com base em dados reais e benchmarks regionais.",
+        "Become the reference ecosystem where professionals understand exactly where they stand, what they need to adjust and what the next strategic step is, based on real data and regional benchmarks.",
+        "Convertirse en el ecosistema de referencia donde los profesionales entienden exactamente dónde están, qué necesitan ajustar y cuál es el siguiente paso estratégico, basándose en datos reales y benchmarks regionales."
       ),
     },
     {
       icon: <ShieldCheck className="w-4 h-4" />,
       title: pick("Valores", "Values", "Valores"),
       text: pick(
-        "Praticidade, dados reais em vez de recomendações genéricas, transparência, humanização da tecnologia e foco no mercado local.",
-        "Practicality, real data instead of generic recommendations, transparency, humanised technology and a strong focus on the local market.",
-        "Practicidad, datos reales en lugar de recomendaciones genéricas, transparencia, humanización de la tecnología y foco en el mercado local."
+        "Praticidade, dados reais em vez de recomendações genéricas, transparência, humanização da tecnologia e leitura contextual dos mercados globais.",
+        "Practicality, real data instead of generic recommendations, transparency, humanised technology and contextual reading of global markets.",
+        "Practicidad, datos reales en lugar de recomendaciones genéricas, transparencia, humanización de la tecnología y lectura contextual de los mercados globales."
       ),
     },
   ];
@@ -203,9 +203,9 @@ export default function AboutPage() {
               </h1>
               <p className="max-w-3xl mx-auto text-base md:text-lg leading-8 text-slate-600">
                 {pick(
-                  "A Share2Inspire é um ecossistema de Career Intelligence criado para tornar as decisões de carreira mais claras, mais estratégicas e mais próximas da realidade do mercado. Em vez de recomendações genéricas, combina tecnologia, contexto local e análise prática para ajudar profissionais a perceber onde estão, o que precisam de ajustar e qual o próximo passo com maior retorno.",
-                  "Share2Inspire is a Career Intelligence ecosystem created to make career decisions clearer, more strategic and closer to actual market conditions. Instead of generic recommendations, it combines technology, local context and practical analysis to help professionals understand where they stand, what they need to adjust and which next step offers the highest return.",
-                  "Share2Inspire es un ecosistema de Career Intelligence creado para hacer que las decisiones de carrera sean más claras, más estratégicas y más cercanas a la realidad del mercado. En lugar de recomendaciones genéricas, combina tecnología, contexto local y análisis práctico para ayudar a los profesionales a entender dónde están, qué necesitan ajustar y cuál es el siguiente paso con mayor retorno."
+                  "A Share2Inspire é uma plataforma global de Career Intelligence criada para tornar as decisões de carreira mais claras, mais estratégicas e mais próximas da realidade do mercado. Em vez de recomendações genéricas, combina tecnologia, análise prática e benchmarks adaptados à América do Norte, à Europa e à Ásia para ajudar profissionais a perceber onde estão, o que precisam de ajustar e qual o próximo passo com maior retorno.",
+                  "Share2Inspire is a global Career Intelligence platform created to make career decisions clearer, more strategic and closer to actual market conditions. Instead of generic recommendations, it combines technology, practical analysis and benchmarks adapted to North America, Europe and Asia to help professionals understand where they stand, what they need to adjust and which next step offers the highest return.",
+                  "Share2Inspire es una plataforma global de Career Intelligence creada para hacer que las decisiones de carrera sean más claras, más estratégicas y más cercanas a la realidad del mercado. En lugar de recomendaciones genéricas, combina tecnología, análisis práctico y benchmarks adaptados a Norteamérica, Europa y Asia para ayudar a los profesionales a entender dónde están, qué necesitan ajustar y cuál es el siguiente paso con mayor retorno."
                 )}
               </p>
             </div>
@@ -251,16 +251,16 @@ export default function AboutPage() {
                   <div className="space-y-4 text-slate-600 leading-8">
                     <p>
                       {pick(
-                        "A plataforma foi desenhada para acelerar a empregabilidade e o crescimento profissional através de análises inteligentes, objectivas e localizadas. O foco está em transformar incerteza em clareza e recomendações dispersas em orientação accionável.",
-                        "The platform was designed to accelerate employability and professional growth through intelligent, objective and locally grounded analysis. Its focus is to turn uncertainty into clarity and scattered recommendations into actionable guidance.",
-                        "La plataforma fue diseñada para acelerar la empleabilidad y el crecimiento profesional mediante análisis inteligentes, objetivos y contextualizados al mercado local. Su foco es transformar la incertidumbre en claridad y las recomendaciones dispersas en orientación accionable."
+                        "A plataforma foi desenhada para acelerar a empregabilidade e o crescimento profissional através de análises inteligentes, objectivas e contextualizadas. Está preparada para reconhecer padrões do mercado de trabalho da América do Norte, da Europa e da Ásia, transformando incerteza em clareza e recomendações dispersas em orientação accionável.",
+                        "The platform was designed to accelerate employability and professional growth through intelligent, objective and contextual analysis. It is built to recognise labour market patterns across North America, Europe and Asia, turning uncertainty into clarity and scattered recommendations into actionable guidance.",
+                        "La plataforma fue diseñada para acelerar la empleabilidad y el crecimiento profesional mediante análisis inteligentes, objetivos y contextualizados. Está preparada para reconocer patrones del mercado laboral de Norteamérica, Europa y Asia, transformando la incertidumbre en claridad y las recomendaciones dispersas en orientación accionable."
                       )}
                     </p>
                     <p>
                       {pick(
-                        "A Share2Inspire posiciona-se entre HR Tech, EdTech e Career Intelligence, com uma abordagem que humaniza a tecnologia: a IA acelera o diagnóstico, enquanto a estratégia e o contexto humano garantem que cada recomendação é útil, realista e relevante.",
-                        "Share2Inspire sits at the intersection of HR Tech, EdTech and Career Intelligence, with an approach that humanises technology: AI accelerates diagnosis, while strategy and human context ensure that each recommendation is useful, realistic and relevant.",
-                        "Share2Inspire se sitúa entre HR Tech, EdTech y Career Intelligence, con un enfoque que humaniza la tecnología: la IA acelera el diagnóstico, mientras que la estrategia y el contexto humano garantizan que cada recomendación sea útil, realista y relevante."
+                        "A Share2Inspire posiciona-se entre HR Tech, EdTech e Career Intelligence, com uma abordagem que humaniza a tecnologia: a IA acelera o diagnóstico, enquanto a estratégia e o contexto humano garantem que cada recomendação é útil, realista e relevante. Isso inclui benchmarks salariais, análise de compatibilidade com ATS e avaliação do risco de automação ajustados à região e ao contexto profissional de cada utilizador.",
+                        "Share2Inspire sits at the intersection of HR Tech, EdTech and Career Intelligence, with an approach that humanises technology: AI accelerates diagnosis, while strategy and human context ensure that each recommendation is useful, realistic and relevant. This includes salary benchmarks, ATS compatibility analysis and automation risk assessment adjusted to each user’s region and professional context.",
+                        "Share2Inspire se sitúa entre HR Tech, EdTech y Career Intelligence, con un enfoque que humaniza la tecnología: la IA acelera el diagnóstico, mientras que la estrategia y el contexto humano garantizan que cada recomendación sea útil, realista y relevante. Esto incluye benchmarks salariales, análisis de compatibilidad con ATS y evaluación del riesgo de automatización ajustados a la región y al contexto profesional de cada usuario."
                       )}
                     </p>
                   </div>
@@ -308,9 +308,9 @@ export default function AboutPage() {
                 </h2>
                 <p className="text-slate-600 leading-8">
                   {pick(
-                    "O ecossistema Share2Inspire foi desenhado para acompanhar diferentes momentos da jornada profissional, desde a optimização da candidatura até à definição do próximo movimento estratégico.",
-                    "The Share2Inspire ecosystem was designed to support different moments of the professional journey, from application optimisation to defining the next strategic move.",
-                    "El ecosistema Share2Inspire fue diseñado para acompañar distintos momentos de la trayectoria profesional, desde la optimización de la candidatura hasta la definición del siguiente movimiento estratégico."
+                    "O ecossistema Share2Inspire foi desenhado para acompanhar diferentes momentos da jornada profissional, desde a optimização da candidatura até à definição do próximo movimento estratégico, com leitura comparativa dos grandes mercados da América do Norte, Europa e Ásia.",
+                    "The Share2Inspire ecosystem was designed to support different moments of the professional journey, from application optimisation to defining the next strategic move, with comparative insight across the major North American, European and Asian markets.",
+                    "El ecosistema Share2Inspire fue diseñado para acompañar distintos momentos de la trayectoria profesional, desde la optimización de la candidatura hasta la definición del siguiente movimiento estratégico, con una lectura comparativa de los grandes mercados de Norteamérica, Europa y Asia."
                   )}
                 </p>
               </div>

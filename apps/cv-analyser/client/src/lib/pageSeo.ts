@@ -196,9 +196,9 @@ export const pageSeo = {
       es: "Sobre | Samuel Rolo y la misión de Share2Inspire | Share2Inspire",
     },
     description: {
-      pt: "Conhece Samuel Rolo, a visão da Share2Inspire e a experiência por trás da plataforma. Descobre a missão e entra em contacto connosco.",
-      en: "Meet Samuel Rolo, the Share2Inspire vision and the experience behind the platform. Discover the mission and get in touch with us.",
-      es: "Conoce a Samuel Rolo, la visión de Share2Inspire y la experiencia detrás de la plataforma. Descubre la misión y contacta con nosotros.",
+      pt: "Conhece Samuel Rolo, a visão da Share2Inspire e a plataforma global de Career Intelligence preparada para a América do Norte, Europa e Ásia.",
+      en: "Meet Samuel Rolo, the Share2Inspire vision and the global Career Intelligence platform built for North America, Europe and Asia.",
+      es: "Conoce a Samuel Rolo, la visión de Share2Inspire y la plataforma global de Career Intelligence preparada para Norteamérica, Europa y Asia.",
     },
   } satisfies SEOConfig,
   contact: {
