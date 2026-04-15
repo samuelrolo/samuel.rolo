@@ -201,6 +201,11 @@ export default function LinkedInRoasterResults() {
 
     const verifyAccess = async () => {
       const hasCachedAnalysis = Boolean(sessionStorage.getItem('linkedinRoasterAnalysis'));
+      const storedPaidFlag = sessionStorage.getItem('linkedinRoasterPaid') === 'true';
+      const orderId = getFirstStoredValue(['linkedinRoasterVerifiedOrderId', 'linkedinRoasterPendingOrderId']);
+      const sessionId = getFirstStoredValue(['linkedinRoasterVerifiedTransactionId']);
+      const hasPaymentMarker = Boolean(orderId || sessionId);
+
       if (!hasCachedAnalysis) {
         if (!cancelled) {
           setAccessChecked(true);
@@ -209,17 +214,23 @@ export default function LinkedInRoasterResults() {
         return;
       }
 
+      if (storedPaidFlag || hasPaymentMarker) {
+        setIsPaid(true);
+      }
+
       const paymentStatus = await fetchPaymentStatus({
-        orderId: getFirstStoredValue(['linkedinRoasterVerifiedOrderId', 'linkedinRoasterPendingOrderId']),
-        sessionId: getFirstStoredValue(['linkedinRoasterVerifiedTransactionId']),
+        orderId,
+        sessionId,
         expectedProductTypes: ['linkedin_roast'],
       });
 
       if (!cancelled) {
         if (paymentStatus.success && paymentStatus.paid) {
           setIsPaid(true);
-        } else {
+          sessionStorage.setItem('linkedinRoasterPaid', 'true');
+        } else if (!(storedPaidFlag && hasCachedAnalysis)) {
           window.location.href = localePath('/linkedin-roaster');
+          return;
         }
         setAccessChecked(true);
       }

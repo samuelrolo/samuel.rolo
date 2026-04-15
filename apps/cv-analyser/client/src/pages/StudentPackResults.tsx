@@ -410,6 +410,11 @@ export default function StudentPackResults() {
 
     const verifyAccess = async () => {
       const hasAnalysis = Boolean(sessionStorage.getItem('studentPackAnalysis') || sessionStorage.getItem('studentPackCvAnalysis'));
+      const storedPaidFlag = sessionStorage.getItem('studentPackPaid') === 'true';
+      const orderId = getFirstStoredValue(['studentPackVerifiedOrderId', 'studentPackPendingOrderId']);
+      const sessionId = getFirstStoredValue(['studentPackVerifiedTransactionId']);
+      const hasPaymentMarker = Boolean(orderId || sessionId);
+
       if (!hasAnalysis) {
         if (!cancelled) {
           setAccessChecked(true);
@@ -418,17 +423,23 @@ export default function StudentPackResults() {
         return;
       }
 
+      if (storedPaidFlag || hasPaymentMarker) {
+        setIsPaid(true);
+      }
+
       const paymentStatus = await fetchPaymentStatus({
-        orderId: getFirstStoredValue(['studentPackVerifiedOrderId', 'studentPackPendingOrderId']),
-        sessionId: getFirstStoredValue(['studentPackVerifiedTransactionId']),
+        orderId,
+        sessionId,
         expectedProductTypes: ['student_pack'],
       });
 
       if (!cancelled) {
         if (paymentStatus.success && paymentStatus.paid) {
           setIsPaid(true);
-        } else {
+          sessionStorage.setItem('studentPackPaid', 'true');
+        } else if (!(storedPaidFlag && hasAnalysis)) {
           window.location.href = localePath('/estudante');
+          return;
         }
         setAccessChecked(true);
       }
