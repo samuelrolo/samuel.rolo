@@ -287,7 +287,7 @@ function AutomationRiskBlock({ blurred, automationRisk }: { blurred: boolean; au
 }
 
 export default function Results() {
-  usePageSEO(pageSeo.results);
+  usePageSEO(pageSeo.cvResults);
   const [, setLocation] = useLocation();
   const lang = getLang();
   const siteHomePath = pick('/', '/en/', '/es/');
