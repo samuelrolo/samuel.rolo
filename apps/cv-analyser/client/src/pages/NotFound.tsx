@@ -1,52 +1,76 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, Home } from "lucide-react";
-import { useLocation } from "wouter";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 
 export default function NotFound() {
-  const [, setLocation] = useLocation();
   usePageSEO(pageSeo.notFound);
 
-  const handleGoHome = () => {
-    setLocation("/");
+  const handleGoBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.location.href = "/";
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-        <CardContent className="pt-8 pb-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
-              <AlertCircle className="relative h-16 w-16 text-red-500" />
-            </div>
+    <div
+      className="min-h-screen w-full flex items-center justify-center px-4"
+      style={{
+        background:
+          "radial-gradient(circle at top, rgba(201, 169, 97, 0.12), transparent 28%), linear-gradient(180deg, #1a1a2e 0%, #11111f 100%)",
+      }}
+    >
+      <div
+        className="w-full max-w-2xl rounded-[28px] border text-center shadow-2xl"
+        style={{
+          background: "rgba(255, 255, 255, 0.04)",
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          boxShadow: "0 28px 80px rgba(0, 0, 0, 0.38)",
+        }}
+      >
+        <div className="px-6 py-14 sm:px-10 sm:py-16">
+          <div className="mb-5 text-6xl leading-none sm:text-7xl" aria-hidden="true">
+            😕
           </div>
 
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
+          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
+            Algo correu mal / Something went wrong
+          </h1>
 
-          <h2 className="text-xl font-semibold text-slate-700 mb-4">
-            Page Not Found
-          </h2>
-
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Sorry, the page you are looking for doesn't exist.
-            <br />
-            It may have been moved or deleted.
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 sm:text-base" style={{ color: "rgba(248, 248, 251, 0.8)" }}>
+            The page you are trying to reach is not available right now. You can return to the previous page and continue browsing Share2Inspire.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="mt-8 flex justify-center">
             <Button
-              onClick={handleGoHome}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              onClick={handleGoBack}
+              className="rounded-full px-6 py-6 text-sm font-semibold transition-all duration-200"
+              style={{
+                background: "#c9a961",
+                color: "#17141f",
+                boxShadow: "0 16px 34px rgba(201, 169, 97, 0.18)",
+              }}
             >
-              <Home className="w-4 h-4 mr-2" />
-              Go Home
+              Go back
             </Button>
           </div>
-        </CardContent>
-      </Card>
+
+          <p className="mt-7 text-sm" style={{ color: "rgba(248, 248, 251, 0.58)" }}>
+            Need help?{" "}
+            <a
+              href="mailto:hello@share2inspire.pt"
+              className="transition-colors duration-200 hover:opacity-80"
+              style={{ color: "rgba(248, 248, 251, 0.8)" }}
+            >
+              hello@share2inspire.pt
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

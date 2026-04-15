@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Share2Inspire | Something went wrong</title>
+    <title>Share2Inspire | Algo correu mal</title>
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#0f1117" />
+    <meta name="theme-color" content="#1a1a2e" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,23 +13,22 @@
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
     <style>
       :root {
-        --bg: #0f1117;
-        --bg-soft: #171a22;
-        --panel: rgba(20, 24, 33, 0.86);
-        --panel-border: rgba(201, 169, 97, 0.24);
-        --gold: #c9a961;
-        --gold-strong: #bf9a33;
-        --gold-soft: #d4af37;
-        --text: #f7f4ec;
-        --text-soft: rgba(247, 244, 236, 0.78);
-        --text-muted: rgba(247, 244, 236, 0.58);
-        --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+        --bg: #1a1a2e;
+        --bg-deep: #11111f;
+        --panel: rgba(255, 255, 255, 0.04);
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --text: #f8f8fb;
+        --text-soft: rgba(248, 248, 251, 0.8);
+        --text-muted: rgba(248, 248, 251, 0.58);
+        --accent: #c9a961;
+        --accent-hover: #d8b66b;
+        --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
       }
 
       * {
@@ -46,210 +45,93 @@
         font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at top left, rgba(201, 169, 97, 0.22), transparent 35%),
-          radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.16), transparent 30%),
-          linear-gradient(160deg, #0a0c12 0%, #10131b 48%, #0b0d13 100%);
+          radial-gradient(circle at top, rgba(201, 169, 97, 0.12), transparent 28%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 24px;
       }
 
-      .shell {
+      .wrap {
         width: 100%;
-        max-width: 1040px;
+        max-width: 720px;
       }
 
       .card {
-        position: relative;
-        overflow: hidden;
         border-radius: 28px;
         border: 1px solid var(--panel-border);
-        background: linear-gradient(180deg, rgba(19, 23, 31, 0.94) 0%, rgba(12, 15, 22, 0.94) 100%);
+        background: var(--panel);
+        backdrop-filter: blur(14px);
         box-shadow: var(--shadow);
+        padding: 56px 32px;
+        text-align: center;
       }
 
-      .card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(135deg, rgba(201, 169, 97, 0.12), transparent 30%),
-          linear-gradient(315deg, rgba(201, 169, 97, 0.08), transparent 25%);
-        pointer-events: none;
-      }
-
-      .grid {
-        position: relative;
-        display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-      }
-
-      .content {
-        padding: 40px 36px;
-      }
-
-      .aside {
-        border-left: 1px solid rgba(201, 169, 97, 0.12);
-        padding: 40px 32px;
-        background: linear-gradient(180deg, rgba(201, 169, 97, 0.06), rgba(201, 169, 97, 0.02));
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .logo {
-        display: inline-flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 24px;
-      }
-
-      .logo img {
-        width: auto;
-        height: 44px;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: 1px solid rgba(201, 169, 97, 0.22);
-        background: rgba(201, 169, 97, 0.08);
-        color: var(--gold);
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 18px;
-      }
-
-      .eyebrow::before {
-        content: "";
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
-        box-shadow: 0 0 0 5px rgba(201, 169, 97, 0.14);
+      .emoji {
+        margin: 0 0 22px;
+        font-size: clamp(3.8rem, 10vw, 5.8rem);
+        line-height: 1;
       }
 
       h1 {
-        margin: 0 0 18px;
-        font-size: clamp(2rem, 5vw, 3.6rem);
-        line-height: 1.08;
+        margin: 0;
+        font-size: clamp(2rem, 4.4vw, 3rem);
+        line-height: 1.15;
         letter-spacing: -0.03em;
       }
 
-      .lead {
-        margin: 0 0 26px;
-        max-width: 38rem;
+      .subtitle {
+        margin: 18px auto 0;
+        max-width: 34rem;
         color: var(--text-soft);
         font-size: 1rem;
-        line-height: 1.85;
+        line-height: 1.8;
       }
 
       .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-bottom: 24px;
+        margin-top: 32px;
       }
 
       .button {
         appearance: none;
         border: 0;
-        border-radius: 14px;
-        padding: 15px 22px;
-        text-decoration: none;
+        border-radius: 999px;
+        padding: 14px 24px;
+        min-width: 164px;
+        font: inherit;
         font-weight: 600;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-      }
-
-      .button-primary {
-        color: #10131b;
-        background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%);
-        box-shadow: 0 14px 34px rgba(201, 169, 97, 0.22);
-      }
-
-      .button-secondary {
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #17141f;
+        background: var(--accent);
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 16px 34px rgba(201, 169, 97, 0.18);
       }
 
       .button:hover {
+        background: var(--accent-hover);
         transform: translateY(-1px);
       }
 
       .button:focus-visible {
-        outline: 2px solid var(--gold);
+        outline: 2px solid #ffffff;
         outline-offset: 3px;
       }
 
-      .meta {
-        color: var(--text-muted);
-        font-size: 0.94rem;
-        line-height: 1.8;
-      }
-
-      .meta a {
-        color: var(--gold);
-        text-decoration: none;
-      }
-
-      .status-box {
-        border-radius: 24px;
-        border: 1px solid rgba(201, 169, 97, 0.18);
-        background: rgba(255, 255, 255, 0.03);
-        padding: 28px 24px;
-      }
-
-      .status-label {
-        margin: 0 0 12px;
-        color: var(--gold);
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .status-code {
-        margin: 0;
-        font-size: clamp(3.5rem, 10vw, 5.2rem);
-        line-height: 0.95;
-        color: var(--text);
-      }
-
-      .status-copy {
-        margin: 16px 0 0;
-        color: var(--text-soft);
-        font-size: 0.96rem;
-        line-height: 1.8;
-      }
-
-      .footer-note {
+      .contact {
         margin-top: 28px;
         color: var(--text-muted);
-        font-size: 0.82rem;
+        font-size: 0.9rem;
         line-height: 1.7;
       }
 
-      .footer-note a {
-        color: var(--gold);
+      .contact a {
+        color: var(--text-soft);
         text-decoration: none;
       }
 
-      @media (max-width: 860px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-
-        .aside {
-          border-left: 0;
-          border-top: 1px solid rgba(201, 169, 97, 0.12);
-        }
+      .contact a:hover {
+        color: var(--accent);
       }
 
       @media (max-width: 640px) {
@@ -257,65 +139,34 @@
           padding: 16px;
         }
 
-        .content,
-        .aside {
-          padding: 28px 22px;
-        }
-
-        .logo img {
-          height: 38px;
+        .card {
+          padding: 44px 22px;
+          border-radius: 24px;
         }
 
         .button {
           width: 100%;
-          text-align: center;
         }
       }
     </style>
   </head>
   <body>
-    <main class="shell">
+    <main class="wrap">
       <section class="card" aria-labelledby="page-title">
-        <div class="grid">
-          <div class="content">
-            <div class="logo">
-              <img src="/logo-s2i.webp" alt="Share2Inspire" />
-            </div>
-
-            <div class="eyebrow">Share2Inspire</div>
-
-            <h1 id="page-title">Algo correu mal / Something went wrong</h1>
-
-            <p class="lead">
-              The page you tried to access is no longer available at this address, or the link may be outdated.
-              You can return to the main website and continue exploring Share2Inspire from there.
-            </p>
-
-            <div class="actions">
-              <a class="button button-primary" href="https://www.share2inspire.pt">Go back</a>
-              <a class="button button-secondary" href="mailto:hello@share2inspire.pt">Contact support</a>
-            </div>
-
-            <p class="meta">
-              Need help? Contact us at <a href="mailto:hello@share2inspire.pt">hello@share2inspire.pt</a>
-            </p>
-          </div>
-
-          <aside class="aside" aria-label="Error details">
-            <div class="status-box">
-              <p class="status-label">Page status</p>
-              <p class="status-code">404</p>
-              <p class="status-copy">
-                This custom error page is designed to keep the experience aligned with the Share2Inspire brand while guiding visitors back to the correct entry point.
-              </p>
-            </div>
-
-            <p class="footer-note">
-              If you arrived here from a saved bookmark or a search result, the page may have been replaced during the latest site migration.
-              For direct assistance, email <a href="mailto:hello@share2inspire.pt">hello@share2inspire.pt</a>.
-            </p>
-          </aside>
+        <p class="emoji" aria-hidden="true">😕</p>
+        <h1 id="page-title">Algo correu mal / Something went wrong</h1>
+        <p class="subtitle">
+          The page you are trying to reach is not available right now. You can return to the previous page and continue browsing Share2Inspire.
+        </p>
+        <div class="actions">
+          <button
+            class="button"
+            type="button"
+            onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = 'https://www.share2inspire.pt'; }">
+            Go back
+          </button>
         </div>
+        <p class="contact">Need help? <a href="mailto:hello@share2inspire.pt">hello@share2inspire.pt</a></p>
       </section>
     </main>
   </body>
