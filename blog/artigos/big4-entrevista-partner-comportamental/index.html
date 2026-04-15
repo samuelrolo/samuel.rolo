@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>A Entrevista com o Partner das Big 4 Já Não É o Que Pensas | Share2Inspire</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --navy: #0a1628;
+      --navy-mid: #122040;
+      --navy-light: #1c3160;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-pale: #f5e9c8;
+      --cream: #faf8f3;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: rgba(201, 168, 76, 0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--navy);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+      text-decoration: none;
+    }
+
+    .logo span { color: #fff; }
+
+    .tag-header {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gold-light);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 2px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+      padding: 96px 32px 80px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -80px;
+      width: 520px; height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .hero-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-category {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-category::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 em {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+
+    .hero-lead {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      max-width: 620px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta-item {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.06em;
+    }
+
+    .hero-meta-item strong {
+      color: rgba(255,255,255,0.75);
+      font-weight: 500;
+    }
+
+    .hero-meta-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+
+    /* ── BODY LAYOUT ── */
+    .article-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 64px 32px 80px;
+    }
+
+    /* ── PULL QUOTE OPENER ── */
+    .opener-quote {
+      border-left: 3px solid var(--gold);
+      padding: 20px 28px;
+      margin-bottom: 48px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), transparent);
+    }
+
+    .opener-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.5;
+    }
+
+    /* ── PROSE ── */
+    .prose p {
+      margin-bottom: 24px;
+      color: #2d2d3a;
+    }
+
+    .prose p:first-child {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--navy-mid);
+    }
+
+    .prose strong {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    /* ── SECTION HEADINGS ── */
+    .section-head {
+      margin: 56px 0 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .section-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+
+    .section-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.25;
+    }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      background: var(--navy);
+      border-radius: 6px;
+      padding: 32px 36px;
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--gold);
+    }
+
+    .highlight-box p {
+      color: rgba(255,255,255,0.85) !important;
+      font-size: 16px;
+      margin-bottom: 0 !important;
+    }
+
+    .highlight-box p + p {
+      margin-top: 16px !important;
+    }
+
+    .highlight-box strong {
+      color: var(--gold-light) !important;
+    }
+
+    /* ── SIGNAL CARDS ── */
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 40px 0;
+    }
+
+    .signal-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px 22px;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .signal-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 4px 24px rgba(201,168,76,0.12);
+    }
+
+    .signal-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .signal-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .signal-card p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 !important;
+    }
+
+    /* ── DIVIDER ── */
+    .gold-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 48px 0;
+    }
+
+    .gold-divider::before,
+    .gold-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .gold-divider span {
+      font-size: 18px;
+      color: var(--gold);
+    }
+
+    /* ── CONTRAST BLOCK ── */
+    .contrast-block {
+      background: var(--gold-pale);
+      border-radius: 6px;
+      padding: 32px 36px;
+      margin: 40px 0;
+    }
+
+    .contrast-block p {
+      color: var(--navy) !important;
+      font-size: 16px;
+    }
+
+    .contrast-block h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+
+    /* ── FINAL CTA ── */
+    .cta-section {
+      background: var(--navy);
+      border-radius: 8px;
+      padding: 48px 40px;
+      margin-top: 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+    }
+
+    .cta-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      color: rgba(255,255,255,0.65);
+      font-size: 16px;
+      margin-bottom: 28px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      padding: 14px 32px;
+      border-radius: 3px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── TAGS ── */
+    .tags {
+      margin-top: 48px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--navy-light);
+      background: rgba(10,22,40,0.07);
+      padding: 5px 12px;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 28px 32px;
+      text-align: center;
+    }
+
+    .site-footer p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+    }
+
+    .site-footer strong {
+      color: var(--gold);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .article-wrap { padding: 48px 20px 60px; }
+      .hero { padding: 64px 20px 56px; }
+      .site-header { padding: 14px 20px; }
+      .highlight-box, .contrast-block, .cta-section { padding: 24px 20px; }
+      .signal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<link href="https://www.share2inspire.pt/blog/artigos/big4-entrevista-partner-comportamental" rel="canonical"/><link href="https://www.share2inspire.pt/blog/artigos/big4-entrevista-partner-comportamental" hreflang="pt" rel="alternate"/><link href="https://www.share2inspire.pt/en/blog/artigos/big4-partner-interview-behavioural" hreflang="en" rel="alternate"/><link href="https://www.share2inspire.pt/es/blog/artigos/big4-entrevista-socio-comportamental" hreflang="es" rel="alternate"/><link href="https://www.share2inspire.pt/blog/artigos/big4-entrevista-partner-comportamental" hreflang="x-default" rel="alternate"/><meta content="A entrevista com o partner das Big 4 avalia maturidade profissional, empatia, pensamento crítico e resiliência comportamental. O que está realmente em causa e como te preparares." name="description"/><meta content="entrevista partner Big4, entrevista sócio Big4, behavioural interview Big4, Big4 Portugal, Deloitte PwC EY KPMG entrevista final" name="keywords"/><meta content="Samuel Rolo" name="author"/><meta content="index, follow" name="robots"/><meta content="article" property="og:type"/><meta content="https://www.share2inspire.pt/blog/artigos/big4-entrevista-partner-comportamental" property="og:url"/><meta content="A Entrevista com o Partner das Big 4 Já Não É o Que Pensas" property="og:title"/><meta content="A entrevista com o partner das Big 4 avalia maturidade profissional, empatia, pensamento crítico e resiliência comportamental. O que está realmente em causa e como te preparares." property="og:description"/><meta content="pt_PT" property="og:locale"/><meta content="Share2Inspire" property="og:site_name"/><meta content="summary_large_image" name="twitter:card"/><meta content="A Entrevista com o Partner das Big 4 Já Não É o Que Pensas" name="twitter:title"/><meta content="A entrevista com o partner das Big 4 avalia maturidade profissional, empatia, pensamento crítico e resiliência comportamental. O que está realmente em causa e como te preparares." name="twitter:description"/><style>  
+    .video-section { margin: 48px 0; }
+    .video-card {
+      background: var(--navy, #0a1628);
+      border-radius: 8px;
+      padding: 28px;
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(10, 22, 40, 0.12);
+    }
+    .video-kicker {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-light, #e8c97a);
+      margin-bottom: 14px;
+    }
+    .video-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .video-card p {
+      color: rgba(255,255,255,0.76) !important;
+      margin-bottom: 18px !important;
+      font-size: 15px;
+    }
+    .video-embed {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .video-link {
+      display: inline-block;
+      margin-top: 16px;
+      color: var(--gold-light, #e8c97a);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .video-link:hover { color: #fff; }
+  </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "A Entrevista com o Partner das Big 4 Já Não É o Que Pensas", "description": "A entrevista com o partner das Big 4 avalia maturidade profissional, empatia, pensamento crítico e resiliência comportamental. O que está realmente em causa e como te preparares.", "author": {"@type": "Person", "name": "Samuel Rolo"}, "publisher": {"@type": "Organization", "name": "Share2Inspire"}, "datePublished": "2026-04-15", "dateModified": "2026-04-15", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.share2inspire.pt/blog/artigos/big4-entrevista-partner-comportamental"}, "inLanguage": "pt-PT", "keywords": "entrevista partner Big4, entrevista sócio Big4, behavioural interview Big4, Big4 Portugal, Deloitte PwC EY KPMG entrevista final"}]}</script></head>
+<body>
+<!-- HEADER -->
+<header class="site-header">
+<a class="logo" href="#">Share2<span>Inspire</span></a>
+<span class="tag-header">Carreira Big 4</span>
+</header>
+<!-- HERO -->
+<section class="hero">
+<div class="hero-inner">
+<div class="hero-category">Consultoria &amp; Carreira</div>
+<h1>A entrevista com o <em>partner</em> das Big 4<br/>já não avalia o que pensas</h1>
+<p class="hero-lead">
+      Quando chegas à fase final de um processo de recrutamento numa Big 4, o técnico já está validado. O que está realmente em avaliação és tu, enquanto pessoa, colega e profissional sob pressão.
+    </p>
+<div class="hero-meta">
+<span class="hero-meta-item"><strong>Samuel Rolo</strong></span>
+<span class="hero-meta-dot"></span>
+<span class="hero-meta-item">Big 4 · Recrutamento · Comportamental</span>
+<span class="hero-meta-dot"></span>
+<span class="hero-meta-item"><strong>8 min de leitura</strong></span>
+</div>
+</div>
+</section>
+<!-- ARTICLE BODY -->
+<main class="article-wrap">
+<div class="opener-quote">
+<p>"Não estou à procura de alguém que saiba tudo. Estou à procura de alguém com quem eu queira trabalhar quando correr mal."</p>
+</div>
+<div class="video-section" id="big4-partner-video">
+<div class="video-card">
+<span class="video-kicker">Vídeo complementar</span>
+<h3>Ver a análise em vídeo</h3>
+<p>Este vídeo está em inglês e complementa o conteúdo do artigo com exemplos práticos sobre o que os partners avaliam na entrevista final.</p>
+<div class="video-embed">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" loading="lazy" src="https://www.youtube.com/embed/Zt_0M_VGYso" title="YouTube video player"></iframe>
+</div>
+<a class="video-link" href="https://www.youtube.com/watch?v=Zt_0M_VGYso" rel="noopener noreferrer" target="_blank">YouTube →</a>
+</div>
+</div>
+
+<div class="prose">
+<p>
+      Esta frase, dita por um sócio de uma das quatro maiores consultoras do mundo durante uma conversa informal, resume melhor do que qualquer guia de entrevista aquilo que realmente acontece quando entras numa sala com um partner ou director das Big 4. O processo mudou. As prioridades mudaram. E a maioria dos candidatos ainda está a preparar-se para o exame errado.
+    </p>
+<p>
+      Durante anos, a narrativa dominante foi clara: domina o método do caso, treina frameworks, sabe responder a uma market sizing em dois minutos, mostra que pensas de forma estruturada. Tudo isso continua relevante, mas chegou ao estatuto de requisito mínimo, não de vantagem competitiva. O que distingue quem avança do que fica no processo é outra coisa.
+    </p>
+<p>
+      O partner ou director que te recebe já leu o teu CV, já sabe que tens boas notas e que fizeste algo interessante. O que ele ainda não sabe, e precisa urgentemente de perceber, é uma coisa simples: <strong>consegue trabalhar contigo?</strong>
+</p>
+</div>
+<!-- SECTION 1 -->
+<div class="section-head">
+<span class="section-number">01 —</span>
+<h2>O fit não é cultura. É equipa específica.</h2>
+</div>
+<div class="prose">
+<p>
+      O conceito de "cultural fit" tornou-se tão genérico que perdeu o significado. Quando um sócio fala em fit, não está a pensar na empresa em abstracto. Está a pensar na sua equipa, nos seus clientes, no seu estilo de liderança. Está a imaginar-te numa reunião com um CFO difícil, ou a entregar um deliverable às 23h, ou a lidar com um junior que não está a performar.
+    </p>
+<p>
+      Cada sócio tem um tipo de profissional que funciona bem consigo. Alguns valorizam a independência e incomodam-se com quem pergunta tudo. Outros precisam de alguém que faça perguntas porque eles próprios trabalham de forma muito intuitiva. Não há resposta certa universal. O que há é a necessidade de perceberes com quem estás a falar antes de decidires como te apresentas.
+    </p>
+</div>
+<div class="highlight-box">
+<p><strong>O que o partner está realmente a fazer nesta entrevista:</strong> está a construir uma hipótese sobre como te vai gerir. Se precisará de te dar muita direcção ou pouca. Se és alguém que escala problemas ou que os resolve antes de aparecer com eles. Se vais proteger a relação com o cliente ou criar fricção desnecessária.</p>
+<p>A entrevista é, acima de tudo, um exercício de previsão comportamental.</p>
+</div>
+<!-- SECTION 2 -->
+<div class="section-head">
+<span class="section-number">02 —</span>
+<h2>Problem solver ou problem maker? A linha é mais fina do que parece.</h2>
+</div>
+<div class="prose">
+<p>
+      Há um tipo de candidato que as Big 4 adoram em teoria e temem na prática: o pensador crítico sem filtro. Aquele que questiona tudo, que encontra o erro no slide do sócio em frente ao cliente, que levanta objecções no pior momento possível. Em entrevista, passa por inteligente. No terreno, pode ser catastrófico.
+    </p>
+<p>
+      O que distingue um bom consultor não é a ausência de pensamento crítico; é a inteligência contextual para perceber quando e como o exercer. Questionar em privado, propor em público. Dizer ao sócio antes de entrar na sala, não durante a apresentação. Saber que há momentos para o debate e momentos para a execução.
+    </p>
+<p>
+      Em entrevista, este equilíbrio detecta-se facilmente. Quando apresentas uma perspectiva contrária à do entrevistador, como o fazes? Com arrogância ou com curiosidade? Como reagens quando te corrigem? Defensivamente ou com abertura genuína? Estas micro-interacções dizem tudo sobre o que serás no dia a dia.
+    </p>
+</div>
+<div class="signal-grid">
+<div class="signal-card">
+<span class="signal-icon">🎯</span>
+<h3>O que querem ver</h3>
+<p>Pensamento crítico exercido com timing e contexto. Quem discorda com inteligência, não com ego.</p>
+</div>
+<div class="signal-card">
+<span class="signal-icon">⚠️</span>
+<h3>O que os afasta</h3>
+<p>Candidatos que questionam tudo sem propor nada. Ceticismo sem construtividade é apenas ruído.</p>
+</div>
+<div class="signal-card">
+<span class="signal-icon">💡</span>
+<h3>Como mostrar o equilíbrio</h3>
+<p>Usa exemplos reais onde discordaste, como o fizeste, e qual foi o resultado para a equipa ou cliente.</p>
+</div>
+</div>
+<!-- SECTION 3 -->
+<div class="section-head">
+<span class="section-number">03 —</span>
+<h2>Empatia não é simpatia. É criar conversa quando não há assunto.</h2>
+</div>
+<div class="prose">
+<p>
+      Uma das competências mais subvalorizadas na preparação para entrevistas é a capacidade de criar ligação genuína com alguém que acabaste de conhecer. Não se trata de ser extrovertido ou de ter um sorriso fácil. Trata-se de conseguir manter uma conversa interessante mesmo quando o assunto esgotou, de encontrar pontos de contacto com pessoas muito diferentes de ti, de fazer o outro sentir que foi ouvido.
+    </p>
+<p>
+      Nas Big 4, o cliente não te contrata pela metodologia. Contrata-te porque acredita que vais entendê-lo, que vais proteger os seus interesses dentro da equipa, que és alguém com quem é possível trabalhar intensamente durante meses sem que a relação se desgaste. Esta capacidade começa a ser avaliada logo na entrevista com o sócio.
+    </p>
+<p>
+      Presta atenção ao que acontece nos primeiros cinco minutos, quando ainda não há caso nem framework. Essa fase de aquecimento não é neutra. É deliberada. O partner quer ver como te comportas quando não tens um guião para seguir.
+    </p>
+</div>
+<div class="contrast-block">
+<h3>O teste silencioso da empatia</h3>
+<p>Quando o sócio menciona que acabou de vir de Amsterdão, ou que o clube dele perdeu no fim-de-semana, ou que o escritório está a passar por uma fase difícil, não está a fazer conversa de circunstância. Está a ver se consegues sair do teu guião de entrevista e ser uma pessoa real por um momento. Quem passa neste filtro raramente tem consciência de que estava a ser avaliado.</p>
+</div>
+<!-- SECTION 4 -->
+<div class="section-head">
+<span class="section-number">04 —</span>
+<h2>Resiliência não é aguentar. É como reages ao erro.</h2>
+</div>
+<div class="prose">
+<p>
+      As Big 4 são ambientes de pressão estrutural. Prazos curtos, clientes exigentes, feedback directo e frequentemente pouco diplomático. A questão não é se vais errar, porque vais. A questão é o que acontece depois.
+    </p>
+<p>
+      Em entrevista, um bom partner vai criar deliberadamente uma situação de pressão ou erro para ver como reages. Pode apontar uma inconsistência no teu raciocínio. Pode pedir-te para defenderes uma posição que claramente não é a melhor. Pode interromper-te no meio de uma resposta bem estruturada só para perceber se te desequilibras.
+    </p>
+<p>
+      O que procuram não é serenidade perfeita. Procuram capacidade de recuperação: reconhecer o erro sem dramatizar, ajustar o curso sem perder confiança, continuar em frente sem que a qualidade do trabalho se ressinta. Isso chama-se resiliência operacional, e distingue-se da resiliência performativa que muita gente mostra em entrevista mas que desaparece rapidamente no primeiro projecto difícil.
+    </p>
+</div>
+<div class="highlight-box">
+<p><strong>Como preparar a resposta ao erro em entrevista:</strong> quando te apontam uma falha ou inconsistência, resiste à tentação de te justificares em primeiro lugar. Reconhece, ajusta, propõe. Três passos. Quem se justifica antes de reconhecer está a proteger o ego; quem reconhece primeiro está a demonstrar maturidade profissional.</p>
+</div>
+<!-- SECTION 5 -->
+<div class="section-head">
+<span class="section-number">05 —</span>
+<h2>Rotação constante ou projecto longo: saber onde preferes estar é já uma resposta.</h2>
+</div>
+<div class="prose">
+<p>
+      Um dos maiores choques para quem entra nas Big 4 é a cadência dos projectos. Em consultoria de estratégia ou de gestão, podes mudar de indústria, de cliente e de equipa em questão de semanas. É estimulante para alguns, desgastante para outros. Nos últimos anos, com o crescimento de equipas dedicadas a transformações multianual, surgiu também um modelo diferente: o profissional que fica no mesmo cliente durante 12 ou 18 meses, com implicações muito diferentes ao nível de identidade de equipa, gestão de relações e aprendizagem.
+    </p>
+<p>
+      O partner que te entrevista quer perceber qual é o teu perfil natural, não o que achas que ele quer ouvir. Dizer que adoras variedade quando claramente tens dificuldade com a falta de continuidade vai criar fricção mais tarde. Dizer que preferes aprofundar relações com clientes quando vais integrar uma equipa de projectos curtos também não ajuda.
+    </p>
+<p>
+      Honestidade sobre o teu perfil não é fraqueza. É maturidade. E os melhores sócios sabem distinguir um candidato que se conhece de um que diz o que é suposto dizer.
+    </p>
+</div>
+<div class="contrast-block">
+<h3>A pergunta que te devias fazer antes da entrevista</h3>
+<p>Não é "o que é que eles querem ouvir?". É "em que tipo de ambiente trabalho melhor e como posso comunicar isso de forma honesta e convincente?" Responder a esta pergunta com clareza, antes de entrar na sala, é provavelmente o trabalho de preparação mais valioso que podes fazer.</p>
+</div>
+<div class="gold-divider"><span>◆</span></div>
+<!-- CLOSING SECTION -->
+<div class="section-head">
+<span class="section-number">—</span>
+<h2>O que muda quando percebes isto</h2>
+</div>
+<div class="prose">
+<p>
+      A maioria dos candidatos sai de uma entrevista com um partner sem perceber exactamente o que foi avaliado. Sentiram-se bem no caso, a conversa correu de forma fluida, não houve silêncios difíceis. E depois não avançam. Sem feedback claro, ficam sem perceber porquê.
+    </p>
+<p>
+      A razão, quase sempre, não está na parte técnica. Está nos sinais subtis que enviaram sem consciência: a forma como reagiram quando foram contrariados, a conversa que não souberam manter quando o guião acabou, a resposta defensiva quando lhes apontaram um erro, a inconsistência entre o que disseram que preferem e o que claramente demonstraram na forma de raciocinar.
+    </p>
+<p>
+      Preparar uma entrevista com um sócio das Big 4 exige o mesmo rigor que preparar o caso técnico. A diferença é que a matéria de estudo és tu próprio.
+    </p>
+</div>
+<!-- CTA -->
+<div class="cta-section">
+<h2>Prepara-te além do óbvio</h2>
+<p>Na Share2Inspire encontras ferramentas, conteúdos e comunidade para te preparares para as carreiras que realmente exigem o melhor de ti.</p>
+<a class="cta-btn" href="https://www.share2inspire.pt">Explorar a plataforma</a>
+</div>
+<!-- TAGS -->
+<div class="tags">
+<span class="tag">#big4</span>
+<span class="tag">#recrutamento</span>
+<span class="tag">#consultoria</span>
+<span class="tag">#entrevista</span>
+<span class="tag">#competências comportamentais</span>
+<span class="tag">#carreira</span>
+<span class="tag">#desenvolvimento profissional</span>
+</div>
+</main>
+<!-- FOOTER -->
+<footer class="site-footer">
+<p>© 2026 <strong>Share2Inspire</strong> · Todos os direitos reservados · www.share2inspire.pt</p>
+</footer>
+</body>
+</html>
