@@ -29,6 +29,7 @@ const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
 const PRICE_NUM = 7.99;
 const PRICE_PT = '7,99';
 const PRICE_ORIGINAL_PT = '13,98';
@@ -227,6 +228,34 @@ export default function StudentPackHome() {
       const currentEmail = email || localStorage.getItem('studentPackEmail') || '';
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
+      setAnalysisMsg(pick("A extrair dados reais do teu LinkedIn...", "Extracting real data from your LinkedIn...", "Extrayendo datos reales de tu LinkedIn..."));
+      const linkedinScrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
+      });
+
+      if (!linkedinScrapeResponse.ok) {
+        const scrapeError = await linkedinScrapeResponse.json().catch(() => ({}));
+        throw new Error(scrapeError?.error || pick(
+          'Não foi possível extrair os dados do teu perfil LinkedIn. Verifica se o URL está correto e o perfil é público.',
+          'Could not extract your LinkedIn profile data. Check the URL and ensure the profile is public.',
+          'No se pudieron extraer los datos de tu perfil de LinkedIn. Verifica que la URL sea correcta y que el perfil sea público.'
+        ));
+      }
+
+      const linkedinScrapeData = await linkedinScrapeResponse.json();
+      if (!linkedinScrapeData?.success || !linkedinScrapeData?.cv_text) {
+        throw new Error(linkedinScrapeData?.error || pick(
+          'Não foi possível extrair dados estruturados do perfil LinkedIn.',
+          'Could not extract structured data from the LinkedIn profile.',
+          'No se pudieron extraer datos estructurados del perfil de LinkedIn.'
+        ));
+      }
+
+      const structuredLinkedinData = JSON.stringify(linkedinScrapeData, null, 2);
+      const linkedinCvText = linkedinScrapeData.cv_text.substring(0, 12000);
+
       if (isPT) {
         // ─── PT: two-engine approach (same as EN/ES) ───
         setAnalysisMsg(pick("A analisar o teu CV com IA...", "Analysing your CV with AI...", "Analizando tu CV con IA..."));
@@ -250,7 +279,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
@@ -322,7 +351,7 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));

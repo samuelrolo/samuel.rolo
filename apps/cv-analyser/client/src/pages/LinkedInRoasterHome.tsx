@@ -18,6 +18,7 @@ import { getDefaultCountryByLanguage } from "@/data/countries";
 import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 const PRICE_NUM = 3.99;
 
@@ -177,17 +178,54 @@ export default function LinkedInRoasterHome() {
       if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
       if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: 'linkedin_roaster', value: PRICE_NUM, currency: 'EUR' });
 
+      const analysisCountry = localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang);
+      const analysisRegion = localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '';
+
+      setLoadingMsg(pick("A extrair dados reais do teu LinkedIn...", "Extracting real data from your LinkedIn...", "Extrayendo datos reales de tu LinkedIn..."));
+      const scrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
+      });
+
+      if (!scrapeResponse.ok) {
+        const scrapeError = await scrapeResponse.json().catch(() => ({}));
+        throw new Error(scrapeError?.error || pick(
+          'Não foi possível extrair os dados do teu perfil LinkedIn. Verifica se o URL está correto e o perfil é público.',
+          'Could not extract your LinkedIn profile data. Check the URL and ensure the profile is public.',
+          'No se pudieron extraer los datos de tu perfil de LinkedIn. Verifica que la URL sea correcta y que el perfil sea público.'
+        ));
+      }
+
+      const scrapeData = await scrapeResponse.json();
+      if (!scrapeData?.success || !scrapeData?.cv_text) {
+        throw new Error(scrapeData?.error || pick(
+          'Não foi possível extrair dados estruturados do perfil LinkedIn.',
+          'Could not extract structured data from the LinkedIn profile.',
+          'No se pudieron extraer datos estructurados del perfil de LinkedIn.'
+        ));
+      }
+
+      const structuredLinkedinData = JSON.stringify(scrapeData, null, 2);
+
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
         try {
-          const analysisCountry = localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang);
-          const analysisRegion = localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '';
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'linkedin_roast', email: (currentEmail || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(), linkedin_url: currentLinkedinUrl, language: lang, country: analysisCountry, region: analysisRegion || undefined }),
+            body: JSON.stringify({
+              mode: 'linkedin_roast',
+              email: (currentEmail || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(),
+              linkedin_url: currentLinkedinUrl,
+              linkedin_data: structuredLinkedinData,
+              cv_text: scrapeData.cv_text.substring(0, 12000),
+              language: lang,
+              country: analysisCountry,
+              region: analysisRegion || undefined
+            }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
