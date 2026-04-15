@@ -1,64 +1,1575 @@
-<!doctype html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Share2Inspire</title>
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/webp" sizes="512x512" href="/android-chrome-512x512.webp" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+    <meta name="theme-color" content="#000000" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share2Inspire · Cockpit de Gestão</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
-    <!-- Google Consent Mode v2 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'ad_storage': 'granted',
-        'ad_user_data': 'granted',
-        'ad_personalization': 'granted',
-        'analytics_storage': 'granted'
-      });
-    </script>
-    <!-- Google Ads + GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-17015553005');
-      gtag('config', 'G-8GQ1KM9FQS');
-    </script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="b87daf50-31f5-47d2-8999-61c17d4050b5"></script>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '3865352233767400');
-fbq('track', 'PageView');
-</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --gold: #C9A961; --gold-light: #D4B96E; --gold-bg: #FBF8F1; --gold-border: #E8DFC8;
+            --dark: #1A1A1A; --text: #374151; --text-secondary: #6B7280; --text-muted: #9CA3AF;
+            --bg: #FAFAFA; --white: #FFFFFF; --border: #F0F0F0; --border-hover: #E5E7EB;
+            --green: #10B981; --green-bg: #ECFDF5; --red: #EF4444; --red-bg: #FEF2F2;
+            --blue: #3B82F6; --blue-bg: #EFF6FF; --purple: #7C3AED; --purple-bg: #F5F3FF;
+            --orange: #F59E0B; --teal: #14B8A6; --teal-bg: #F0FDFA;
+            --radius: 12px; --radius-sm: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,.04); --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; }
 
-  <script type="module" crossorigin src="/assets/index-C0x1zCQc.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/vendor-radix-BLr3lDYs.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-pdf-BXl3LOEh.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-charts-CJ2m9zX3.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-B7LLgVi1.css">
+        /* ── HEADER ── */
+        .header { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .header-brand { display:flex; align-items:center; gap:12px; }
+        .header-brand h1 { font-size:15px; font-weight:600; color:var(--dark); letter-spacing:.5px; }
+        .header-brand span { font-size:11px; color:var(--text-muted); }
+        .header-actions { display:flex; align-items:center; gap:12px; }
+        .header-status { font-size:11px; color:var(--text-muted); }
+        .health-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+        .health-dot.green { background:var(--green); box-shadow:0 0 6px rgba(16,185,129,.4); }
+        .health-dot.yellow { background:var(--orange); box-shadow:0 0 6px rgba(245,158,11,.4); }
+        .health-dot.red { background:var(--red); box-shadow:0 0 6px rgba(239,68,68,.4); }
+
+        /* ── LANG TOGGLE ── */
+        .lang-toggle { display:inline-flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+        .lang-toggle button { padding:5px 12px; font-size:11px; font-weight:500; border:none; background:var(--white); color:var(--text-secondary); cursor:pointer; transition:all .15s; }
+        .lang-toggle button.active { background:var(--gold); color:var(--white); }
+        .lang-toggle button:hover:not(.active) { background:var(--gold-bg); }
+
+        .btn-refresh { padding:6px 14px; font-size:12px; font-weight:500; border:1px solid var(--gold); background:var(--white); color:var(--gold); border-radius:6px; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:6px; }
+        .btn-refresh:hover { background:var(--gold); color:var(--white); }
+
+        /* ── NAV TABS ── */
+        .nav-tabs { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:0; overflow-x:auto; }
+        .tab-btn { padding:12px 18px; font-size:13px; font-weight:500; color:var(--text-secondary); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all .15s; white-space:nowrap; display:flex; align-items:center; gap:7px; }
+        .tab-btn:hover { color:var(--dark); }
+        .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .tab-btn i { font-size:13px; }
+
+        /* ── SUB-NAV ── */
+        .crm-subnav { display:flex; gap:0; margin-bottom:20px; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg); }
+        .crm-subtab { flex:1; padding:10px 16px; font-size:13px; font-weight:500; color:var(--text-secondary); background:none; border:none; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; border-right:1px solid var(--border); }
+        .crm-subtab:last-child { border-right:none; }
+        .crm-subtab:hover { background:rgba(0,0,0,.03); color:var(--dark); }
+        .crm-subtab.active { background:var(--gold); color:#fff; font-weight:600; }
+        .crm-subtab i { font-size:12px; }
+
+        /* ── MAIN ── */
+        .main { padding:24px 32px; max-width:1440px; margin:0 auto; }
+        .section-header h2 { font-size:16px; font-weight:700; color:var(--dark); }
+        .section-header p { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+        /* ── PERIOD BTNS ── */
+        .period-btns { display:flex; gap:4px; }
+        .period-btn { padding:5px 12px; font-size:11px; font-weight:500; border:1px solid var(--border); border-radius:6px; background:var(--white); color:var(--text-secondary); cursor:pointer; transition:all .15s; }
+        .period-btn:hover { border-color:var(--gold); color:var(--gold); }
+        .period-btn.active { background:var(--gold); color:var(--white); border-color:var(--gold); }
+
+        /* ── KPI CARDS ── */
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin-bottom:20px; }
+        .kpi-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; transition:border-color .15s; position:relative; overflow:hidden; }
+        .kpi-card:hover { border-color:var(--gold-border); }
+        .kpi-card .kpi-accent { position:absolute; top:0; left:0; width:3px; height:100%; border-radius:3px 0 0 3px; }
+        .kpi-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; }
+        .kpi-value { font-size:26px; font-weight:700; color:var(--dark); line-height:1; }
+        .kpi-value.gold { color:var(--gold); }
+        .kpi-value.green { color:var(--green); }
+        .kpi-value.blue { color:var(--blue); }
+        .kpi-value.red { color:var(--red); }
+        .kpi-value.purple { color:var(--purple); }
+        .kpi-value.teal { color:var(--teal); }
+        .kpi-sub { font-size:11px; color:var(--text-muted); margin-top:5px; }
+        .kpi-trend { font-size:11px; margin-top:4px; }
+        .kpi-trend.up { color:var(--green); }
+        .kpi-trend.down { color:var(--red); }
+
+        /* ── CARDS ── */
+        .card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:20px; overflow:hidden; }
+        .card-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+        .card-title { font-size:13px; font-weight:600; color:var(--dark); display:flex; align-items:center; gap:8px; }
+        .card-title i { color:var(--gold); font-size:14px; }
+        .card-body { padding:20px; position:relative; }
+
+        /* ── GRID ── */
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+        @media (max-width:1100px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
+        @media (max-width:900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; } }
+
+        /* ── FILTER BAR ── */
+        .filter-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:14px 20px; background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; }
+        .filter-bar label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; }
+        .form-select,.form-input { padding:6px 10px; font-size:12px; border:1px solid var(--border); border-radius:6px; background:var(--white); color:var(--text); font-family:inherit; outline:none; transition:border-color .15s; }
+        .form-select:focus,.form-input:focus { border-color:var(--gold); }
+        .filter-divider { width:1px; height:20px; background:var(--border); }
+
+        /* ── TABLES ── */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        thead th { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; padding:10px 14px; border-bottom:1px solid var(--border); text-align:left; background:var(--bg); white-space:nowrap; }
+        tbody td { padding:10px 14px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:middle; }
+        tbody tr:hover { background:var(--gold-bg); }
+        tbody tr:last-child td { border-bottom:none; }
+
+        /* ── BADGES ── */
+        .badge { display:inline-flex; align-items:center; padding:2px 9px; border-radius:20px; font-size:10px; font-weight:600; line-height:1.5; white-space:nowrap; }
+        .badge-paid { background:var(--green-bg); color:var(--green); }
+        .badge-free { background:#F3F4F6; color:var(--text-secondary); }
+        .badge-voucher { background:var(--gold-bg); color:#92750E; }
+        .badge-career { background:var(--blue-bg); color:var(--blue); }
+        .badge-cv { background:var(--purple-bg); color:var(--purple); }
+        .badge-pt { background:#F0FFF4; color:#166534; }
+        .badge-en { background:#EFF6FF; color:#1E40AF; }
+        .badge-success { background:var(--green-bg); color:var(--green); }
+        .badge-danger { background:var(--red-bg); color:var(--red); }
+        .badge-warning { background:#FFFBEB; color:#B45309; }
+        .badge-secondary { background:#F3F4F6; color:var(--text-secondary); }
+        .badge-teal { background:var(--teal-bg); color:var(--teal); }
+        .badge-purple { background:var(--purple-bg); color:var(--purple); }
+
+        /* ── BUTTONS ── */
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:7px 14px; font-size:12px; font-weight:500; border-radius:6px; border:none; cursor:pointer; transition:all .15s; font-family:inherit; }
+        .btn-gold { background:var(--gold); color:var(--white); }
+        .btn-gold:hover { background:var(--gold-light); }
+        .btn-outline { background:var(--white); color:var(--text); border:1px solid var(--border); }
+        .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+        .btn-sm { padding:4px 10px; font-size:11px; }
+        .btn-icon { width:30px; height:30px; padding:0; border-radius:6px; background:var(--white); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s; }
+        .btn-icon:hover { border-color:var(--gold); color:var(--gold); }
+
+        /* ── PAGINATION ── */
+        .pagination { display:flex; gap:4px; margin-top:12px; justify-content:center; }
+        .page-btn { padding:4px 9px; font-size:12px; border:1px solid var(--border); border-radius:4px; background:var(--white); color:var(--text-secondary); cursor:pointer; }
+        .page-btn.active { background:var(--gold); color:var(--white); border-color:var(--gold); }
+
+        /* ── FUNNEL ── */
+        .funnel-container { display:flex; flex-direction:column; gap:8px; }
+        .funnel-label-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+        .funnel-step-name { font-size:12px; font-weight:600; color:var(--text); }
+        .funnel-step-meta { font-size:11px; color:var(--text-muted); display:flex; gap:12px; }
+        .funnel-bar-wrap { background:#F3F4F6; border-radius:6px; height:32px; overflow:hidden; }
+        .funnel-bar { height:32px; border-radius:6px; display:flex; align-items:center; padding:0 12px; color:white; font-size:12px; font-weight:700; transition:width .6s ease; min-width:40px; }
+        .funnel-drop { font-size:10px; color:var(--red); margin-top:2px; text-align:right; }
+
+        /* ── TOAST ── */
+        .toast { position:fixed; top:16px; right:16px; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:500; color:var(--white); z-index:9999; opacity:0; transform:translateY(-10px); transition:all .3s; pointer-events:none; }
+        .toast.show { opacity:1; transform:translateY(0); }
+        .toast.info { background:var(--blue); }
+        .toast.success { background:var(--green); }
+        .toast.danger { background:var(--red); }
+
+        /* ── SPINNER ── */
+        .spinner { width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .6s linear infinite; margin:20px auto; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* ── MODAL ── */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(2px); }
+        .modal-box { background:var(--white); border-radius:var(--radius); width:90%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.15); }
+        .modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+        .modal-header h3 { font-size:15px; font-weight:600; color:var(--dark); display:flex; align-items:center; }
+        .modal-close { background:none; border:none; font-size:16px; color:var(--text-muted); cursor:pointer; padding:4px; }
+        .modal-body { padding:20px; }
+        .form-group { margin-bottom:14px; }
+        .form-label { display:block; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; text-transform:uppercase; letter-spacing:.3px; }
+        .form-textarea { width:100%; padding:8px 12px; font-size:13px; border:1px solid var(--border); border-radius:6px; font-family:inherit; resize:vertical; outline:none; transition:border-color .15s; }
+        .form-textarea:focus { border-color:var(--gold); }
+        .form-check { display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; }
+
+        /* ── ACTIVITY FEED ── */
+        .activity-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+        .activity-item:last-child { border-bottom:none; }
+        .activity-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+        .activity-content { flex:1; }
+        .activity-title { font-size:13px; font-weight:500; color:var(--dark); }
+        .activity-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+        /* ── INSIGHT CARD ── */
+        .insight-card { padding:14px 16px; border-radius:var(--radius-sm); margin-bottom:10px; border-left:3px solid; }
+        .insight-card.warning { background:#FFFBEB; border-color:var(--orange); }
+        .insight-card.success { background:var(--green-bg); border-color:var(--green); }
+        .insight-card.danger { background:var(--red-bg); border-color:var(--red); }
+        .insight-card.info { background:var(--blue-bg); border-color:var(--blue); }
+        .insight-title { font-size:12px; font-weight:600; color:var(--dark); margin-bottom:4px; }
+        .insight-text { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+
+        /* ── CROSS-REF HIGHLIGHT ── */
+        .cross-ref { background:var(--gold-bg); border:1px dashed var(--gold-border); border-radius:var(--radius-sm); padding:12px 16px; margin-bottom:16px; }
+        .cross-ref-title { font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+        .cross-ref-text { font-size:12px; color:var(--text); }
+    </style>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="b87daf50-31f5-47d2-8999-61c17d4050b5"></script>
 </head>
+<body>
+<div class="toast" id="toast"></div>
 
-  <body>
-    <!-- Meta Pixel noscript (must be in body) -->
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
-    /></noscript>
-    <div id="root"></div>
-  </body>
+<!-- ── LOGIN OVERLAY ── -->
+<div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
+    <div style="background:var(--white);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow-md);max-width:400px;width:90%;text-align:center;">
+        <h1 style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:4px;">Share2Inspire</h1>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Cockpit de Gestão &mdash; Acesso Restrito</p>
+        <div id="loginError" style="display:none;background:var(--red-bg);color:var(--red);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;"></div>
+        <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;" />
+        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:20px;outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')adminLogin()" />
+        <button id="loginBtn" onclick="adminLogin()" style="width:100%;padding:10px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Entrar</button>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:16px;">Acesso exclusivo para administradores</p>
+    </div>
+</div>
 
+<!-- ── HEADER ── -->
+<header class="header">
+    <div class="header-brand">
+        <div>
+            <h1>Share2Inspire</h1>
+            <span>Cockpit de Gestão</span>
+        </div>
+    </div>
+    <div class="header-actions">
+        <div style="display:flex;align-items:center;gap:6px;">
+            <span class="health-dot green" id="healthDot"></span>
+            <span class="header-status" id="healthStatus">Sistema operacional</span>
+        </div>
+        <div class="lang-toggle" id="globalLangToggle">
+            <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
+            <button onclick="setGlobalLang('pt',this)">PT</button>
+            <button onclick="setGlobalLang('en',this)">EN</button>
+        </div>
+        <span class="header-status" id="lastUpdate">A carregar...</span>
+        <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        <button class="btn-refresh" onclick="adminLogout()" style="border-color:var(--red);color:var(--red);" title="Terminar sessão"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    </div>
+</header>
+
+<!-- ── NAVIGATION (7 tabs instead of 13) ── -->
+<nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('cockpit',this)"><i class="fas fa-gauge-high"></i> Cockpit</button>
+    <button class="tab-btn" onclick="switchTab('funnel',this)"><i class="fas fa-filter"></i> Funil</button>
+    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> CRM & Leads</button>
+    <button class="tab-btn" onclick="switchTab('market',this)"><i class="fas fa-chart-line"></i> Mercado</button>
+    <button class="tab-btn" onclick="switchTab('partnerships',this)"><i class="fas fa-handshake"></i> Parcerias</button>
+    <button class="tab-btn" onclick="switchTab('users',this)"><i class="fas fa-user-shield"></i> Utilizadores</button>
+    <button class="tab-btn" onclick="switchTab('system',this)"><i class="fas fa-server"></i> Sistema</button>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     TAB 1: COCKPIT (Executive Dashboard)
+══════════════════════════════════════════════ -->
+<div id="tab-cockpit">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header">
+            <h2>Visão Executiva</h2>
+            <p>Saúde do projecto em tempo real</p>
+        </div>
+        <div class="period-btns" id="dashPeriodBtns">
+            <button class="period-btn" onclick="setDashPeriod(1,this)">Hoje</button>
+            <button class="period-btn" onclick="setDashPeriod(7,this)">7d</button>
+            <button class="period-btn" onclick="setDashPeriod(30,this)">30d</button>
+            <button class="period-btn" onclick="setDashPeriod(90,this)">90d</button>
+            <button class="period-btn active" onclick="setDashPeriod(0,this)">Tudo</button>
+        </div>
+    </div>
+
+    <!-- KPI Row 1: Revenue & Volume -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));">
+        <div class="kpi-card" style="border-top:3px solid var(--gold);"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Receita Real</div>
+            <div class="kpi-value gold" id="kpiRealRevenue">--</div>
+            <div class="kpi-sub" id="kpiRealRevenueSub">excl. testes</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Total Análises</div>
+            <div class="kpi-value" id="kpiTotal">--</div>
+            <div class="kpi-sub" id="kpi24h">-- últimas 24h</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Pagas</div>
+            <div class="kpi-value green" id="kpiPaid">--</div>
+            <div class="kpi-sub" id="kpiPaidPct">--% do total</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--text-muted);"></div>
+            <div class="kpi-label">Gratuitas</div>
+            <div class="kpi-value" id="kpiFree">--</div>
+            <div class="kpi-sub" id="kpiFreePct">--% do total</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Utilizadores Únicos</div>
+            <div class="kpi-value blue" id="kpiUniqueUsers">--</div>
+            <div class="kpi-sub" id="kpiIdentifiedPct">--% identificados</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--purple);"></div>
+            <div class="kpi-label">Career Paths</div>
+            <div class="kpi-value purple" id="kpiCareerPaths">--</div>
+            <div class="kpi-sub" id="kpiCPPct">--% dos pagantes</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--orange);"></div>
+            <div class="kpi-label">Últimos 7 dias</div>
+            <div class="kpi-value" style="color:var(--orange);" id="kpi7d">--</div>
+            <div class="kpi-sub" id="kpi7dRevenue">--€ receita</div>
+        </div>
+    </div>
+
+    <!-- Pivot Table: Métricas por Produto -->
+    <div class="card" style="margin-bottom:24px;">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-chart-bar"></i> Métricas por Produto</div>
+            <div style="font-size:10px;color:var(--text-muted);font-style:italic;">Vendas reais excluem samuelrolo@gmail.com</div>
+        </div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-wrap">
+                <table id="pivotTable">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th style="text-align:center;">Total</th>
+                            <th style="text-align:center;">Gratuitas</th>
+                            <th style="text-align:center;">Pagas</th>
+                            <th style="text-align:center;">Voucher</th>
+                            <th style="text-align:center;">Conversão</th>
+                            <th style="text-align:right;">Receita</th>
+                            <th style="text-align:right;">Ticket Médio</th>
+                            <th style="text-align:right;">Vendas Reais</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pivotBody">
+                        <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">A carregar...</td></tr>
+                    </tbody>
+                    <tfoot id="pivotFoot" style="display:none;">
+                        <tr style="background:var(--gold-bg);font-weight:600;">
+                            <td style="font-weight:700;color:var(--dark);">TOTAL</td>
+                            <td style="text-align:center;" id="pivotTotalAll">--</td>
+                            <td style="text-align:center;" id="pivotTotalFree">--</td>
+                            <td style="text-align:center;" id="pivotTotalPaid">--</td>
+                            <td style="text-align:center;" id="pivotTotalVoucher">--</td>
+                            <td style="text-align:center;" id="pivotTotalConv">--</td>
+                            <td style="text-align:right;color:var(--gold);" id="pivotTotalRevenue">--</td>
+                            <td style="text-align:right;color:var(--gold);" id="pivotTotalTicket">--</td>
+                            <td style="text-align:right;color:var(--gold);font-size:15px;" id="pivotTotalReal">--</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row 2: Strategic Metrics -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));margin-bottom:24px;">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Conv. Gratuito→Pago</div>
+            <div class="kpi-value green" id="kpiConvRate">--</div>
+            <div class="kpi-sub">taxa de conversão</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Ticket Médio</div>
+            <div class="kpi-value gold" id="kpiAvgTicket">--</div>
+            <div class="kpi-sub">por transação paga</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">LTV Estimado</div>
+            <div class="kpi-value blue" id="kpiLTV">--</div>
+            <div class="kpi-sub">por utilizador</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--red);"></div>
+            <div class="kpi-label">Taxa de Abandono</div>
+            <div class="kpi-value red" id="kpiAbandon">--</div>
+            <div class="kpi-sub">análises anónimas</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Vouchers Ativos</div>
+            <div class="kpi-value green" id="kpiVouchersActive">--</div>
+            <div class="kpi-sub" id="kpiVouchersUsed">-- utilizados</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--teal);"></div>
+            <div class="kpi-label">Score Médio</div>
+            <div class="kpi-value teal" id="kpiAvgScore">--</div>
+            <div class="kpi-sub">pontos / 100</div>
+        </div>
+    </div>
+
+    <!-- Insights Row (AI-generated cross-data insights) -->
+    <div id="cockpitInsights" style="margin-bottom:20px;"></div>
+
+    <!-- Charts Row -->
+    <div class="grid-2" style="margin-bottom:20px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Atividade Diária</div>
+                <select class="form-select" id="chartDateFilter" onchange="updateCharts()" style="font-size:11px;padding:3px 8px;">
+                    <option value="7">7 dias</option>
+                    <option value="14" selected>14 dias</option>
+                    <option value="30">30 dias</option>
+                    <option value="90">90 dias</option>
+                </select>
+            </div>
+            <div class="card-body"><canvas id="dailyChart" height="180"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-euro-sign"></i> Receita Acumulada</div>
+            </div>
+            <div class="card-body"><canvas id="revenueChart" height="180"></canvas></div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-pie"></i> Distribuição por Tipo</div>
+            </div>
+            <div class="card-body" style="max-width:260px;margin:0 auto;"><canvas id="typeChart" height="200"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-star"></i> Distribuição de Scores</div>
+            </div>
+            <div class="card-body"><canvas id="scoreChart" height="200"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-stream"></i> Atividade Recente</div>
+        </div>
+        <div class="card-body" id="activityFeed" style="max-height:400px;overflow-y:auto;">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- Hidden KPIs for JS compatibility -->
+    <div style="display:none;">
+        <span id="kpiRevenue"></span><span id="kpiRevenueVoucher"></span>
+        <span id="kpiRevenuePT"></span><span id="kpiRevenueEN"></span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2: FUNIL DE CONVERSÃO
+══════════════════════════════════════════════ -->
+<div id="tab-funnel" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="section-header">
+            <h2>Funil de Conversão</h2>
+            <p>Percurso completo do utilizador — do topo ao fundo do funil</p>
+        </div>
+        <div class="period-btns" id="funnelPeriodBtns">
+            <button class="period-btn" onclick="setFunnelPeriod(7,this)">7d</button>
+            <button class="period-btn" onclick="setFunnelPeriod(30,this)">30d</button>
+            <button class="period-btn" onclick="setFunnelPeriod(90,this)">90d</button>
+            <button class="period-btn active" onclick="setFunnelPeriod(0,this)">Tudo</button>
+        </div>
+    </div>
+
+    <!-- Funil KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #059669;">
+            <div class="kpi-label">Student Pack</div>
+            <div class="kpi-value" style="color:#059669;" id="funnelLR">--</div>
+            <div class="kpi-sub" id="funnelLRConv">topo do funil</div>
+        </div>
+        <!-- Career Energy hidden
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #6B7280;">
+            <div class="kpi-label">Career Energy</div>
+            <div class="kpi-value" id="funnelCE">- -</div>
+            <div class="kpi-sub">diagnóstico</div>
+        </div>
+        -->
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--gold);">
+            <div class="kpi-label">CV Analyser Grátis</div>
+            <div class="kpi-value gold" id="funnelFree">--</div>
+            <div class="kpi-sub" id="funnelFreeConv">--% do topo</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--green);">
+            <div class="kpi-label">CV Analyser Pago</div>
+            <div class="kpi-value green" id="funnelPaid">--</div>
+            <div class="kpi-sub" id="funnelPaidConv">--% do grátis</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--blue);">
+            <div class="kpi-label">Career Path</div>
+            <div class="kpi-value blue" id="funnelCP">--</div>
+            <div class="kpi-sub" id="funnelCPConv">--% dos pagantes</div>
+        </div>
+    </div>
+
+    <!-- Funil Visual + Chart -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-filter"></i> Funil Visual</div>
+            </div>
+            <div class="card-body">
+                <div class="funnel-container" id="funnelVisual"><div class="spinner"></div></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Conversão por Etapa</div>
+            </div>
+            <div class="card-body"><canvas id="funnelChart" height="220"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Abandono e Oportunidades -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> Pontos de Abandono</div>
+            </div>
+            <div class="card-body" id="abandonPoints"><div class="spinner"></div></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-lightbulb" style="color:var(--orange);"></i> Oportunidades de Conversão</div>
+            </div>
+            <div class="card-body" id="conversionOpportunities"><div class="spinner"></div></div>
+        </div>
+    </div>
+
+    <!-- Receita por Produto -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-euro-sign"></i> Receita por Produto</div>
+        </div>
+        <div class="card-body"><div id="revenueByProduct"><div class="spinner"></div></div></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 3: CRM & LEADS (merged: CRM + Analyses + Vouchers + Email History + Contacts)
+══════════════════════════════════════════════ -->
+<div id="tab-crm" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header">
+            <h2>CRM · Gestão de Leads & Clientes</h2>
+            <p>Visão unificada de contactos, análises, vouchers e comunicações</p>
+        </div>
+    </div>
+
+    <!-- Pipeline KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card" style="border-top:3px solid #F59E0B;">
+            <div class="kpi-label">Novas Leads</div>
+            <div class="kpi-value" style="color:var(--orange);" id="crmLeads">--</div>
+            <div class="kpi-sub">só análise gratuita</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--blue);">
+            <div class="kpi-label">Em Nurturing</div>
+            <div class="kpi-value blue" id="crmNurturing">--</div>
+            <div class="kpi-sub">com email enviado</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--green);">
+            <div class="kpi-label">Clientes</div>
+            <div class="kpi-value green" id="crmClients">--</div>
+            <div class="kpi-sub">pelo menos 1 compra</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--purple);">
+            <div class="kpi-label">Recorrentes</div>
+            <div class="kpi-value purple" id="crmRecurring">--</div>
+            <div class="kpi-sub">2+ produtos</div>
+        </div>
+    </div>
+
+    <!-- CRM Sub-navigation (merged tabs) -->
+    <div class="crm-subnav">
+        <button class="crm-subtab active" onclick="switchCrmSubtab('contacts',this)"><i class="fas fa-address-book"></i> Contactos</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('analyses',this)"><i class="fas fa-file-alt"></i> Análises</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('vouchers',this)"><i class="fas fa-ticket-alt"></i> Vouchers</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('automation',this)"><i class="fas fa-robot"></i> Automação</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('campaigns',this)"><i class="fas fa-paper-plane"></i> Campanhas</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('history',this)"><i class="fas fa-history"></i> Histórico Email</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('messages',this)"><i class="fas fa-inbox"></i> Mensagens</button>
+    </div>
+
+    <!-- SUB-TAB: Contactos (CRM main view) -->
+    <div id="crm-sub-contacts">
+        <div class="filter-bar">
+            <label>Etapa</label>
+            <select class="form-select" id="crmFilterStage" onchange="renderCRM()">
+                <option value="all">Todas</option>
+                <option value="lead">Novas Leads</option>
+                <option value="nurturing">Em Nurturing</option>
+                <option value="client">Clientes</option>
+                <option value="recurring">Recorrentes</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Produto</label>
+            <select class="form-select" id="crmFilterProduct" onchange="renderCRM()">
+                <option value="all">Todos</option>
+                <option value="cv_free">CV Grátis</option>
+                <option value="cv_paid">CV Pago</option>
+                <option value="student_pack">Student Pack</option>
+                <option value="career_path">Career Path</option>
+                <option value="career_intelligence">Career Intelligence</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Senioridade</label>
+            <select class="form-select" id="crmFilterSeniority" onchange="renderCRM()"><option value="all">Todas</option></select>
+            <div class="filter-divider"></div>
+            <label>Área</label>
+            <select class="form-select" id="crmFilterArea" onchange="renderCRM()"><option value="all">Todas</option></select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="crmSearch" placeholder="Pesquisar nome ou email..." oninput="renderCRM()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="crmCount">-- contactos</span>
+                <button class="btn btn-outline btn-sm" onclick="exportCRMCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr>
+                        <th>Utilizador</th><th>Área Profissional</th><th>Senioridade</th>
+                        <th>Produtos Usados</th><th>Produtos Comprados</th><th>Valor Total</th>
+                        <th>Última Interação</th><th>Etapa</th><th></th>
+                    </tr></thead>
+                    <tbody id="crmTable"><tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination" id="crmPagination"></div>
+    </div>
+
+    <!-- SUB-TAB: Análises (moved from separate tab) -->
+    <div id="crm-sub-analyses" style="display:none;">
+        <div class="filter-bar">
+            <label>Tipo</label>
+            <select class="form-select" id="filterType" onchange="filterAnalyses()">
+                <option value="all">Todos</option>
+                <option value="free">Gratuitas</option>
+                <option value="paid">Pagas</option>
+                <option value="voucher">Voucher</option>
+                <option value="career_path">Career Path</option>
+                <option value="linkedin_roaster">LinkedIn Roaster</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Período</label>
+            <select class="form-select" id="filterPeriod" onchange="filterAnalyses()">
+                <option value="all">Todos</option>
+                <option value="7d">7 dias</option>
+                <option value="30d">30 dias</option>
+                <option value="90d">90 dias</option>
+            </select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="filterSearch" placeholder="Pesquisar..." oninput="filterAnalyses()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="analysesCount">--</span>
+                <button class="btn btn-outline btn-sm" onclick="exportAnalysesCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo</th><th>Score</th><th>Área</th><th>Pagamento</th><th>Valor</th><th>Rating</th><th></th></tr></thead>
+                    <tbody id="analysesTable"><tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+            <div class="pagination" id="analysesPagination"></div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Vouchers (moved from separate tab) -->
+    <div id="crm-sub-vouchers" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div></div>
+            <button class="btn btn-gold" onclick="showCreateVoucherModal()"><i class="fas fa-plus"></i> Criar Voucher</button>
+        </div>
+        <div class="filter-bar">
+            <label>Estado</label>
+            <select class="form-select" id="filterVoucherStatus" onchange="filterVouchers()">
+                <option value="all">Todos</option>
+                <option value="active">Ativos</option>
+                <option value="used">Usados</option>
+                <option value="expired">Expirados</option>
+            </select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="filterVoucherSearch" placeholder="Pesquisar email..." oninput="filterVouchers()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="vouchersCount">--</span>
+                <button class="btn btn-outline btn-sm" onclick="exportVouchersCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Código</th><th>Email</th><th>Plano</th><th>Método</th><th>Valor</th><th>Estado</th><th>Usadas</th><th>Data</th><th></th></tr></thead>
+                    <tbody id="vouchersTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Automação -->
+    <div id="crm-sub-automation" style="display:none;">
+        <!-- Automation Controls -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:13px;font-weight:600;">Estado:</span>
+                    <span id="autoStatusBadge" class="badge badge-success">Ativa</span>
+                </div>
+                <button class="btn btn-outline btn-sm" id="autoPauseBtn" onclick="toggleAutomationPause()">
+                    <i class="fas fa-pause" id="autoPauseIcon"></i> <span id="autoPauseLabel">Pausar</span>
+                </button>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--text-muted);" id="autoLastRun">Última execução: --</span>
+                <button class="btn btn-gold btn-sm" id="autoRunBtn" onclick="runAutomationNow()">
+                    <i class="fas fa-play"></i> Executar Agora
+                </button>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+            <div class="kpi-card" style="border-top:3px solid var(--blue);">
+                <div class="kpi-label">Upsell 2h Enviados</div>
+                <div class="kpi-value blue" id="autoUpsell2h">--</div>
+                <div class="kpi-sub">últimos 30 dias</div>
+            </div>
+            <div class="kpi-card" style="border-top:3px solid var(--purple);">
+                <div class="kpi-label">Follow-up 7d Enviados</div>
+                <div class="kpi-value purple" id="autoUpsell7d">--</div>
+                <div class="kpi-sub">últimos 30 dias</div>
+            </div>
+            <div class="kpi-card" style="border-top:3px solid var(--green);">
+                <div class="kpi-label">Conversões Pós-Email</div>
+                <div class="kpi-value green" id="autoConversions">--</div>
+                <div class="kpi-sub">compraram após email auto</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="kpi-card" style="border-top:3px solid #e67e22;">
+                <div class="kpi-label">CV → Career Path</div>
+                <div class="kpi-value" style="color:#e67e22" id="autoCrossCvCp">--</div>
+                <div class="kpi-sub">cross-sell com CVPATH50</div>
+            </div>
+            <div class="kpi-card" style="border-top:3px solid #9b59b6;">
+                <div class="kpi-label">CP → Pro Sub</div>
+                <div class="kpi-value" style="color:#9b59b6" id="autoCrossCpPro">--</div>
+                <div class="kpi-sub">cross-sell com PATHPRO</div>
+            </div>
+            <div class="kpi-card" style="border-top:3px solid var(--gold);">
+                <div class="kpi-label">Taxa de Conversão</div>
+                <div class="kpi-value gold" id="autoConvRate">--</div>
+                <div class="kpi-sub">email auto → compra</div>
+            </div>
+        </div>
+        <!-- Pending Leads (to be sent) -->
+        <div class="card" style="margin-bottom:16px;">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-clock" style="color:var(--gold);"></i> Leads Pendentes</div>
+                <span style="font-size:12px;color:var(--text-muted);" id="autoPendingCount">--</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Email</th><th>Nome</th><th>Tipo Previsto</th><th>Análise em</th><th>Tempo Decorrido</th></tr></thead>
+                    <tbody id="autoPendingTable"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-list"></i> Últimos Emails Automáticos</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Email</th><th>Tipo</th><th>Assunto</th><th>Estado</th><th>Converteu</th></tr></thead>
+                    <tbody id="autoEmailsTable"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Campanhas / Nurturing -->
+    <div id="crm-sub-campaigns" style="display:none;">
+        <!-- Segment Cards -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div class="lang-toggle" id="nurturingLangToggle">
+                <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
+                <button onclick="setNurturingLang('en',this)">EN</button>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted);margin-left:auto;" id="campaignLastSent"></span>
+        </div>
+        <div id="nurturingSegments" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;"></div>
+
+        <!-- Campaign Composer -->
+        <div id="nurturingDetail" style="margin-top:0;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" id="nurturingTitle"><i class="fas fa-paper-plane"></i> Compor Campanha</div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-outline btn-sm" onclick="selectOnlyUnsent()"><i class="fas fa-filter"></i> Só não enviados</button>
+                        <button class="btn btn-gold btn-sm" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar Campanha</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Segmento</label>
+                            <select class="form-select" id="campaignSegment" onchange="filterCampaignRecipients()">
+                                <option value="all">Todos</option>
+                                <option value="lead">Leads (sem compra)</option>
+                                <option value="client">Clientes (1 compra)</option>
+                                <option value="recurring">Recorrentes (2+)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Template</label>
+                            <select class="form-select" id="campaignTemplate" onchange="loadCampaignTemplate()">
+                                <option value="">— Personalizado —</option>
+                                <option value="upsell_cv">Upsell — CV Analyser</option>
+                                <option value="upsell_cp">Upsell — Career Path</option>
+                                <option value="upsell_student_pack">Upsell — Student Pack</option>
+                                <option value="upsell_ci">Upsell — Career Intelligence</option>
+                                <option value="followup">Follow-up</option>
+                                <option value="testimonial">Pedir Testemunho</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assunto</label>
+                        <input class="form-input" id="nurturingSubject" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Corpo (HTML)</label>
+                        <textarea class="form-textarea" id="nurturingBody" style="min-height:150px;"></textarea>
+                    </div>
+                    <div class="filter-bar" style="margin-top:12px;">
+                        <input class="form-input" type="text" id="recipientSearch" placeholder="Filtrar destinatários..." oninput="filterRecipientList()" style="width:200px;">
+                        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                            <label class="form-check"><input type="checkbox" id="selectAll" checked onchange="toggleAllRecipients(this.checked)"> Selecionar todos</label>
+                            <span style="font-size:12px;color:var(--text-muted);" id="recipientCount">0 destinatários</span>
+                        </div>
+                    </div>
+                    <div class="table-wrap" style="max-height:300px;overflow-y:auto;">
+                        <table>
+                            <thead><tr><th style="width:30px;"></th><th>Nome</th><th>Email</th><th>Estágio</th><th>Último Email</th></tr></thead>
+                            <tbody id="recipientTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Histórico de Email (moved from separate tab) -->
+    <div id="crm-sub-history" style="display:none;">
+        <div class="filter-bar">
+            <label>Tipo</label>
+            <select class="form-select" id="filterHistoryType" onchange="renderEmailHistory()">
+                <option value="all">Todos</option>
+                <option value="auto">Automáticos</option>
+                <option value="manual">Manuais</option>
+                <option value="bulk">Campanhas</option>
+            </select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="filterHistorySearch" placeholder="Pesquisar email..." oninput="renderEmailHistory()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="historyCount">--</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Para</th><th>Assunto</th><th>Tipo</th><th>Estado</th></tr></thead>
+                    <tbody id="historyTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Mensagens de Contacto (moved from separate tab) -->
+    <div id="crm-sub-messages" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-inbox"></i> Mensagens do Formulário de Contacto</div>
+                <span style="font-size:12px;color:var(--text-muted);" id="messagesCount">--</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Assunto</th><th>Mensagem</th></tr></thead>
+                    <tbody id="contactsTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 4: MERCADO (Job Search + Career Energy cross-referenced)
+══════════════════════════════════════════════ -->
+<div id="tab-market" style="display:none;">
+    <div class="section-header" style="margin-bottom:16px;">
+        <h2>Inteligência de Mercado</h2>
+        <p>Cargos procurados, competências e energia profissional — cruzamento de dados</p>
+    </div>
+
+    <!-- Cross-reference insight -->
+    <div class="cross-ref" id="marketCrossRef">
+        <div class="cross-ref-title"><i class="fas fa-link" style="margin-right:4px;"></i> Cruzamento de Dados</div>
+        <div class="cross-ref-text" id="marketCrossRefText">A calcular insights...</div>
+    </div>
+
+    <!-- Market KPIs -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-label">Total Pesquisas</div><div class="kpi-value gold" style="font-size:22px;" id="kpiJobTotal">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Com Vaga</div><div class="kpi-value green" style="font-size:22px;" id="kpiJobWithJob">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Sem Vaga</div><div class="kpi-value blue" style="font-size:22px;" id="kpiJobNoJob">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Cargos Únicos</div><div class="kpi-value purple" style="font-size:22px;" id="kpiJobUniqueRoles">--</div></div>
+        <!-- Career Energy KPIs hidden
+        <div class="kpi-card"><div class="kpi-label">Career Energy Médio</div><div class="kpi-value green" style="font-size:22px;" id="kpiCEAvg">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Diagnósticos CE</div><div class="kpi-value gold" style="font-size:22px;" id="kpiCETotal">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Países CE</div><div class="kpi-value purple" style="font-size:22px;" id="kpiCECountries">--</div></div>
+        -->
+    </div>
+
+    <!-- Sub-navigation for Market -->
+    <div class="crm-subnav" style="margin-bottom:20px;">
+        <button class="crm-subtab active" onclick="switchMarketSubtab('jobs',this)"><i class="fas fa-briefcase"></i> Cargos Procurados</button>
+        <!-- Career Energy sub-tab hidden
+        <button class="crm-subtab" onclick="switchMarketSubtab('energy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
+        -->
+    </div>
+
+    <!-- Market Sub: Jobs -->
+    <div id="market-sub-jobs">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Top 10 Cargos</h3><canvas id="chartTopRoles" height="250"></canvas></div>
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Distribuição por Senioridade</h3><canvas id="chartSeniority" height="250"></canvas></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Top Skills</h3><canvas id="chartTopSkills" height="250"></canvas></div>
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Keyword Gaps</h3><canvas id="chartKeywordGaps" height="250"></canvas></div>
+        </div>
+        <div class="filter-bar">
+            <label>Senioridade</label>
+            <select class="form-select" id="filterJobSeniority" onchange="renderJobSearchTable()"><option value="all">Todas</option></select>
+            <label>Período</label>
+            <select class="form-select" id="filterJobPeriod" onchange="renderJobSearchTable()">
+                <option value="all">Todos</option><option value="7d">7 dias</option><option value="30d">30 dias</option><option value="90d">90 dias</option>
+            </select>
+            <input class="form-input" type="text" id="filterJobSearch" placeholder="Pesquisar cargo..." oninput="renderJobSearchTable()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="jobSearchCount">--</span>
+                <button class="btn btn-outline btn-sm" onclick="exportJobSearchCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Nome</th><th>Cargo</th><th>Senioridade</th><th>Skills</th><th>Vaga</th><th>ATS Score</th></tr></thead>
+                    <tbody id="jobSearchTable"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Sub: Career Energy — HIDDEN
+    <div id="market-sub-energy" style="display:none !important;">
+        <div class="grid-2" style="margin-bottom:16px;">
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Distribuição de Scores</h3><canvas id="ceScoreChart" height="220"></canvas></div>
+            <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Score vs Felicidade do País</h3><canvas id="ceScatterChart" height="220"></canvas></div>
+        </div>
+        <div class="filter-bar">
+            <label>País</label>
+            <select class="form-select" id="filterCECountry" onchange="renderCETable()"><option value="all">Todos</option></select>
+            <label>Nível</label>
+            <select class="form-select" id="filterCELevel" onchange="renderCETable()"><option value="all">Todos</option></select>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="ceCount">--</span>
+                <button class="btn btn-outline btn-sm" onclick="exportCECSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Nome</th><th>Cargo</th><th>País</th><th>Score</th><th>Nível</th><th>Felicidade País</th><th>Diferença</th></tr></thead>
+                    <tbody id="ceTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    Career Energy section end -->
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 5: PARCERIAS (Affiliates + Coupons merged)
+══════════════════════════════════════════════ -->
+<div id="tab-partnerships" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header">
+            <h2>Parcerias & Afiliados</h2>
+            <p>Gestão de afiliados, cupões de desconto e receita de parcerias</p>
+        </div>
+    </div>
+
+    <!-- Partnership KPIs (combined) -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Afiliados Ativos</div>
+            <div class="kpi-value gold" id="affKpiTotal">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Total Cliques</div>
+            <div class="kpi-value blue" id="affKpiClicks">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Total Vendas Afiliados</div>
+            <div class="kpi-value green" id="affKpiSales">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Receita Afiliados</div>
+            <div class="kpi-value gold" id="affKpiRevenue">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Cupões Ativos</div>
+            <div class="kpi-value green" id="couponKpiActive">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Cupões Utilizados</div>
+            <div class="kpi-value blue" id="couponKpiUses">--</div>
+        </div>
+    </div>
+
+    <!-- Sub-navigation -->
+    <div class="crm-subnav" style="margin-bottom:20px;">
+        <button class="crm-subtab active" onclick="switchPartnerSubtab('affiliates',this)"><i class="fas fa-link"></i> Afiliados</button>
+        <button class="crm-subtab" onclick="switchPartnerSubtab('coupons',this)"><i class="fas fa-percent"></i> Cupões de Desconto</button>
+        <button class="crm-subtab" onclick="switchPartnerSubtab('clicks',this)"><i class="fas fa-mouse-pointer"></i> Cliques</button>
+        <button class="crm-subtab" onclick="switchPartnerSubtab('conversions',this)"><i class="fas fa-shopping-cart"></i> Conversões</button>
+    </div>
+
+    <!-- Partner Sub: Affiliates -->
+    <div id="partner-sub-affiliates">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+            <button class="btn btn-gold" onclick="openCreateAffiliateModal()"><i class="fas fa-plus"></i> Novo Afiliado</button>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Nome</th><th>Produto</th><th>Código</th><th>Link</th><th>Cliques</th><th>Vendas</th><th>Receita</th><th>Conversão</th><th>Comissão %</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
+                    <tbody id="affTable"><tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Sub: Coupons -->
+    <div id="partner-sub-coupons" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="filter-bar" style="flex:1;margin-bottom:0;">
+                <label>Estado</label>
+                <select class="form-select" id="filterCouponStatus" onchange="renderCoupons()">
+                    <option value="all">Todos</option>
+                    <option value="active">Ativos</option>
+                    <option value="inactive">Inativos</option>
+                </select>
+                <input class="form-input" type="text" id="filterCouponSearch" placeholder="Pesquisar código ou parceiro..." oninput="renderCoupons()" style="width:220px;">
+            </div>
+            <button class="btn btn-gold" style="margin-left:12px;" onclick="openCreateCouponModal()"><i class="fas fa-plus"></i> Novo Cupão</button>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Código</th><th>Parceiro</th><th>Desconto</th><th>Produtos</th><th>Utilizações</th><th>Limite</th><th>Validade</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
+                    <tbody id="couponsTable"><tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Sub: Clicks -->
+    <div id="partner-sub-clicks" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-mouse-pointer"></i> Últimos Cliques</span>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <select class="form-select" id="filterAffClickCode" onchange="renderAffClicks()"><option value="all">Todos</option></select>
+                    <button class="btn btn-outline btn-sm" onclick="exportAffClicksCSV()"><i class="fas fa-download"></i> CSV</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Afiliado</th><th>Página</th><th>País</th><th>Cidade</th><th>Dispositivo</th><th>Browser</th><th>OS</th><th>Referrer</th></tr></thead>
+                    <tbody id="affClicksTable"><tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Sub: Conversions -->
+    <div id="partner-sub-conversions" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-shopping-cart"></i> Últimas Conversões</span>
+                <button class="btn btn-outline btn-sm" onclick="exportAffConversionsCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Afiliado</th><th>Produto</th><th>Valor</th><th>Moeda</th><th>Método</th><th>Email Cliente</th><th>Transação</th></tr></thead>
+                    <tbody id="affConversionsTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 6: UTILIZADORES & LICENÇAS
+══════════════════════════════════════════════ -->
+<div id="tab-users" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header">
+            <h2><i class="fas fa-user-shield" style="color:var(--purple);margin-right:8px;"></i> Utilizadores & Licenças</h2>
+            <p>Gestão de utilizadores registados na Membro e respetivas subscrições</p>
+        </div>
+        <button class="btn btn-gold" onclick="exportUsersCSV()"><i class="fas fa-download"></i> Exportar CSV</button>
+    </div>
+
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--purple);"></div>
+            <div class="kpi-label">Total Utilizadores</div>
+            <div class="kpi-value purple" id="usersKpiTotal">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Subscrições Ativas</div>
+            <div class="kpi-value green" id="usersKpiActiveSubs">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Análises Guardadas</div>
+            <div class="kpi-value blue" id="usersKpiSavedAnalyses">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Receita Subscrições</div>
+            <div class="kpi-value gold" id="usersKpiRevenue">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--teal);"></div>
+            <div class="kpi-label">Perfis Completos</div>
+            <div class="kpi-value teal" id="usersKpiComplete">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--orange);"></div>
+            <div class="kpi-label">Último Registo</div>
+            <div class="kpi-value" id="usersKpiLastReg" style="font-size:14px;color:var(--orange);">--</div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <label>Estado</label>
+        <select class="form-select" id="filterUserStatus" onchange="renderUsers()">
+            <option value="all">Todos</option>
+            <option value="active_sub">Com Subscrição Ativa</option>
+            <option value="no_sub">Sem Subscrição</option>
+            <option value="expired">Subscrição Expirada</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Pesquisa</label>
+        <input class="form-input" type="text" id="filterUserSearch" placeholder="Nome, email ou telefone..." oninput="renderUsers()" style="width:220px;">
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Nome</th><th>Email</th><th>Telefone</th><th>LinkedIn</th>
+                    <th>Subscrição</th><th>Plano</th><th>Expira</th><th>Análises</th>
+                    <th>CV</th><th>Registado</th><th>Último Login</th><th>Ações</th>
+                </tr></thead>
+                <tbody id="usersTable"><tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+        <div id="usersPagination" class="pagination"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 7: SISTEMA (Health + Newsletter/Ebook)
+══════════════════════════════════════════════ -->
+<div id="tab-system" style="display:none;">
+    <div class="section-header" style="margin-bottom:16px;">
+        <h2>Saúde do Sistema</h2>
+        <p>Monitorização do backend, APIs e serviços</p>
+    </div>
+
+
+
+    <!-- Configurações -->
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-cog"></i> Configurações</div>
+        </div>
+        <div class="card-body" style="padding:16px 20px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">API Key Brevo (Email)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" type="password" id="brevoKeyInput" placeholder="Insere a API Key do Brevo..." style="flex:1;">
+                    <button class="btn btn-gold btn-sm" onclick="saveBrevoKey()" style="white-space:nowrap;"><i class="fas fa-save"></i> Guardar</button>
+                    <button class="btn btn-outline btn-sm" onclick="clearBrevoKey()" style="white-space:nowrap;"><i class="fas fa-trash"></i></button>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="brevoKeyStatus">--</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div id="healthExecutiveSummary" style="margin-bottom:20px;padding:16px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card-bg);display:flex;align-items:center;gap:16px;">
+        <div id="healthSummaryIcon" style="font-size:28px;">⏳</div>
+        <div style="flex:1;">
+            <div id="healthSummaryTitle" style="font-weight:600;font-size:16px;color:var(--text);">A verificar serviços...</div>
+            <div id="healthSummaryDesc" style="font-size:13px;color:var(--text-muted);margin-top:2px;">Último check: --</div>
+        </div>
+        <button class="btn btn-sm" onclick="refreshHealthCheck()" style="background:var(--gold);color:#000;font-weight:600;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;"><i class="fas fa-sync-alt"></i> Verificar Agora</button>
+    </div>
+
+    <!-- Service Cards Grid -->
+    <div id="healthServiceCards" style="margin-bottom:20px;">
+        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">A carregar serviços...</div>
+    </div>
+
+    <!-- Health History -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-history"></i> Histórico de Checks</div>
+            <select class="form-select" id="healthHistoryFilter" onchange="renderHealthHistory()" style="width:auto;">
+                <option value="all">Todos os serviços</option>
+            </select>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Serviço</th><th>Estado</th><th>TTFB</th><th>HTTP</th><th>Detalhes</th></tr></thead>
+                <tbody id="healthTable"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════
+     MODAIS (kept from original)
+══════════════════════════════════════════════════ -->
+
+<!-- Modal: Email -->
+<div class="modal-overlay" id="emailModalOverlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope" style="color:var(--gold);margin-right:8px;"></i> Enviar Email</h3>
+            <button class="modal-close" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Para</label>
+                <input class="form-input" type="email" id="modalEmailTo" style="width:100%;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Idioma</label>
+                <select class="form-select" id="modalEmailLang" onchange="loadEmailTemplate()" style="width:100%;">
+                    <option value="pt">PT Português</option>
+                    <option value="en">EN English</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Template</label>
+                <select class="form-select" id="modalEmailTemplate" onchange="loadEmailTemplate()" style="width:100%;">
+                    <option value="">— Selecionar template —</option>
+                    <option value="upsell_cv">Upsell — Análise Completa CV</option>
+                    <option value="upsell_cp">Upsell — Career Path</option>
+                    <option value="upsell_student_pack">Upsell — Student Pack</option>
+                    <option value="upsell_ci">Upsell — Career Intelligence</option>
+                    <option value="followup">Follow-up</option>
+                    <option value="testimonial">Pedir Testemunho</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assunto</label>
+                <input class="form-input" type="text" id="modalEmailSubject" style="width:100%;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Corpo (HTML)</label>
+                <textarea class="form-textarea" id="modalEmailBody" style="min-height:150px;"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeEmailModal()">Cancelar</button>
+                <button class="btn btn-gold" onclick="sendSingleEmail()"><i class="fas fa-paper-plane"></i> Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Criar Vouchers -->
+<div class="modal-overlay" id="voucherModalOverlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-ticket-alt" style="color:var(--gold);margin-right:8px;"></i> Criar Vouchers</h3>
+            <button class="modal-close" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Email do Cliente</label>
+                <input class="form-input" type="email" id="voucherEmail" style="width:100%;" placeholder="cliente@email.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Plano</label>
+                <select class="form-select" id="voucherPlan" style="width:100%;">
+                    <option value="CV Analyser|1|9.99|standard|false">CV Analyser — 1 análise (9,99€)</option>
+                    <option value="Career Path|1|19.99|career_path|true">Career Path — 1 análise (19,99€)</option>
+                    <option value="CI PRO Upgrade|1|29.00|career_intelligence_pro|false">CI PRO Upgrade — (29,00€)</option>
+                    <option value="Career Intelligence Full|1|49.00|career_intelligence_full|false">Career Intelligence Full — (49,00€)</option>
+                    <option value="Bundle CV + Career Path|1|29.00|career_path|true">Bundle CV + Career Path (29,00€)</option>
+                    <option value="LinkedIn Roaster|1|4.99|linkedin_roaster|false">LinkedIn Roaster (4,99€)</option>
+                    <option value="Pack Estudante|1|7.99|student_pack|false">Pack Estudante — 1 voucher (7,99€)</option>
+                    <option value="PACK_TESTE_PARCERIA">Pack Teste Parceria (CV + Career + Roaster)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Método de Pagamento</label>
+                <select class="form-select" id="voucherPayment" style="width:100%;">
+                    <option value="mbway">MBWay</option>
+                    <option value="multibanco">Multibanco</option>
+                    <option value="stripe">Stripe</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="transferencia">Transferência</option>
+                    <option value="oferta">Oferta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" id="voucherSendEmail" checked>
+                    Enviar email com o(s) código(s) ao cliente
+                </label>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeVoucherModal()">Cancelar</button>
+                <button class="btn btn-gold" onclick="createVouchers()"><i class="fas fa-plus"></i> Criar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Perfil do Utilizador -->
+<div class="modal-overlay" id="userProfileModal" style="display:none;" onclick="if(event.target===this)closeUserProfile()">
+    <div class="modal-box" style="max-width:680px;">
+        <div class="modal-header">
+            <h3 id="userProfileTitle"><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Perfil do Utilizador</h3>
+            <button class="modal-close" onclick="closeUserProfile()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="userProfileBody"><div class="spinner"></div></div>
+    </div>
+</div>
+
+<!-- Modal: Criar Afiliado -->
+<div class="modal-overlay" id="affModalOverlay" style="display:none;" onclick="if(event.target===this)closeAffiliateModal()">
+    <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-link" style="color:var(--gold);margin-right:8px;"></i> <span id="affModalTitle">Novo Afiliado</span></h3>
+            <button class="modal-close" onclick="closeAffiliateModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="affEditId">
+            <div class="form-group">
+                <label class="form-label">Nome</label>
+                <input class="form-input" type="text" id="affName" style="width:100%;" placeholder="Nome do afiliado">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" id="affEmail" style="width:100%;" placeholder="email@exemplo.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Produtos</label>
+                <div id="affProductCheckboxes" style="display:flex;flex-direction:column;gap:8px;padding:8px 0;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="cv-analyser" onchange="updateAffLinkPreview()" checked>
+                        <span class="badge" style="background:var(--blue);color:#fff;font-size:11px;">CV Analyser</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="career-path" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="career-intelligence" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">Career Intelligence</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="student-pack" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="linkedin-roaster" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Código (slug único para o link)</label>
+                <input class="form-input" type="text" id="affCode" style="width:100%;" placeholder="ex: joao, partner1">
+                <div id="affLinkPreview" style="font-size:11px;color:var(--text-muted);margin-top:8px;">Links: share2inspire.pt/cv-analyser?ref=...</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Comissão (%)</label>
+                <input class="form-input" type="number" id="affCommission" style="width:100%;" placeholder="0" min="0" max="100" step="0.5">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notas</label>
+                <textarea class="form-textarea" id="affNotes" style="min-height:60px;" placeholder="Notas internas..."></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeAffiliateModal()">Cancelar</button>
+                <button class="btn btn-gold" id="affSaveBtn" onclick="saveAffiliate()"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Criar/Editar Cupão de Desconto -->
+<div class="modal-overlay" id="couponModalOverlay" style="display:none;" onclick="if(event.target===this)closeCouponModal()">
+    <div class="modal-box" style="max-width:520px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-percent" style="color:var(--green);margin-right:8px;"></i> <span id="couponModalTitle">Novo Cupão de Desconto</span></h3>
+            <button class="modal-close" onclick="closeCouponModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="couponEditId">
+            <div class="form-group">
+                <label class="form-label">Código do Cupão</label>
+                <input class="form-input" type="text" id="couponCodeInput" style="width:100%;text-transform:uppercase;letter-spacing:1px;" placeholder="Ex: ISEG30, NOVA20">
+                <small style="color:var(--text-muted);font-size:11px;">O código que o parceiro partilha com os seus utilizadores</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome do Parceiro</label>
+                <input class="form-input" type="text" id="couponPartnerName" style="width:100%;" placeholder="Ex: ISEG, Nova SBE, ISCTE">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Desconto (%)</label>
+                <input class="form-input" type="number" id="couponDiscount" style="width:100%;" placeholder="20" min="1" max="100" step="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição (opcional)</label>
+                <input class="form-input" type="text" id="couponDescription" style="width:100%;" placeholder="Desconto para alunos do ISEG">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Produtos aplicáveis</label>
+                <div id="couponProductCheckboxes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 0;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;grid-column:1/-1;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:4px;">
+                        <input type="checkbox" class="coupon-product-cb" value="all" checked>
+                        <span class="badge" style="background:#374151;color:#fff;font-size:11px;">Todos os produtos</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="cv_analysis" checked>
+                        <span class="badge" style="background:var(--blue);color:#fff;font-size:11px;">CV Analyser</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_path" checked>
+                        <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_pro" checked>
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">CI PRO</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_full" checked>
+                        <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="student_pack" checked>
+                        <span class="badge" style="background:#059669;color:#fff;font-size:11px;">Student Pack</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="bundle" checked>
+                        <span class="badge" style="background:var(--purple);color:#fff;font-size:11px;">Bundle</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="linkedin_roaster" checked>
+                        <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="subscription" checked>
+                        <span class="badge" style="background:#D97706;color:#fff;font-size:11px;">Subscrição</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="salary_reality_check_premium" checked>
+                        <span class="badge" style="background:#DC2626;color:#fff;font-size:11px;">Salary Check</span>
+                    </label>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group">
+                    <label class="form-label">Limite de utilizações</label>
+                    <input class="form-input" type="number" id="couponMaxUses" style="width:100%;" placeholder="Sem limite" min="1">
+                    <small style="color:var(--text-muted);font-size:11px;">Deixar vazio = ilimitado</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Válido até</label>
+                    <input class="form-input" type="date" id="couponValidUntil" style="width:100%;">
+                    <small style="color:var(--text-muted);font-size:11px;">Deixar vazio = sem expiração</small>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                <button class="btn btn-outline" onclick="closeCouponModal()">Cancelar</button>
+                <button class="btn btn-gold" id="couponSaveBtn" onclick="saveCoupon()"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Ver Mensagem de Contacto -->
+<div class="modal-overlay" id="msgModalOverlay" style="display:none;" onclick="if(event.target===this)closeMsgModal()">
+    <div class="modal-box" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope-open-text" style="color:var(--gold);margin-right:8px;"></i> Mensagem de Contacto</h3>
+            <button class="modal-close" onclick="closeMsgModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div>
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Nome</div>
+                    <div id="msgDetailName" style="font-size:14px;font-weight:600;margin-top:4px;">—</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Email</div>
+                    <div id="msgDetailEmail" style="font-size:14px;margin-top:4px;">—</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Assunto</div>
+                    <div id="msgDetailSubject" style="font-size:14px;margin-top:4px;">—</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Data</div>
+                    <div id="msgDetailDate" style="font-size:14px;margin-top:4px;">—</div>
+                </div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;">
+                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Mensagem</div>
+                <div id="msgDetailBody" style="font-size:14px;line-height:1.7;background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap;max-height:300px;overflow-y:auto;">—</div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;">
+                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Notas internas</div>
+                <textarea class="form-textarea" id="msgDetailNotes" style="min-height:60px;font-size:13px;" placeholder="Adicionar notas sobre esta mensagem..."></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                <button class="btn btn-outline" onclick="saveMsgNotes()" style="font-size:12px;"><i class="fas fa-save"></i> Guardar Notas</button>
+                <button class="btn btn-outline" onclick="deleteMsgFromModal()" style="font-size:12px;color:var(--red);border-color:var(--red);"><i class="fas fa-trash"></i> Eliminar</button>
+                <button class="btn btn-gold" onclick="replyToMsg()" style="font-size:12px;"><i class="fas fa-reply"></i> Responder por Email</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/admin-analytics/admin-analytics.js"></script>
+</body>
 </html>
