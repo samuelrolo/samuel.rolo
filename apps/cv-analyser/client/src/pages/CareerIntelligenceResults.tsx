@@ -707,8 +707,8 @@ export default function CareerIntelligenceResults() {
     );
   }
 
-  const candidateProfile = getCareerIntelligenceProfile(cvAnalysis);
-  const profileName = candidateProfile.detected_name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
+  const candidateProfile = getCareerIntelligenceProfile(cvAnalysis) || cvAnalysis?.raw?.candidate_profile || {};
+  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
   const currentRole = candidateProfile.detected_role || cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
   const seniority = candidateProfile.seniority || cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 

@@ -901,9 +901,10 @@ export default function CareerPathResults() {
     );
   }
 
-  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
-  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
-  const seniority = cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
+  const cpProfile = cvAnalysis?.candidate_profile || cvAnalysis?.cv_analysis?.candidate_profile || {};
+  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis.name || cvAnalysis.candidate_name || (t('o_teu_perfil'));
+  const currentRole = cpProfile.detected_role || cvAnalysis.current_role || cvAnalysis.perceivedRole || (t('profissional'));
+  const seniority = cpProfile.seniority || cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 
   return (
     <div className="min-h-screen bg-background">
