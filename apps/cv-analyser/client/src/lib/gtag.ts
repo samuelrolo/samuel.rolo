@@ -2,6 +2,7 @@ interface GtagWindow extends Window {
   dataLayer: any[];
   gtag: (...args: any[]) => void;
   fbq: (...args: any[]) => void;
+  umami?: { track: (eventName: string, params?: Record<string, any>) => void };
 }
 
 declare const window: GtagWindow;
@@ -40,6 +41,15 @@ export const trackFBEvent = (eventName: string, params?: Record<string, any>) =>
   } catch (e) { /* silent */ }
 };
 
+// Umami event tracking
+export const trackUmamiEvent = (eventName: string, params?: Record<string, any>) => {
+  try {
+    if (typeof window.umami !== 'undefined' && typeof window.umami.track === 'function') {
+      window.umami.track(eventName, params);
+    }
+  } catch (e) { /* silent */ }
+};
+
 // Predefined funnel events
 export const trackCVUpload = () => {
   trackEvent('cv_upload', { event_category: 'engagement' });
@@ -70,6 +80,7 @@ export const trackPurchase = (product: string, value: number, transactionId: str
   sendConversion(value, 'EUR', transactionId);
   trackEvent('purchase', { event_category: 'ecommerce', items: [{ item_name: product }], value, currency: 'EUR', transaction_id: transactionId });
   trackFBEvent('Purchase', { value, currency: 'EUR', content_name: product });
+  trackUmamiEvent('purchase', { product, value, currency: 'EUR' });
 };
 
 export const trackLinkedInShare = (type: 'cv_analyser' | 'career_path' | 'career_energy') => {

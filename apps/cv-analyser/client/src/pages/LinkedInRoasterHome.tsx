@@ -175,6 +175,7 @@ export default function LinkedInRoasterHome() {
     try {
       sendConversion(PRICE_NUM, 'EUR', `roast-${Date.now()}`);
       if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
+      if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: 'linkedin_roaster', value: PRICE_NUM, currency: 'EUR' });
 
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {

@@ -1002,6 +1002,7 @@ export default function Results() {
       
       // For PayPal, we need manual confirmation - go to success step
       if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceNum, currency: CURRENCY_CODE});
+      if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: priceNum, currency: CURRENCY_CODE });
       setPaymentStep('success');
     } catch (err) {
       setPaymentError(t('erro_ao_abrir_paypal_tenta'));
@@ -1081,6 +1082,7 @@ export default function Results() {
           }
           
           if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
+          if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE });
           setPaymentStep('success');
           return;
         }
@@ -1153,6 +1155,7 @@ export default function Results() {
           setCareerPathEmail(email);
         }
         if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
+        if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE });
         setPaymentStep('success');
       } else {
         setPollingExpired(true);
