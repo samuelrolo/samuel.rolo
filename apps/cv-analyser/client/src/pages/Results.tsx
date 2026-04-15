@@ -2731,7 +2731,7 @@ export default function Results() {
                     'Mapa visual de las mismas acciones anteriores, distribuidas por impacto esperado y esfuerzo estimado para una referencia rápida.'
                   )}
                 </p>
-                <div className="relative h-[360px] rounded-2xl border border-border bg-muted/10 overflow-hidden">
+                <div className="relative h-[360px] rounded-2xl border border-border bg-muted/10 overflow-visible">
                   <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
                     <div className="border-r border-b border-border/70 p-3 sm:p-4 bg-red-500/[0.03]">
                       <p className="text-sm font-semibold text-foreground">{pick('1. Top Priority', '1. Top Priority', '1. Máxima Prioridad')}</p>
@@ -2757,18 +2757,28 @@ export default function Results() {
                     return (
                       <div
                         key={`${item.actionLetter}-${item.dimension}`}
-                        className="absolute -translate-x-1/2 -translate-y-1/2"
+                        className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
                         style={{ left: item.position.left, top: item.position.top }}
                       >
-                        <button
-                          type="button"
-                          onMouseEnter={() => setHighlightedActionLetter(item.actionLetter)}
-                          onMouseLeave={() => setHighlightedActionLetter(null)}
-                          className={`w-10 h-10 rounded-full text-white shadow-lg border-4 border-background flex items-center justify-center text-sm transition-all duration-200 ${isHighlighted ? 'bg-[#B89547] font-extrabold scale-110 shadow-xl ring-4 ring-[#C9A961]/20' : 'bg-[#C9A961] font-bold hover:bg-[#B89547] hover:scale-105'}`}
-                          aria-label={`${item.actionLetter}: ${item.actionText}`}
-                        >
-                          {item.actionLetter}
-                        </button>
+                        <div className="relative flex flex-col items-center">
+                          {isHighlighted && (
+                            <div className="pointer-events-none absolute bottom-full mb-3 w-max max-w-[220px] rounded-xl border border-border bg-background/95 px-3 py-2 text-center shadow-xl backdrop-blur-sm">
+                              <p className="text-xs font-black tracking-[0.2em] text-[#B89547] uppercase mb-1">{item.actionLetter}</p>
+                              <p className="text-xs sm:text-sm font-medium leading-snug text-foreground">{item.actionText}</p>
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onMouseEnter={() => setHighlightedActionLetter(item.actionLetter)}
+                            onMouseLeave={() => setHighlightedActionLetter(null)}
+                            onFocus={() => setHighlightedActionLetter(item.actionLetter)}
+                            onBlur={() => setHighlightedActionLetter(null)}
+                            className={`w-10 h-10 rounded-full text-white shadow-lg border-4 border-background flex items-center justify-center text-sm transition-all duration-200 ${isHighlighted ? 'bg-[#B89547] font-extrabold scale-110 shadow-xl ring-4 ring-[#C9A961]/20' : 'bg-[#C9A961] font-bold hover:bg-[#B89547] hover:scale-105'}`}
+                            aria-label={`${item.actionLetter}: ${item.actionText}`}
+                          >
+                            {item.actionLetter}
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -2781,9 +2791,9 @@ export default function Results() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {pick(
-                    'Passa o cursor sobre cada letra para realçar a carta correspondente abaixo.',
-                    'Hover each letter to highlight the corresponding card below.',
-                    'Pasa el cursor sobre cada letra para resaltar la tarjeta correspondiente de abajo.'
+                    'Passa o cursor sobre cada letra para ver a descrição da acção e realçar a carta correspondente abaixo.',
+                    'Hover each letter to see the action description and highlight the corresponding card below.',
+                    'Pasa el cursor sobre cada letra para ver la descripción de la acción y resaltar la tarjeta correspondiente de abajo.'
                   )}
                 </p>
               </div>
