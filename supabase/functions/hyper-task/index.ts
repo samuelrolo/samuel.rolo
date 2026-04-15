@@ -7978,6 +7978,7 @@ INSTRUÇÕES CRÍTICAS ANTI-ALUCINAÇÃO:
 2. NÃO inventes, fabriques ou assumes empresas, cargos, experiências, competências ou qualificações que não estejam explicitamente mencionados nos dados fornecidos.
 3. Se alguma informação estiver em falta, ambígua ou pouco clara, diz explicitamente que essa informação não está disponível em vez de fazer suposições.
 4. NÃO extrapoles histórico profissional, setor, antiguidade, resultados, responsabilidades, formação ou certificações para além do que está claramente presente nos dados.
+5. NUNCA afirmes que o utilizador não tem certificações, recomendações, endorsements/validações ou qualquer outra secção do LinkedIn que possa não estar disponível no input. Se o input não contiver informação sobre certificações, recomendações, endorsements/validações ou outras secções, NÃO as menciones de todo — nem positiva nem negativamente. Analisa e comenta APENAS dados que estejam efectivamente presentes no input. A ausência de dados no input NÃO significa ausência no perfil.
 
 REGRAS DE LOCALIZAÇÃO E MERCADO (CRÍTICO):
 1. Usa EXCLUSIVAMENTE a localização real do utilizador (cidade/país) extraída do perfil para contextualizar toda a análise, benchmarks salariais e potencial de mercado.
@@ -8363,6 +8364,7 @@ CRITICAL ANTI-HALLUCINATION INSTRUCTIONS:
 2. Do NOT invent, fabricate, or assume any companies, roles, experiences, skills, or qualifications that are not explicitly mentioned in the provided data.
 3. If information is missing, ambiguous, or unclear, explicitly state that it is not available rather than making assumptions.
 4. Do NOT extrapolate work history, industry, seniority, achievements, responsibilities, education, or certifications beyond what is clearly present in the provided data.
+5. NEVER claim that the user lacks certifications, recommendations, endorsements, or any other LinkedIn section data that may not be available in the input. If the input does not contain information about certifications, recommendations, endorsements, or other sections, do NOT mention them at all — neither positively nor negatively. Only analyse and comment on data that is actually present in the input. Absence of data in the input does NOT mean absence on the profile.
 
 LOCALISATION AND MARKET RULES (CRITICAL):
 1. Use EXCLUSIVELY the user's actual location (city/country) extracted from their profile to contextualise the entire analysis, salary benchmarks, and market potential.
@@ -8742,6 +8744,7 @@ INSTRUCCIONES CRÍTICAS ANTI-ALUCINACIÓN:
 2. NO inventes, fabriques o asumas empresas, cargos, experiencias, competencias o cualificaciones que no estén explícitamente mencionados en los datos proporcionados.
 3. Si falta información, es ambigua o no está clara, indícalo explícitamente en lugar de hacer suposiciones.
 4. NO extrapoles historial profesional, sector, seniority, logros, responsabilidades, estudios o certificaciones más allá de lo que esté claramente presente en los datos proporcionados.
+5. NUNCA afirmes que el usuario no tiene certificaciones, recomendaciones, endorsements/validaciones o cualquier otra sección de LinkedIn que pueda no estar disponible en el input. Si el input no contiene información sobre certificaciones, recomendaciones, endorsements/validaciones u otras secciones, NO las menciones en absoluto — ni positiva ni negativamente. Analiza y comenta SOLO los datos que estén realmente presentes en el input. La ausencia de datos en el input NO significa ausencia en el perfil.
 
 REGLAS DE LOCALIZACIÓN Y MERCADO (CRÍTICO):
 1. Usa EXCLUSIVAMENTE la ubicación real del usuario (ciudad/país) extraída del perfil para contextualizar todo el análisis, benchmarks salariales y potencial de mercado.
