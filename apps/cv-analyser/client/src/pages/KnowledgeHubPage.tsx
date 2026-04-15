@@ -52,6 +52,16 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
   },
   {
     category: "big4",
+    tag: pick("BIG4 · ENTREVISTA FINAL", "BIG4 · FINAL INTERVIEW", "BIG4 · ENTREVISTA FINAL"),
+    title: pick("A Entrevista com o Partner das Big 4 Já Não É o Que Pensas", "The Big 4 Partner Interview Is Not Testing What You Think", "La Entrevista con el Socio de las Big 4 No Evalúa lo que Crees"),
+    excerpt: pick("A entrevista final não testa apenas fit cultural. Avalia pensamento crítico, empatia operacional, resiliência e o tipo de profissional que serás quando a pressão aumenta.", "The final interview is not just about cultural fit. It evaluates critical thinking, operational empathy, resilience and the kind of professional you become when pressure rises.", "La entrevista final no evalúa solo encaje cultural. Mide pensamiento crítico, empatía operativa, resiliencia y el tipo de profesional que serás cuando la presión aumente."),
+    author: "Samuel Rolo",
+    date: "Abr 2026",
+    readTime: "8 min",
+    link: pick("/blog/artigos/big4-entrevista-partner-comportamental/", "/en/blog/artigos/big4-partner-interview-behavioural/", "/es/blog/artigos/big4-entrevista-socio-comportamental/"),
+  },
+  {
+    category: "big4",
     tag: pick("BIG4 · DECISÃO DE CARREIRA", "BIG4 · CAREER DECISION", "BIG4 · DECISIÓN DE CARRERA"),
     title: pick("Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década", "Senior at Big4: Stay or Leave? The Decision That Defines the Next Decade", "Senior en las Big4: ¿Quedarse o Salir? La Decisión que Define la Próxima Década"),
     excerpt: pick("O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.", "What changes when you reach Senior, what you gain if you progress to Manager, and what you lose if you stay too long.", "Qué cambia cuando llegas a Senior, qué ganas si progresas a Manager y qué pierdes si te quedas demasiado tiempo."),
@@ -230,6 +240,15 @@ const buildVideos = (pick: <T,>(pt: T, en: T, es: T) => T): VideoItem[] => [
     guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
     ytLink: "https://www.youtube.com/watch?v=cFw11WRjuxM",
     featured: true,
+  },
+  {
+    id: "Zt_0M_VGYso",
+    badge: pick("NOVO VÍDEO", "NEW VIDEO", "NUEVO VÍDEO"),
+    title: pick("A Entrevista com o Partner das Big 4 Já Não É o Que Pensas", "The Big 4 Partner Interview Is Not Testing What You Think", "La Entrevista con el Socio de las Big 4 No Evalúa lo que Crees"),
+    desc: pick("O vídeo está em inglês, mas foi integrado nas três versões do artigo. Explica os sinais comportamentais que os partners avaliam na entrevista final e como demonstrar julgamento sob pressão.", "This video is in English, but it is embedded in all three article versions. It explains the behavioural signals partners assess in the final interview and how to demonstrate judgment under pressure.", "El vídeo está en inglés, pero está integrado en las tres versiones del artículo. Explica las señales conductuales que los partners evalúan en la entrevista final y cómo demostrar criterio bajo presión."),
+    guideLink: pick("/blog/artigos/big4-entrevista-partner-comportamental/", "/en/blog/artigos/big4-partner-interview-behavioural/", "/es/blog/artigos/big4-entrevista-socio-comportamental/"),
+    guideLabel: pick("LER ARTIGO COMPLETO →", "READ FULL ARTICLE →", "LEER ARTÍCULO COMPLETO →"),
+    ytLink: "https://www.youtube.com/watch?v=Zt_0M_VGYso",
   },
   {
     id: "LhLmgE1noC8",
