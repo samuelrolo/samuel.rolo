@@ -6,6 +6,61 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/pt/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/pt/home.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/pt/pages/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/home",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
+      "source": "/en/home.html",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
+      "source": "/en/pages/home",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
+      "source": "/es/home",
+      "destination": "/es",
+      "permanent": true
+    },
+    {
+      "source": "/es/home.html",
+      "destination": "/es",
+      "permanent": true
+    },
+    {
+      "source": "/es/pages/home",
+      "destination": "/es",
+      "permanent": true
+    },
+    {
       "source": "/pages/servicos",
       "destination": "/servicos",
       "permanent": true
@@ -280,14 +335,6 @@
     },
     {
       "source": "/es",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/en/home",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/en/pages/home",
       "destination": "/index.html"
     },
     {
