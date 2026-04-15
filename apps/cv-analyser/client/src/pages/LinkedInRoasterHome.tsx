@@ -77,7 +77,7 @@ export default function LinkedInRoasterHome() {
       const profile = await getAuthenticatedProfilePrefill();
       if (!active || !profile) return;
       if (profile.linkedinUrl) setLinkedinUrl((current) => current || profile.linkedinUrl);
-      if (profile.email) setEmail((current) => current || profile.email);
+// if (profile.email) setEmail((current) => current || profile.email); // Removed to ensure candidate email is always entered manually
     })();
     return () => { active = false; };
   }, []);
@@ -156,6 +156,7 @@ export default function LinkedInRoasterHome() {
   // Step 2: Run analysis
   const runAnalysis = async (options?: { emailOverride?: string; linkedinUrlOverride?: string }) => {
     const currentEmail = (options?.emailOverride || email).trim().toLowerCase();
+    const candidateEmail = currentEmail;
     const currentLinkedinUrl = (options?.linkedinUrlOverride || linkedinUrl).trim();
 
     setError(null);
@@ -218,7 +219,7 @@ export default function LinkedInRoasterHome() {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
               mode: 'linkedin_roast',
-              email: (currentEmail || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(),
+              email: candidateEmail,
               linkedin_url: currentLinkedinUrl,
               linkedin_data: structuredLinkedinData,
               cv_text: scrapeData.cv_text.substring(0, 12000),
@@ -248,7 +249,7 @@ export default function LinkedInRoasterHome() {
 
       const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(responseData, lang);
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
-      sessionStorage.setItem('linkedinRoasterEmail', currentEmail);
+      sessionStorage.setItem('linkedinRoasterEmail', candidateEmail);
       sessionStorage.setItem('linkedinRoasterUrl', currentLinkedinUrl);
       sessionStorage.setItem('linkedinRoasterPaid', 'true');
       sessionStorage.setItem('analysisLang', normalizedLinkedinAnalysis.language);
@@ -259,7 +260,7 @@ export default function LinkedInRoasterHome() {
         fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
-          body: JSON.stringify({ profile_url: currentLinkedinUrl, user_email: currentEmail, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
+          body: JSON.stringify({ profile_url: currentLinkedinUrl, user_email: candidateEmail, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
         }).catch(() => {});
       } catch (_) {}
 
@@ -268,7 +269,7 @@ export default function LinkedInRoasterHome() {
         fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail, name: '', type: 'linkedin_roaster', language: lang })
+          body: JSON.stringify({ email: candidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
         }).catch(() => {});
       } catch (_) {}
 
@@ -279,7 +280,7 @@ export default function LinkedInRoasterHome() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=minimal' },
           body: JSON.stringify({
-            user_email: currentEmail,
+            user_email: candidateEmail,
             score: score,
             analysis_type: 'linkedin_roast',
             payment_status: 'paid',

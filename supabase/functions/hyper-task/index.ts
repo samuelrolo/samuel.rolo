@@ -7960,9 +7960,23 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
       const linkedinUrl = body.linkedin_url || '';
 
+      const candidateEmail = String(body.email || body.user_email || '').trim().toLowerCase();
+
       const targetArea = body.target_area || '';
 
       const isES = language === 'es';
+
+      if (!candidateEmail || !candidateEmail.includes('@')) {
+
+        return jsonResponse({
+
+          success: false,
+
+          error: isEN ? 'Candidate email is required for LinkedIn Roast.' : isES ? 'El email del candidato es obligatorio para el LinkedIn Roast.' : 'O email do candidato é obrigatório para o LinkedIn Roast.'
+
+        }, 400);
+
+      }
 
       // cvText may already be populated from linkedin_url extraction above
 
@@ -9586,6 +9600,8 @@ REGLAS FINALES:
           analysis_type: 'linkedin_roast',
 
           language,
+
+          candidate_email: candidateEmail,
 
           linkedin_roast: roastAnalysis,
 

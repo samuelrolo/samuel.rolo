@@ -289,29 +289,115 @@ function studentPackWelcomeBody(name: string, lang: string): string {
 }
 
 /* ─── Template: Welcome after LinkedIn Roaster Purchase ─── */
-function linkedinRoasterWelcomeBody(name: string, lang: string): string {
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function cleanInsight(value: unknown): string {
+  return String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function formatLinkedinScoreLabel(value: unknown): string {
+  const normalized = cleanInsight(value);
+  if (!normalized) return "";
+  if (normalized.includes("/")) return normalized;
+  const numeric = Number(normalized.replace(',', '.'));
+  if (Number.isFinite(numeric) && numeric > 0 && numeric <= 10) {
+    return `${normalized}/10`;
+  }
+  return normalized;
+}
+
+function normalizeLinkedinScore(score: unknown, results?: any): string {
+  const directScore = formatLinkedinScoreLabel(score);
+  if (directScore) return directScore;
+
+  const candidates = [
+    results?.teaser?.nota_geral,
+    results?.teaser?.overall_score,
+    results?.score,
+    results?.overall_score,
+    results?.analise_completa?.nota_geral,
+  ];
+
+  for (const candidate of candidates) {
+    const normalized = formatLinkedinScoreLabel(candidate);
+    if (normalized) return normalized;
+  }
+
+  return "";
+}
+
+function getLinkedinHighlights(results?: any): string[] {
+  const highlights: string[] = [];
+  const candidates = [
+    results?.teaser?.hook_vendas,
+    results?.analise_completa?.dica_de_ouro,
+    results?.analise_completa?.visibilidade_algoritmo ? `Visibilidade no algoritmo: ${results.analise_completa.visibilidade_algoritmo}` : "",
+    Array.isArray(results?.analise_completa?.erros_criticos) ? results.analise_completa.erros_criticos[0] : "",
+    Array.isArray(results?.analise_completa?.headlines_sugeridas) ? `Headline sugerida: ${results.analise_completa.headlines_sugeridas[0]}` : "",
+    results?.analise_completa?.o_roast,
+  ];
+
+  for (const candidate of candidates) {
+    const normalized = cleanInsight(candidate);
+    if (!normalized) continue;
+    if (highlights.includes(normalized)) continue;
+    highlights.push(normalized);
+    if (highlights.length === 2) break;
+  }
+
+  return highlights;
+}
+
+function renderLinkedinHighlights(highlights: string[]): string {
+  if (!highlights.length) return "";
+  return `<ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">${highlights
+    .map((highlight) => `<li>${escapeHtml(highlight)}</li>`)
+    .join("")}</ul>`;
+}
+
+function linkedinRoasterWelcomeBody(name: string, lang: string, score?: unknown, results?: any): string {
   const isEn = lang === "en";
   const isEs = lang === "es";
   const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
   const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
+  const scoreLabel = normalizeLinkedinScore(score, results);
+  const highlights = getLinkedinHighlights(results);
+  const scoreCard = scoreLabel
+    ? `<div style="background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);border:1px solid #fdba74;border-radius:10px;padding:18px 20px;margin:20px 0;">
+  <p style="font-size:12px;color:#9a3412;margin:0 0 8px 0;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">${isEn ? "LinkedIn Score" : isEs ? "Puntuación de LinkedIn" : "Score LinkedIn"}</p>
+  <p style="font-size:24px;color:#9a3412;margin:0;font-weight:800;line-height:1.2;">${escapeHtml(
+    isEn
+      ? `Your LinkedIn profile scored ${scoreLabel}`
+      : isEs
+        ? `Tu perfil de LinkedIn obtuvo ${scoreLabel}`
+        : `O teu perfil LinkedIn obteve ${scoreLabel}`,
+  )}</p>
+</div>`
+    : "";
+  const highlightsBlock = highlights.length
+    ? `<div style="background:#f8fafc;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 10px 0;font-weight:700;">${isEn ? "Key highlights from your analysis:" : isEs ? "Aspectos clave de tu análisis:" : "Destaques principais da tua análise:"}</p>
+  ${renderLinkedinHighlights(highlights)}
+</div>`
+    : "";
 
   if (isEn) {
     return `
 <h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Your LinkedIn Roast is ready! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Thank you for using the <strong>LinkedIn Roaster</strong>. Your profile has been roasted and your results are now available.</p>
-
-<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
-  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">What you'll find in your report:</p>
-  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
-    <li>Brutally honest feedback on your profile</li>
-    <li>Recruiter's perspective on your first impression</li>
-    <li>SEO & Keyword analysis to boost your visibility</li>
-    <li>Ready-to-use headlines and quick fixes</li>
-  </ul>
-</div>
-
-<p style="font-size:15px;color:#333;line-height:1.7;">Check your results now and start transforming your LinkedIn presence:</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Thank you for using the <strong>LinkedIn Roaster</strong>. Your results are now available and already include a clear score plus practical priorities to improve your profile.</p>
+${scoreCard}
+${highlightsBlock}
+<p style="font-size:15px;color:#333;line-height:1.7;">Open your report now to review the full roast and apply the recommendations to strengthen your LinkedIn presence.</p>
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/en/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">View my LinkedIn Roast</a>
@@ -341,19 +427,10 @@ function linkedinRoasterWelcomeBody(name: string, lang: string): string {
     return `
 <h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Tu LinkedIn Roast está listo! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por usar el <strong>LinkedIn Roaster</strong>. Tu perfil ha sido analizado y los resultados ya están disponibles.</p>
-
-<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
-  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">Lo que encontrarás en tu informe:</p>
-  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
-    <li>Feedback brutalmente honesto sobre tu perfil</li>
-    <li>Perspectiva del reclutador sobre tu primera impresión</li>
-    <li>Análisis de SEO y palabras clave para aumentar tu visibilidad</li>
-    <li>Titulares listos para usar y correcciones rápidas</li>
-  </ul>
-</div>
-
-<p style="font-size:15px;color:#333;line-height:1.7;">Consulta tus resultados ahora y empieza a transformar tu presencia en LinkedIn:</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por usar el <strong>LinkedIn Roaster</strong>. Tus resultados ya están disponibles e incluyen una puntuación clara y prioridades concretas para mejorar tu perfil.</p>
+${scoreCard}
+${highlightsBlock}
+<p style="font-size:15px;color:#333;line-height:1.7;">Abre tu informe ahora para ver el roast completo y aplicar las recomendaciones que pueden reforzar tu presencia en LinkedIn.</p>
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/es/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver mi LinkedIn Roast</a>
@@ -380,21 +457,12 @@ function linkedinRoasterWelcomeBody(name: string, lang: string): string {
   }
 
   return `
-<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">O teu LinkedIn Roast está pronto! 🔥</h1>
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Os teus resultados do LinkedIn Roaster estão prontos! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Obrigado por utilizares o <strong>LinkedIn Roaster</strong>. O teu perfil foi analisado e os resultados já estão disponíveis.</p>
-
-<div style="background:#fff7ed;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
-  <p style="font-size:14px;color:#333;margin:0 0 8px 0;font-weight:600;">O que vais encontrar no teu relatório:</p>
-  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
-    <li>Feedback brutalmente honesto sobre o teu perfil</li>
-    <li>Perspetiva do recrutador sobre a tua primeira impressão</li>
-    <li>Análise de SEO e keywords para aumentares a tua visibilidade</li>
-    <li>Headlines prontas a usar e correções rápidas</li>
-  </ul>
-</div>
-
-<p style="font-size:15px;color:#333;line-height:1.7;">Consulta os teus resultados agora e começa a transformar a tua presença no LinkedIn:</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Obrigado por utilizares o <strong>LinkedIn Roaster</strong>. Os teus resultados já estão disponíveis e incluem o score real do teu perfil, bem como prioridades concretas para o melhorares.</p>
+${scoreCard}
+${highlightsBlock}
+<p style="font-size:15px;color:#333;line-height:1.7;">Abre agora o teu relatório completo para veres o roast na íntegra e aplicares as recomendações que podem reforçar a tua presença no LinkedIn.</p>
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver o meu LinkedIn Roast</a>
@@ -598,6 +666,8 @@ Deno.serve(async (req: Request) => {
     const email = payload?.email;
     const name = payload?.name;
     const lang = payload?.lang || payload?.language;
+    const score = payload?.score;
+    const results = payload?.results || payload?.analysis_result || payload?.analysis_json;
     const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
@@ -654,7 +724,7 @@ Deno.serve(async (req: Request) => {
         : language === "es"
           ? "¡Tu LinkedIn Roast está listo! 🔥"
           : "O teu LinkedIn Roast está pronto! 🔥";
-      bodyHtml = linkedinRoasterWelcomeBody(name || "", language);
+      bodyHtml = linkedinRoasterWelcomeBody(name || "", language, score, results);
     } else {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
