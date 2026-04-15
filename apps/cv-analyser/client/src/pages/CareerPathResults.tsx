@@ -492,7 +492,7 @@ export default function CareerPathResults() {
     };
 
     hydratePaidAccess();
-  }, [careerPathHomePath, lang, setLocation]);
+  }, [careerPathHomePath, generateCareerPath, lang, setLocation]);
 
   const generateCareerPath = useCallback(async () => {
     setIsGenerating(true);
