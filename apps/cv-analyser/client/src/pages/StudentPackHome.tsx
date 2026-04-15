@@ -53,6 +53,17 @@ async function extractTextFromDOCX(file: File): Promise<string> {
   return (await mammoth.extractRawText({ arrayBuffer: ab })).value.trim();
 }
 
+const isPdfFile = (file: File) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+async function readFileAsBase64(file: File): Promise<string> {
+  const reader = new FileReader();
+  return await new Promise<string>((resolve, reject) => {
+    reader.onload = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function StudentPackHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
@@ -164,6 +175,23 @@ export default function StudentPackHome() {
     }).catch(() => {});
   };
 
+  const persistStudentPackCvPayload = async (inputFile: File, extractedText?: string) => {
+    const resolvedText = typeof extractedText === 'string'
+      ? extractedText
+      : (isPdfFile(inputFile) ? await extractTextFromPDF(inputFile) : await extractTextFromDOCX(inputFile));
+    const resolvedBase64 = await readFileAsBase64(inputFile);
+    sessionStorage.setItem('studentPackCvText', resolvedText);
+    localStorage.setItem('studentPackCvText', resolvedText);
+    sessionStorage.setItem('studentPackCvBase64', resolvedBase64);
+    sessionStorage.setItem('studentPackCvFilename', inputFile.name || 'cv.pdf');
+    sessionStorage.setItem('studentPackCvMimeType', inputFile.type || '');
+    return {
+      cvText: resolvedText,
+      base64Content: resolvedBase64,
+      cvFilename: inputFile.name || 'cv.pdf',
+    };
+  };
+
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
 
@@ -178,10 +206,7 @@ export default function StudentPackHome() {
     if (!acceptedTerms) { setError(pick('Aceita a Política de Privacidade', 'Accept the Privacy Policy', 'Acepta la Política de Privacidad')); return; }
     setError(null);
     try {
-      let cvText = '';
-      if (file.type === 'application/pdf') { cvText = await extractTextFromPDF(file); }
-      else { cvText = await extractTextFromDOCX(file); }
-      localStorage.setItem('studentPackCvText', cvText);
+      await persistStudentPackCvPayload(file);
       localStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
       localStorage.setItem('studentPackEmail', email.trim().toLowerCase());
       localStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
@@ -207,19 +232,16 @@ export default function StudentPackHome() {
     }, 4500);
 
     try {
-      let cvText = "";
-      let base64Content = "";
+      let cvText = sessionStorage.getItem('studentPackCvText') || localStorage.getItem('studentPackCvText') || '';
+      let base64Content = sessionStorage.getItem('studentPackCvBase64') || '';
+      let cvFilename = sessionStorage.getItem('studentPackCvFilename') || 'cv.pdf';
       if (file) {
-        cvText = file.type === 'application/pdf' ? await extractTextFromPDF(file) : await extractTextFromDOCX(file);
-        const reader = new FileReader();
-        base64Content = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve((reader.result as string).split(',')[1]);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      } else {
-        cvText = localStorage.getItem('studentPackCvText') || '';
-        if (!cvText) throw new Error(pick('CV não disponível após pagamento. Por favor contacta support@share2inspire.pt', 'CV not available after payment. Please contact support@share2inspire.pt', 'CV no disponible tras el pago. Contacta support@share2inspire.pt'));
+        const persistedCv = await persistStudentPackCvPayload(file);
+        cvText = persistedCv.cvText;
+        base64Content = persistedCv.base64Content;
+        cvFilename = persistedCv.cvFilename;
+      } else if (!cvText && !base64Content) {
+        throw new Error(pick('CV não disponível após pagamento. Por favor contacta support@share2inspire.pt', 'CV not available after payment. Please contact support@share2inspire.pt', 'CV no disponible tras el pago. Contacta support@share2inspire.pt'));
       }
       const currentLinkedinUrl = linkedinUrl || localStorage.getItem('studentPackLinkedinUrl') || '';
       if (currentLinkedinUrl && !linkedinUrl) setLinkedinUrl(currentLinkedinUrl);
@@ -265,7 +287,7 @@ export default function StudentPackHome() {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
             const body: any = { mode: 'cv_extraction', email: currentEmail.trim().toLowerCase(), language: 'pt', country: currentCountry, region: currentRegion };
-            if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
+            if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = cvFilename; } else { body.cv_text = cvText.substring(0, 8000); }
             const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseDataPT = await res.json(); if (cvResponseDataPT.success) break; }
@@ -337,8 +359,8 @@ export default function StudentPackHome() {
         for (let attempt = 0; attempt <= 2; attempt++) {
           const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
           try {
-            const body: any = { mode: 'cv_extraction', language: langCode, country: currentCountry, region: currentRegion };
-            if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = file?.name || 'cv.pdf'; } else { body.cv_text = cvText.substring(0, 8000); }
+            const body: any = { mode: 'cv_extraction', email: currentEmail.trim().toLowerCase(), language: langCode, country: currentCountry, region: currentRegion || undefined };
+            if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = cvFilename; } else { body.cv_text = cvText.substring(0, 8000); }
             const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
             clearTimeout(tid);
             if (res.ok) { cvResponseData = await res.json(); if (cvResponseData.success) break; }
