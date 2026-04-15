@@ -1002,7 +1002,6 @@ export default function Results() {
       
       // For PayPal, we need manual confirmation - go to success step
       if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceNum, currency: CURRENCY_CODE});
-      if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: priceNum, currency: CURRENCY_CODE });
       setPaymentStep('success');
     } catch (err) {
       setPaymentError(t('erro_ao_abrir_paypal_tenta'));
@@ -1082,7 +1081,6 @@ export default function Results() {
           }
           
           if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
-          if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE });
           setPaymentStep('success');
           return;
         }
@@ -1155,7 +1153,6 @@ export default function Results() {
           setCareerPathEmail(email);
         }
         if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
-        if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: selectedPlan?.includes_career_path ? 'bundle' : 'cv_analyser', value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE });
         setPaymentStep('success');
       } else {
         setPollingExpired(true);
@@ -1595,6 +1592,72 @@ export default function Results() {
     score: q.score,
     benchmark: q.benchmark
   }));
+  const priorityMatrixSource = (Array.isArray(analysisData.priorityMatrix) && analysisData.priorityMatrix.length > 0)
+    ? analysisData.priorityMatrix
+    : analysisData.quadrants.map((q: any) => {
+        const gap = Math.max(0, (q.benchmark || 0) - (q.score || 0));
+        return {
+          dimension: translateQuadrantTitle(q.title),
+          urgency: gap > 5 ? pick('Alta', 'High', 'Alta') : gap > 0 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja'),
+          currentScore: q.score,
+          potentialScore: Math.min(100, (q.score || 0) + (gap > 0 ? gap + 5 : 5)),
+          actions: [
+            ...(Array.isArray(q.weaknesses) ? q.weaknesses.slice(0, 2) : []),
+            ...(Array.isArray(q.strengths) && q.strengths[0] ? [q.strengths[0]] : []),
+          ].filter(Boolean),
+        };
+      });
+  const priorityMatrixItems = (() => {
+    const sorted = [...priorityMatrixSource]
+      .map((item: any, index: number) => {
+        const actions = Array.isArray(item.actions) ? item.actions.filter(Boolean) : [];
+        const currentScore = Number(item.currentScore || 0);
+        const potentialScore = Number(item.potentialScore || currentScore);
+        const gain = Math.max(1, potentialScore - currentScore);
+        const urgencyLabel = String(item.urgency || '').toLowerCase();
+        const isHighUrgency = /alta|high/.test(urgencyLabel);
+        const isMediumUrgency = /m[eé]dia|medium|media/.test(urgencyLabel);
+        const isHighImpact = gain >= 8;
+        const quadrantKey = isHighImpact
+          ? (isHighUrgency ? 'top' : 'secondary')
+          : ((isHighUrgency || isMediumUrgency) ? 'quick' : 'later');
+        return {
+          ...item,
+          actions,
+          currentScore,
+          potentialScore,
+          gain,
+          actionLetter: String.fromCharCode(65 + index),
+          actionText: actions[0] || item.dimension || pick('Acção prioritária', 'Priority action', 'Acción prioritaria'),
+          quadrantKey,
+        };
+      })
+      .sort((a: any, b: any) => {
+        const urgencyWeight = (value: string) => /alta|high/i.test(value) ? 0 : /m[eé]dia|medium|media/i.test(value) ? 1 : 2;
+        const urgencyDelta = urgencyWeight(a.urgency || '') - urgencyWeight(b.urgency || '');
+        if (urgencyDelta !== 0) return urgencyDelta;
+        return (b.gain || 0) - (a.gain || 0);
+      })
+      .slice(0, 4);
+
+    const quadrantSlots: Record<string, { left: string; top: string }[]> = {
+      top: [{ left: '26%', top: '24%' }, { left: '38%', top: '34%' }],
+      secondary: [{ left: '73%', top: '24%' }, { left: '84%', top: '34%' }],
+      quick: [{ left: '26%', top: '74%' }, { left: '38%', top: '84%' }],
+      later: [{ left: '73%', top: '74%' }, { left: '84%', top: '84%' }],
+    };
+    const quadrantUsage: Record<string, number> = { top: 0, secondary: 0, quick: 0, later: 0 };
+
+    return sorted.map((item: any) => {
+      const slotGroup = quadrantSlots[item.quadrantKey] || quadrantSlots.quick;
+      const slotIndex = Math.min(quadrantUsage[item.quadrantKey] || 0, slotGroup.length - 1);
+      quadrantUsage[item.quadrantKey] = (quadrantUsage[item.quadrantKey] || 0) + 1;
+      return {
+        ...item,
+        position: slotGroup[slotIndex],
+      };
+    });
+  })();
   const translatedTopStrengths = analysisData.quadrants
     .slice()
     .sort((a, b) => b.score - a.score)
@@ -2502,34 +2565,93 @@ export default function Results() {
             </div>
 
             {/* ═══ Matriz de Prioridades ═══ */}
-            <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <GoldIcon size="w-8 h-8">
-                  <Target className="w-4 h-4 text-[#C9A961]" />
-                </GoldIcon>
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('matriz_de_prioridades')}</p>
-              </div>
-              <p className="text-sm text-muted-foreground">{t('dimenses_ordenadas_por_urgncia_de')}</p>
-              <div className="space-y-2">
-                {[...dimensions].sort((a: any, b: any) => (a.score - a.benchmark) - (b.score - b.benchmark)).map((dim: any, i: number) => {
-                  const gap = dim.score - dim.benchmark;
-                  const priority = gap <= 0 ? pick('Alta', 'High', 'Alta') : gap <= 10 ? pick('Média', 'Medium', 'Media') : pick('Baixa', 'Low', 'Baja');
-                  const prColor = gap <= 0 ? 'bg-red-500/10 text-red-600 border-red-500/20' : gap <= 10 ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
-                  return (
-                    <div key={dim.label} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-muted-foreground w-6">#{i + 1}</span>
-                        <span className="text-sm font-medium text-foreground">{dim.label}</span>
+            {priorityMatrixItems.length > 0 && (
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <GoldIcon size="w-8 h-8">
+                    <Target className="w-4 h-4 text-[#C9A961]" />
+                  </GoldIcon>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{t('matriz_de_prioridades')}</p>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {pick(
+                    'Acções prioritárias posicionadas por impacto esperado e esforço estimado para te ajudar a decidir o que corrigir primeiro.',
+                    'Priority actions positioned by expected impact and estimated effort so you can decide what to fix first.',
+                    'Acciones prioritarias posicionadas por impacto esperado y esfuerzo estimado para ayudarte a decidir qué corregir primero.'
+                  )}
+                </p>
+                <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-5">
+                  <div className="space-y-3">
+                    <div className="relative h-[360px] rounded-2xl border border-border bg-muted/10 overflow-hidden">
+                      <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+                        <div className="border-r border-b border-border/70 p-3 sm:p-4 bg-red-500/[0.03]">
+                          <p className="text-sm font-semibold text-foreground">{pick('1. Top Priority', '1. Top Priority', '1. Máxima Prioridad')}</p>
+                          <p className="text-xs text-muted-foreground">{pick('Alto impacto, baixa fricção', 'High impact, low friction', 'Alto impacto, baja fricción')}</p>
+                        </div>
+                        <div className="border-b border-border/70 p-3 sm:p-4 bg-amber-500/[0.03]">
+                          <p className="text-sm font-semibold text-foreground">{pick('2. Secondary Focus', '2. Secondary Focus', '2. Foco Secundario')}</p>
+                          <p className="text-xs text-muted-foreground">{pick('Alto impacto, maior esforço', 'High impact, higher effort', 'Alto impacto, mayor esfuerzo')}</p>
+                        </div>
+                        <div className="border-r border-border/70 p-3 sm:p-4 bg-emerald-500/[0.03]">
+                          <p className="text-sm font-semibold text-foreground">{pick('3. Quick Wins', '3. Quick Wins', '3. Victorias Rápidas')}</p>
+                          <p className="text-xs text-muted-foreground">{pick('Baixo impacto, baixa fricção', 'Low impact, low friction', 'Bajo impacto, baja fricción')}</p>
+                        </div>
+                        <div className="p-3 sm:p-4 bg-slate-500/[0.03]">
+                          <p className="text-sm font-semibold text-foreground">{pick('4. Later', '4. Later', '4. Más Adelante')}</p>
+                          <p className="text-xs text-muted-foreground">{pick('Baixo impacto, maior esforço', 'Low impact, higher effort', 'Bajo impacto, mayor esfuerzo')}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{dim.score}/{dim.benchmark}</span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${prColor}`}>{priority}</span>
+                      <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border/80" />
+                      <div className="absolute top-1/2 left-0 right-0 h-px bg-border/80" />
+                      {priorityMatrixItems.map((item: any) => (
+                        <div
+                          key={`${item.actionLetter}-${item.dimension}`}
+                          className="absolute -translate-x-1/2 -translate-y-1/2"
+                          style={{ left: item.position.left, top: item.position.top }}
+                        >
+                          <div className="w-10 h-10 rounded-full bg-[#C9A961] text-white shadow-lg border-4 border-background flex items-center justify-center text-sm font-bold">
+                            {item.actionLetter}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="absolute left-4 bottom-4 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                        {pick('Impacto', 'Impact', 'Impacto')}
+                      </div>
+                      <div className="absolute right-[-8px] top-1/2 -translate-y-1/2 rotate-90 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                        {pick('Esforço', 'Effort', 'Esfuerzo')}
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                  <div className="space-y-3">
+                    {priorityMatrixItems.map((item: any) => {
+                      const urgencyTone = /alta|high/i.test(item.urgency || '')
+                        ? 'bg-red-500/10 text-red-600 border-red-500/20'
+                        : /m[eé]dia|medium|media/i.test(item.urgency || '')
+                          ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                          : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+                      return (
+                        <div key={`${item.dimension}-${item.actionLetter}`} className="rounded-xl border border-border bg-muted/20 p-3 space-y-2">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#C9A961] text-white flex items-center justify-center text-xs font-bold shrink-0">{item.actionLetter}</div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <p className="text-sm font-semibold text-foreground">{item.dimension}</p>
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${urgencyTone}`}>{item.urgency}</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{item.actionText}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground gap-3">
+                            <span>{pick('Actual', 'Current', 'Actual')}: <strong className="text-foreground">{item.currentScore}/100</strong></span>
+                            <span>{pick('Potencial', 'Potential', 'Potencial')}: <strong className="text-foreground">{item.potentialScore}/100</strong></span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ═══ Acções de Melhoria com Antes/Depois ═══ */}
             {analysisData.improvementActions && analysisData.improvementActions.length > 0 && (
