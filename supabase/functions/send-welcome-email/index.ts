@@ -489,6 +489,62 @@ ${highlightsBlock}
 }
 
 /* ─── Template: Welcome after Member Registration ─── */
+function iscalColdEmailBody(name: string, lang: string, score: string, highlights: any[], couponCode: string, partnershipRef: string, affiliateLinks: Record<string, string>): string {
+  const isEn = lang === "en";
+  const isEs = lang === "es";
+  const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
+  const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
+
+  const scoreCard = score && score !== "N/A"
+    ? `<div style="background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);border:1px solid #fdba74;border-radius:10px;padding:18px 20px;margin:20px 0;">
+  <p style="font-size:12px;color:#9a3412;margin:0 0 8px 0;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">${isEn ? "LinkedIn Score" : isEs ? "Puntuación de LinkedIn" : "Score LinkedIn"}</p>
+  <p style="font-size:24px;color:#9a3412;margin:0;font-weight:800;line-height:1.2;">${escapeHtml(
+      isEn
+        ? `Your LinkedIn profile scored ${score}`
+        : isEs
+          ? `Tu perfil de LinkedIn obtuvo ${score}`
+          : `O teu perfil LinkedIn obteve ${score}`,
+    )}</p>
+</div>`
+    : "";
+
+  const highlightsBlock = highlights && highlights.length > 0
+    ? `<div style="background:#f8fafc;border-left:4px solid #ea580c;padding:16px 20px;margin:20px 0;border-radius:4px;">
+  <p style="font-size:14px;color:#333;margin:0 0 10px 0;font-weight:700;">${isEn ? "Key highlights from your analysis:" : isEs ? "Aspectos clave de tu análisis:" : "Destaques principais da tua análise:"}</p>
+  <ul style="font-size:14px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+    ${highlights.map((h: any) => `<li><strong>${escapeHtml(h.area)}:</strong> ${escapeHtml(h.diagnostico)} - ${escapeHtml(h.recomendacao)}</li>`).join("")}
+  </ul>
+</div>`
+    : "";
+
+  const affiliateLinksHtml = affiliateLinks
+    ? `<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Explora mais ferramentas Share2Inspire:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+  ${affiliateLinks.linkedin_roaster ? `<tr><td style="padding:4px 0;"><a href="https://${affiliateLinks.linkedin_roaster}" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🔥 LinkedIn Roaster</a></td></tr>` : ""}
+  ${affiliateLinks.student_pack ? `<tr><td style="padding:4px 0;"><a href="https://${affiliateLinks.student_pack}" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">🎓 Student Pack</a></td></tr>` : ""}
+  ${affiliateLinks.cv_analyser ? `<tr><td style="padding:4px 0;"><a href="https://${affiliateLinks.cv_analyser}" style="color:#C9A961;font-weight:600;text-decoration:none;font-size:14px;">📊 CV Analyser</a></td></tr>` : ""}
+</table>`
+    : "";
+
+  return `
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Olá ${firstName}, o teu perfil LinkedIn foi analisado!</h1>
+<p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Como parceiro oficial do ISCAL, a Share2Inspire tem o prazer de te apresentar uma análise gratuita do teu perfil LinkedIn. Vimos o panfleto nos corredores do ISCAL e queremos oferecer-te uma amostra do nosso trabalho.</p>
+${scoreCard}
+${highlightsBlock}
+<p style="font-size:15px;color:#333;line-height:1.7;">Abre o teu relatório completo para veres todos os detalhes e as recomendações personalizadas para otimizar o teu perfil e destacares-te no mercado de trabalho.</p>
+
+<div style="text-align:center;margin:24px 0 8px 0;">
+  <a href="https://www.share2inspire.pt/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver o meu LinkedIn Roast completo</a>
+</div>
+
+<p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">Como estudante do ISCAL, tens um desconto exclusivo de 25% em qualquer um dos nossos serviços. Usa o código **${couponCode}** no checkout.</p>
+
+${affiliateLinksHtml}
+
+<p style="font-size:13px;color:#888;line-height:1.6;margin-top:20px;">Se tiveres alguma dúvida, basta responder a este email.<br><strong>A Equipa Share2Inspire</strong></p>`;
+}
+
 function memberWelcomeBody(name: string, lang: string): string {
   const isEn = lang === "en";
   const isEs = lang === "es";
@@ -679,7 +735,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!type || !["cv_analysis", "member_signup", "student_pack", "linkedin_roaster"].includes(type)) {
+    if (!type || !["cv_analysis", "member_signup", "student_pack", "linkedin_roaster", "iscal_cold_email"].includes(type)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid type. Must be "cv_analysis", "member_signup", "student_pack" or "linkedin_roaster"' }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -700,7 +756,9 @@ Deno.serve(async (req: Request) => {
         ? "welcome_student_pack"
         : type === "linkedin_roaster"
           ? "welcome_linkedin_roaster"
-          : "welcome_member_signup";
+          ? "welcome_member_signup"
+          : type === "iscal_cold_email"
+            ? "iscal_cold_email";
     let subject: string;
     let bodyHtml: string;
 
@@ -732,6 +790,17 @@ Deno.serve(async (req: Request) => {
           ? "¡Bienvenido a Share2Inspire — Tu Cuenta Está Lista!"
           : "Bem-vindo ao Share2Inspire — A Tua Conta Está Pronta!";
       bodyHtml = memberWelcomeBody(name || "", language);
+    } else if (type === "iscal_cold_email") {
+      subject = "Análise Gratuita do Teu Perfil LinkedIn - Parceria ISCAL";
+      bodyHtml = iscalColdEmailBody(
+        name || "",
+        language,
+        score,
+        payload.highlights || [],
+        payload.coupon_code || "AEISCAL25%",
+        payload.partnership_ref || "Como parceiro oficial do ISCAL",
+        payload.affiliate_links || {}
+      );
     }
 
     const htmlContent = wrapTemplate(bodyHtml, language);
