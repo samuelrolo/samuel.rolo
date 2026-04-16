@@ -114,12 +114,8 @@ const collectCareerReportAnalysis = (
 ): Record<string, any> => {
   const root = safeObject(payload);
   const nestedReportKey = analysisType === 'career_intelligence' ? 'career_intelligence' : 'career_path';
-  const explicitAnalysisType = typeof root.analysis_type === 'string' ? root.analysis_type : '';
-  const hasNestedReportPayload = Object.keys(safeObject(root[nestedReportKey])).length > 0;
-
-  if (explicitAnalysisType && explicitAnalysisType !== analysisType && !hasNestedReportPayload) {
-    return {};
-  }
+  // No guard needed – both career_path and career_intelligence share the same
+  // response shape and the BFS below will find the report fields regardless.
 
   const queue: any[] = [root];
   const seen = new Set<any>();
