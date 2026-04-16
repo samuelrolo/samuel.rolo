@@ -1448,7 +1448,8 @@ export default function Results() {
     setCareerPathLoading(true);
     setCareerPathError(null);
     try {
-      const cvData = sessionStorage.getItem('cvAnalysis');
+      // Use the ORIGINAL CV text, not the transformed analysis JSON
+      const cvData = sessionStorage.getItem('careerPathCvText') || localStorage.getItem('careerPathCvText') || sessionStorage.getItem('cvText') || '';
       // IMPORTANT: Read linkedin from sessionStorage first (reliable for Bundle flow),
       // fallback to React state (for manual Career Path purchase flow)
       const linkedinFromStorage = sessionStorage.getItem('careerPathLinkedinUrl') || '';
