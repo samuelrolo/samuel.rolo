@@ -7966,24 +7966,103 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
       const isES = language === 'es';
 
-      const rawProfileName = String(body.profile_name || body.full_name || body.name || body.candidate_name || '').replace(/\s+/g, ' ').trim();
-
-      const extractedProfileName = cvText.match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';
+      const normalizeLinkedInNameValue = (value) => String(value || '').replace(/\s+/g, ' ').trim();
 
       const invalidProfileNameRegex = /^(?:T[IÍ]TULO(?:\s+PROFISSIONAL)?|TITLE|HEADLINE|NOME|NAME|NOMBRE|LOCALIZA(?:Ç(?:Ã|A)O|CION|TION)?|LOCATION|PERFIL|PROFILE)\b/i;
 
       const isValidLinkedInProfileName = (value) => {
-        const cleanedValue = String(value || '').replace(/\s+/g, ' ').trim();
+        const cleanedValue = normalizeLinkedInNameValue(value);
         return !!cleanedValue && cleanedValue.length < 80 && !invalidProfileNameRegex.test(cleanedValue) && !cleanedValue.includes(':');
       };
 
-      const exactProfileName = isValidLinkedInProfileName(rawProfileName) ? rawProfileName : isValidLinkedInProfileName(extractedProfileName) ? extractedProfileName : '';
+      const extractLinkedInIdentity = (source) => {
+        if (!source) {
+          return { firstName: '', fullName: '' };
+        }
 
-      const profileFirstName = isValidLinkedInProfileName(exactProfileName) ? exactProfileName.split(/\s+/).filter(Boolean)[0] || '' : '';
+        if (Array.isArray(source)) {
+          return extractLinkedInIdentity(source.find(item => item && typeof item === 'object') || null);
+        }
 
-      const safeProfileNameForPrompt = exactProfileName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+        if (typeof source !== 'object') {
+          return { firstName: '', fullName: '' };
+        }
 
-      const safeFirstNameForPrompt = profileFirstName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+        const primarySource = source.data?.[0] || source.items?.[0] || source.results?.[0] || source.profileData || source.profile_data || source.profile || source;
+
+        const firstNameCandidates = [
+          primarySource.firstName,
+          primarySource.first_name,
+          primarySource.profileFirstName,
+          primarySource.profile_first_name,
+          primarySource.profile?.firstName,
+          primarySource.profile?.first_name,
+          primarySource.data?.firstName,
+          primarySource.data?.first_name,
+          source.firstName,
+          source.first_name
+        ];
+
+        const firstName = firstNameCandidates.map(normalizeLinkedInNameValue).find(isValidLinkedInProfileName) || '';
+
+        const combinedNameFromParts = [
+          firstName,
+          normalizeLinkedInNameValue(primarySource.lastName || primarySource.last_name || primarySource.profile?.lastName || primarySource.profile?.last_name || primarySource.data?.lastName || primarySource.data?.last_name || source.lastName || source.last_name)
+        ].filter(Boolean).join(' ');
+
+        const fullNameCandidates = [
+          primarySource.fullName,
+          primarySource.full_name,
+          primarySource.profile_name,
+          primarySource.profileName,
+          primarySource.name,
+          primarySource.profile?.fullName,
+          primarySource.profile?.full_name,
+          primarySource.profile?.name,
+          primarySource.data?.fullName,
+          primarySource.data?.full_name,
+          primarySource.data?.profile_name,
+          primarySource.data?.name,
+          source.fullName,
+          source.full_name,
+          source.profile_name,
+          source.name,
+          combinedNameFromParts
+        ];
+
+        const fullName = fullNameCandidates.map(normalizeLinkedInNameValue).find(isValidLinkedInProfileName) || '';
+
+        return {
+          firstName: firstName || (fullName ? fullName.split(/\s+/).filter(Boolean)[0] || '' : ''),
+          fullName
+        };
+      };
+
+      let exactProfileName = '';
+      let profileFirstName = '';
+      let resolvedProfileNameSource = 'none';
+
+      const rawProfileName = normalizeLinkedInNameValue(body.profile_name || body.full_name || body.name || body.candidate_name || '');
+      if (isValidLinkedInProfileName(rawProfileName)) {
+        exactProfileName = rawProfileName;
+        profileFirstName = rawProfileName.split(/\s+/).filter(Boolean)[0] || '';
+        resolvedProfileNameSource = 'body';
+      }
+
+      const rawLinkedinData = body.linkedin_data;
+      if (rawLinkedinData) {
+        try {
+          const parsedLinkedinData = typeof rawLinkedinData === 'string' ? JSON.parse(rawLinkedinData) : rawLinkedinData;
+          const linkedinIdentityFromPayload = extractLinkedInIdentity(parsedLinkedinData);
+          if (linkedinIdentityFromPayload.fullName) {
+            exactProfileName = linkedinIdentityFromPayload.fullName;
+            profileFirstName = linkedinIdentityFromPayload.firstName;
+            resolvedProfileNameSource = 'linkedin_data';
+          }
+        } catch (linkedinDataError) {
+          console.warn('⚠️ linkedin_data not parseable in linkedin_roast:', linkedinDataError.message);
+        }
+      }
 
       if (!candidateEmail || !candidateEmail.includes('@')) {
 
@@ -7996,17 +8075,57 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
         }, 400);
 
       }
+      if (linkedinUrl && linkedinUrl.includes('linkedin.com')) {
+        try {
+          console.log(`🔎 LinkedIn Roast: a extrair nome real via Apify para ${linkedinUrl}`);
+          const apifyResponse = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/scrape-linkedin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ linkedin_url: linkedinUrl })
+          });
 
-      // cvText may already be populated from linkedin_url extraction above
+          if (apifyResponse.ok) {
+            const apifyData = await apifyResponse.json();
+            const apifyIdentity = extractLinkedInIdentity(apifyData);
 
+            console.log(`📡 LinkedIn Roast Apify response: success=${apifyData.success}, firstName=${apifyIdentity.firstName || 'N/A'}, fullName=${apifyIdentity.fullName || 'N/A'}, cv_text_len=${apifyData.cv_text?.length || 0}`);
+
+            if (apifyIdentity.fullName) {
+              exactProfileName = apifyIdentity.fullName;
+              profileFirstName = apifyIdentity.firstName;
+              resolvedProfileNameSource = 'apify';
+            }
+
+            if (apifyData.success && apifyData.cv_text && apifyData.cv_text.length > (cvText?.length || 0)) {
+              cvText = apifyData.cv_text;
+            }
+          } else {
+            const apifyErrorText = await apifyResponse.text();
+            console.warn('⚠️ LinkedIn Roast Apify scrape failed:', apifyErrorText.substring(0, 300));
+          }
+        } catch (apifyError) {
+          console.warn('⚠️ LinkedIn Roast Apify error:', apifyError.message);
+        }
+      }
+
+      const extractedProfileName = String(cvText || '').match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';
+      if (!exactProfileName && isValidLinkedInProfileName(extractedProfileName)) {
+        exactProfileName = normalizeLinkedInNameValue(extractedProfileName);
+        profileFirstName = exactProfileName.split(/\s+/).filter(Boolean)[0] || '';
+        resolvedProfileNameSource = 'cv_text';
+      }
+
+      const safeProfileNameForPrompt = exactProfileName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+      const safeFirstNameForPrompt = profileFirstName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+
+      console.log(`🪪 LinkedIn Roast resolved profile name: source=${resolvedProfileNameSource}, full=${exactProfileName || 'N/A'}, first=${profileFirstName || 'N/A'}`);
+
+      // cvText may already be populated from previous extraction steps
       if ((!cvText || cvText.trim().length < 50) && linkedinUrl) {
-
         cvText = `LinkedIn Profile URL: ${linkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
-
       }
 
       if (!cvText || cvText.length < 50) {
-
         return jsonResponse({
 
           success: false,
