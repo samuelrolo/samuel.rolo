@@ -225,7 +225,11 @@ export default function LinkedInRoasterHome() {
               cv_text: scrapeData.cv_text.substring(0, 12000),
               language: lang,
               country: analysisCountry,
-              region: analysisRegion || undefined
+              region: analysisRegion || undefined,
+              payment_amount: finalPrice,
+              payment_method: paymentMethod,
+              transaction_id: localStorage.getItem('linkedinRoasterVerifiedTransactionId') || localStorage.getItem('linkedinRoasterPendingOrderId') || null,
+              voucher_code: appliedCoupon?.code || null
             }),
             signal: controller.signal
           });
@@ -256,41 +260,12 @@ export default function LinkedInRoasterHome() {
       sessionStorage.setItem('analysisCountry', localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang));
       sessionStorage.setItem('analysisRegion', localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '');
 
-      try {
-        fetch(`${SUPABASE_URL}/rest/v1/linkedin_roaster_analyses`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
-          body: JSON.stringify({ profile_url: currentLinkedinUrl, user_email: candidateEmail, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, analysis_result: JSON.stringify(responseData), domain: 'share2inspire.pt', created_at: new Date().toISOString() }),
-        }).catch(() => {});
-      } catch (_) {}
-
       // Trigger welcome email
       try {
         fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: candidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
-        }).catch(() => {});
-      } catch (_) {}
-
-      // Log to cv_analysis for admin-analytics
-      try {
-        const score = responseData?.teaser?.nota_geral || responseData?.teaser_score || 0;
-        fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=minimal' },
-          body: JSON.stringify({
-            user_email: candidateEmail,
-            score: score,
-            analysis_type: 'linkedin_roast',
-            payment_status: 'paid',
-            payment_amount: isPT ? PRICE_NUM : finalPrice,
-            transaction_id: localStorage.getItem('linkedinRoasterVerifiedTransactionId') || localStorage.getItem('linkedinRoasterPendingOrderId') || `ROAST-${Date.now()}`,
-            domain: 'share2inspire.pt',
-            linkedin_url: currentLinkedinUrl,
-            analysis_result: JSON.stringify(responseData),
-            created_at: new Date().toISOString()
-          }),
         }).catch(() => {});
       } catch (_) {}
 

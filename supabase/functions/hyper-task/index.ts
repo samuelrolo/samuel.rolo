@@ -9777,6 +9777,46 @@ REGLAS FINALES:
           roastAnalysis = replaceLinkedInNamePlaceholders(roastAnalysis);
         }
 
+        const teaserScore = String(roastAnalysis?.teaser?.nota_geral || roastAnalysis?.teaser_score || '').trim() || null;
+        const normalizedPaymentAmount = typeof body.payment_amount === 'number'
+          ? body.payment_amount
+          : typeof body.payment_amount === 'string' && body.payment_amount.trim() !== ''
+            ? Number(body.payment_amount)
+            : null;
+        const paymentAmount = Number.isFinite(normalizedPaymentAmount) ? normalizedPaymentAmount : null;
+        const transactionId = String(body.transaction_id || '').trim() || `ROAST-${Date.now()}`;
+        const paymentMethod = String(body.payment_method || '').trim() || null;
+        const voucherCode = String(body.voucher_code || '').trim() || null;
+        const userAgent = req.headers.get('user-agent') || null;
+        const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || null;
+
+        try {
+          const { error: roastInsertError } = await supabase.from('linkedin_roaster_analyses').insert({
+            linkedin_url: linkedinUrl || null,
+            profile_text: cvText || null,
+            user_email: candidateEmail,
+            user_name: exactProfileName || null,
+            teaser_score: teaserScore,
+            analysis_json: roastAnalysis,
+            payment_status: 'paid',
+            payment_method: paymentMethod,
+            payment_amount: paymentAmount,
+            transaction_id: transactionId,
+            email_sent: false,
+            ip_address: ipAddress,
+            user_agent: userAgent,
+            voucher_code: voucherCode
+          });
+
+          if (roastInsertError) {
+            console.error('⚠️ LinkedIn Roast persistence error (non-fatal):', roastInsertError.message);
+          } else {
+            console.log('✅ LinkedIn Roast guardado em linkedin_roaster_analyses');
+          }
+        } catch (persistError) {
+          console.error('⚠️ LinkedIn Roast persistence exception (non-fatal):', persistError);
+        }
+
         console.log('✅ LinkedIn Audit gerado:', JSON.stringify(roastAnalysis).substring(0, 300));
 
         return jsonResponse({
