@@ -8115,6 +8115,20 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
         resolvedProfileNameSource = 'cv_text';
       }
 
+      // Fallback: extract name from LinkedIn URL slug
+      if (!exactProfileName && linkedinUrl) {
+        const urlSlugMatch = linkedinUrl.match(/linkedin\.com\/in\/([^\/\?#]+)/i);
+        if (urlSlugMatch) {
+          const slug = urlSlugMatch[1].replace(/-+/g, ' ').replace(/\d+$/, '').trim();
+          const slugName = slug.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+          if (slugName && slugName.length >= 2 && slugName.length < 60) {
+            exactProfileName = slugName;
+            profileFirstName = slugName.split(/\s+/)[0] || '';
+            resolvedProfileNameSource = 'url_slug';
+          }
+        }
+      }
+
       const safeProfileNameForPrompt = exactProfileName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
       const safeFirstNameForPrompt = profileFirstName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
 
