@@ -2601,141 +2601,348 @@ REGRAS CRÍTICAS:
 
 8. NUNCA inventes dados de contacto — usa null se não encontrado no CV`;
 
-                const promptES = `Eres un analista de CVs BRUTALMENTE HONESTO. Puntúas CVs de forma RIGUROSA — la mayoría de los CVs puntúan entre 35-65. Una puntuación superior a 75 es EXCEPCIONAL y rara. DEBES adaptar TODA la analítica al ÁREA PROFESIONAL REAL detectada en el CV (ej: fisioterapia, enfermería, enseñanza, ingeniería, retail — NO solo business/corporate).
-RÚBRICA DE PUNTUACIÓN: 0-25 severamente deficiente, 26-40 por debajo de la media, 41-55 medio, 56-70 bueno, 71-85 muy bueno, 86-100 excepcional (EXTREMADAMENTE RARO). Empieza en 50 y aplica penalizaciones/bonificaciones.
+                const promptES = `Eres un analista de CVs BRUTALMENTE HONESTO. Puntúas CVs de forma RIGUROSA — la mayoría de los CVs puntúan entre 35-65. Una puntuación superior a 75 es EXCEPCIONAL y rara. DEBES adaptar TODO el análisis al ÁREA PROFESIONAL REAL detectada en el CV (ej: fisioterapia, enfermería, enseñanza, ingeniería, retail — NO solo business/corporate).
+
+
+
+RÚBRICA DE PUNTUACIÓN: 0-25 severamente deficiente, 26-40 por debajo de la media, 41-55 promedio, 56-70 bueno, 71-85 muy bueno, 86-100 excepcional (EXTREMADAMENTE RARO). Empieza en 50 y aplica penalizaciones/bonificaciones.
+
+
+
 REGLAS ANTI-FABRICACIÓN (CRÍTICO):
+
 - detected_name: copia EXACTAMENTE como aparece en el encabezado del CV. NO adivines ni inventes.
-- detected_email / detected_phone: copia exactamente como se encuentra, o usa null si está ausente.
+
+- detected_email / detected_phone: copia exactamente como se encuentre, o usa null si falta.
+
 - Todos los campos de score DEBEN ser enteros (ej: 62, no "62" ni "62/100").
+
 - Todos los campos salariales DEBEN ser enteros en ${currency.code} (ej: 2500, no "2500" ni "2.500 EUR").
-- Si un campo no puede determinarse de forma fiable a partir del CV, usa null. Nunca fabricar.
-IDIOMA DE SALIDA: Responde íntegramente en Español.
+
+- Si un campo no puede determinarse de forma fiable a partir del CV, usa null. Nunca fabriques.
+
+
+
+IDIOMA DE SALIDA: Responde íntegramente en Español, independientemente del idioma original del CV.
+
+
+
 Analiza este CV y devuelve un JSON. Todo el texto debe estar en Español.
+
+
+
 CV:
+
 ${sanitized}${jobSection}
+
+
+
 ${country ? `MERCADO OBJETIVO: ${getMarketContext(country, region)}
 MONEDA: ${currency.symbol} (${currency.code})` : ''}
+
+
+
 ${cvProblemsContextES}
+
+
+
 TABLA SALARIAL DE REFERENCIA (mensual bruto, base Portugal — escala proporcionalmente para otros mercados usando el MERCADO OBJETIVO arriba):
+
 SALUD: Fisioterapeuta 900-2200, Enfermero 1100-2400, Médico 2500-5500
+
 EDUCACIÓN: Profesor 1200-2800, Profesor Universitario 1800-4500
+
 INGENIERÍA: 1200-3500 dependiendo de la especialización
+
 TECNOLOGÍA: Ingeniero de Software 1500-4500, Analista de Datos 1200-3000
+
 OFICIOS: 800-1800 dependiendo de la especialización
-COMERCIO/RETAIL: Operador de Tienda 820-1100, Gerente de Tienda 1200-2000
-CORPORATIVO: Analista 1200-2000, Manager 2000-3500, Director 3500-6000+
-REGLAS DE FEEDBACK POR ÁREA:
-SALUD: Enfócate en volumen de pacientes, especialidades clínicas, certificaciones, gestión de crisis — NO en "crecimiento de ingresos" o "gestión de stakeholders"
-EDUCACIÓN: Enfócate en metodologías de enseñanza, tamaño de clases, desarrollo curricular, resultados de alumnos — NO en "optimización de procesos"
-INGENIERÍA: Enfócate en herramientas técnicas, alcance de proyectos, normativas de seguridad, presupuestos gestionados
-OFICIOS: Enfócate en certificaciones especializadas, resolución de problemas complejos, experiencia en seguridad, transición energética verde — NO liderazgo de IA y automatización
-COMERCIO: Enfócate en experiencia del cliente, visual merchandising, competencias de e-commerce, gestión de inventario — NO liderazgo ejecutivo
-TECNOLOGÍA: Enfócate en frameworks emergentes, arquitectura cloud, competencias IA/ML, diseño de sistemas — apropiado al área
-CORPORATIVO: Liderazgo, pensamiento estratégico, transformación digital — SOLO para funciones realmente corporativas
-KEYWORDS ATS POR ÁREA: Las keywords detectadas y recomendadas DEBEN ser relevantes para el área profesional. Un enfermero necesita "cuidados al paciente, evaluación clínica, administración de medicación" — NO "gestión de stakeholders, ROI, KPIs". Un mecánico necesita "diagnóstico, mantenimiento preventivo, sistemas hidráulicos" — NO "gestión de proyectos, metodología agile". Un fisioterapeuta necesita "rehabilitación, terapia manual, evaluación funcional" — NO "transformación organizacional". Un técnico de radiología necesita "imagenología, protección radiológica, tomografía" — NO "gestión de equipos".
-REGLAS DE DENSIDAD Y CALIDAD (OBLIGATORIO):
+
+COMERCIO/HOSTELERÍA: 800-2000 dependiendo del puesto
+
+CORPORATE: Responsable de RRHH 2000-5000, Responsable de Marketing 1800-4000
+
+
+
+RIESGO DE AUTOMATIZACIÓN: Salud/Educación/Oficios = céntrate en atención al paciente, pedagogía, habilidades manuales (NO liderazgo genérico). Tecnología = céntrate en frameworks emergentes. Corporate = liderazgo y estrategia SOLO para funciones realmente corporativas.
+
+
+
+REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIO — aplicadas a todos los campos de texto):
+
 - Escribe como un analista sénior hablando directamente con el profesional, no como un formulario a rellenar.
-- Cada campo de texto debe leerse como una frase elaborada, no como un fragmento de bullet point o placeholder de template.
-- Mínimos de palabras: items de strengths/improvements = 25 palabras cada uno; market_positioning = 60 palabras; detailed_feedback de cada quadrant = 50 palabras; descripción de automationRisk = 60 palabras; priority_recommendations = 70 palabras; full_explanation de cv_problems = 80 palabras cada uno.
+
+- Cada campo de texto debe leerse como una frase elaborada, no como un fragmento de bullet point o placeholder de plantilla.
+
+- Mínimos de palabras: cada item de strengths/improvements = 25 palabras; market_positioning = 60 palabras; detailed_feedback de cada quadrante = 50 palabras; descripción de automationRisk = 60 palabras; priority_recommendations = 70 palabras; full_explanation de cada cv_problem = 80 palabras.
+
 - Referencia la función real del profesional, empleadores y etapa de carrera en TODOS los campos de texto analítico.
+
 - Evita empezar frases con "Este CV", "El candidato", "Debes" — varía los inicios de frase.
+
+
+
 Devuelve SOLO este JSON (todos los valores de score/salario son enteros, no strings):
+
 {
-  "detected_name": "Nombre completo",
-  "detected_email": "Email",
-  "detected_phone": "Teléfono",
-  "detected_role": "Cargo actual o principal",
-  "seniority": "Junior/Intermedio/Senior/Lead/Director — solo etiqueta. NUNCA incluir años, rangos, paréntesis, barras ni explicaciones.",
-  "total_years_exp": "X años — solo entero + unidad (ejemplo: '13 años'), calculado desde el inicio de carrera hasta el presente. NUNCA añadir desglose, rangos, paréntesis ni justificación.",
-  "key_skills": ["8-12 competencias específicas del CV — herramientas, metodologías, dominios, idiomas. No etiquetas genéricas."],
-  "detected_professional_field": "Área profesional real (ej: Fisioterapia, Retail, Ingeniería Civil, IT)",
-  "global_score": <entero 0-100>,
-  "salary_min": <entero>,
-  "salary_max": <entero>,
-  "currency": "${currency.code}",
-  "market_context": "Breve justificación salarial para el mercado objetivo",
-  "ats_keywords": ["keyword1", "keyword2", "keyword3"],
-  "missing_keywords": ["keyword_faltante1", "keyword_faltante2"],
-  "executive_summary": "Resumen de 3-4 frases sobre el perfil",
+
+  "candidate_profile": {
+
+    "detected_name": "Nombre exacto del encabezado del CV o null",
+
+    "detected_email": "Email exacto o null",
+
+    "detected_phone": "Teléfono exacto o null",
+
+    "total_years_exp": "X años — solo entero + unidad (ejemplo: '13 años'), calculado desde el inicio de la carrera hasta el presente. NUNCA añadas desglose, rangos, paréntesis ni justificación.",
+
+    "detected_role": "Cargo actual o más reciente tal como aparece en el CV",
+
+    "seniority": "Junior/Intermedio/Senior/Lead/Director — solo etiqueta. NUNCA incluir años, rangos, paréntesis, barras ni explicaciones.",
+
+    "key_skills": ["8-12 competencias específicas extraídas directamente del CV — herramientas, metodologías, dominios, idiomas. No etiquetas genéricas."]
+
+  },
+
+  "global_summary": {
+
+    "strengths": [
+
+      "Fortaleza 1 — mínimo 2 frases. Nombra una fortaleza específica y explica POR QUÉ importa para el posicionamiento de mercado de esta persona, referenciando evidencia concreta del CV (ej: empresa, proyecto, certificación).",
+
+      "Fortaleza 2 — mínimo 2 frases. Misma profundidad.",
+
+      "Fortaleza 3 — mínimo 2 frases. Misma profundidad.",
+
+      "Fortaleza 4 — opcional pero preferible para perfiles sénior"
+
+    ],
+
+    "improvements": [
+
+      "Mejora 1 — mínimo 2 frases. Nombra una carencia específica y explica el impacto profesional concreto de NO corregirla.",
+
+      "Mejora 2 — mínimo 2 frases. Misma profundidad.",
+
+      "Mejora 3 — mínimo 2 frases. Misma profundidad."
+
+    ]
+
+  },
+
+  "executive_summary": {
+
+    "global_score": "<entero 0-100 — puntuación RIGUROSA>",
+
+    "market_positioning": "3-4 frases. Describe cómo está posicionada esta persona en ${getMarketContext(country, region)}: qué tipo de puestos compite, contra quién, qué la diferencia y dónde se sitúa en la jerarquía de mercado. Referencia empleadores reales y el área profesional."
+
+  },
+
   "quadrants": [
+
     {
-      "title": "Estructura y Formato",
-      "score": <entero 0-100>,
-      "benchmark": 65,
-      "impactPhrase": "Frase de impacto",
-      "strengths": ["punto fuerte 1", "punto fuerte 2"],
-      "weaknesses": ["punto débil 1", "punto débil 2"],
-      "detailed_feedback": "Feedback detallado"
+
+      "title": "Estructura",
+
+      "score": "<entero 0-100>",
+
+      "benchmark": "<entero 0-100 — típico para esta seniority en esta área>",
+
+      "impactPhrase": "Una frase incisiva específica a la estructura de ESTE CV — no genérica",
+
+      "strengths": ["2-3 fortalezas estructurales específicas referenciando elementos reales del CV (layout, extensión, secciones presentes, formato)"],
+
+      "weaknesses": ["2-3 debilidades estructurales específicas con ejemplos concretos de este CV"],
+
+      "detailed_feedback": "3-4 frases. Evalúa la estructura específicamente: si el layout facilita la lectura, si la extensión es adecuada para la seniority, si las secciones están bien ordenadas y si existe jerarquía visual clara. Referencia elementos específicos de este CV."
+
     },
+
     {
-      "title": "Contenido y Métricas",
-      "score": <entero 0-100>,
-      "benchmark": 55,
-      "impactPhrase": "Frase de impacto",
-      "strengths": ["punto fuerte 1", "punto fuerte 2"],
-      "weaknesses": ["punto débil 1", "punto débil 2"],
-      "detailed_feedback": "Feedback detallado"
+
+      "title": "Contenido",
+
+      "score": "<entero>",
+
+      "benchmark": "<entero>",
+
+      "impactPhrase": "Una frase incisiva específica a la calidad del contenido de ESTE CV",
+
+      "strengths": ["2-3 fortalezas de contenido — nombra bullets reales, logros o métricas del CV"],
+
+      "weaknesses": ["2-3 debilidades de contenido — nombra lo que falta o resulta vago en este CV"],
+
+      "detailed_feedback": "3-4 frases. Evalúa la calidad del contenido: si los logros están cuantificados, si los bullets muestran impacto o solo tareas, si el lenguaje es activo y si los resultados están demostrados. Da ejemplos específicos de este CV."
+
     },
+
     {
-      "title": "Educación y Formación",
-      "score": <entero 0-100>,
-      "benchmark": 70,
-      "impactPhrase": "Frase de impacto",
-      "strengths": ["punto fuerte 1", "punto fuerte 2"],
-      "weaknesses": ["punto débil 1", "punto débil 2"],
-      "detailed_feedback": "Feedback detallado"
+
+      "title": "Formación",
+
+      "score": "<entero>",
+
+      "benchmark": "<entero>",
+
+      "impactPhrase": "Una frase incisiva específica a la formación y credenciales de ESTE CV",
+
+      "strengths": ["2-3 fortalezas de formación — nombra titulaciones reales, certificaciones, instituciones"],
+
+      "weaknesses": ["2-3 debilidades de formación — qué credenciales faltan o están infrarrepresentadas para esta área"],
+
+      "detailed_feedback": "3-4 frases. Evalúa la formación en relación con el área detectada: si el nivel académico es adecuado, si las certificaciones están actualizadas y son relevantes, y qué credenciales reforzarían este perfil. Referencia cualificaciones reales de este CV."
+
     },
+
     {
+
       "title": "Experiencia",
-      "score": <entero 0-100>,
-      "benchmark": 60,
-      "impactPhrase": "Frase de impacto",
-      "strengths": ["punto fuerte 1", "punto fuerte 2"],
-      "weaknesses": ["punto débil 1", "punto débil 2"],
-      "detailed_feedback": "Feedback detallado"
+
+      "score": "<entero>",
+
+      "benchmark": "<entero>",
+
+      "impactPhrase": "Una frase incisiva específica al perfil de experiencia de ESTE CV",
+
+      "strengths": ["2-3 fortalezas de experiencia — nombra empleadores reales, funciones o patrones de progresión"],
+
+      "weaknesses": ["2-3 debilidades de experiencia — vacíos, tenures cortos, falta de exposición sectorial, etc."],
+
+      "detailed_feedback": "3-4 frases. Evalúa la calidad y relevancia de la experiencia: lógica de progresión profesional, prestigio de los empleadores para el área, patrones de permanencia, amplitud frente a profundidad cross-sector. Referencia empleadores reales y la cronología de este CV."
+
     }
+
   ],
+
   "salaryDetailed": {
-    "period": "monthly",
+
+    "period": "mensual",
+
     "currency_code": "${currency.code}",
+
     "currency_symbol": "${currency.symbol}",
-    "percentile25": <entero>,
-    "median": <entero>,
-    "percentile75": <entero>,
-    "topMax": <entero>,
-    "salary_label": "Rango salarial mensual bruto en ${currency.symbol}",
-    "benefits": ["beneficio 1", "beneficio 2"],
-    "benefitsNote": "Nota sobre beneficios",
-    "source": "Estimación de mercado"
+
+    "percentile25": "<entero bruto mensual en ${currency.code} — solo números, ej: 2200>",
+
+    "median": "<entero bruto mensual en ${currency.code}>",
+
+    "percentile75": "<entero bruto mensual en ${currency.code}>",
+
+    "topMax": "<entero bruto mensual en ${currency.code}>",
+
+    "salary_label": "Rango salarial bruto mensual en ${currency.symbol} para ${getMarketContext(country, region)} — ej: '${currency.symbol}2.200 – ${currency.symbol}3.500/mes bruto'",
+
+    "benefits": [
+
+      "Beneficio específico de esta área profesional y nivel de seniority — no genérico",
+
+      "Beneficio 2 — específico del área",
+
+      "Beneficio 3 — específico del área",
+
+      "Beneficio 4 — opcional"
+
+    ],
+
+    "benefitsNote": "2-3 frases. Contextualiza el paquete de beneficios para este perfil específico en ${getMarketContext(country, region)}: qué es estándar, qué puede negociar esta persona dada su seniority y qué perks son propios del área.",
+
+    "source": "Estimación de mercado para la función y seniority detectadas en ${getMarketContext(country, region)}"
+
   },
+
   "automationRisk": {
-    "percentage": <entero 0-100>,
-    "level": "Low/Medium/High",
-    "description": "Descripción del riesgo",
-    "recommendations": ["recomendación 1", "recomendación 2"]
+
+    "percentage": "<entero 0-100>",
+
+    "level": "Bajo/Medio/Alto",
+
+    "description": "3-4 frases ESPECÍFICAS para ESTA función y área. Explica QUÉ tareas del trabajo real de esta persona están en riesgo y POR QUÉ, cuáles están protegidas y cuál es la perspectiva a 5 años para esta profesión específica. NO uses afirmaciones genéricas sobre IA o automatización.",
+
+    "recommendations": [
+
+      "Recomendación específica vinculada a la profesión y competencias reales de esta persona — no consejo genérico",
+
+      "Recomendación 2 — específica de esta área",
+
+      "Recomendación 3 — específica de esta área"
+
+    ]
+
   },
+
   "priority_recommendations": {
-    "immediate_adjustments": "Ajustes inmediatos"
+
+    "immediate_adjustments": "3-4 frases. Los 2-3 cambios de mayor impacto que esta persona debe hacer en el CV ahora mismo, con referencia específica a lo que existe y a lo que debería reemplazarlo. Accionable, no genérico."
+
   },
+
   "cv_problems": [
+
     {
-      "title": "Título del problema",
-      "description": "Descripción",
-      "full_explanation": "Explicación completa",
+
+      "title": "Título del problema — específico de este CV",
+
+      "description": "2 frases: cuál es el problema y por qué importa para la candidatura de esta persona.",
+
+      "full_explanation": "4-5 frases: explicación detallada del problema con evidencia específica del CV, la perspectiva del reclutador y el impacto en el éxito de las candidaturas.",
+
+      "correction_example": "Antes: [texto o patrón exacto de este CV] → Después: [versión mejorada]",
+
+      "rewrite_suggestion": "Texto listo para pegar en el idioma del CV. Máx 50 palabras. Específico a la función y experiencia de esta persona."
+
+    },
+
+    {
+
+      "title": "Problema 2",
+
+      "description": "2 frases.",
+
+      "full_explanation": "4-5 frases.",
+
       "correction_example": "Antes → Después",
-      "rewrite_suggestion": "Sugerencia de reescritura"
+
+      "rewrite_suggestion": "Texto listo, máx 50 palabras"
+
+    },
+
+    {
+
+      "title": "Problema 3",
+
+      "description": "2 frases.",
+
+      "full_explanation": "4-5 frases.",
+
+      "correction_example": "Antes → Después",
+
+      "rewrite_suggestion": "Texto listo, máx 50 palabras"
+
     }
+
   ]${jobJsonES}
+
 }
+
+
+
 REGLAS CRÍTICAS:
-1. global_score DEBE ser calculado como media ponderada: Estructura 25% + Contenido 30% + Educación 15% + Experiencia 30%
-2. Las puntuaciones de los quadrants DEBEN variar al menos 10 puntos entre la más alta y la más baja
-3. TODOS los valores de benchmark y score DEBEN ser enteros simples (0-100), NO strings
-4. El salario DEBE ser realista para la profesión y mercado detectados
-5. Los beneficios DEBEN ser específicos para el área profesional detectada
-6. Las recomendaciones de riesgo de automatización DEBEN ser específicas para la profesión detectada
+
+1. global_score DEBE calcularse como media ponderada: Estructura 25% + Contenido 30% + Formación 15% + Experiencia 30%
+
+2. Las puntuaciones de las dimensiones DEBEN variar al menos 10 puntos entre la más alta y la más baja
+
+3. TODOS los valores de benchmark y score DEBEN ser enteros simples (0-100), NO strings ni texto
+
+4. El salario DEBE ser realista para la profesión y el mercado detectados — usa la tabla de referencia anterior
+
+5. Los beneficios DEBEN ser específicos del área profesional detectada
+
+6. Las recomendaciones de riesgo de automatización DEBEN ser específicas de la profesión detectada
+
 7. Un CV con descripciones genéricas, sin métricas y estructura básica NUNCA debe puntuar por encima de 55
-8. NUNCA inventes datos de contacto — usa null si no se encuentra en el CV`;
+
+8. NUNCA inventes datos de contacto — usa null si no se encuentran en el CV`;
 
         const prompt = isEN ? promptEN : isES ? promptES : promptPT;
 
@@ -2844,7 +3051,22 @@ REGLAS CRÍTICAS:
             console.log('🔄 Retrying with simplified prompt...');
 
             try {
-              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nReturn JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp as \"X years\" only, detected_role, seniority as one label only from Junior/Mid-level/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] with detailed explanations), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[4] specific to role), cv_problems[4] (title, description). STRICT scoring: most CVs 35-65.` : isES ? `Analiza este CV y devuelve JSON. Sé conciso, pero NO escueto.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nDevuelve JSON con: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp solo como \"X años\", detected_role, seniority solo como una etiqueta de Junior/Intermedio/Senior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estructura/Contenido/Formación/Experiencia con score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] con explicaciones detalladas), salaryDetailed (percentile25, median, percentile75, topMax como números en ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica a la función, recommendations[4] específicas a la profesión), cv_problems[4] (title, description). Puntuación RIGUROSA: la mayoría de los CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.\n\nCV:\n${sanitized.substring(0, 4000)}\n\nRetorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp apenas como \"X anos\", detected_role, seniority apenas como um rótulo de Júnior/Pleno/Sénior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] com explicações detalhadas), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[4] específicas à profissão), cv_problems[4] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
+              const retryPrompt = isEN ? `Analyze this CV and return a JSON. Be concise, but NOT terse.
+
+CV:
+${sanitized.substring(0, 4000)}
+
+Return JSON with: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp as "X years" only, detected_role, seniority as one label only from Junior/Mid-level/Senior/Lead/Director, key_skills), global_summary (strengths[4] with detailed explanations, improvements[3] with detailed explanations), executive_summary (global_score 0-100, market_positioning in 3-4 sentences with the same depth as PT), quadrants (4 items: Structure/Content/Education/Experience with score 0-100, benchmark 0-100, impactPhrase, strengths[2-3], weaknesses[2-3], detailed_feedback in 3-4 substantial sentences), detailedAtsAnalysis (factors[6] with detailed explanations, each detail concrete and CV-specific), salaryDetailed (percentile25, median, percentile75, topMax as numbers in ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description specific to role, recommendations[3] specific to role), priority_recommendations (immediate_adjustments with the same depth as PT), cv_problems[3] (title, description, full_explanation, correction_example, rewrite_suggestion). STRICT scoring: most CVs 35-65.` : isES ? `Analiza este CV y devuelve JSON. Sé conciso, pero NO escueto.
+
+CV:
+${sanitized.substring(0, 4000)}
+
+Devuelve JSON con: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp solo como "X años", detected_role, seniority solo como una etiqueta de Junior/Intermedio/Senior/Lead/Director, key_skills), global_summary (strengths[4] con explicaciones detalladas, improvements[3] con explicaciones detalladas), executive_summary (global_score 0-100, market_positioning en 3-4 frases con la misma profundidad que PT), quadrants (4 items: Estructura/Contenido/Formación/Experiencia con score 0-100, benchmark 0-100, impactPhrase, strengths[2-3], weaknesses[2-3], detailed_feedback en 3-4 frases sustanciales), detailedAtsAnalysis (factors[6] con explicaciones detalladas, cada detail concreto y específico del CV), salaryDetailed (percentile25, median, percentile75, topMax como números en ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica a la función, recommendations[3] específicas a la profesión), priority_recommendations (immediate_adjustments con la misma profundidad que PT), cv_problems[3] (title, description, full_explanation, correction_example, rewrite_suggestion). Puntuación RIGUROSA: la mayoría de los CVs 35-65.` : `Analisa este CV e retorna JSON. Sê conciso.
+
+CV:
+${sanitized.substring(0, 4000)}
+
+Retorna JSON com: candidate_profile (detected_name, detected_email, detected_phone, total_years_exp apenas como "X anos", detected_role, seniority apenas como um rótulo de Júnior/Pleno/Sénior/Lead/Director, key_skills), global_summary (strengths[3], improvements[4]), executive_summary (global_score 0-100, market_positioning), quadrants (4 items: Estrutura/Conteúdo/Formação/Experiência com score 0-100, benchmark 0-100), detailedAtsAnalysis (factors[6] com explicações detalhadas), salaryDetailed (percentile25, median, percentile75, topMax como números em ${currency.code}, benefits[4], benefitsNote), automationRisk (percentage 0-100, level, description específica à função, recommendations[4] específicas à profissão), cv_problems[4] (title, description). Pontuação RIGOROSA: maioria dos CVs 35-65.`;
               const retryResponse = await fetch(geminiUrl, {
 
                 method: 'POST',
@@ -4242,10 +4464,12 @@ RETURN EXACTLY this JSON (no text before or after):
 
     "factors": [
 
-      { "factor": "<main factor affecting ATS compatibility of THIS specific CV — cite the concrete problem>", "status": "pass|warning|fail", "detail": "<SPECIFIC explanation tied to this CV — mention concrete sections/elements>" },
-      { "factor": "<second factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" },
-      { "factor": "<third factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" },
-      { "factor": "<fourth factor>", "status": "pass|warning|fail", "detail": "<specific explanation>" }
+      { "factor": "<main factor affecting ATS compatibility of THIS specific CV — cite the concrete problem>", "status": "pass|warning|fail", "detail": "<SPECIFIC explanation tied to this CV — mention concrete sections/elements; minimum 35 words>" },
+      { "factor": "<second factor>", "status": "pass|warning|fail", "detail": "<specific explanation; minimum 35 words>" },
+      { "factor": "<third factor>", "status": "pass|warning|fail", "detail": "<specific explanation; minimum 35 words>" },
+      { "factor": "<fourth factor>", "status": "pass|warning|fail", "detail": "<specific explanation; minimum 35 words>" },
+      { "factor": "<fifth factor>", "status": "pass|warning|fail", "detail": "<specific explanation; minimum 35 words>" },
+      { "factor": "<sixth factor>", "status": "pass|warning|fail", "detail": "<specific explanation; minimum 35 words>" }
 
     ],
 
@@ -4350,7 +4574,7 @@ RETURN EXACTLY this JSON (no text before or after):
 
   "recruiterDeepAnalysis": {
 
-    "firstImpression": "<what a recruiter thinks in the first 6 seconds>",
+    "firstImpression": "<what a recruiter thinks in the first 6 seconds — substantial and specific to THIS CV, minimum 35 words>",
 
     "redFlags": ["<specific red flag>"],
 
@@ -4358,7 +4582,7 @@ RETURN EXACTLY this JSON (no text before or after):
 
     "interviewLikelihood": "<High|Medium|Low>",
 
-    "interviewLikelihoodReason": "<why — with reference to concrete CV elements>"
+    "interviewLikelihoodReason": "<why — with reference to concrete CV elements, substantial and specific, minimum 35 words>"
 
   },
 
@@ -4494,7 +4718,7 @@ CRITICAL RULES:
 
 7. Return ONLY the JSON, no additional text
 
-8. ALL text must be in English
+8. ALL text must be in English, including every recruiter-perception label, attention-map item, benchmark label, section title, and explanatory phrase. Never mix in Portuguese or Spanish. If you mention recruiter scanning order, use English wording such as "Name and professional title (0-2 seconds)", "Most recent experience (2-5 seconds)", "Education background (5-8 seconds)", "Key skills and certifications (8-15 seconds)", "Overall consistency and formatting (15-30 seconds)", "Structure: below benchmark", and "Content: below benchmark".
 
 9. SCORING CALIBRATION: Start from 50 (average) and apply penalties/bonuses. Most CVs should score 35-65. Only truly exceptional CVs score above 75. A CV with generic descriptions, no metrics, and basic structure should NEVER score above 55.
 
@@ -4564,7 +4788,19 @@ CRITICAL RULES:
 
   CORPORATE: Leadership, strategic thinking, digital transformation — ONLY for actual corporate roles
 
-16. ATS KEYWORDS BY FIELD: The keywords detected and recommended MUST be relevant to the professional field. A nurse needs "patient care, clinical assessment, medication administration" — NOT "stakeholder management, ROI, KPIs". A mechanic needs "diagnostics, preventive maintenance, hydraulic systems" — NOT "project management, agile methodology".` : isES ? `${cvOutputLanguageInstruction}
+16. ATS KEYWORDS BY FIELD: The keywords detected and recommended MUST be relevant to the professional field. A nurse needs "patient care, clinical assessment, medication administration" — NOT "stakeholder management, ROI, KPIs". A mechanic needs "diagnostics, preventive maintenance, hydraulic systems" — NOT "project management, agile methodology".
+
+17. DENSITY AND QUANTITY RULES (MANDATORY):
+
+  - "detailedAtsAnalysis.factors" MUST contain exactly 6 distinct factors and each "detail" must have at least 35 words, with concrete explanation specific to the CV.
+
+  - "improvementActions" MUST contain exactly 4 distinct prioritised improvement actions. Do not return 2 or 3.
+
+  - Each quadrants "detailed_feedback" must have 3-4 substantial sentences and at least 50 words.
+
+  - "automationRisk.description", "salaryDetailed.benefitsNote", "recruiterDeepAnalysis.firstImpression", and "interviewLikelihoodReason" must be substantial, specific, and not shorter than 35 words whenever the field allows it.
+
+  - The full report in English must match the density, completeness, and analytical detail expected in PT. Telegraphic, minimal, or generic responses are unacceptable.` : isES ? `${cvOutputLanguageInstruction}
 
 Analiza el siguiente CV y devuelve un JSON EXACTAMENTE con esta estructura. CADA campo debe contener análisis ESPECÍFICO de este CV — cita secciones, frases y datos concretos del CV.
 
