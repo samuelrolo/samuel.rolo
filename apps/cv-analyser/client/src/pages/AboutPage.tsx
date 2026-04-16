@@ -122,9 +122,9 @@ export default function AboutPage() {
       "+15 años de experiencia en transformación de RR. HH., excelencia operativa e innovación aplicada a People & Culture."
     ),
     pick(
-      "Percurso em organizações como Deloitte, BNP Paribas CIB e AstraZeneca, com evolução de Analyst a Senior Manager e liderança em HR Transformation e Digital HR.",
-      "Track record in organisations such as Deloitte, BNP Paribas CIB and AstraZeneca, progressing from Analyst to Senior Manager and leading HR Transformation and Digital HR initiatives.",
-      "Trayectoria en organizaciones como Deloitte, BNP Paribas CIB y AstraZeneca, progresando de Analyst a Senior Manager y liderando iniciativas de HR Transformation y Digital HR."
+      "Percurso em transformação de RH e liderança digital, com evolução de Analyst a Senior Manager e responsabilidade em iniciativas de HR Transformation e Digital HR.",
+      "Track record in HR transformation and digital leadership, progressing from Analyst to Senior Manager and leading HR Transformation and Digital HR initiatives.",
+      "Trayectoria en transformación de RR. HH. y liderazgo digital, progresando de Analyst a Senior Manager y liderando iniciativas de HR Transformation y Digital HR."
     ),
     pick(
       "Reconhecido como LinkedIn Top Voice em Change & Transformation e Top Creator em Technology & Innovation em Portugal.",

@@ -850,7 +850,7 @@ const COMPANY_WEBSITES: Record<string, string> = {
 
   'siemens': 'siemens.com', 'bosch': 'bosch.com', 'continental': 'continental.com',
 
-  'astrazeneca': 'astrazeneca.com', 'novartis': 'novartis.com', 'pfizer': 'pfizer.com', 'roche': 'roche.com',
+  'novartis': 'novartis.com', 'pfizer': 'pfizer.com', 'roche': 'roche.com',
 
   'unilever': 'unilever.com', 'nestlé': 'nestle.com', 'nestle': 'nestle.com', "l'oréal": 'loreal.com', 'loreal': 'loreal.com',
 
@@ -1288,7 +1288,7 @@ function extractCompanyNames(text: string): string[] {
 
   const companies: string[] = [];
 
-  const knownCompanies = /\b(Deloitte|McKinsey|BCG|Bain|KPMG|EY|PwC|Accenture|IBM|Google|Microsoft|Amazon|Meta|Apple|BNP Paribas|Goldman Sachs|JP Morgan|Morgan Stanley|Citi|HSBC|Barclays|Galp|EDP|Sonae|Jer[oó]nimo Martins|Altice|NOS|Vodafone|Siemens|Bosch|Continental|AstraZeneca|Novartis|Pfizer|Roche|Unilever|Nestl[eé]|L'Or[eé]al|SAP|Oracle|Salesforce|Adobe|Cisco|Intel|Tesla|SpaceX|Uber|Airbnb|Netflix|Spotify|Share2Inspire|Capgemini|Atos|Sopra Steria|Indra|Everis|NTT Data|Wipro|TCS|Infosys|HCL|Cognizant|CGI|Bearing ?Point|Roland Berger|Oliver Wyman|A\.T\. ?Kearney|Strategy&|Mercer|Aon|Willis Towers Watson|Hays|Randstad|Adecco|Michael Page|Robert Half|ManpowerGroup|Mota[- ]?Engil|Navigator|CTT|TAP|Millennium BCP|BCP|CGD|Novo Banco|BPI|Santander|Farfetch|OutSystems|Feedzai|Talkdesk|Sword Health|Unbabel|Remote|Critical Software|Novabase|Primavera|REN|Brisa|Lidl|Auchan|Pingo Doce|Continente|Worten|IKEA|Zara|Inditex|Mercedes|BMW|Volkswagen|AutoEuropa|Porsche|MEO|CUF|Luz Sa[uú]de|Corticeira Amorim|Amorim|Marsh|WTW)\b/gi;
+  const knownCompanies = /\b(Deloitte|McKinsey|BCG|Bain|KPMG|EY|PwC|Accenture|IBM|Google|Microsoft|Amazon|Meta|Apple|BNP Paribas|Goldman Sachs|JP Morgan|Morgan Stanley|Citi|HSBC|Barclays|Galp|EDP|Sonae|Jer[oó]nimo Martins|Altice|NOS|Vodafone|Siemens|Bosch|Continental|Novartis|Pfizer|Roche|Unilever|Nestl[eé]|L'Or[eé]al|SAP|Oracle|Salesforce|Adobe|Cisco|Intel|Tesla|SpaceX|Uber|Airbnb|Netflix|Spotify|Share2Inspire|Capgemini|Atos|Sopra Steria|Indra|Everis|NTT Data|Wipro|TCS|Infosys|HCL|Cognizant|CGI|Bearing ?Point|Roland Berger|Oliver Wyman|A\.T\. ?Kearney|Strategy&|Mercer|Aon|Willis Towers Watson|Hays|Randstad|Adecco|Michael Page|Robert Half|ManpowerGroup|Mota[- ]?Engil|Navigator|CTT|TAP|Millennium BCP|BCP|CGD|Novo Banco|BPI|Santander|Farfetch|OutSystems|Feedzai|Talkdesk|Sword Health|Unbabel|Remote|Critical Software|Novabase|Primavera|REN|Brisa|Lidl|Auchan|Pingo Doce|Continente|Worten|IKEA|Zara|Inditex|Mercedes|BMW|Volkswagen|AutoEuropa|Porsche|MEO|CUF|Luz Sa[uú]de|Corticeira Amorim|Amorim|Marsh|WTW)\b/gi;
 
   let match;
 
@@ -6656,7 +6656,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
         "what_you_need": ["minimum 6 specific items — be granular. Name specific certifications, tools, frameworks, experience types or knowledge areas. Example: 'SHRM-SCP certification' not 'HR certification'"],
 
-        "typical_companies": ["5-7 real specific companies operating in ${authoritativeCountry || explicitLocationLabel || 'the target market'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — include sector labels. Example: 'AstraZeneca (pharma)', 'Deloitte Portugal (consulting)', 'Millennium BCP (banking)'"],
+        "typical_companies": ["5-7 real specific companies operating in ${authoritativeCountry || explicitLocationLabel || 'the target market'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — include sector labels. Example: 'global pharma company (pharma)', 'consulting firm in the target market (consulting)', 'retail bank in the target market (banking)'"],
 
         "salary_range": "Annual gross in ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}). Format: '${authoritativeCurrency.symbol}75,000 – ${authoritativeCurrency.symbol}110,000/year gross'. Plain integers also in salary_min and salary_max.",
 
@@ -6716,7 +6716,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
         {
 
-          "activity": "Specific activity tied to this person's expertise (e.g., 'Write a monthly LinkedIn article series on AI in HR processes, drawing on your AstraZeneca experience')",
+          "activity": "Specific activity tied to this person's expertise (e.g., 'Write a monthly LinkedIn article series on AI in HR processes, drawing on your experience in a global healthcare environment')",
 
           "platform": "Specific platform and format",
 
@@ -6810,7 +6810,7 @@ PRODUCE A COMPLETE "CAREER PATH" REPORT IN JSON WITH THE FOLLOWING STRUCTURE:
 
           "year": "Year 1",
 
-          "milestone": "Specific milestone with context — not generic. Example: 'Complete SHRM-SCP and take on a regional HR lead role within AstraZeneca or equivalent pharma multinational'"
+          "milestone": "Specific milestone with context — not generic. Example: 'Complete SHRM-SCP and take on a regional HR lead role within a global pharma company or equivalent multinational'"
 
         }
 
@@ -7199,7 +7199,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
         "what_you_need": ["mínimo 6 itens específicos — ser granular. Nomeia certificações, ferramentas, frameworks, tipos de experiência ou áreas de conhecimento específicas. Exemplo: 'Certificação SHRM-SCP' não 'certificação de RH'"],
 
-        "typical_companies": ["5-7 empresas reais e específicas a operar em ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — incluir rótulo de sector. Exemplo: 'AstraZeneca (farmacêutica)', 'Deloitte Portugal (consultoria)', 'Millennium BCP (banca)'"],
+        "typical_companies": ["5-7 empresas reais e específicas a operar em ${authoritativeCountry || explicitLocationLabel || 'o mercado-alvo'}${authoritativeRegion ? ` (${authoritativeRegion})` : ''} — incluir rótulo de sector. Exemplo: 'empresa farmacêutica global (farmacêutica)', 'consultora no mercado-alvo (consultoria)', 'banco de retalho no mercado-alvo (banca)'"],
 
         "salary_range": "Bruto anual em ${authoritativeCurrency.symbol} (${authoritativeCurrency.code}). Formato: '${authoritativeCurrency.symbol}75.000 – ${authoritativeCurrency.symbol}110.000/ano bruto'. Inteiros simples também em salary_min e salary_max.",
 
@@ -7259,7 +7259,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
         {
 
-          "activity": "Actividade específica ligada à área de especialização desta pessoa (ex: 'Escrever uma série mensal de artigos no LinkedIn sobre IA em processos de RH, com base na experiência na AstraZeneca')",
+          "activity": "Actividade específica ligada à área de especialização desta pessoa (ex: 'Escrever uma série mensal de artigos no LinkedIn sobre IA em processos de RH, com base na experiência num contexto global de saúde')",
 
           "platform": "Plataforma e formato específicos",
 
@@ -7353,7 +7353,7 @@ PRODUZ UM RELATÓRIO "CAREER PATH" COMPLETO EM JSON COM A SEGUINTE ESTRUTURA:
 
           "year": "Ano 1",
 
-          "milestone": "Marco específico com contexto — não genérico. Exemplo: 'Concluir certificação SHRM-SCP e assumir papel de HR Lead regional na AstraZeneca ou multinacional farmacêutica equivalente'"
+          "milestone": "Marco específico com contexto — não genérico. Exemplo: 'Concluir certificação SHRM-SCP e assumir papel de HR Lead regional numa empresa farmacêutica global ou multinacional equivalente'"
 
         }
 
