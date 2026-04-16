@@ -250,7 +250,7 @@ function normalizeExtractedProfileName(value) {
 
 }
 
-const invalidProfileIdentityRegex = /^(?:full\s+name|profile\s+name|headline|title|t[íi]tulo(?:\s+profissional)?|name|nome|nombre|location|localiza(?:ç(?:ã|a)o|cion|tion)|perfil|profile|about|summary)$/i;
+const invalidProfileIdentityRegex = /^(?:full\s+name|profile\s+name|headline|title|t[íi]tulo(?:\s+profissional)?|name|nome|nombre|location|localiza(?:ç(?:ã|a)o|cion|tion)|perfil|profile|about|summary|forma(?:ç(?:ã|a)o|ci[oó]n)\s+acad[eé]mica|experi[eê]ncia\s+profissional|educa(?:ç(?:ã|a)o|ci[oó]n|tion)|compet[eê]ncias|skills|habili(?:dades|ties)|idiomas|languages|certifica(?:ç(?:õ|o)es|ciones|tions)|objectivos?|objetivos?|objectives?|contactos?|contacts?|refer[eê]ncias|references|curriculum\s+vitae|resume|dados\s+pessoais|personal\s+(?:data|info(?:rmation)?)|licenciatura\s+em)$/i;
 
 function isLikelyValidProfileName(value) {
 
@@ -6897,15 +6897,10 @@ USING COMPANY DATA:
 
         console.log(`🪪 ${reportLabel} resolved profile identity: source=${resolvedProfileIdentity.source}, full=${resolvedProfileIdentity.fullName || 'N/A'}`);
 
+        // Previously blocked when linkedinUrl present but no name resolved — removed because
+        // the analysis can still proceed and Gemini will extract the name from the CV/LinkedIn data.
         if (linkedinUrl && !resolvedProfileIdentity.fullName) {
-          return jsonResponse({
-            success: false,
-            error: language === 'en'
-              ? 'Could not confirm the identity of the LinkedIn profile from the current input. Please verify the URL or provide a CV/PDF with the correct profile data.'
-              : language === 'es'
-                ? 'No fue posible confirmar la identidad del perfil de LinkedIn a partir del input actual. Verifica la URL o envía un CV/PDF con los datos correctos del perfil.'
-                : 'Não foi possível confirmar a identidade do perfil LinkedIn a partir do input actual. Verifica o URL ou envia um CV/PDF com os dados correctos do perfil.'
-          }, 422);
+          console.warn(`⚠️ ${reportLabel} could not resolve profile name from input, proceeding anyway`);
         }
 
         const careerPathPrompt = isEN ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
@@ -8282,16 +8277,15 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
         const cpResultRoot = careerPath.career_path || careerPath;
         const generatedProfileName = normalizeExtractedProfileName(careerPath.name || careerPath.candidate_name || cpResultRoot?.name || cpResultRoot?.candidate_name || '');
 
-        if (resolvedProfileIdentity.fullName && generatedProfileName && !profileNamesMatch(resolvedProfileIdentity.fullName, generatedProfileName)) {
-          console.error(`❌ ${reportLabel} identity mismatch: expected=${resolvedProfileIdentity.fullName} generated=${generatedProfileName}`);
-          return jsonResponse({
-            success: false,
-            error: language === 'en'
-              ? `The generated report identity did not match the current profile (${resolvedProfileIdentity.fullName}). Please retry with a cleaner CV or LinkedIn input.`
-              : language === 'es'
-                ? `La identidad generada en el informe no coincidió con el perfil actual (${resolvedProfileIdentity.fullName}). Vuelve a intentarlo con un CV o input de LinkedIn más limpio.`
-                : `A identidade gerada no relatório não coincidiu com o perfil actual (${resolvedProfileIdentity.fullName}). Tenta novamente com um CV ou input de LinkedIn mais limpo.`
-          }, 422);
+        // Identity mismatch check removed — was too aggressive and blocked valid results
+        // when the CV text extractor picked up section headers instead of the real name.
+        // The Gemini-generated name is trusted; we only override it if we have a reliable resolved name.
+        if (generatedProfileName && !resolvedProfileIdentity.fullName) {
+          // Gemini found a name but our extractor didn't — trust Gemini
+          console.log(`ℹ️ ${reportLabel} using Gemini-generated name: ${generatedProfileName}`);
+        } else if (resolvedProfileIdentity.fullName && generatedProfileName && !profileNamesMatch(resolvedProfileIdentity.fullName, generatedProfileName)) {
+          // Names differ but don't block — log warning and prefer resolved identity if it looks valid
+          console.warn(`⚠️ ${reportLabel} name mismatch (non-blocking): resolved=${resolvedProfileIdentity.fullName} generated=${generatedProfileName}`);
         }
 
         if (resolvedProfileIdentity.fullName) {
