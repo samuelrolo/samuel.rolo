@@ -70,6 +70,23 @@ const buildCandidateProfile = (analysis: any) => {
   };
 };
 
+const formatDisplayName = (value?: string) => String(value || '')
+  .trim()
+  .replace(/\s+/g, ' ')
+  .split(' ')
+  .filter(Boolean)
+  .map((part) => part
+    .split('-')
+    .map((segment) => segment ? segment.charAt(0).toLocaleUpperCase('pt-PT') + segment.slice(1).toLocaleLowerCase('pt-PT') : '')
+    .join('-'))
+  .join(' ');
+
+const pickBestDisplayName = (...values: Array<string | undefined>) => {
+  const candidates = values.map(value => String(value || '').trim()).filter(Boolean);
+  const withSpacing = candidates.find(value => /\s/.test(value));
+  return formatDisplayName(withSpacing || candidates[0] || '');
+};
+
 /**
  * Fire-and-forget: log career path purchase to cv_analysis table for dashboard.
  * Never blocks the user flow. Errors are silently caught.
@@ -413,7 +430,13 @@ export default function CareerPathResults() {
     setIsGenerating(true);
     setGenerateError(null);
     try {
-      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
+      const cvText = (
+        localStorage.getItem('careerPathCvText') ||
+        sessionStorage.getItem('careerPathCvText') ||
+        cvAnalysis?.raw_text ||
+        cvAnalysis?.raw?.raw_text ||
+        ''
+      );
       const cvFile = (localStorage.getItem('careerPathCvFile') || sessionStorage.getItem('careerPathCvFile')) || '';
       const cvFilename = (localStorage.getItem('careerPathCvFilename') || sessionStorage.getItem('careerPathCvFilename')) || 'cv.pdf';
       const currentLanguage = (localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang);
@@ -495,7 +518,7 @@ export default function CareerPathResults() {
     } finally {
       setIsGenerating(false);
     }
-  }, [linkedinUrl]);
+  }, [cvAnalysis, linkedinUrl]);
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
@@ -946,7 +969,14 @@ export default function CareerPathResults() {
   }
 
   const cpProfile = buildCandidateProfile(cvAnalysis);
-  const profileName = cpProfile.detected_name || cpProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('o_teu_perfil'));
+  const profileName = pickBestDisplayName(
+    cpProfile?.name,
+    cpProfile?.candidate_name,
+    cvAnalysis?.name,
+    cvAnalysis?.candidate_name,
+    cpProfile?.detected_name,
+    cvAnalysis?.detected_name,
+  ) || (t('o_teu_perfil'));
   const currentRole = cpProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('profissional'));
   const seniority = cpProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 

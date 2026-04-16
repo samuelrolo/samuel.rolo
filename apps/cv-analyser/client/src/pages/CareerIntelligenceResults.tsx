@@ -71,6 +71,23 @@ const buildCandidateProfile = (analysis: any) => {
   };
 };
 
+const formatDisplayName = (value?: string) => String(value || '')
+  .trim()
+  .replace(/\s+/g, ' ')
+  .split(' ')
+  .filter(Boolean)
+  .map((part) => part
+    .split('-')
+    .map((segment) => segment ? segment.charAt(0).toLocaleUpperCase('pt-PT') + segment.slice(1).toLocaleLowerCase('pt-PT') : '')
+    .join('-'))
+  .join(' ');
+
+const pickBestDisplayName = (...values: Array<string | undefined>) => {
+  const candidates = values.map(value => String(value || '').trim()).filter(Boolean);
+  const withSpacing = candidates.find(value => /\s/.test(value));
+  return formatDisplayName(withSpacing || candidates[0] || '');
+};
+
 /* ─── Gold Icon wrapper ─── */
 function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode; size?: string }) {
   return (
@@ -749,7 +766,14 @@ export default function CareerIntelligenceResults() {
   }
 
   const candidateProfile = getCareerIntelligenceProfile(cvAnalysis);
-  const profileName = candidateProfile.detected_name || candidateProfile.name || cvAnalysis?.detected_name || cvAnalysis?.name || cvAnalysis?.candidate_name || (t('ups_tenta_novamente'));
+  const profileName = pickBestDisplayName(
+    candidateProfile?.name,
+    candidateProfile?.candidate_name,
+    cvAnalysis?.name,
+    cvAnalysis?.candidate_name,
+    candidateProfile?.detected_name,
+    cvAnalysis?.detected_name,
+  ) || (t('ups_tenta_novamente'));
   const currentRole = candidateProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('ups_tenta_novamente'));
   const seniority = candidateProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
 

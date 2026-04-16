@@ -89,6 +89,14 @@ const CAREER_META_KEYS = [
   'detected_role',
 ] as const;
 
+const countCareerReportFields = (candidate: Record<string, any>) => {
+  let score = 0;
+  for (const key of CAREER_REPORT_KEYS) {
+    if (hasMeaningfulValue(candidate[key])) score += 1;
+  }
+  return score;
+};
+
 const mergeSelectedFields = (target: Record<string, any>, source: Record<string, any>, keys: readonly string[]) => {
   for (const key of keys) {
     if (!(key in source)) continue;
@@ -123,7 +131,7 @@ const collectCareerReportAnalysis = (
     seen.add(current);
     candidates.push(current);
 
-    for (const nestedKey of ['raw', 'data', 'analysis', nestedReportKey, 'career_path']) {
+    for (const nestedKey of ['raw', 'data', 'analysis', 'career_intelligence', 'career_path']) {
       const nested = safeObject(current[nestedKey]);
       if (Object.keys(nested).length > 0 && !seen.has(nested)) {
         queue.push(nested);
@@ -131,13 +139,19 @@ const collectCareerReportAnalysis = (
     }
   }
 
+  const rankedCandidates = candidates
+    .map(candidate => ({ candidate, score: countCareerReportFields(candidate) }))
+    .filter(entry => entry.score > 0)
+    .sort((a, b) => a.score - b.score)
+    .map(entry => entry.candidate);
+
   const analysis: Record<string, any> = {};
-  for (const candidate of candidates) {
+  for (const candidate of rankedCandidates.length > 0 ? rankedCandidates : candidates) {
     mergeSelectedFields(analysis, candidate, CAREER_META_KEYS);
     mergeSelectedFields(analysis, candidate, CAREER_REPORT_KEYS);
   }
 
-  return Object.keys(analysis).length > 0 ? analysis : preferObject(...candidates, root);
+  return Object.keys(analysis).length > 0 ? analysis : preferObject(root[nestedReportKey], root.analysis, root.career_intelligence, root.career_path, ...candidates, root);
 };
 
 const normalizeCareerReportPayload = (payload: any, language: SupportedLanguage, analysisType: 'career_path' | 'career_intelligence') => {
