@@ -455,7 +455,7 @@ export default function CareerPathResults() {
         sessionStorage.setItem('analysisLocation', currentLocation);
       }
 
-      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || email || '').trim().toLowerCase();
+      const cpEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || email || '').trim().toLowerCase();
       const requestBody: any = {
         mode: 'career_path',
         email: cpEmail,

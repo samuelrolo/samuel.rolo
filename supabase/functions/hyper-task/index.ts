@@ -7904,6 +7904,8 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
         console.log(`✅ ${reportLabel} gerado com sucesso`);
 
+        const normalizedCareerReport = careerPath.career_path || careerPath;
+
         return jsonResponse(mode === 'career_intelligence' ? {
 
           success: true,
@@ -7912,11 +7914,11 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
           language,
 
-          analysis: careerPath,
+          ...careerPath,
 
-          career_intelligence: careerPath,
+          analysis: normalizedCareerReport,
 
-          ...careerPath
+          career_intelligence: normalizedCareerReport
 
         } : {
 
@@ -7926,11 +7928,11 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
           language,
 
-          analysis: careerPath,
+          ...careerPath,
 
-          career_path: careerPath,
+          analysis: normalizedCareerReport,
 
-          ...careerPath
+          career_path: normalizedCareerReport
 
         });
 
