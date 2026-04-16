@@ -502,28 +502,14 @@ export default function CareerIntelligenceHome() {
         cvText = analysisSource.raw_text;
       }
 
-      const serializedAnalysis = JSON.stringify(analysisSource);
-      const storedCvText = (cvText || '').substring(0, 8000);
-
-      localStorage.setItem('careerPathCvAnalysis', serializedAnalysis);
-      sessionStorage.setItem('careerPathCvAnalysis', serializedAnalysis);
-      localStorage.setItem('careerIntelligenceCvAnalysis', serializedAnalysis);
-      sessionStorage.setItem('careerIntelligenceCvAnalysis', serializedAnalysis);
-
-      localStorage.setItem('careerPathCvText', storedCvText);
-      sessionStorage.setItem('careerPathCvText', storedCvText);
-      localStorage.setItem('careerIntelligenceCvText', storedCvText);
-      sessionStorage.setItem('careerIntelligenceCvText', storedCvText);
-
+      localStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(analysisSource));
+      localStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
       localStorage.setItem('careerPathCvFile', base64Content);
       sessionStorage.setItem('careerPathCvFile', base64Content);
-      localStorage.setItem('careerIntelligenceCvFile', base64Content);
-      sessionStorage.setItem('careerIntelligenceCvFile', base64Content);
-
       localStorage.setItem('careerPathCvFilename', file.name);
       sessionStorage.setItem('careerPathCvFilename', file.name);
-      localStorage.setItem('careerIntelligenceCvFilename', file.name);
-      sessionStorage.setItem('careerIntelligenceCvFilename', file.name);
       localStorage.setItem('analysisLang', pageLang);
       sessionStorage.setItem('analysisLang', pageLang);
       localStorage.setItem('analysisCountry', country);
@@ -533,11 +519,6 @@ export default function CareerIntelligenceHome() {
       if (linkedinUrl) {
         localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
         sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
-        localStorage.setItem('careerIntelligenceLinkedinUrl', linkedinUrl);
-        sessionStorage.setItem('careerIntelligenceLinkedinUrl', linkedinUrl);
-      } else {
-        localStorage.removeItem('careerIntelligenceLinkedinUrl');
-        sessionStorage.removeItem('careerIntelligenceLinkedinUrl');
       }
 
       const profile = getCareerIntelligenceProfile(analysisSource);

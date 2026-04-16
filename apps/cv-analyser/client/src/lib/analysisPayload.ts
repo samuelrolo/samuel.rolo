@@ -89,21 +89,11 @@ const CAREER_META_KEYS = [
   'detected_role',
 ] as const;
 
-const mergeSelectedFields = (
-  target: Record<string, any>,
-  source: Record<string, any>,
-  keys: readonly string[],
-  options?: { preserveExisting?: boolean }
-) => {
+const mergeSelectedFields = (target: Record<string, any>, source: Record<string, any>, keys: readonly string[]) => {
   for (const key of keys) {
     if (!(key in source)) continue;
     const incoming = source[key];
     const existing = target[key];
-
-    if (options?.preserveExisting && hasMeaningfulValue(existing)) {
-      continue;
-    }
-
     if (hasMeaningfulValue(incoming) || !hasMeaningfulValue(existing)) {
       target[key] = incoming;
     }
@@ -133,11 +123,7 @@ const collectCareerReportAnalysis = (
     seen.add(current);
     candidates.push(current);
 
-    const nestedKeys = analysisType === 'career_intelligence'
-      ? ['raw', 'data', 'analysis', nestedReportKey]
-      : ['raw', 'data', 'analysis', nestedReportKey, 'career_path'];
-
-    for (const nestedKey of nestedKeys) {
+    for (const nestedKey of ['raw', 'data', 'analysis', nestedReportKey, 'career_path']) {
       const nested = safeObject(current[nestedKey]);
       if (Object.keys(nested).length > 0 && !seen.has(nested)) {
         queue.push(nested);
@@ -147,7 +133,7 @@ const collectCareerReportAnalysis = (
 
   const analysis: Record<string, any> = {};
   for (const candidate of candidates) {
-    mergeSelectedFields(analysis, candidate, CAREER_META_KEYS, { preserveExisting: true });
+    mergeSelectedFields(analysis, candidate, CAREER_META_KEYS);
     mergeSelectedFields(analysis, candidate, CAREER_REPORT_KEYS);
   }
 
