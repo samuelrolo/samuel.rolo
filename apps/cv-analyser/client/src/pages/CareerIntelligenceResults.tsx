@@ -297,202 +297,6 @@ export default function CareerIntelligenceResults() {
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
-  // ─── Load data from sessionStorage ───
-  const generateAnalysis = useCallback(async () => {
-    setIsGenerating(true);
-    setGenerateError(null);
-    try {
-      const cvText = (localStorage.getItem('careerPathCvText') || sessionStorage.getItem('careerPathCvText')) || '';
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mode: 'career_intelligence',
-          email: (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || localStorage.getItem('paymentEmail') || sessionStorage.getItem('paymentEmail') || '').trim().toLowerCase(),
-          cv_text: cvText,
-          linkedin_url: linkedinUrl || undefined,
-          language: getAnalysisLanguage(),
-          country: (localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry')) || undefined,
-          region: (localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion')) || undefined,
-        }),
-      });
-
-      const data = await response.json();
-      if (!data.success && !data.career_intelligence) {
-        throw new Error(data.error || (t('erro_ao_gerar_career_intelligence')));
-      }
-
-      const normalizedCareerIntelligence = normalizeCareerIntelligencePayload(data, getAnalysisLanguage());
-      const ciData = normalizedCareerIntelligence.analysis;
-      setCareerData(ciData);
-      setIsPaid(true);
-      localStorage.setItem('careerPathPaid', 'true');
-      localStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
-      sessionStorage.setItem('careerIntelligenceData', JSON.stringify(normalizedCareerIntelligence));
-
-      // Save to user_analyses for area-cliente
-      // Delay to capture HTML after React renders the full results
-      setTimeout(async () => {
-        try {
-          await saveToUserAnalyses('career_intelligence', {
-            strategic_paths: ciData.strategic_paths || [],
-            decision_recommendation: ciData.decision_recommendation || {},
-            market_context: ciData.market_context || {},
-            career_potential_score: ciData.career_potential_score || {},
-            career_goal: (localStorage.getItem('careerGoal') || sessionStorage.getItem('careerGoal')) || '',
-            results_html: document.querySelector('.career-intelligence-results')?.innerHTML || '',
-          });
-          setSavedToAccount(true);
-        } catch (e: any) {
-          console.warn('[S2I] Auto-save after generation failed:', e?.message);
-        }
-      }, 1500);
-    } catch (err: any) {
-      setGenerateError(err.message || (t('erro_ao_gerar_career_intelligence_2')));
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [linkedinUrl]);
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('payment');
-    const sessionId = urlParams.get('session_id');
-    const isStripeReturn = paymentStatus === 'success' && !!sessionId;
-
-    const cvData = (localStorage.getItem('careerPathCvAnalysis') || sessionStorage.getItem('careerPathCvAnalysis'));
-    const linkedin = (localStorage.getItem('careerPathLinkedinUrl') || sessionStorage.getItem('careerPathLinkedinUrl'));
-    const savedData = readCareerIntelligenceData();
-
-    if (!cvData && !isStripeReturn) {
-      setLocation(careerIntelligenceHomePath);
-      return;
-    }
-
-    if (cvData) {
-      try {
-        const parsedCv = JSON.parse(cvData);
-        const analysisLanguage = getAnalysisLanguage();
-        const rawCvAnalysis = parsedCv?.analysis || parsedCv;
-        const normalizedCv = transformGeminiResponse(rawCvAnalysis, analysisLanguage);
-        setCvAnalysis({
-          ...parsedCv,
-          ...normalizedCv,
-          raw: rawCvAnalysis,
-          candidate_profile: buildCandidateProfile({
-            ...parsedCv,
-            ...normalizedCv,
-            raw: rawCvAnalysis,
-          }),
-          profile: parsedCv?.profile || rawCvAnalysis?.profile || {},
-        });
-      } catch {
-        if (!isStripeReturn) {
-          setLocation(careerIntelligenceHomePath);
-          return;
-        }
-      }
-    }
-
-    if (!cvData && isStripeReturn) {
-      const savedEmail = (localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail'));
-      if (savedEmail) setEmail(savedEmail);
-    }
-
-    if (linkedin) setLinkedinUrl(linkedin);
-
-    // ─── bootstrapPaidAccess: localStorage-first pattern (same as CareerPathResults) ───
-    const paidFlag = (
-      localStorage.getItem('careerIntelligenceFull') ||
-      sessionStorage.getItem('careerIntelligenceFull') ||
-      localStorage.getItem('careerIntelligenceProPaid') ||
-      sessionStorage.getItem('careerIntelligenceProPaid') ||
-      localStorage.getItem('careerPathPaid') ||
-      sessionStorage.getItem('careerPathPaid')
-    ) === 'true';
-
-    const bootstrapPaidAccess = () => {
-      setIsPaid(true);
-      localStorage.setItem('careerIntelligenceFull', 'true');
-      sessionStorage.setItem('careerIntelligenceFull', 'true');
-      if (savedData) {
-        setCareerData(savedData);
-        return;
-      }
-      // No saved data — need to generate
-      setTimeout(() => { generateAnalysis(); }, 300);
-    };
-
-    // If user already has a paid flag in localStorage, trust it immediately
-    if (paidFlag) {
-      bootstrapPaidAccess();
-      // Background verify (non-blocking) for analytics only
-      fetchPaymentStatus({
-        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
-        sessionId: getFirstStoredValue(['stripeSessionId']),
-        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
-      }).catch(() => {});
-      return;
-    }
-
-    // No local paid flag — try server verification as fallback
-    const hydratePaidAccess = async () => {
-      try {
-        const paymentVerification = await fetchPaymentStatus({
-          orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
-          sessionId: getFirstStoredValue(['stripeSessionId']),
-          expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
-        });
-        if (paymentVerification.success && paymentVerification.paid) {
-          bootstrapPaidAccess();
-        }
-      } catch {
-        // Server unreachable — don't clear flags
-      }
-    };
-    hydratePaidAccess();
-
-    // Handle cancelled payment — clean URL and redirect to the localized Career Intelligence entry page
-    if (paymentStatus === 'cancelled') {
-      window.history.replaceState({}, '', window.location.pathname);
-      setLocation(careerIntelligenceHomePath);
-      return;
-    }
-
-    if (paymentStatus === 'success' && sessionId) {
-      localStorage.setItem('stripeSessionId', sessionId);
-      sessionStorage.setItem('stripeSessionId', sessionId);
-
-      fetchPaymentStatus({
-        orderId: getFirstStoredValue(['ciOrderId', 'cpOrderId']),
-        sessionId,
-        expectedProductTypes: ['career_intelligence_full', 'career_intelligence_pro'],
-      }).then(data => {
-        if (data.success && data.paid) {
-          const stripeAmount = data.amount || 49;
-          const productType = data.product_type || 'career_intelligence_full';
-          if (productType === 'career_intelligence_full' || productType === 'career_intelligence_pro') {
-            localStorage.setItem('careerPathPaid', 'true');
-            localStorage.setItem('careerIntelligenceProPaid', 'true');
-            localStorage.setItem('careerIntelligenceFull', 'true');
-            sessionStorage.setItem('careerPathPaid', 'true');
-            sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-            sessionStorage.setItem('careerIntelligenceFull', 'true');
-            trackPurchase('career_intelligence_full', stripeAmount, `CI-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: t('eur'), payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
-          }
-          setIsPaid(true);
-          generateAnalysis();
-          window.history.replaceState({}, '', window.location.pathname);
-        }
-      }).catch(() => {});
-    }
-  }, []);
-
-  // ─── Generate Career Intelligence analysis ───
-
   // ─── Discount code validation ───
   const handleDiscountSubmit = async () => {
     if (!discountCode.trim()) { setDiscountError(t('introduz_um_cdigo')); return; }
@@ -822,6 +626,9 @@ export default function CareerIntelligenceResults() {
   };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const returnSessionId = urlParams.get('session_id');
     const rawCv =
       localStorage.getItem('careerIntelligenceCvAnalysis') ||
       sessionStorage.getItem('careerIntelligenceCvAnalysis') ||
@@ -833,6 +640,12 @@ export default function CareerIntelligenceResults() {
       localStorage.getItem('careerPathLinkedinUrl') ||
       sessionStorage.getItem('careerPathLinkedinUrl') || '';
     const forceRegeneration = (localStorage.getItem('ciNeedsRegeneration') || sessionStorage.getItem('ciNeedsRegeneration')) === 'true';
+
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(careerIntelligenceHomePath);
+      return;
+    }
 
     let parsedCv: any = null;
     if (rawCv) {
@@ -874,15 +687,24 @@ export default function CareerIntelligenceResults() {
       return;
     }
 
-    const orderId = getFirstStoredValue(['careerIntelligenceVerifiedOrderId', 'careerIntelligencePendingOrderId', 'cpOrderId']);
-    const sessionId = getFirstStoredValue(['careerIntelligenceVerifiedTransactionId', 'stripeSessionId']);
+    const orderId = getFirstStoredValue(['careerIntelligenceVerifiedOrderId', 'careerIntelligencePendingOrderId', 'ciOrderId', 'cpOrderId']);
+    const sessionId = returnSessionId || getFirstStoredValue(['careerIntelligenceVerifiedTransactionId', 'stripeSessionId']);
+    if (returnSessionId) {
+      localStorage.setItem('stripeSessionId', returnSessionId);
+      sessionStorage.setItem('stripeSessionId', returnSessionId);
+    }
     if (orderId || sessionId) {
-      fetchPaymentStatus({ orderId, sessionId, expectedProductTypes: ['career_intelligence', 'career_intelligence_full', 'bundle'] }).then(res => {
+      fetchPaymentStatus({ orderId, sessionId, expectedProductTypes: ['career_intelligence', 'career_intelligence_full', 'career_intelligence_pro', 'bundle'] }).then(res => {
         if (res.success && res.paid) {
           setIsPaid(true);
           localStorage.setItem('careerIntelligenceFull', 'true');
           sessionStorage.setItem('careerIntelligenceFull', 'true');
+          localStorage.setItem('careerIntelligenceProPaid', 'true');
+          sessionStorage.setItem('careerIntelligenceProPaid', 'true');
           if (!existing && parsedCv) generateAnalysis({ cvAnalysisOverride: parsedCv, linkedinUrlOverride: li });
+          if (returnSessionId) {
+            window.history.replaceState({}, '', window.location.pathname);
+          }
         } else if (!existing && !parsedCv) {
           setLocation(careerIntelligenceHomePath);
         }
