@@ -2385,8 +2385,78 @@ async function refreshHealthCheck() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  AFFILIATES
+//  AFFILIATES / PARTNERSHIPS
 // ═══════════════════════════════════════════════════════════════
+function normalizeAffiliateProductValue(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    const map = {
+        'cv_analysis': 'cv-analyser',
+        'cv-analyser': 'cv-analyser',
+        'career_path': 'career-path',
+        'career-path': 'career-path',
+        'career_intelligence': 'career-intelligence',
+        'career-intelligence': 'career-intelligence',
+        'student_pack': 'student-pack',
+        'student-pack': 'student-pack',
+        'linkedin_roaster': 'linkedin-roaster',
+        'linkedin-roaster': 'linkedin-roaster'
+    };
+    return map[normalized] || normalized;
+}
+
+function normalizeAffiliateProducts(rawValue) {
+    return String(rawValue || 'cv-analyser')
+        .split(',')
+        .map(normalizeAffiliateProductValue)
+        .filter(Boolean);
+}
+
+function normalizeCouponProductValue(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    const map = {
+        'all': 'all',
+        'cv': 'cv_analysis',
+        'cv_analysis': 'cv_analysis',
+        'cv-analyser': 'cv_analysis',
+        'career_path': 'career_path',
+        'career-path': 'career_path',
+        'career_intelligence_pro': 'career_intelligence_pro',
+        'career_intelligence_full': 'career_intelligence_full',
+        'career_intelligence': 'career_intelligence',
+        'career-intelligence': 'career_intelligence',
+        'student_pack': 'student_pack',
+        'student-pack': 'student_pack',
+        'student': 'student_pack',
+        'bundle': 'bundle',
+        'linkedin_roaster': 'linkedin_roaster',
+        'linkedin-roaster': 'linkedin_roaster',
+        'subscription': 'subscription',
+        'salary_reality_check': 'salary_reality_check_premium',
+        'salary_reality_check_premium': 'salary_reality_check_premium',
+        'salary-check': 'salary_reality_check_premium'
+    };
+    return map[normalized] || normalized;
+}
+
+function normalizeCouponProducts(rawProducts) {
+    const source = Array.isArray(rawProducts)
+        ? rawProducts
+        : String(rawProducts || '')
+            .split(',')
+            .map(v => v.trim())
+            .filter(Boolean);
+    const expanded = [];
+    source.forEach(product => {
+        const normalized = normalizeCouponProductValue(product);
+        if (normalized === 'career_intelligence') {
+            expanded.push('career_intelligence_pro', 'career_intelligence_full');
+            return;
+        }
+        expanded.push(normalized);
+    });
+    return [...new Set(expanded.filter(Boolean))];
+}
+
 function renderAffiliates() {
     const tbody = document.getElementById('affTable');
     if (!tbody) return;
@@ -2395,20 +2465,21 @@ function renderAffiliates() {
     setText('affKpiClicks', allAffClicks.filter(c => !c.affiliate_code?.startsWith('__')).length);
     setText('affKpiSales', allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).length);
     const totalRev = allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
-    setText('affKpiRevenue', totalRev.toFixed(2) + '€');
+    setText('affKpiRevenue', totalRev.toFixed(0) + '€');
+    setText('affKpiActive', active.length);
 
-    // Filter probe entries from affiliates list
-    const filteredAffiliates = allAffiliates.filter(a => !a.code?.startsWith("__") && !a.name?.includes("probe"));
+    const filteredAffiliates = allAffiliates.filter(a => !a.code?.startsWith('__') && !a.name?.includes('probe'));
     if (!filteredAffiliates.length) { tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
     const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','student-pack':'SP','linkedin-roaster':'LR'};
     tbody.innerHTML = filteredAffiliates.map(a => {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code && !c.affiliate_code?.startsWith('__')).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
-        const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
+        const normalizedProducts = normalizeAffiliateProducts(a.product);
+        const products = normalizedProducts.map(p => productLabels[p] || p).join(', ');
         const conversion = clicks > 0 ? ((sales / clicks) * 100).toFixed(1) + '%' : '—';
         const createdDate = a.created_at ? new Date(a.created_at).toLocaleDateString('pt-PT') : '—';
-        const linkCount = (a.product || 'cv-analyser').split(',').length;
+        const linkCount = normalizedProducts.length;
         return `<tr>
             <td style="font-weight:500;">${a.name}</td>
             <td style="font-size:12px;">${products}</td>
@@ -2418,8 +2489,8 @@ function renderAffiliates() {
             <td style="font-size:12px;">${sales}</td>
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${rev.toFixed(2)}€</td>
             <td style="font-size:12px;">${conversion}</td>
-            <td style="font-size:12px;">${a.commission_pct || 0}%</td>
-            <td><span class="badge ${a.active ? 'badge-success' : 'badge-secondary'}">${a.active ? 'Ativo' : 'Inativo'}</span></td>
+            <td>${a.active ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge" style="background:var(--red);color:#fff;">Inativo</span>'}</td>
+            <td style="font-size:12px;">${parseFloat(a.commission_pct || 0).toFixed(1)}%</td>
             <td style="font-size:11px;color:var(--text-muted);">${createdDate}</td>
             <td><div style="display:flex;gap:4px;">
                 <button class="btn-icon" onclick="editAffiliate('${a.id}')" title="Editar"><i class="fas fa-edit"></i></button>
@@ -2429,6 +2500,57 @@ function renderAffiliates() {
         </tr>`;
     }).join('');
 }
+
+function openCreateAffiliateModal() {
+    document.getElementById('affEditId').value = '';
+    document.getElementById('affName').value = '';
+    document.getElementById('affEmail').value = '';
+    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = cb.value === 'cv-analyser');
+    document.getElementById('affCode').value = '';
+    document.getElementById('affCommission').value = '0';
+    document.getElementById('affNotes').value = '';
+    document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
+    updateAffLinkPreview();
+    document.getElementById('affModalOverlay').style.display = 'flex';
+    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
+}
+
+function closeAffiliateModal() { document.getElementById('affModalOverlay').style.display = 'none'; }
+
+function editAffiliate(id) {
+    const aff = allAffiliates.find(a => a.id === id);
+    if (!aff) return;
+    document.getElementById('affEditId').value = aff.id;
+    document.getElementById('affName').value = aff.name || '';
+    document.getElementById('affEmail').value = aff.email || '';
+    const products = normalizeAffiliateProducts(aff.product);
+    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
+    document.getElementById('affCode').value = aff.code || '';
+    document.getElementById('affCommission').value = aff.commission_pct || 0;
+    document.getElementById('affNotes').value = aff.notes || '';
+    document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
+    updateAffLinkPreview();
+    document.getElementById('affModalOverlay').style.display = 'flex';
+    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
+}
+
+function updateAffLinkPreview() {
+    const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
+    const code = document.getElementById('affCode').value.trim().toLowerCase();
+    const el = document.getElementById('affLinkPreview');
+    if (!el) return;
+    if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster'};
+    const slug = code || '...';
+    el.innerHTML = products.map(p => {
+        const ptPath = p === 'student-pack' ? 'estudante' : p;
+        const enPath = p === 'student-pack' ? 'student-pack' : p;
+        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`];
+        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${enPath}?ref=${slug}`);
+        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
+    }).join('');
+}
+
 
 function renderAffClicks() {
     const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
@@ -2467,55 +2589,6 @@ function renderAffConversions() {
     }).join('');
 }
 
-function openCreateAffiliateModal() {
-    document.getElementById('affEditId').value = '';
-    document.getElementById('affName').value = '';
-    document.getElementById('affEmail').value = '';
-    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = cb.value === 'cv-analyser');
-    document.getElementById('affCode').value = '';
-    document.getElementById('affCommission').value = '0';
-    document.getElementById('affNotes').value = '';
-    document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
-    updateAffLinkPreview();
-    document.getElementById('affModalOverlay').style.display = 'flex';
-    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
-}
-function closeAffiliateModal() { document.getElementById('affModalOverlay').style.display = 'none'; }
-
-function editAffiliate(id) {
-    const aff = allAffiliates.find(a => a.id === id);
-    if (!aff) return;
-    document.getElementById('affEditId').value = aff.id;
-    document.getElementById('affName').value = aff.name || '';
-    document.getElementById('affEmail').value = aff.email || '';
-    const products = (aff.product || 'cv-analyser').split(',');
-    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
-    document.getElementById('affCode').value = aff.code || '';
-    document.getElementById('affCommission').value = aff.commission_pct || 0;
-    document.getElementById('affNotes').value = aff.notes || '';
-    document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
-    updateAffLinkPreview();
-    document.getElementById('affModalOverlay').style.display = 'flex';
-    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
-}
-
-function updateAffLinkPreview() {
-    const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
-    const code = document.getElementById('affCode').value.trim().toLowerCase();
-    const el = document.getElementById('affLinkPreview');
-    if (!el) return;
-    if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','student-pack':'Student Pack','linkedin-roaster':'LinkedIn Roaster'};
-    const slug = code || '...';
-    el.innerHTML = products.map(p => {
-        const ptPath = p === 'student-pack' ? 'estudante' : p;
-        const enPath = p === 'student-pack' ? 'student-pack' : p;
-        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`];
-        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${enPath}?ref=${slug}`);
-        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
-    }).join('');
-}
-
 async function saveAffiliate() {
     const editId = document.getElementById('affEditId').value;
     const name = document.getElementById('affName').value.trim();
@@ -2539,7 +2612,10 @@ async function saveAffiliate() {
         closeAffiliateModal();
         await loadAffiliateData();
         renderAffiliates();
-    } catch (e) { showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger'); }
+    } catch (e) {
+        console.error('Erro ao guardar afiliado:', e);
+        showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger');
+    }
 }
 
 async function toggleAffiliate(id, currentActive) {
@@ -2553,7 +2629,7 @@ async function toggleAffiliate(id, currentActive) {
 
 function copyAffLink(code, product) {
     const base = 'https://www.share2inspire.pt';
-    const products = (product || 'cv-analyser').split(',');
+    const products = normalizeAffiliateProducts(product);
     const allLinks = [];
     products.forEach(p => {
         const ptPath = p === 'student-pack' ? 'estudante' : p;
@@ -2672,7 +2748,7 @@ function editCoupon(id) {
     document.getElementById('couponDescription').value = c.description || '';
     document.getElementById('couponMaxUses').value = c.max_uses || '';
     document.getElementById('couponValidUntil').value = c.valid_until ? c.valid_until.slice(0, 10) : '';
-    const products = c.applicable_products || [];
+    const products = normalizeCouponProducts(c.applicable_products);
     document.querySelectorAll('.coupon-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
     document.getElementById('couponModalOverlay').style.display = 'flex';
 }
@@ -2685,7 +2761,7 @@ async function saveCoupon() {
     const description = document.getElementById('couponDescription').value.trim();
     const maxUses = document.getElementById('couponMaxUses').value ? parseInt(document.getElementById('couponMaxUses').value) : null;
     const validUntil = document.getElementById('couponValidUntil').value || null;
-    const products = [...document.querySelectorAll('.coupon-product-cb:checked')].map(cb => cb.value);
+    const products = normalizeCouponProducts([...document.querySelectorAll('.coupon-product-cb:checked')].map(cb => cb.value));
     if (!code) { showToast('Código obrigatório', 'danger'); return; }
     if (!discount || discount < 1 || discount > 100) { showToast('Desconto entre 1-100%', 'danger'); return; }
     if (!products.length) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
@@ -2697,7 +2773,10 @@ async function saveCoupon() {
         closeCouponModal();
         await loadCouponData();
         renderCoupons();
-    } catch (e) { showToast('Erro ao guardar cupão', 'danger'); }
+    } catch (e) {
+        console.error('Erro ao guardar cupão:', e);
+        showToast('Erro ao guardar cupão: ' + (e.message || 'erro desconhecido'), 'danger');
+    }
 }
 
 async function toggleCoupon(id, currentActive) {

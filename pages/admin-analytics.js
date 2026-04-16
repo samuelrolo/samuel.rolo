@@ -2387,6 +2387,76 @@ async function refreshHealthCheck() {
 // ═══════════════════════════════════════════════════════════════
 //  AFFILIATES
 // ═══════════════════════════════════════════════════════════════
+function normalizeAffiliateProductValue(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    const map = {
+        'cv_analysis': 'cv-analyser',
+        'cv-analyser': 'cv-analyser',
+        'career_path': 'career-path',
+        'career-path': 'career-path',
+        'career_intelligence': 'career-intelligence',
+        'career-intelligence': 'career-intelligence',
+        'student_pack': 'student-pack',
+        'student-pack': 'student-pack',
+        'linkedin_roaster': 'linkedin-roaster',
+        'linkedin-roaster': 'linkedin-roaster'
+    };
+    return map[normalized] || normalized;
+}
+
+function normalizeAffiliateProducts(rawValue) {
+    return String(rawValue || 'cv-analyser')
+        .split(',')
+        .map(normalizeAffiliateProductValue)
+        .filter(Boolean);
+}
+
+function normalizeCouponProductValue(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    const map = {
+        'all': 'all',
+        'cv': 'cv_analysis',
+        'cv_analysis': 'cv_analysis',
+        'cv-analyser': 'cv_analysis',
+        'career_path': 'career_path',
+        'career-path': 'career_path',
+        'career_intelligence_pro': 'career_intelligence_pro',
+        'career_intelligence_full': 'career_intelligence_full',
+        'career_intelligence': 'career_intelligence',
+        'career-intelligence': 'career_intelligence',
+        'student_pack': 'student_pack',
+        'student-pack': 'student_pack',
+        'student': 'student_pack',
+        'bundle': 'bundle',
+        'linkedin_roaster': 'linkedin_roaster',
+        'linkedin-roaster': 'linkedin_roaster',
+        'subscription': 'subscription',
+        'salary_reality_check': 'salary_reality_check_premium',
+        'salary_reality_check_premium': 'salary_reality_check_premium',
+        'salary-check': 'salary_reality_check_premium'
+    };
+    return map[normalized] || normalized;
+}
+
+function normalizeCouponProducts(rawProducts) {
+    const source = Array.isArray(rawProducts)
+        ? rawProducts
+        : String(rawProducts || '')
+            .split(',')
+            .map(v => v.trim())
+            .filter(Boolean);
+    const expanded = [];
+    source.forEach(product => {
+        const normalized = normalizeCouponProductValue(product);
+        if (normalized === 'career_intelligence') {
+            expanded.push('career_intelligence_pro', 'career_intelligence_full');
+            return;
+        }
+        expanded.push(normalized);
+    });
+    return [...new Set(expanded.filter(Boolean))];
+}
+
 function renderAffiliates() {
     const tbody = document.getElementById('affTable');
     if (!tbody) return;
@@ -2405,10 +2475,11 @@ function renderAffiliates() {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code && !c.affiliate_code?.startsWith('__')).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
-        const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
+        const normalizedProducts = normalizeAffiliateProducts(a.product);
+        const products = normalizedProducts.map(p => productLabels[p] || p).join(', ');
         const conversion = clicks > 0 ? ((sales / clicks) * 100).toFixed(1) + '%' : '—';
         const createdDate = a.created_at ? new Date(a.created_at).toLocaleDateString('pt-PT') : '—';
-        const linkCount = (a.product || 'cv-analyser').split(',').length;
+        const linkCount = normalizedProducts.length;
         return `<tr>
             <td style="font-weight:500;">${a.name}</td>
             <td style="font-size:12px;">${products}</td>
@@ -2488,7 +2559,7 @@ function editAffiliate(id) {
     document.getElementById('affEditId').value = aff.id;
     document.getElementById('affName').value = aff.name || '';
     document.getElementById('affEmail').value = aff.email || '';
-    const products = (aff.product || 'cv-analyser').split(',');
+    const products = normalizeAffiliateProducts(aff.product);
     document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
     document.getElementById('affCode').value = aff.code || '';
     document.getElementById('affCommission').value = aff.commission_pct || 0;
@@ -2539,7 +2610,10 @@ async function saveAffiliate() {
         closeAffiliateModal();
         await loadAffiliateData();
         renderAffiliates();
-    } catch (e) { showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger'); }
+    } catch (e) {
+        console.error('Erro ao guardar afiliado:', e);
+        showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger');
+    }
 }
 
 async function toggleAffiliate(id, currentActive) {
@@ -2553,7 +2627,7 @@ async function toggleAffiliate(id, currentActive) {
 
 function copyAffLink(code, product) {
     const base = 'https://www.share2inspire.pt';
-    const products = (product || 'cv-analyser').split(',');
+    const products = normalizeAffiliateProducts(product);
     const allLinks = [];
     products.forEach(p => {
         const ptPath = p === 'student-pack' ? 'estudante' : p;
@@ -2672,7 +2746,7 @@ function editCoupon(id) {
     document.getElementById('couponDescription').value = c.description || '';
     document.getElementById('couponMaxUses').value = c.max_uses || '';
     document.getElementById('couponValidUntil').value = c.valid_until ? c.valid_until.slice(0, 10) : '';
-    const products = c.applicable_products || [];
+    const products = normalizeCouponProducts(c.applicable_products);
     document.querySelectorAll('.coupon-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
     document.getElementById('couponModalOverlay').style.display = 'flex';
 }
@@ -2685,7 +2759,7 @@ async function saveCoupon() {
     const description = document.getElementById('couponDescription').value.trim();
     const maxUses = document.getElementById('couponMaxUses').value ? parseInt(document.getElementById('couponMaxUses').value) : null;
     const validUntil = document.getElementById('couponValidUntil').value || null;
-    const products = [...document.querySelectorAll('.coupon-product-cb:checked')].map(cb => cb.value);
+    const products = normalizeCouponProducts([...document.querySelectorAll('.coupon-product-cb:checked')].map(cb => cb.value));
     if (!code) { showToast('Código obrigatório', 'danger'); return; }
     if (!discount || discount < 1 || discount > 100) { showToast('Desconto entre 1-100%', 'danger'); return; }
     if (!products.length) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
@@ -2697,7 +2771,10 @@ async function saveCoupon() {
         closeCouponModal();
         await loadCouponData();
         renderCoupons();
-    } catch (e) { showToast('Erro ao guardar cupão', 'danger'); }
+    } catch (e) {
+        console.error('Erro ao guardar cupão:', e);
+        showToast('Erro ao guardar cupão: ' + (e.message || 'erro desconhecido'), 'danger');
+    }
 }
 
 async function toggleCoupon(id, currentActive) {
