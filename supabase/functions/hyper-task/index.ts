@@ -200,6 +200,358 @@ function sanitizeCVText(text) {
 
 }
 
+function normalizeProfileIdentityValue(value) {
+
+  return String(value || '').replace(/\s+/g, ' ').trim();
+
+}
+
+function normalizeExtractedProfileName(value) {
+
+  let cleaned = normalizeProfileIdentityValue(value)
+
+    .replace(/^(?:full\s+name|profile\s+name|nome\s+completo|nombre\s+completo|name|nome|nombre)\s*[:\-]\s*/i, '')
+
+    .replace(/\b(?:headline|title|t[íi]tulo(?:\s+profissional)?|location|localiza(?:ç(?:ã|a)o|cion|tion)|perfil|profile)\b.*$/i, '')
+
+    .replace(/[|•·]+.*$/, '')
+
+    .trim();
+
+  if (!cleaned) return '';
+
+  let tokens = cleaned.split(/\s+/).filter(Boolean);
+
+  if (tokens.length >= 3) {
+
+    const firstToken = tokens[0].toLowerCase();
+
+    for (let i = 2; i < tokens.length; i++) {
+
+      if (tokens[i].toLowerCase() === firstToken) {
+
+        tokens = tokens.slice(0, i);
+
+        break;
+
+      }
+
+    }
+
+  }
+
+  if (tokens.length > 6) {
+
+    tokens = tokens.slice(0, 6);
+
+  }
+
+  return tokens.join(' ').trim();
+
+}
+
+const invalidProfileIdentityRegex = /^(?:full\s+name|profile\s+name|headline|title|t[íi]tulo(?:\s+profissional)?|name|nome|nombre|location|localiza(?:ç(?:ã|a)o|cion|tion)|perfil|profile|about|summary)$/i;
+
+function isLikelyValidProfileName(value) {
+
+  const cleanedValue = normalizeExtractedProfileName(value);
+
+  if (!cleanedValue || cleanedValue.length < 3 || cleanedValue.length > 80) return false;
+
+  if (invalidProfileIdentityRegex.test(cleanedValue)) return false;
+
+  if (/[0-9@]/.test(cleanedValue)) return false;
+
+  if (cleanedValue.includes(':')) return false;
+
+  const tokens = cleanedValue.split(/\s+/).filter(Boolean);
+
+  if (tokens.length < 2) return false;
+
+  return tokens.every((token)=>/[A-Za-zÀ-ÿ'’-]{2,}/.test(token));
+
+}
+
+function extractProfileIdentityFromText(text) {
+
+  const normalizedText = String(text || '').replace(/\r/g, '\n');
+
+  const lines = normalizedText.split(/\n+/).map((line)=>line.trim()).filter(Boolean);
+
+  for (const line of lines.slice(0, 20)) {
+
+    const labeledMatch = line.match(/^(?:full\s+name|profile\s+name|nome\s+completo|nombre\s+completo|name|nome|nombre)\s*[:\-]\s*(.+)$/i);
+
+    if (labeledMatch && isLikelyValidProfileName(labeledMatch[1])) {
+
+      const fullName = normalizeExtractedProfileName(labeledMatch[1]);
+
+      return {
+
+        fullName,
+
+        firstName: fullName.split(/\s+/)[0] || '',
+
+        source: 'cv_text_label'
+
+      };
+
+    }
+
+  }
+
+  for (const line of lines.slice(0, 12)) {
+
+    if (isLikelyValidProfileName(line)) {
+
+      const fullName = normalizeExtractedProfileName(line);
+
+      return {
+
+        fullName,
+
+        firstName: fullName.split(/\s+/)[0] || '',
+
+        source: 'cv_text_line'
+
+      };
+
+    }
+
+  }
+
+  return {
+
+    fullName: '',
+
+    firstName: '',
+
+    source: 'none'
+
+  };
+
+}
+
+function extractProfileIdentityFromLinkedinData(rawLinkedinData) {
+
+  if (!rawLinkedinData) {
+
+    return {
+
+      fullName: '',
+
+      firstName: '',
+
+      source: 'none'
+
+    };
+
+  }
+
+  let parsed = rawLinkedinData;
+
+  try {
+
+    if (typeof rawLinkedinData === 'string') parsed = JSON.parse(rawLinkedinData);
+
+  } catch (_error) {
+
+    return {
+
+      fullName: '',
+
+      firstName: '',
+
+      source: 'none'
+
+    };
+
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
+
+    return {
+
+      fullName: '',
+
+      firstName: '',
+
+      source: 'none'
+
+    };
+
+  }
+
+  const primarySource = parsed.data?.[0] || parsed.items?.[0] || parsed.results?.[0] || parsed.profileData || parsed.profile_data || parsed.profile || parsed;
+
+  const candidates = [
+
+    primarySource.fullName,
+
+    primarySource.full_name,
+
+    primarySource.profile_name,
+
+    primarySource.profileName,
+
+    primarySource.name,
+
+    primarySource.profile?.fullName,
+
+    primarySource.profile?.full_name,
+
+    primarySource.profile?.name,
+
+    primarySource.data?.fullName,
+
+    primarySource.data?.full_name,
+
+    primarySource.data?.profile_name,
+
+    primarySource.data?.name,
+
+    parsed.fullName,
+
+    parsed.full_name,
+
+    parsed.profile_name,
+
+    parsed.name,
+
+    [primarySource.firstName || primarySource.first_name || parsed.firstName || parsed.first_name, primarySource.lastName || primarySource.last_name || parsed.lastName || parsed.last_name].filter(Boolean).join(' ')
+
+  ];
+
+  const fullName = candidates.map(normalizeExtractedProfileName).find(isLikelyValidProfileName) || '';
+
+  return {
+
+    fullName,
+
+    firstName: fullName.split(/\s+/)[0] || '',
+
+    source: fullName ? 'linkedin_data' : 'none'
+
+  };
+
+}
+
+function resolveProfileIdentity({ profileName, linkedinData, cvText, linkedinUrl }) {
+
+  const bodyName = normalizeExtractedProfileName(profileName);
+
+  if (isLikelyValidProfileName(bodyName)) {
+
+    return {
+
+      fullName: bodyName,
+
+      firstName: bodyName.split(/\s+/)[0] || '',
+
+      source: 'body'
+
+    };
+
+  }
+
+  const linkedinIdentity = extractProfileIdentityFromLinkedinData(linkedinData);
+
+  if (linkedinIdentity.fullName) return linkedinIdentity;
+
+  const textIdentity = extractProfileIdentityFromText(cvText);
+
+  if (textIdentity.fullName) return textIdentity;
+
+  if (linkedinUrl) {
+
+    const urlSlugMatch = String(linkedinUrl).match(/linkedin\.com\/in\/([^\/\?#]+)/i);
+
+    if (urlSlugMatch) {
+
+      const slugName = normalizeExtractedProfileName(urlSlugMatch[1].replace(/-+/g, ' ').replace(/\d+$/, ''));
+
+      if (isLikelyValidProfileName(slugName)) {
+
+        return {
+
+          fullName: slugName,
+
+          firstName: slugName.split(/\s+/)[0] || '',
+
+          source: 'url_slug'
+
+        };
+
+      }
+
+    }
+
+  }
+
+  return {
+
+    fullName: '',
+
+    firstName: '',
+
+    source: 'none'
+
+  };
+
+}
+
+function normaliseNameForComparison(value) {
+
+  return normalizeExtractedProfileName(value)
+
+    .normalize('NFD')
+
+    .replace(/[\u0300-\u036f]/g, '')
+
+    .toLowerCase()
+
+    .replace(/[^a-z\s]/g, ' ')
+
+    .replace(/\s+/g, ' ')
+
+    .trim();
+
+}
+
+function profileNamesMatch(expectedName, actualName) {
+
+  const expected = normaliseNameForComparison(expectedName);
+
+  const actual = normaliseNameForComparison(actualName);
+
+  if (!expected || !actual) return false;
+
+  return expected === actual || expected.includes(actual) || actual.includes(expected);
+
+}
+
+function buildProfileIdentityPromptContext(identity, language) {
+
+  const safeFullName = identity?.fullName || 'N/A';
+
+  const safeFirstName = identity?.firstName || 'N/A';
+
+  if (language === 'en') {
+
+    return `CURRENT PROFILE IDENTITY (SOURCE OF TRUTH):\n- Exact full name from the current input: ${safeFullName}\n- First name to use only if the analysis is certain: ${safeFirstName}\n- CRITICAL ANTI-CONTAMINATION RULE: Use ONLY the identity present in this current CV / LinkedIn input. NEVER reuse names, employers or details from previous analyses, site owners, example data, cached runs or any other person. If the current input does not contain a reliable name, use \"N/A\" and clearly say the identity could not be confirmed.`;
+
+  }
+
+  if (language === 'es') {
+
+    return `IDENTIDAD ACTUAL DEL PERFIL (FUENTE DE VERDAD):\n- Nombre completo exacto del input actual: ${safeFullName}\n- Nombre de pila a usar solo si el análisis tiene certeza: ${safeFirstName}\n- REGLA CRÍTICA ANTI-CONTAMINACIÓN: Usa SOLO la identidad presente en este CV / LinkedIn actual. NUNCA reutilices nombres, empleadores o detalles de análisis anteriores, del propietario del sitio, datos de ejemplo, ejecuciones en caché ni de ninguna otra persona. Si el input actual no contiene un nombre fiable, usa \"N/A\" y di claramente que la identidad no pudo confirmarse.`;
+
+  }
+
+  return `IDENTIDADE ACTUAL DO PERFIL (FONTE DE VERDADE):\n- Nome completo exacto do input actual: ${safeFullName}\n- Primeiro nome a usar apenas se a análise tiver certeza: ${safeFirstName}\n- REGRA CRÍTICA ANTI-CONTAMINAÇÃO: Usa APENAS a identidade presente neste CV / LinkedIn actual. NUNCA reutilizes nomes, empregadores ou detalhes de análises anteriores, do dono do site, dados de exemplo, execuções em cache ou de qualquer outra pessoa. Se o input actual não contiver um nome fiável, usa \"N/A\" e indica claramente que a identidade não pôde ser confirmada.`;
+
+}
+
 // Helper: Get market context string for EN prompts
 
 function getMarketContext(country, region) {
@@ -6535,6 +6887,26 @@ USING COMPANY DATA:
             ? `the ${requestedLocation} job market`
             : marketCtx;
         const authoritativeCurrency = getCurrency(authoritativeCountry);
+        const resolvedProfileIdentity = resolveProfileIdentity({
+          profileName: body.profile_name || body.full_name || body.candidate_name || '',
+          linkedinData,
+          cvText: sanitized,
+          linkedinUrl
+        });
+        const careerProfileIdentityContext = buildProfileIdentityPromptContext(resolvedProfileIdentity, language);
+
+        console.log(`🪪 ${reportLabel} resolved profile identity: source=${resolvedProfileIdentity.source}, full=${resolvedProfileIdentity.fullName || 'N/A'}`);
+
+        if (linkedinUrl && !resolvedProfileIdentity.fullName) {
+          return jsonResponse({
+            success: false,
+            error: language === 'en'
+              ? 'Could not confirm the identity of the LinkedIn profile from the current input. Please verify the URL or provide a CV/PDF with the correct profile data.'
+              : language === 'es'
+                ? 'No fue posible confirmar la identidad del perfil de LinkedIn a partir del input actual. Verifica la URL o envía un CV/PDF con los datos correctos del perfil.'
+                : 'Não foi possível confirmar a identidade do perfil LinkedIn a partir do input actual. Verifica o URL ou envia um CV/PDF com os dados correctos do perfil.'
+          }, 422);
+        }
 
         const careerPathPrompt = isEN ? `You are an elite Career Advisor with 20 years of experience in career development, executive coaching and talent management at firms like McKinsey, Deloitte and Heidrick & Struggles. You analyse careers in depth, cross-referencing CV and LinkedIn data to produce highly personalised recommendations.
 
@@ -6567,6 +6939,8 @@ ${sanitized}
 
 
 ${cpCompanyContext}
+
+${careerProfileIdentityContext}
 
 ${linkedinData ? `LINKEDIN DATA:\n${linkedinData}\n` : ''}${linkedinUrl ? `LINKEDIN URL: ${linkedinUrl}\n` : ''}
 
@@ -7049,6 +7423,7 @@ REGLA DE DENSIDAD: Proporciona explicaciones detalladas y extensas para cada sec
 ANALIZA EL SIGUIENTE CV:
 ${sanitized}
 ${cpCompanyContext}
+${careerProfileIdentityContext}
 ${linkedinData ? `LINKEDIN DATA:\n${linkedinData}\n` : ''}${linkedinUrl ? `LINKEDIN URL: ${linkedinUrl}\n` : ''}
 ${getLocalisationInstructions(authoritativeCountry, authoritativeRegion, authoritativeCurrency, language)}
 REGLAS DE PROFUNDIDAD NARRATIVA (OBLIGATORIAS):
@@ -7108,6 +7483,8 @@ ${sanitized}
 
 
 ${cpCompanyContext}
+
+${careerProfileIdentityContext}
 
 ${linkedinData ? `DADOS DO LINKEDIN:\n${linkedinData}\n` : ''}${linkedinUrl ? `URL DO LINKEDIN: ${linkedinUrl}\n` : ''}
 
@@ -7900,6 +8277,29 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
           } catch (sp2Err) {
             console.warn('⚠️ Second pass request failed:', sp2Err);
           }
+        }
+
+        const cpResultRoot = careerPath.career_path || careerPath;
+        const generatedProfileName = normalizeExtractedProfileName(careerPath.name || careerPath.candidate_name || cpResultRoot?.name || cpResultRoot?.candidate_name || '');
+
+        if (resolvedProfileIdentity.fullName && generatedProfileName && !profileNamesMatch(resolvedProfileIdentity.fullName, generatedProfileName)) {
+          console.error(`❌ ${reportLabel} identity mismatch: expected=${resolvedProfileIdentity.fullName} generated=${generatedProfileName}`);
+          return jsonResponse({
+            success: false,
+            error: language === 'en'
+              ? `The generated report identity did not match the current profile (${resolvedProfileIdentity.fullName}). Please retry with a cleaner CV or LinkedIn input.`
+              : language === 'es'
+                ? `La identidad generada en el informe no coincidió con el perfil actual (${resolvedProfileIdentity.fullName}). Vuelve a intentarlo con un CV o input de LinkedIn más limpio.`
+                : `A identidade gerada no relatório não coincidiu com o perfil actual (${resolvedProfileIdentity.fullName}). Tenta novamente com um CV ou input de LinkedIn mais limpo.`
+          }, 422);
+        }
+
+        if (resolvedProfileIdentity.fullName) {
+          careerPath.name = resolvedProfileIdentity.fullName;
+          careerPath.candidate_name = resolvedProfileIdentity.fullName;
+        } else if (!generatedProfileName) {
+          careerPath.name = 'N/A';
+          careerPath.candidate_name = 'N/A';
         }
 
         console.log(`✅ ${reportLabel} gerado com sucesso`);

@@ -70,6 +70,26 @@ const buildCandidateProfile = (analysis: any) => {
   };
 };
 
+const normalizeIdentityName = (value?: string) => String(value || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .replace(/[^a-z\s]/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const getAnalysisIdentityName = (analysis: any) => {
+  const profile = buildCandidateProfile(analysis);
+  return profile?.detected_name || analysis?.name || analysis?.candidate_name || analysis?.detected_name || '';
+};
+
+const analysesBelongToSameProfile = (left: any, right: any) => {
+  const leftName = normalizeIdentityName(getAnalysisIdentityName(left));
+  const rightName = normalizeIdentityName(getAnalysisIdentityName(right));
+  if (!leftName || !rightName) return true;
+  return leftName === rightName || leftName.includes(rightName) || rightName.includes(leftName);
+};
+
 /**
  * Fire-and-forget: log career path purchase to cv_analysis table for dashboard.
  * Never blocks the user flow. Errors are silently caught.
@@ -510,8 +530,15 @@ export default function CareerPathResults() {
     const hydrateStoredCareerPathData = () => {
       if (!savedData) return false;
       try {
+        const parsedStored = JSON.parse(savedData);
+        const currentCv = cvData ? JSON.parse(cvData) : null;
+        if (currentCv && !analysesBelongToSameProfile(currentCv, parsedStored)) {
+          localStorage.removeItem('careerPathData');
+          sessionStorage.removeItem('careerPathData');
+          return false;
+        }
         const normalizedStored = normalizeCareerPathPayload(
-          JSON.parse(savedData),
+          parsedStored,
           localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang') || lang
         );
         setCareerPathData(normalizedStored.analysis);
