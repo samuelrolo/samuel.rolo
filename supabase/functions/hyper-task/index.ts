@@ -9905,6 +9905,14 @@ REGLAS FINALES:
 
         crosssell_cp_to_pro_sent: 0,
 
+        roaster_reminder_2d_sent: 0,
+
+        roaster_student_pack_5d_sent: 0,
+
+        roaster_upsell_7d_sent: 0,
+
+        monthly_newsletter_sent: 0,
+
         errors: 0,
 
         skipped: 0
@@ -9915,7 +9923,7 @@ REGLAS FINALES:
 
         // Get all emails that already received auto emails
 
-        const { data: sentEmails } = await supabase.from('email_history').select('recipient_email, email_type').in('email_type', [
+        const { data: sentEmails } = await supabase.from('email_history').select('recipient_email, email_type, created_at').in('email_type', [
 
           'upsell_auto_2h',
 
@@ -9923,23 +9931,657 @@ REGLAS FINALES:
 
           'crosssell_cv_to_cp',
 
-          'crosssell_cp_to_pro'
+          'crosssell_cp_to_pro',
+
+          'roaster_reminder_2d',
+
+          'roaster_student_pack_5d',
+
+          'roaster_upsell_7d',
+
+          'monthly_newsletter'
 
         ]);
 
-        const sent2h = new Set((sentEmails || []).filter((e)=>e.email_type === 'upsell_auto_2h').map((e)=>e.recipient_email));
+        const normalizeEmail = (value?: string | null) => (value || '').trim().toLowerCase();
 
-        const sent7d = new Set((sentEmails || []).filter((e)=>e.email_type === 'upsell_auto_7d').map((e)=>e.recipient_email));
+        const sent2h = new Set((sentEmails || []).filter((e)=>e.email_type === 'upsell_auto_2h').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
 
-        const sentCvToCp = new Set((sentEmails || []).filter((e)=>e.email_type === 'crosssell_cv_to_cp').map((e)=>e.recipient_email));
+        const sent7d = new Set((sentEmails || []).filter((e)=>e.email_type === 'upsell_auto_7d').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
 
-        const sentCpToPro = new Set((sentEmails || []).filter((e)=>e.email_type === 'crosssell_cp_to_pro').map((e)=>e.recipient_email));
+        const sentCvToCp = new Set((sentEmails || []).filter((e)=>e.email_type === 'crosssell_cv_to_cp').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
+
+        const sentCpToPro = new Set((sentEmails || []).filter((e)=>e.email_type === 'crosssell_cp_to_pro').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
+
+        const sentRoasterReminder2d = new Set((sentEmails || []).filter((e)=>e.email_type === 'roaster_reminder_2d').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
+
+        const sentRoasterStudentPack5d = new Set((sentEmails || []).filter((e)=>e.email_type === 'roaster_student_pack_5d').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
+
+        const sentRoasterUpsell7d = new Set((sentEmails || []).filter((e)=>e.email_type === 'roaster_upsell_7d').map((e)=>normalizeEmail(e.recipient_email)).filter(Boolean));
+
+        const lastMonthlyNewsletterByEmail = new Map<string, string>();
+
+        for (const row of (sentEmails || []).filter((e)=>e.email_type === 'monthly_newsletter').sort((a, b)=>new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())) {
+
+          const email = normalizeEmail(row.recipient_email);
+
+          if (email && !lastMonthlyNewsletterByEmail.has(email) && row.created_at) {
+
+            lastMonthlyNewsletterByEmail.set(email, row.created_at);
+
+          }
+
+        }
+
+        const baseUrl = 'https://www.share2inspire.pt';
+
+        const escapeHtml = (value: string = '') => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#39;');
+
+        const getLanguageFromDomain = (domain?: string | null) => domain && domain.includes('/en') ? 'en' : domain && domain.includes('/es') ? 'es' : 'pt';
+
+        const normalizeLanguage = (language?: string | null, domain?: string | null) => {
+
+          if (language === 'en' || language === 'es' || language === 'pt') return language;
+
+          return getLanguageFromDomain(domain);
+
+        };
+
+        const getLocalizedPathPrefix = (language: string) => language === 'en' ? '/en' : language === 'es' ? '/es' : '';
+
+        const getPageLinks = (language: string) => ({
+
+          cvAnalyser: language === 'en' ? `${baseUrl}/en/cv-analyser?ref=news` : language === 'es' ? `${baseUrl}/es/cv-analyser?ref=news` : `${baseUrl}/cv-analyser?ref=news`,
+
+          careerPath: language === 'en' ? `${baseUrl}/en/career-path?ref=news` : language === 'es' ? `${baseUrl}/es/career-path?ref=news` : `${baseUrl}/career-path?ref=news`,
+
+          careerIntelligence: language === 'en' ? `${baseUrl}/en/career-intelligence?ref=news` : language === 'es' ? `${baseUrl}/es/career-intelligence?ref=news` : `${baseUrl}/career-intelligence?ref=news`,
+
+          studentPack: language === 'en' ? `${baseUrl}/en/student-pack?ref=news` : language === 'es' ? `${baseUrl}/es/pack-estudiante?ref=news` : `${baseUrl}/estudante?ref=news`,
+
+          linkedinRoaster: language === 'en' ? `${baseUrl}/en/linkedin-roaster?ref=news` : language === 'es' ? `${baseUrl}/es/linkedin-roaster?ref=news` : `${baseUrl}/linkedin-roaster?ref=news`,
+
+          linkedinRoasterResults: `${baseUrl}${getLocalizedPathPrefix(language)}/linkedin-roaster/results`,
+
+          youtube: 'https://www.youtube.com/watch?v=NkqHEANfi8s&t=23s&ref=news',
+
+          article: 'https://e27.co/share2inspire-thinks-your-cv-isnt-failing-its-being-misread-20260415/?ref=news',
+
+          unsubscribe: `mailto:geral@share2inspire.pt?subject=${encodeURIComponent(language === 'en' ? 'Unsubscribe Share2Inspire emails' : language === 'es' ? 'Baja de los correos de Share2Inspire' : 'Remover dos emails da Share2Inspire')}`
+
+        });
+
+        const getFirstName = (name?: string | null, language: string = 'pt') => {
+
+          const firstToken = (name || '').trim().split(/\s+/).filter(Boolean)[0] || '';
+
+          if (firstToken) return firstToken;
+
+          return language === 'en' ? 'there' : language === 'es' ? 'profesional' : 'profissional';
+
+        };
+
+        const wrapAutoEmail = ({ language, preview, title, intro, bodyHtml, ctaLabel, ctaUrl }:{ language: string; preview: string; title: string; intro: string; bodyHtml: string; ctaLabel?: string; ctaUrl?: string; }) => {
+
+          const links = getPageLinks(language);
+
+          const footerLine = language === 'en'
+
+            ? 'You received this email because you used Share2Inspire. If you prefer not to receive educational or follow-up emails, you can unsubscribe below.'
+
+            : language === 'es'
+
+              ? 'Recibiste este correo porque utilizaste Share2Inspire. Si prefieres no recibir correos educativos o de seguimiento, puedes darte de baja abajo.'
+
+              : 'Recebeste este email porque utilizaste a Share2Inspire. Se preferires não receber emails educativos ou de follow-up, podes remover-te abaixo.';
+
+          const unsubscribeLabel = language === 'en' ? 'Unsubscribe' : language === 'es' ? 'Darse de baja' : 'Remover subscrição';
+
+          return `<div style="margin:0;padding:24px;background:#f5f7fb;font-family:'Segoe UI',Arial,sans-serif;color:#1a2233">\n  <div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preview)}</div>\n  <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e6ebf3;border-radius:22px;overflow:hidden;box-shadow:0 18px 55px rgba(15,23,42,0.08)">\n    <div style="background:linear-gradient(135deg,#0a1628 0%,#153255 100%);padding:30px 36px;text-align:center">\n      <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" style="height:42px;margin-bottom:12px">\n      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#C9A961">Share2Inspire</div>\n    </div>\n    <div style="height:4px;background:linear-gradient(90deg,#C9A961,#eadcb7,#C9A961)"></div>\n    <div style="padding:36px 36px 28px">\n      <h1 style="margin:0 0 14px;font-size:28px;line-height:1.2;color:#0f172a">${title}</h1>\n      <p style="margin:0 0 18px;font-size:15px;line-height:1.8;color:#475569">${intro}</p>\n      ${bodyHtml}\n      ${ctaLabel && ctaUrl ? `<p style="margin:30px 0 8px"><a href="${ctaUrl}" style="display:inline-block;background:#C9A961;color:#0f172a;padding:14px 26px;border-radius:12px;text-decoration:none;font-weight:700">${ctaLabel}</a></p>` : ''}\n    </div>\n    <div style="padding:22px 36px;background:#0f172a;color:rgba(255,255,255,0.78)">\n      <p style="margin:0 0 10px;font-size:12px;line-height:1.7">${footerLine}</p>\n      <p style="margin:0;font-size:12px"><a href="${links.unsubscribe}" style="color:#C9A961;text-decoration:none;font-weight:700">${unsubscribeLabel}</a></p>\n    </div>\n  </div>\n</div>`;
+
+        };
+
+        const buildRoasterReminderEmail = (language: string, firstName: string, resultsUrl: string) => {
+
+          const subject = language === 'en'
+
+            ? 'Still waiting? Your LinkedIn Roast is ready'
+
+            : language === 'es'
+
+              ? '¿Aún esperando? Tu LinkedIn Roast ya está listo'
+
+              : 'Ainda à espera? O teu LinkedIn Roast já está pronto';
+
+          const title = language === 'en'
+
+            ? `Your roast is ready, ${escapeHtml(firstName)}`
+
+            : language === 'es'
+
+              ? `Tu roast ya está listo, ${escapeHtml(firstName)}`
+
+              : `O teu roast já está pronto, ${escapeHtml(firstName)}`;
+
+          const intro = language === 'en'
+
+            ? 'Two days ago you requested your LinkedIn Roast. Your report is already generated and waiting for you.'
+
+            : language === 'es'
+
+              ? 'Hace dos días pediste tu LinkedIn Roast. Tu informe ya está generado y está a tu espera.'
+
+              : 'Há dois dias pediste o teu LinkedIn Roast. O teu relatório já foi gerado e está à tua espera.';
+
+          const bodyHtml = language === 'en'
+
+            ? `<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px 22px;margin:18px 0"><p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#475569">Inside the report you will find direct feedback on positioning, headline, experience narrative, SEO keywords and the biggest credibility gaps in your profile.</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">Open your results now and review the actions with the highest impact first.</p></div>`
+
+            : language === 'es'
+
+              ? `<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px 22px;margin:18px 0"><p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#475569">Dentro del informe encontrarás feedback directo sobre posicionamiento, titular, narrativa de experiencia, keywords SEO y las brechas de credibilidad más importantes de tu perfil.</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">Abre ahora tus resultados y revisa primero las acciones con mayor impacto.</p></div>`
+
+              : `<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px 22px;margin:18px 0"><p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#475569">Dentro do relatório encontras feedback directo sobre posicionamento, headline, narrativa da experiência, keywords SEO e os gaps de credibilidade mais importantes do teu perfil.</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">Abre agora os teus resultados e revê primeiro as acções com maior impacto.</p></div>`;
+
+          const ctaLabel = language === 'en' ? 'Open my results' : language === 'es' ? 'Abrir mis resultados' : 'Abrir resultados';
+
+          return {
+
+            subject,
+
+            html: wrapAutoEmail({
+
+              language,
+
+              preview: subject,
+
+              title,
+
+              intro,
+
+              bodyHtml,
+
+              ctaLabel,
+
+              ctaUrl: resultsUrl
+
+            })
+
+          };
+
+        };
+
+        const buildStudentPackEmail = (language: string, firstName: string, studentPackUrl: string) => {
+
+          const subject = language === 'en'
+
+            ? 'Your natural next step after the LinkedIn Roast'
+
+            : language === 'es'
+
+              ? 'Tu siguiente paso natural después del LinkedIn Roast'
+
+              : 'O passo natural a seguir depois do LinkedIn Roast';
+
+          const title = language === 'en'
+
+            ? `Turn feedback into positioning, ${escapeHtml(firstName)}`
+
+            : language === 'es'
+
+              ? `Convierte feedback en posicionamiento, ${escapeHtml(firstName)}`
+
+              : `Transforma feedback em posicionamento, ${escapeHtml(firstName)}`;
+
+          const intro = language === 'en'
+
+            ? 'The LinkedIn Roast shows what is limiting your visibility. The Student Pack helps you fix the full profile stack: CV plus LinkedIn.'
+
+            : language === 'es'
+
+              ? 'El LinkedIn Roast te muestra qué está limitando tu visibilidad. El Student Pack te ayuda a corregir todo el stack de posicionamiento: CV más LinkedIn.'
+
+              : 'O LinkedIn Roast mostra o que está a limitar a tua visibilidade. O Student Pack ajuda-te a corrigir toda a base do posicionamento: CV mais LinkedIn.';
+
+          const bodyHtml = language === 'en'
+
+            ? `<div style="display:grid;gap:12px;margin:18px 0"><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:18px 20px"><p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#0f172a">What you get</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">A combined offer for students and early-career professionals who want a stronger CV, a sharper LinkedIn profile and clearer direction before internships, graduate programmes or first interviews.</p></div><div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:18px 20px"><p style="margin:0;font-size:15px;line-height:1.8;color:#7c2d12">If your profile already has potential, the next leverage point is consistency between CV narrative, LinkedIn message and market positioning.</p></div></div>`
+
+            : language === 'es'
+
+              ? `<div style="display:grid;gap:12px;margin:18px 0"><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:18px 20px"><p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#0f172a">Qué incluye</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">Una oferta combinada para estudiantes y perfiles junior que quieren un CV más fuerte, un LinkedIn más estratégico y una dirección más clara antes de prácticas, programas de graduados o primeras entrevistas.</p></div><div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:18px 20px"><p style="margin:0;font-size:15px;line-height:1.8;color:#7c2d12">Si tu perfil ya tiene potencial, el siguiente punto de apalancamiento es la consistencia entre narrativa del CV, mensaje en LinkedIn y posicionamiento en el mercado.</p></div></div>`
+
+              : `<div style="display:grid;gap:12px;margin:18px 0"><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:18px 20px"><p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#0f172a">O que inclui</p><p style="margin:0;font-size:15px;line-height:1.8;color:#475569">Uma oferta combinada para estudantes e perfis em início de carreira que querem um CV mais forte, um LinkedIn mais estratégico e uma direcção mais clara antes de estágios, programas de trainee ou primeiras entrevistas.</p></div><div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:18px 20px"><p style="margin:0;font-size:15px;line-height:1.8;color:#7c2d12">Se o teu perfil já tem potencial, o próximo ponto de alavanca é a consistência entre narrativa do CV, mensagem no LinkedIn e posicionamento no mercado.</p></div></div>`;
+
+          const ctaLabel = language === 'en' ? 'See the Student Pack' : language === 'es' ? 'Ver el Student Pack' : 'Ver o Student Pack';
+
+          return {
+
+            subject,
+
+            html: wrapAutoEmail({
+
+              language,
+
+              preview: subject,
+
+              title,
+
+              intro,
+
+              bodyHtml,
+
+              ctaLabel,
+
+              ctaUrl: studentPackUrl
+
+            })
+
+          };
+
+        };
+
+        const buildRoasterUpsellEmail = (language: string, firstName: string, roasterUrl: string, couponCode: string) => {
+
+          const subject = language === 'en'
+
+            ? '25% off the paid LinkedIn Roaster — this is your window'
+
+            : language === 'es'
+
+              ? '25% de descuento en el LinkedIn Roaster de pago — esta es tu ventana'
+
+              : '25% de desconto no LinkedIn Roaster pago — esta é a tua janela';
+
+          const title = language === 'en'
+
+            ? `Ready to go deeper, ${escapeHtml(firstName)}?`
+
+            : language === 'es'
+
+              ? `¿Listo para profundizar, ${escapeHtml(firstName)}?`
+
+              : `Pronto para ir mais fundo, ${escapeHtml(firstName)}?`;
+
+          const intro = language === 'en'
+
+            ? 'Seven days after your roast, the opportunity is clear: improve your profile with urgency while the feedback is still fresh.'
+
+            : language === 'es'
+
+              ? 'Siete días después de tu roast, la oportunidad es clara: mejora tu perfil con urgencia mientras el feedback sigue fresco.'
+
+              : 'Sete dias depois do teu roast, a oportunidade é clara: melhora o teu perfil com urgência enquanto o feedback ainda está fresco.';
+
+          const urgencyLine = language === 'en'
+
+            ? 'Use the 25% coupon below now and secure the paid experience before you lose momentum.'
+
+            : language === 'es'
+
+              ? 'Usa ahora el cupón del 25% y activa la versión de pago antes de perder tracción.'
+
+              : 'Usa agora o cupão de 25% e activa a versão paga antes de perderes tracção.';
+
+          const bodyHtml = `<div style="background:linear-gradient(135deg,#0f172a,#1d4f91);border-radius:18px;padding:24px 26px;margin:20px 0;color:#fff"><p style="margin:0 0 8px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#C9A961;font-weight:700">25% OFF</p><p style="margin:0 0 10px;font-size:28px;font-weight:800;line-height:1.2">${escapeHtml(couponCode)}</p><p style="margin:0;font-size:15px;line-height:1.8;color:rgba(255,255,255,0.86)">${urgencyLine}</p></div>`;
+
+          const ctaLabel = language === 'en' ? 'Use my 25% coupon' : language === 'es' ? 'Usar mi cupón del 25%' : 'Usar o meu cupão de 25%';
+
+          return {
+
+            subject,
+
+            html: wrapAutoEmail({
+
+              language,
+
+              preview: subject,
+
+              title,
+
+              intro,
+
+              bodyHtml,
+
+              ctaLabel,
+
+              ctaUrl: roasterUrl
+
+            })
+
+          };
+
+        };
+
+        const buildMonthlyNewsletterEmail = (language: string, firstName: string, couponCode: string) => {
+
+          const links = getPageLinks(language);
+
+          const subject = language === 'en'
+
+            ? 'ATS, career growth and a 25% Share2Inspire coupon'
+
+            : language === 'es'
+
+              ? 'ATS, crecimiento profesional y un cupón Share2Inspire del 25%'
+
+              : 'ATS, crescimento de carreira e um cupão Share2Inspire de 25%';
+
+          const title = language === 'en'
+
+            ? `Career intelligence for this month, ${escapeHtml(firstName)}`
+
+            : language === 'es'
+
+              ? `Inteligencia de carrera para este mes, ${escapeHtml(firstName)}`
+
+              : `Inteligência de carreira para este mês, ${escapeHtml(firstName)}`;
+
+          const intro = language === 'en'
+
+            ? 'This month we are focusing on a simple idea: many good candidates are not being rejected because they lack potential, but because their signal is being interpreted badly by ATS systems and recruiters.'
+
+            : language === 'es'
+
+              ? 'Este mes nos centramos en una idea simple: muchos buenos candidatos no están siendo rechazados por falta de potencial, sino porque su señal está siendo interpretada de forma incorrecta por los sistemas ATS y los recruiters.'
+
+              : 'Este mês estamos focados numa ideia simples: muitos bons candidatos não estão a ser rejeitados por falta de potencial, mas porque o seu sinal está a ser mal interpretado por sistemas ATS e recrutadores.';
+
+          const educationTitle = language === 'en' ? 'What to read and watch this month' : language === 'es' ? 'Qué leer y ver este mes' : 'O que ler e ver este mês';
+
+          const toolsTitle = language === 'en' ? 'Where Share2Inspire helps' : language === 'es' ? 'Dónde te ayuda Share2Inspire' : 'Onde a Share2Inspire te ajuda';
+
+          const couponLine = language === 'en'
+
+            ? 'Use this 25% coupon across the site, including the member area.'
+
+            : language === 'es'
+
+              ? 'Usa este cupón del 25% en todo el sitio, incluida el área de miembro.'
+
+              : 'Usa este cupão de 25% em todo o site, incluindo a área de membro.';
+
+          const bodyHtml = `
+
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:22px 24px;margin:18px 0">
+
+              <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#0f172a">${educationTitle}</p>
+
+              <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#475569"><a href="${links.youtube}" style="color:#0f4c81;font-weight:700;text-decoration:none">The Optimization ROI — Decoding the ATS Filter</a></p>
+
+              <p style="margin:0;font-size:15px;line-height:1.8;color:#475569"><a href="${links.article}" style="color:#0f4c81;font-weight:700;text-decoration:none">${language === 'en' ? 'Media feature on why strong CVs are often misread' : language === 'es' ? 'Artículo sobre por qué muchos CVs potentes están siendo mal interpretados' : 'Artigo sobre porque muitos CVs fortes estão a ser mal lidos'}</a></p>
+
+            </div>
+
+            <div style="margin:18px 0">
+
+              <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#0f172a">${toolsTitle}</p>
+
+              <table style="width:100%;border-collapse:separate;border-spacing:0 10px">
+
+                <tr><td style="padding:14px 16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px"><a href="${links.cvAnalyser}" style="color:#0f4c81;font-weight:700;text-decoration:none">CV Analyser</a><div style="margin-top:6px;font-size:14px;line-height:1.7;color:#475569">${language === 'en' ? 'Improve ATS readability and strengthen the evidence in your CV.' : language === 'es' ? 'Mejora la legibilidad ATS y refuerza la evidencia en tu CV.' : 'Melhora a legibilidade ATS e reforça a evidência no teu CV.'}</div></td></tr>
+
+                <tr><td style="padding:14px 16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px"><a href="${links.careerPath}" style="color:#0f4c81;font-weight:700;text-decoration:none">Career Path</a><div style="margin-top:6px;font-size:14px;line-height:1.7;color:#475569">${language === 'en' ? 'Clarify the next role, the missing skills and the practical roadmap.' : language === 'es' ? 'Aclara el siguiente rol, las competencias que faltan y el roadmap práctico.' : 'Clarifica o próximo cargo, as competências em falta e o roadmap prático.'}</div></td></tr>
+
+                <tr><td style="padding:14px 16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px"><a href="${links.careerIntelligence}" style="color:#0f4c81;font-weight:700;text-decoration:none">Career Intelligence</a><div style="margin-top:6px;font-size:14px;line-height:1.7;color:#475569">${language === 'en' ? 'Compare strategic paths and make career decisions with more confidence.' : language === 'es' ? 'Compara caminos estratégicos y toma decisiones profesionales con más confianza.' : 'Compara caminhos estratégicos e toma decisões de carreira com mais confiança.'}</div></td></tr>
+
+                <tr><td style="padding:14px 16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px"><a href="${links.studentPack}" style="color:#0f4c81;font-weight:700;text-decoration:none">Student Pack</a><div style="margin-top:6px;font-size:14px;line-height:1.7;color:#475569">${language === 'en' ? 'A practical entry point for students and early-career professionals.' : language === 'es' ? 'Un punto de entrada práctico para estudiantes y perfiles junior.' : 'Um ponto de entrada prático para estudantes e perfis em início de carreira.'}</div></td></tr>
+
+                <tr><td style="padding:14px 16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px"><a href="${links.linkedinRoaster}" style="color:#0f4c81;font-weight:700;text-decoration:none">LinkedIn Roaster</a><div style="margin-top:6px;font-size:14px;line-height:1.7;color:#475569">${language === 'en' ? 'Stress-test your LinkedIn positioning and remove hidden credibility gaps.' : language === 'es' ? 'Pon a prueba tu posicionamiento en LinkedIn y elimina brechas ocultas de credibilidad.' : 'Testa o teu posicionamento no LinkedIn e remove gaps ocultos de credibilidade.'}</div></td></tr>
+
+              </table>
+
+            </div>
+
+            <div style="background:linear-gradient(135deg,#0f172a,#1d4f91);border-radius:18px;padding:24px 26px;margin:22px 0;color:#fff">
+
+              <p style="margin:0 0 8px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#C9A961;font-weight:700">Share2Inspire</p>
+
+              <p style="margin:0 0 12px;font-size:16px;line-height:1.8;color:rgba(255,255,255,0.88)">${language === 'en' ? 'We combine AI analysis, career strategy and direct market positioning so professionals understand where they stand, what blocks them and what to do next.' : language === 'es' ? 'Combinamos análisis con IA, estrategia de carrera y posicionamiento directo en el mercado para que los profesionales entiendan dónde están, qué les bloquea y qué hacer a continuación.' : 'Combinamos análise com IA, estratégia de carreira e posicionamento directo no mercado para que os profissionais percebam onde estão, o que os está a bloquear e o que fazer a seguir.'}</p>
+
+              <p style="margin:0 0 10px;font-size:14px;color:rgba(255,255,255,0.82)">${couponLine}</p>
+
+              <p style="margin:0;font-size:30px;font-weight:800;color:#fff">${escapeHtml(couponCode)}</p>
+
+            </div>`;
+
+          const ctaLabel = language === 'en' ? 'Explore Share2Inspire' : language === 'es' ? 'Explorar Share2Inspire' : 'Explorar a Share2Inspire';
+
+          return {
+
+            subject,
+
+            html: wrapAutoEmail({
+
+              language,
+
+              preview: subject,
+
+              title,
+
+              intro,
+
+              bodyHtml,
+
+              ctaLabel,
+
+              ctaUrl: links.cvAnalyser
+
+            })
+
+          };
+
+        };
+
+        const sendTrackedEmail = async ({ email, name, subject, htmlContent, emailType, campaignType = 'auto_emails' }:{ email: string; name?: string | null; subject: string; htmlContent: string; emailType: string; campaignType?: string; }) => {
+
+          const normalizedEmail = normalizeEmail(email);
+
+          if (!normalizedEmail) throw new Error('Missing recipient email');
+
+          const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+
+            method: 'POST',
+
+            headers: {
+
+              'api-key': BREVO_API_KEY,
+
+              'Content-Type': 'application/json'
+
+            },
+
+            body: JSON.stringify({
+
+              sender: SENDER,
+
+              to: [
+
+                {
+
+                  email: normalizedEmail,
+
+                  name: name || ''
+
+                }
+
+              ],
+
+              subject,
+
+              htmlContent,
+
+              headers: {
+
+                'X-Mailin-Track': '1',
+
+                'X-Mailin-Track-Links': '1'
+
+              }
+
+            })
+
+          });
+
+          if (!response.ok) {
+
+            throw new Error(await response.text());
+
+          }
+
+          const brevoData = await response.json().catch(()=>null);
+
+          const { error: historyError } = await supabase.from('email_history').insert({
+
+            recipient_email: normalizedEmail,
+
+            recipient_name: name || '',
+
+            subject,
+
+            campaign_type: campaignType,
+
+            email_type: emailType,
+
+            status: 'sent'
+
+          });
+
+          if (historyError) {
+
+            console.error(`❌ Erro a registar ${emailType} para ${normalizedEmail}:`, historyError.message);
+
+          }
+
+          return brevoData;
+
+        };
+
+        const { data: welcomeLogs } = await supabase.from('welcome_emails_log').select('email, name, lang, created_at, type').in('type', [
+
+          'cv_analysis',
+
+          'student_pack',
+
+          'linkedin_roaster'
+
+        ]).order('created_at', {
+
+          ascending: false
+
+        });
+
+        const languageByEmail = new Map<string, string>();
+
+        const nameByEmail = new Map<string, string>();
+
+        for (const row of welcomeLogs || []) {
+
+          const email = normalizeEmail(row.email);
+
+          if (!email) continue;
+
+          if (!languageByEmail.has(email) && (row.lang === 'pt' || row.lang === 'en' || row.lang === 'es')) {
+
+            languageByEmail.set(email, row.lang);
+
+          }
+
+          if (!nameByEmail.has(email) && row.name) {
+
+            nameByEmail.set(email, row.name);
+
+          }
+
+        }
+
+        let roasterCouponCode = 'S2I25';
+
+        let newsletterCouponCode = 'S2I25';
+
+        try {
+
+          const { data: coupons } = await supabase.from('discount_coupons').select('code, discount_percent, applicable_products, valid_from, valid_until, current_uses, max_uses, is_active').eq('is_active', true).eq('discount_percent', 25).order('created_at', {
+
+            ascending: false
+
+          });
+
+          const nowTs = Date.now();
+
+          const isCouponValid = (coupon: any) => {
+
+            const validFrom = coupon.valid_from ? new Date(coupon.valid_from).getTime() : 0;
+
+            const validUntil = coupon.valid_until ? new Date(coupon.valid_until).getTime() : Number.MAX_SAFE_INTEGER;
+
+            const underLimit = coupon.max_uses === null || coupon.max_uses === undefined || (coupon.current_uses || 0) < coupon.max_uses;
+
+            return nowTs >= validFrom && nowTs <= validUntil && underLimit;
+
+          };
+
+          const matchesProducts = (coupon: any, acceptedProducts: string[]) => {
+
+            const applicableProducts = Array.isArray(coupon.applicable_products) ? coupon.applicable_products.map((value: string)=>String(value).toLowerCase()) : [];
+
+            if (applicableProducts.length === 0) return true;
+
+            return applicableProducts.some((value: string)=>acceptedProducts.includes(value));
+
+          };
+
+          const validCoupons = (coupons || []).filter(isCouponValid);
+
+          const siteWideCoupon = validCoupons.find((coupon)=>matchesProducts(coupon, [
+
+            'all',
+
+            'complete',
+
+            'member_area',
+
+            'membership',
+
+            'subscription',
+
+            'subscriptions',
+
+            'pro'
+
+          ]));
+
+          const roasterCoupon = validCoupons.find((coupon)=>matchesProducts(coupon, [
+
+            'all',
+
+            'linkedin_roaster',
+
+            'linkedin_roast',
+
+            'roaster'
+
+          ]));
+
+          if (roasterCoupon?.code) roasterCouponCode = roasterCoupon.code;
+
+          else if (siteWideCoupon?.code) roasterCouponCode = siteWideCoupon.code;
+
+          if (siteWideCoupon?.code) newsletterCouponCode = siteWideCoupon.code;
+
+          else if (roasterCoupon?.code) newsletterCouponCode = roasterCoupon.code;
+
+        } catch (couponError) {
+
+          console.warn('⚠️ Não foi possível carregar cupões de 25% para auto_emails:', couponError.message);
+
+        }
 
         // Get all emails that have paid (already converted — skip them)
 
         const { data: paidUsers } = await supabase.from('cv_analysis').select('user_email').eq('payment_status', 'paid');
 
-        const convertedEmails = new Set((paidUsers || []).map((u)=>u.user_email));
+        const convertedEmails = new Set((paidUsers || []).map((u)=>normalizeEmail(u.user_email)).filter(Boolean));
 
         // ── UPSELL 2H: Free analyses created > 2 hours ago ──
 
@@ -11038,6 +11680,279 @@ REGLAS FINALES:
           } catch (e) {
 
             console.error(`❌ Erro ao enviar CP→Pro para ${email}:`, e.message);
+
+            results.errors++;
+
+          }
+
+          await new Promise((r)=>setTimeout(r, 200));
+
+        }
+
+
+        // ── LINKEDIN ROASTER FOLLOW-UPS ──
+
+        const { data: roasterPaidRows } = await supabase.from('cv_analysis').select('user_email, user_name, domain, created_at, linkedin_url').eq('analysis_type', 'linkedin_roast').eq('payment_status', 'paid').order('created_at', {
+
+          ascending: false
+
+        });
+
+        const uniqueRoasterPaidRows = new Map<string, any>();
+
+        for (const row of roasterPaidRows || []) {
+
+          const email = normalizeEmail(row.user_email);
+
+          if (email && !uniqueRoasterPaidRows.has(email)) uniqueRoasterPaidRows.set(email, row);
+
+        }
+
+        const twoDaysMs = 2 * 24 * 60 * 60 * 1000;
+
+        const fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+
+        const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+        const nowMs = Date.now();
+
+        for (const [email, lead] of uniqueRoasterPaidRows) {
+
+          const createdAtMs = new Date(lead.created_at || 0).getTime();
+
+          if (!createdAtMs) continue;
+
+          const language = normalizeLanguage(languageByEmail.get(email), lead.domain);
+
+          const firstName = getFirstName(lead.user_name || nameByEmail.get(email) || '', language);
+
+          const links = getPageLinks(language);
+
+          if (nowMs - createdAtMs >= twoDaysMs && !sentRoasterReminder2d.has(email)) {
+
+            const reminderEmail = buildRoasterReminderEmail(language, firstName, links.linkedinRoasterResults);
+
+            try {
+
+              await sendTrackedEmail({
+
+                email,
+
+                name: lead.user_name || nameByEmail.get(email) || '',
+
+                subject: reminderEmail.subject,
+
+                htmlContent: reminderEmail.html,
+
+                emailType: 'roaster_reminder_2d',
+
+                campaignType: 'roaster_reminder_2d'
+
+              });
+
+              sentRoasterReminder2d.add(email);
+
+              results.roaster_reminder_2d_sent++;
+
+              console.log(`✅ Roaster reminder 2d enviado para ${email}`);
+
+            } catch (error) {
+
+              console.error(`❌ Erro ao enviar roaster_reminder_2d para ${email}:`, error.message);
+
+              results.errors++;
+
+            }
+
+            await new Promise((r)=>setTimeout(r, 200));
+
+          }
+
+          if (nowMs - createdAtMs >= fiveDaysMs && !sentRoasterStudentPack5d.has(email)) {
+
+            const studentPackEmail = buildStudentPackEmail(language, firstName, links.studentPack);
+
+            try {
+
+              await sendTrackedEmail({
+
+                email,
+
+                name: lead.user_name || nameByEmail.get(email) || '',
+
+                subject: studentPackEmail.subject,
+
+                htmlContent: studentPackEmail.html,
+
+                emailType: 'roaster_student_pack_5d',
+
+                campaignType: 'roaster_student_pack_5d'
+
+              });
+
+              sentRoasterStudentPack5d.add(email);
+
+              results.roaster_student_pack_5d_sent++;
+
+              console.log(`✅ Roaster Student Pack 5d enviado para ${email}`);
+
+            } catch (error) {
+
+              console.error(`❌ Erro ao enviar roaster_student_pack_5d para ${email}:`, error.message);
+
+              results.errors++;
+
+            }
+
+            await new Promise((r)=>setTimeout(r, 200));
+
+          }
+
+          if (nowMs - createdAtMs >= sevenDaysMs && !sentRoasterUpsell7d.has(email)) {
+
+            const upsellEmail = buildRoasterUpsellEmail(language, firstName, links.linkedinRoaster, roasterCouponCode);
+
+            try {
+
+              await sendTrackedEmail({
+
+                email,
+
+                name: lead.user_name || nameByEmail.get(email) || '',
+
+                subject: upsellEmail.subject,
+
+                htmlContent: upsellEmail.html,
+
+                emailType: 'roaster_upsell_7d',
+
+                campaignType: 'roaster_upsell_7d'
+
+              });
+
+              sentRoasterUpsell7d.add(email);
+
+              results.roaster_upsell_7d_sent++;
+
+              console.log(`✅ Roaster upsell 7d enviado para ${email}`);
+
+            } catch (error) {
+
+              console.error(`❌ Erro ao enviar roaster_upsell_7d para ${email}:`, error.message);
+
+              results.errors++;
+
+            }
+
+            await new Promise((r)=>setTimeout(r, 200));
+
+          }
+
+        }
+
+        // ── MONTHLY NEWSLETTER FOR ALL CONTACTS ──
+
+        const { data: newsletterCvRows } = await supabase.from('cv_analysis').select('user_email, user_name, domain, created_at').not('user_email', 'is', null).order('created_at', {
+
+          ascending: false
+
+        });
+
+        const { data: newsletterRoasterRows } = await supabase.from('linkedin_roaster_analyses').select('user_email, domain, created_at').not('user_email', 'is', null).order('created_at', {
+
+          ascending: false
+
+        });
+
+        const newsletterContacts = new Map<string, any>();
+
+        const upsertNewsletterContact = (contact: any) => {
+
+          const email = normalizeEmail(contact.user_email);
+
+          if (!email) return;
+
+          const current = newsletterContacts.get(email);
+
+          const currentTs = current?.created_at ? new Date(current.created_at).getTime() : 0;
+
+          const nextTs = contact.created_at ? new Date(contact.created_at).getTime() : 0;
+
+          const nextLanguage = normalizeLanguage(languageByEmail.get(email), contact.domain);
+
+          const nextName = contact.user_name || current?.user_name || nameByEmail.get(email) || '';
+
+          if (!current || nextTs >= currentTs) {
+
+            newsletterContacts.set(email, {
+
+              user_email: email,
+
+              user_name: nextName,
+
+              domain: contact.domain || current?.domain || null,
+
+              language: nextLanguage,
+
+              created_at: contact.created_at || current?.created_at || null
+
+            });
+
+          }
+
+        };
+
+        for (const row of newsletterCvRows || []) upsertNewsletterContact(row);
+
+        for (const row of newsletterRoasterRows || []) upsertNewsletterContact(row);
+
+        const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+        for (const [email, contact] of newsletterContacts) {
+
+          const lastSentAt = lastMonthlyNewsletterByEmail.get(email);
+
+          if (lastSentAt && nowMs - new Date(lastSentAt).getTime() < thirtyDaysMs) {
+
+            results.skipped++;
+
+            continue;
+
+          }
+
+          const language = normalizeLanguage(contact.language, contact.domain);
+
+          const firstName = getFirstName(contact.user_name || nameByEmail.get(email) || '', language);
+
+          const newsletterEmail = buildMonthlyNewsletterEmail(language, firstName, newsletterCouponCode);
+
+          try {
+
+            await sendTrackedEmail({
+
+              email,
+
+              name: contact.user_name || nameByEmail.get(email) || '',
+
+              subject: newsletterEmail.subject,
+
+              htmlContent: newsletterEmail.html,
+
+              emailType: 'monthly_newsletter',
+
+              campaignType: 'monthly_newsletter'
+
+            });
+
+            lastMonthlyNewsletterByEmail.set(email, new Date().toISOString());
+
+            results.monthly_newsletter_sent++;
+
+            console.log(`✅ Monthly newsletter enviada para ${email}`);
+
+          } catch (error) {
+
+            console.error(`❌ Erro ao enviar monthly_newsletter para ${email}:`, error.message);
 
             results.errors++;
 
