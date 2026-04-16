@@ -7966,6 +7966,18 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
       const isES = language === 'es';
 
+      const rawProfileName = String(body.profile_name || body.full_name || body.name || body.candidate_name || '').trim();
+
+      const extractedProfileName = cvText.match(/(?:^|\n)NOME:\s*(.+)/i)?.[1]?.trim() || cvText.match(/(?:^|\n)NAME:\s*(.+)/i)?.[1]?.trim() || cvText.match(/(?:^|\n)NOMBRE:\s*(.+)/i)?.[1]?.trim() || '';
+
+      const exactProfileName = (rawProfileName || extractedProfileName).replace(/\s+/g, ' ').trim();
+
+      const profileFirstName = exactProfileName.split(/\s+/).filter(Boolean)[0] || '';
+
+      const safeProfileNameForPrompt = exactProfileName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+
+      const safeFirstNameForPrompt = profileFirstName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+
       if (!candidateEmail || !candidateEmail.includes('@')) {
 
         return jsonResponse({
@@ -8043,10 +8055,14 @@ REGRAS ABSOLUTAS DE IDIOMA E TOM:
 
 
 
+IDENTIDADE DO PERFIL (USAR SEMPRE ESTES DADOS QUANDO DISPONÍVEIS):
+- Nome completo exacto: ${safeProfileNameForPrompt}
+- Primeiro nome a usar no texto corrido: ${safeFirstNameForPrompt}
+- REGRA CRÍTICA: NUNCA uses placeholders como [Nome], [Name], [Nombre] ou variantes. Se o primeiro nome estiver disponível acima, usa exactamente esse nome. Se não estiver disponível, usa apenas "o profissional".
+
 INPUT DE DADOS DO PERFIL:
 
 ${cvText.substring(0, 8000)}
-
 ${roastCompanyContext}
 
 ${getLocalisationInstructions(country, region, currency, language)}
@@ -8422,6 +8438,11 @@ ABSOLUTE LANGUAGE AND TONE RULES::
 4. Be SPECIFIC and SHARP — reference concrete data from the profile (company names, job titles, qualifications, awards, numbers). NEVER make generic comments that could apply to any profile. Every critique must state what is weak, missing, mispositioned or wasted.
 
 
+
+PROFILE IDENTITY (ALWAYS USE THESE DETAILS WHEN AVAILABLE):
+- Exact full name: ${safeProfileNameForPrompt}
+- First name to use in narrative text: ${safeFirstNameForPrompt}
+- CRITICAL RULE: NEVER use placeholders such as [Nome], [Name], [Nombre] or similar variants. If the first name is available above, use exactly that name. If it is not available, use only "the professional".
 
 PROFILE DATA INPUT:
 
@@ -8802,6 +8823,11 @@ REGLAS ABSOLUTAS DE IDIOMA Y TONO:
 4. Sé ESPECÍFICO y CORTANTE — referencia datos concretos del perfil (nombres de empresas, cargos, estudios, premios, cifras). NUNCA hagas comentarios genéricos que puedan aplicarse a cualquier perfil. Cada crítica debe explicar qué está débil, ausente, mal posicionado o desaprovechado.
 
 
+
+IDENTIDAD DEL PERFIL (USA SIEMPRE ESTOS DATOS CUANDO ESTÉN DISPONIBLES):
+- Nombre completo exacto: ${safeProfileNameForPrompt}
+- Nombre de pila que debes usar en el texto corrido: ${safeFirstNameForPrompt}
+- REGLA CRÍTICA: NUNCA uses placeholders como [Nome], [Name], [Nombre] ni variantes. Si el nombre de pila está disponible arriba, usa exactamente ese nombre. Si no está disponible, usa solo "el profesional".
 
 DATOS DE ENTRADA DEL PERFIL:
 
@@ -9589,6 +9615,26 @@ REGLAS FINALES:
 
           }
 
+        }
+
+        if (roastAnalysis && typeof roastAnalysis === 'object') {
+          const placeholderRegex = /\[(?:Nome|Name|Nombre)\]/g;
+          const replacementName = profileFirstName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
+
+          const replaceLinkedInNamePlaceholders = (value) => {
+            if (typeof value === 'string') {
+              return value.replace(placeholderRegex, replacementName);
+            }
+            if (Array.isArray(value)) {
+              return value.map(replaceLinkedInNamePlaceholders);
+            }
+            if (value && typeof value === 'object') {
+              return Object.fromEntries(Object.entries(value).map(([key, nestedValue]) => [key, replaceLinkedInNamePlaceholders(nestedValue)]));
+            }
+            return value;
+          };
+
+          roastAnalysis = replaceLinkedInNamePlaceholders(roastAnalysis);
         }
 
         console.log('✅ LinkedIn Audit gerado:', JSON.stringify(roastAnalysis).substring(0, 300));
