@@ -9790,6 +9790,11 @@ REGLAS FINALES:
         const userAgent = req.headers.get('user-agent') || null;
         const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || null;
 
+        // Create Supabase client for server-side persistence
+        const roastSupabaseUrl = Deno.env.get('SUPABASE_URL') || 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+        const roastSupabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+        const supabase = createClient(roastSupabaseUrl, roastSupabaseServiceKey);
+
         try {
           const { error: roastInsertError } = await supabase.from('linkedin_roaster_analyses').insert({
             linkedin_url: linkedinUrl || null,
