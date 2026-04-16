@@ -7966,13 +7966,20 @@ Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercício
 
       const isES = language === 'es';
 
-      const rawProfileName = String(body.profile_name || body.full_name || body.name || body.candidate_name || '').trim();
+      const rawProfileName = String(body.profile_name || body.full_name || body.name || body.candidate_name || '').replace(/\s+/g, ' ').trim();
 
-      const extractedProfileName = cvText.match(/(?:^|\n)NOME:\s*(.+)/i)?.[1]?.trim() || cvText.match(/(?:^|\n)NAME:\s*(.+)/i)?.[1]?.trim() || cvText.match(/(?:^|\n)NOMBRE:\s*(.+)/i)?.[1]?.trim() || '';
+      const extractedProfileName = cvText.match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';
 
-      const exactProfileName = (rawProfileName || extractedProfileName).replace(/\s+/g, ' ').trim();
+      const invalidProfileNameRegex = /^(?:T[IÍ]TULO(?:\s+PROFISSIONAL)?|TITLE|HEADLINE|NOME|NAME|NOMBRE|LOCALIZA(?:Ç(?:Ã|A)O|CION|TION)?|LOCATION|PERFIL|PROFILE)\b/i;
 
-      const profileFirstName = exactProfileName.split(/\s+/).filter(Boolean)[0] || '';
+      const isValidLinkedInProfileName = (value) => {
+        const cleanedValue = String(value || '').replace(/\s+/g, ' ').trim();
+        return !!cleanedValue && cleanedValue.length < 80 && !invalidProfileNameRegex.test(cleanedValue) && !cleanedValue.includes(':');
+      };
+
+      const exactProfileName = isValidLinkedInProfileName(rawProfileName) ? rawProfileName : isValidLinkedInProfileName(extractedProfileName) ? extractedProfileName : '';
+
+      const profileFirstName = isValidLinkedInProfileName(exactProfileName) ? exactProfileName.split(/\s+/).filter(Boolean)[0] || '' : '';
 
       const safeProfileNameForPrompt = exactProfileName || (isEN ? 'the professional' : isES ? 'el profesional' : 'o profissional');
 
