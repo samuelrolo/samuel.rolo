@@ -319,7 +319,7 @@ function adaptLegacyToUnified(legacy: any): any {
   }
   return {
     perfil: {
-      nome: cp.name || cp.nome || '',
+      nome: cp.name || cp.nome || cp.detected_name || '',
       curso: cp.detected_role || cp.area || '',
       area_alvo: cv.perceivedRole || cp.detected_role || '',
       resumo_executivo: liAnalysis.sumario_executivo || liTeaser.hook_vendas || ''
