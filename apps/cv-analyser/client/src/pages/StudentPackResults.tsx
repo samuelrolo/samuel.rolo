@@ -553,7 +553,7 @@ export default function StudentPackResults() {
               <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
               <div className="relative z-10">
                 <div className="flex items-center gap-2 text-emerald-200 text-xs font-bold uppercase tracking-wider mb-4">
-                  <GraduationCap className="w-4 h-4" /> {pick('Pack Estudante — Relatório Completo', 'Student Pack — Full Report', 'Pack Estudiante — Informe Completo')}
+                  <GraduationCap className="w-4 h-4" /> {pick('Relatório Completo', 'Complete Report', 'Informe Completo')}
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-8">
@@ -566,8 +566,10 @@ export default function StudentPackResults() {
                   </div>
 
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="text-2xl md:text-3xl font-bold mb-1">{perfil?.nome || t('ups_tenta_novamente')}</h1>
-                    <p className="text-emerald-200 text-sm mb-3">{perfil?.curso || perfil?.area_alvo || t('ups_tenta_novamente')}</p>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1">{pick('Pack Estudante', 'Student Pack', 'Pack Estudante')}</h1>
+                    {(perfil?.curso || perfil?.area_alvo) && (
+                      <p className="text-emerald-200 text-sm mb-3">{perfil?.curso || perfil?.area_alvo}</p>
+                    )}
                     {nivel && (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${nivelBadge(nivel)}`}>
                         <Star className="w-3.5 h-3.5" /> {nivel}
