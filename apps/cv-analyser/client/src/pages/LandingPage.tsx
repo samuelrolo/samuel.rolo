@@ -179,32 +179,31 @@ export default function LandingPage() {
 
       {/* ─── HERO ─── */}
       <section
-        className="relative flex items-center justify-center text-center text-white"
+        className="relative flex min-h-[calc(100svh-118px)] items-center justify-center text-center text-white md:min-h-screen"
         style={{
-          minHeight: "100vh",
           backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.5)), url('https://www.share2inspire.pt/images/hero-samuel-blur.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
         }}
       >
-        <div className="relative z-10 px-6 max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight mb-4" style={{ letterSpacing: "-0.5px" }}>
+        <div className="relative z-10 mx-auto max-w-3xl px-5 py-8 md:px-6 md:py-0">
+          <h1 className="text-2xl md:text-5xl font-semibold leading-tight mb-3 md:mb-4" style={{ letterSpacing: "-0.5px" }}>
             {pick(
               <>Constrói a tua carreira com <strong className="text-[#C9A961]">estratégia</strong>,<br className="hidden md:block" /> não por tentativa e erro</>,
               <>Build your career with <strong className="text-[#C9A961]">strategy</strong>,<br className="hidden md:block" /> not trial and error</>,
               <>Construye tu carrera con <strong className="text-[#C9A961]">estrategia</strong>,<br className="hidden md:block" /> no por ensayo y error</>
             )}
           </h1>
-          <p className="text-base md:text-lg text-white/70 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="mx-auto mb-6 max-w-lg text-sm leading-relaxed text-white/70 md:mb-10 md:max-w-xl md:text-lg">
             {pick(
               "Um ecossistema completo para perceberes onde estás, o que ajustar e qual o próximo passo certo.",
               "A complete ecosystem to understand where you are, what to adjust and what the right next step is.",
               "Un ecosistema completo para entender dónde estás, qué ajustar y cuál es el próximo paso correcto."
             )}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href={lp("/cv-analyser")} className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
+          <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
+            <a href={lp("/cv-analyser")} className="group mx-auto w-full max-w-xs rounded-xl border border-white/20 bg-white/10 px-5 py-4 text-left backdrop-blur transition-all hover:border-[#C9A961]/40 hover:bg-white/15 sm:mx-0 sm:px-6 sm:py-5">
               <h3 className="text-base font-semibold mb-1">
                 {pick("Quero melhorar o meu CV", "I want to improve my CV", "Quiero mejorar mi CV")}
               </h3>
@@ -219,7 +218,7 @@ export default function LandingPage() {
                 {pick("Analisar o meu CV", "Analyse my CV", "Analizar mi CV")} &rarr;
               </span>
             </a>
-            <a href={lp("/career-path")} className="group bg-white/10 backdrop-blur border border-white/20 rounded-xl px-6 py-5 text-left hover:bg-white/15 hover:border-[#C9A961]/40 transition-all max-w-xs">
+            <a href={lp("/career-path")} className="group mx-auto w-full max-w-xs rounded-xl border border-white/20 bg-white/10 px-5 py-4 text-left backdrop-blur transition-all hover:border-[#C9A961]/40 hover:bg-white/15 sm:mx-0 sm:px-6 sm:py-5">
               <h3 className="text-base font-semibold mb-1">
                 {pick("Quero definir o meu próximo passo", "I want to define my next step", "Quiero definir mi próximo paso")}
               </h3>

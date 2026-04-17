@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Chrome, GraduationCap } from "lucide-react";
+import { ArrowRight, Chrome, GraduationCap, X } from "lucide-react";
 import {
   Carousel,
   type CarouselApi,
@@ -9,10 +9,11 @@ import {
 import useTranslation from "@/i18n/useTranslation";
 
 const CHROME_WEB_STORE_URL = "https://chromewebstore.google.com/detail/share2inspire-%E2%80%94-job-saver/depelnoienlhmoolnepgjpdmoaocfdem";
+const STORAGE_KEY = "s2i_rotating_promo_banner_dismissed_v1";
 
 type PromoSlide = {
   id: string;
-  eyebrow: string;
+  badge: string;
   title: string;
   description: string;
   cta: string;
@@ -25,36 +26,42 @@ export default function RotatingPromoBanner() {
   const { pick, localePath } = useTranslation();
   const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [visible, setVisible] = useState(false);
 
   const slides = useMemo<PromoSlide[]>(() => [
     {
       id: "chrome-extension",
-      eyebrow: pick("Novo no ecossistema Share2Inspire", "New in the Share2Inspire ecosystem", "Nuevo en el ecosistema Share2Inspire"),
+      badge: pick("NOVO", "NEW", "NUEVO"),
       title: pick("Extensão Chrome — Job Saver", "Chrome Extension — Job Saver", "Extensión Chrome — Job Saver"),
       description: pick(
         "Guarda ofertas de emprego diretamente do LinkedIn",
         "Save job offers directly from LinkedIn",
         "Guarda ofertas de empleo directamente desde LinkedIn"
       ),
-      cta: pick("Instalar extensão", "Install extension", "Instalar extensión"),
+      cta: pick("Instalar", "Install", "Instalar"),
       href: CHROME_WEB_STORE_URL,
       external: true,
       icon: Chrome,
     },
     {
       id: "student-pack",
-      eyebrow: pick("Oferta em destaque", "Featured offer", "Oferta destacada"),
+      badge: pick("DESTAQUE", "FEATURED", "DESTACADO"),
       title: pick("Pack Estudante", "Student Pack", "Pack Estudiante"),
       description: pick(
-        "CV Analyser + LinkedIn Roaster num formato simples, elegante e pensado para o primeiro emprego.",
-        "CV Analyser + LinkedIn Roaster in a simple, elegant format designed for a first job search.",
-        "CV Analyser + LinkedIn Roaster en un formato simple, elegante y pensado para la búsqueda del primer empleo."
+        "CV Analyser + LinkedIn Roaster num formato simples e pensado para o primeiro emprego.",
+        "CV Analyser + LinkedIn Roaster in a simple format designed for a first job search.",
+        "CV Analyser + LinkedIn Roaster en un formato simple pensado para la búsqueda del primer empleo."
       ),
-      cta: pick("Descobrir pack", "Discover pack", "Descubrir pack"),
+      cta: pick("Descobrir", "Discover", "Descubrir"),
       href: localePath("/estudante"),
       icon: GraduationCap,
     },
   ], [localePath, pick]);
+
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem(STORAGE_KEY);
+    if (!dismissed) setVisible(true);
+  }, []);
 
   useEffect(() => {
     if (!api) return;
@@ -69,7 +76,7 @@ export default function RotatingPromoBanner() {
   }, [api]);
 
   useEffect(() => {
-    if (!api || slides.length <= 1) return;
+    if (!api || slides.length <= 1 || !visible) return;
 
     const intervalId = window.setInterval(() => {
       const lastIndex = slides.length - 1;
@@ -78,15 +85,22 @@ export default function RotatingPromoBanner() {
     }, 6000);
 
     return () => window.clearInterval(intervalId);
-  }, [api, slides.length]);
+  }, [api, slides.length, visible]);
+
+  function dismiss() {
+    sessionStorage.setItem(STORAGE_KEY, "1");
+    setVisible(false);
+  }
+
+  if (!visible) return null;
 
   return (
     <section className="relative z-20 border-b border-[#C9A961]/12 bg-[#0b211c] text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+      <div className="mx-auto max-w-6xl px-3 py-2 sm:px-6">
         <Carousel
           setApi={setApi}
           opts={{ loop: slides.length > 1, align: "start" }}
-          className="overflow-hidden rounded-[22px] border border-[#C9A961]/18 bg-gradient-to-r from-[#12392f] via-[#0f2f28] to-[#0b241f] shadow-[0_18px_44px_-30px_rgba(0,0,0,0.65)]"
+          className="overflow-hidden rounded-xl border border-[#C9A961]/18 bg-gradient-to-r from-[#12392f] via-[#103129] to-[#0d2722] shadow-[0_12px_28px_-24px_rgba(0,0,0,0.7)]"
         >
           <CarouselContent className="-ml-0">
             {slides.map((slide) => {
@@ -94,48 +108,59 @@ export default function RotatingPromoBanner() {
 
               return (
                 <CarouselItem key={slide.id} className="pl-0">
-                  <div className="flex flex-col gap-4 px-5 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5">
-                    <div className="flex items-start gap-3 md:gap-4">
-                      <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#C9A961]/30 bg-[#C9A961]/10 text-[#E4C773]">
-                        <Icon className="h-5 w-5" />
+                  <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4">
+                    <span className="hidden sm:inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C9A961]/25 bg-[#C9A961]/10 text-[#D8BC74]">
+                      <Icon className="h-4 w-4" />
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex rounded-full bg-white/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#D8BC74]">
+                          {slide.badge}
+                        </span>
+                        {slides.length > 1 && (
+                          <div className="hidden items-center gap-1 md:flex">
+                            {slides.map((item, index) => (
+                              <button
+                                key={item.id}
+                                type="button"
+                                aria-label={`${pick("Ir para slide", "Go to slide", "Ir a la diapositiva")} ${index + 1}`}
+                                onClick={() => api?.scrollTo(index)}
+                                className={`h-1.5 rounded-full transition-all ${activeIndex === index ? "w-5 bg-[#C9A961]" : "w-1.5 bg-white/30 hover:bg-white/45"}`}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#D8BC74]">
-                          {slide.eyebrow}
-                        </p>
-                        <h2 className="text-base font-semibold text-white md:text-lg">
+
+                      <div className="mt-1 flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2">
+                        <p className="truncate text-sm font-semibold text-white">
                           {slide.title}
-                        </h2>
-                        <p className="mt-1 text-sm leading-6 text-white/72 md:max-w-2xl">
-                          {slide.description}
+                        </p>
+                        <p className="hidden truncate text-sm text-white/72 sm:block">
+                          — {slide.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 md:justify-end">
-                      {slides.length > 1 && (
-                        <div className="flex items-center gap-1.5">
-                          {slides.map((item, index) => (
-                            <button
-                              key={item.id}
-                              type="button"
-                              aria-label={`${pick("Ir para slide", "Go to slide", "Ir a la diapositiva")} ${index + 1}`}
-                              onClick={() => api?.scrollTo(index)}
-                              className={`h-2.5 rounded-full transition-all ${activeIndex === index ? "w-7 bg-[#C9A961]" : "w-2.5 bg-white/25 hover:bg-white/40"}`}
-                            />
-                          ))}
-                        </div>
-                      )}
-
+                    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                       <a
                         href={slide.href}
                         target={slide.external ? "_blank" : undefined}
                         rel={slide.external ? "noopener noreferrer" : undefined}
-                        className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#C9A961] px-4 py-2.5 text-sm font-semibold text-[#13211c] transition-all hover:bg-[#d6b66a]"
+                        className="inline-flex min-h-[34px] items-center gap-1 rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-[#12392f] transition-all hover:bg-[#f6f2e6] sm:min-h-[36px]"
                       >
                         {slide.cta}
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </a>
+                      <button
+                        type="button"
+                        onClick={dismiss}
+                        aria-label={pick("Fechar banner", "Close banner", "Cerrar banner")}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 </CarouselItem>
