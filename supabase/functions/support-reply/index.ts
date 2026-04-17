@@ -14,8 +14,10 @@ const BRAND_URL = "https://www.share2inspire.pt";
 const BRAND_LOGO = "https://www.share2inspire.pt/images/logo.webp";
 const OPENAI_BASE_URL = (Deno.env.get("OPENAI_BASE_URL") || "https://api.openai.com/v1").replace(/\/$/, "");
 const OPENAI_MODEL = Deno.env.get("SUPPORT_REPLY_MODEL") || "gemini-2.5-flash";
+const GEMINI_MODEL = Deno.env.get("SUPPORT_REPLY_GEMINI_MODEL") || "gemini-2.5-flash";
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") || "";
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") || "";
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
 
 type SupportAction = "suggest_reply" | "send_reply" | "generate_voucher";
 type Lang = "pt" | "en" | "es";
@@ -272,8 +274,34 @@ async function getMessage(db: ReturnType<typeof supabaseAdmin>, messageId: numbe
 }
 
 async function callGeminiCompatibleJSON(prompt: string) {
-  if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+  if (GEMINI_API_KEY) {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.5,
+            responseMimeType: "application/json",
+          },
+        }),
+      },
+    );
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`LLM request failed: ${errorText}`);
+    }
+    const data = await response.json();
+    const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!content || typeof content !== "string") throw new Error("Empty model response");
+    return extractJson(content);
+  }
 
+  if (!OPENAI_API_KEY) throw new Error("Neither GEMINI_API_KEY nor OPENAI_API_KEY is configured");
   const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: "POST",
     headers: {
@@ -295,12 +323,10 @@ async function callGeminiCompatibleJSON(prompt: string) {
       ],
     }),
   });
-
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`LLM request failed: ${errorText}`);
   }
-
   const data = await response.json();
   const content = data?.choices?.[0]?.message?.content;
   if (!content || typeof content !== "string") throw new Error("Empty model response");
@@ -376,7 +402,7 @@ Return strictly JSON in this format:
 }
 
 async function findCouponTable(db: ReturnType<typeof supabaseAdmin>) {
-  const candidates = ["discount_codes", "coupons", "discount_coupons", "vouchers"];
+  const candidates = ["discount_coupons", "discount_codes", "coupons", "vouchers"];
   for (const table of candidates) {
     const { error } = await db.from(table).select("*", { count: "exact", head: true }).limit(1);
     if (!error) return table;
@@ -409,7 +435,24 @@ async function createVoucher(db: ReturnType<typeof supabaseAdmin>, message: Cont
   const nowIso = new Date().toISOString();
   const maxUses = Math.max(1, Number(body.max_uses ?? 1));
 
-  if (["discount_codes", "coupons", "discount_coupons"].includes(table)) {
+  if (table === "discount_coupons") {
+    const payload: JsonRecord = {
+      code,
+      discount_percent: discountPercent,
+      partner_name: "Share2Inspire Support",
+      description: `Voucher de suporte gerado para ${message.email || "cliente sem email"}`,
+      applicable_products: [applicableProduct],
+      max_uses: maxUses,
+      current_uses: 0,
+      valid_until: validUntil.toISOString(),
+      is_active: true,
+    };
+    const { data, error } = await db.from(table).insert(payload).select("*").single();
+    if (error) throw new Error(`Could not create voucher in ${table}: ${error.message}`);
+    return { table, code, valid_until: validUntil.toISOString(), record: data };
+  }
+
+  if (["discount_codes", "coupons"].includes(table)) {
     const payload: JsonRecord = {
       code,
       discount_percent: discountPercent,
@@ -422,11 +465,11 @@ async function createVoucher(db: ReturnType<typeof supabaseAdmin>, message: Cont
       created_at: nowIso,
       updated_at: nowIso,
     };
-
     const { data, error } = await db.from(table).insert(payload).select("*").single();
     if (error) throw new Error(`Could not create voucher in ${table}: ${error.message}`);
     return { table, code, valid_until: validUntil.toISOString(), record: data };
   }
+
 
   const voucherPayload: JsonRecord = {
     code,
