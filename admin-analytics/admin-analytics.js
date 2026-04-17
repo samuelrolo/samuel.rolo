@@ -107,8 +107,12 @@ let allCoupons         = [];
 let usersPage          = 1;
 
 let globalLang       = 'all';
+let uiLang           = localStorage.getItem('s2i_admin_ui_lang') || 'pt';
 let nurturingLang    = 'pt';
 let dashPeriodDays   = 0;
+let lastDataRefreshAt = null;
+let toastCounter     = 0;
+let currentMsgId     = null;
 let funnelPeriodDays = 0;
 let currentPage      = 1;
 let historyPage      = 1;
@@ -198,14 +202,18 @@ async function supaDelete(table, id) {
 // ═══════════════════════════════════════════════════════════════
 function detectLanguage(a) {
     if (a.analysis_type && a.analysis_type.includes('_en')) return 'en';
+    if (a.analysis_type && a.analysis_type.includes('_es')) return 'es';
     const area = (a.professional_area || '').toLowerCase();
     const email = (a.user_email || '').toLowerCase();
     const ptAreas = ['engenheiro','analista','gestor','programador','técnico','consultor','administra'];
     const enAreas = ['software engineer','data scientist','project manager','developer','analyst'];
+    const esAreas = ['ingeniero','analista','gestor','desarrollador','consultor','marketing'];
     for (const x of ptAreas) if (area.includes(x)) return 'pt';
     for (const x of enAreas) if (area.includes(x)) return 'en';
+    for (const x of esAreas) if (area.includes(x)) return 'es';
     if (email.endsWith('.pt') || email.endsWith('.br')) return 'pt';
     if (email.endsWith('.uk') || email.endsWith('.io')) return 'en';
+    if (email.endsWith('.es')) return 'es';
     return 'pt';
 }
 
@@ -270,9 +278,9 @@ function getTypeBadge(type) {
     return map[type] || map.free;
 }
 function getLangBadge(lang) {
-    return lang === 'en'
-        ? '<span class="badge badge-en">🇬🇧 EN</span>'
-        : '<span class="badge badge-pt">🇵🇹 PT</span>';
+    if (lang === 'en') return '<span class="badge badge-en">🇬🇧 EN</span>';
+    if (lang === 'es') return '<span class="badge" style="background:#FEF3C7;color:#92400E;">🇪🇸 ES</span>';
+    return '<span class="badge badge-pt">🇵🇹 PT</span>';
 }
 function isStudentPack(a) {
     const type = (a?.analysis_type || a?.product || a?._source || '').toLowerCase();
@@ -316,19 +324,123 @@ function getStageBadge(stage) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  TOAST & HELPERS
+//  TOAST, I18N & TIME HELPERS
 // ═══════════════════════════════════════════════════════════════
+function tr(pt, en, es) {
+    return uiLang === 'en' ? en : uiLang === 'es' ? es : pt;
+}
+
+function formatUiDate(value, options = {}) {
+    if (!value) return tr('Sem dados', 'No data', 'Sin datos');
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return tr('Sem dados', 'No data', 'Sin datos');
+    const locale = uiLang === 'en' ? 'en-GB' : uiLang === 'es' ? 'es-ES' : 'pt-PT';
+    return date.toLocaleString(locale, {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+        ...options
+    });
+}
+
+function formatRelativeRefresh(value) {
+    if (!value) return tr('Sem dados', 'No data', 'Sin datos');
+    return tr('Última atualização: ', 'Last update: ', 'Última actualización: ') + formatUiDate(value);
+}
+
+function updateLastRefreshTimestamp(value = new Date()) {
+    if (!value) {
+        lastDataRefreshAt = null;
+        const el = document.getElementById('lastUpdate');
+        if (el) el.textContent = tr('Última atualização: sem dados', 'Last update: no data', 'Última actualización: sin datos');
+        return;
+    }
+    lastDataRefreshAt = value instanceof Date ? value : new Date(value);
+    const el = document.getElementById('lastUpdate');
+    if (el) el.textContent = formatRelativeRefresh(lastDataRefreshAt);
+}
+
+function closeToast(id) {
+    const toast = document.getElementById(id);
+    if (!toast) return;
+    toast.classList.remove('show');
+    toast.classList.add('toast-closing');
+    setTimeout(() => toast.remove(), 260);
+}
+
 function showToast(msg, type = 'info') {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.className = `show ${type}`;
-    setTimeout(() => { t.className = ''; }, 3500);
+    const stack = document.getElementById('toastStack');
+    if (!stack || !msg) return;
+    const toastId = `toast-${Date.now()}-${++toastCounter}`;
+    const iconMap = {
+        success: 'fa-circle-check',
+        danger: 'fa-circle-exclamation',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+    };
+    const safeType = ['success', 'danger', 'warning', 'info'].includes(type) ? type : 'info';
+    const toast = document.createElement('div');
+    toast.id = toastId;
+    toast.className = `toast ${safeType}`;
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `
+        <div class="toast-icon"><i class="fas ${iconMap[safeType] || iconMap.info}"></i></div>
+        <div class="toast-content">
+            <div class="toast-title">${safeType === 'success' ? tr('Sucesso', 'Success', 'Éxito') : safeType === 'danger' ? tr('Erro', 'Error', 'Error') : safeType === 'warning' ? tr('Aviso', 'Warning', 'Aviso') : tr('Informação', 'Information', 'Información')}</div>
+            <div class="toast-message">${msg}</div>
+        </div>
+        <button class="toast-close" type="button" aria-label="Close" onclick="closeToast('${toastId}')"><i class="fas fa-times"></i></button>`;
+    stack.prepend(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => closeToast(toastId), 4600);
+}
+
+function setUILang(lang, btn) {
+    uiLang = lang;
+    localStorage.setItem('s2i_admin_ui_lang', lang);
+    document.querySelectorAll('#uiLangToggle button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    applyUILanguage();
+    if (lastDataRefreshAt) updateLastRefreshTimestamp(lastDataRefreshAt);
+    if (document.getElementById('userProfileModal')?.style.display === 'flex') {
+        const email = document.getElementById('userProfileModal')?.dataset?.email;
+        if (email) showUserProfile(email);
+    }
+    if (document.getElementById('msgModalOverlay')?.style.display === 'flex' && currentMsgId) openMsgModal(currentMsgId);
+}
+
+function applyUILanguage() {
+    const map = {
+        headerSubtitle: tr('Cockpit de Gestão', 'Management Dashboard', 'Panel de Gestión'),
+        uiLangLabel: tr('Interface', 'Interface', 'Interfaz'),
+        dataLangLabel: tr('Dados', 'Data', 'Datos'),
+        healthStatus: tr('Sistema operacional', 'System operational', 'Sistema operativo'),
+        refreshBtnLabel: tr('Atualizar', 'Refresh', 'Actualizar'),
+        logoutBtnLabel: tr('Sair', 'Logout', 'Salir'),
+        navCockpit: tr('Cockpit', 'Dashboard', 'Panel'),
+        navFunnel: tr('Funil', 'Funnel', 'Embudo'),
+        navCrm: 'CRM & Leads',
+        navPartnerships: tr('Parcerias', 'Partnerships', 'Partners'),
+        navUsers: tr('Utilizadores', 'Users', 'Usuarios'),
+        navSystem: tr('Sistema', 'System', 'Sistema')
+    };
+    Object.entries(map).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    });
 }
 
 function setText(id, val) {
     const el = document.getElementById(id);
-    if (el) el.textContent = val;
+    if (!el) return;
+    if (val === null || val === undefined || val === '') {
+        el.textContent = tr('Sem dados', 'No data', 'Sin datos');
+        return;
+    }
+    el.textContent = val;
+}
+
+function formatMetricValue(value, formatter) {
+    if (value === null || value === undefined || Number.isNaN(value)) return tr('Sem dados', 'No data', 'Sin datos');
+    return typeof formatter === 'function' ? formatter(value) : value;
 }
 
 function renderPagination(containerId, currentPage, totalPages, onPageChange) {
@@ -363,7 +475,6 @@ function switchTab(name, btn) {
     // Lazy render on first visit
     if (name === 'funnel') renderFunnel();
     if (name === 'crm') { renderCRM(); renderAutoEmailsMonitoring(); renderNurturingSegments(); }
-    if (name === 'market') { renderJobSearchTable(); renderCETable(); }
     if (name === 'partnerships') { renderAffiliates(); renderCoupons(); }
     if (name === 'users') renderUsers();
     if (name === 'system') { renderHealthLogs(); updateBrevoKeyStatus(); }
@@ -415,7 +526,7 @@ function switchPartnerSubtab(name, btn) {
 function setGlobalLang(lang, btn) {
     globalLang = lang;
     document.querySelectorAll('#globalLangToggle button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     updateDashboard();
     updateCharts();
 }
@@ -423,7 +534,7 @@ function setGlobalLang(lang, btn) {
 function setNurturingLang(lang, btn) {
     nurturingLang = lang;
     document.querySelectorAll('#nurturingLangToggle button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     if (nurturingSegment) prepareNurturing(nurturingSegment);
 }
 
@@ -763,7 +874,7 @@ function updateDashboard() {
     // Activity Feed
     renderActivityFeed(data);
 
-    document.getElementById('lastUpdate').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-PT');
+    updateLastRefreshTimestamp(new Date());
 }
 
 function renderCockpitInsights(data, paid, free, cp, ciAll, lr, realRevenue, uniqueEmails, abandonRate) {
@@ -1158,6 +1269,62 @@ function getCRMPlannedAction(p) {
     return '<span style="color:var(--text-muted);">—</span>';
 }
 
+function buildAutomationSummaryCards() {
+    const emailLogs = Array.isArray(allEmailHistory) ? allEmailHistory : [];
+    const welcomeLogs = Array.isArray(allWelcomeEmails) ? allWelcomeEmails : [];
+    const byStatus = (logs) => {
+        const success = logs.filter(l => (l.status || 'sent') === 'sent').length;
+        const failed = logs.filter(l => ['failed', 'error'].includes((l.status || '').toLowerCase())).length;
+        const total = logs.length;
+        return {
+            total,
+            success,
+            failed,
+            successRate: total > 0 ? `${((success / total) * 100).toFixed(1)}%` : tr('Sem dados', 'No data', 'Sin datos'),
+            failureRate: total > 0 ? `${((failed / total) * 100).toFixed(1)}%` : tr('Sem dados', 'No data', 'Sin datos'),
+            lastSentAt: logs.map(l => l.sent_at || l.created_at).filter(Boolean).sort().slice(-1)[0] || null
+        };
+    };
+    return [
+        { key: 'send-welcome-email', title: 'send-welcome-email', logs: welcomeLogs, active: welcomeLogs.length > 0 },
+        { key: 'upsell_auto_2h', title: 'auto_emails · Upsell 2H', logs: emailLogs.filter(e => ['upsell_auto_2h'].includes(e.email_type || e.campaign_type)), active: true },
+        { key: 'upsell_auto_7d', title: 'auto_emails · Follow-up 7D', logs: emailLogs.filter(e => ['upsell_auto_7d'].includes(e.email_type || e.campaign_type)), active: true },
+        { key: 'crosssell_cv_to_cp', title: 'auto_emails · Cross-sell CV→CP', logs: emailLogs.filter(e => ['crosssell_cv_to_cp'].includes(e.email_type || e.campaign_type)), active: true },
+        { key: 'crosssell_cp_to_pro', title: 'auto_emails · Cross-sell CP→Pro', logs: emailLogs.filter(e => ['crosssell_cp_to_pro'].includes(e.email_type || e.campaign_type)), active: true },
+        { key: 'nurturing', title: 'Nurturing emails', logs: emailLogs.filter(e => ['campaign', 'manual'].includes(e.email_type) || (e.campaign_type || '').includes('newsletter') || (e.campaign_type || '').includes('nurturing')), active: emailLogs.some(e => ['campaign', 'manual'].includes(e.email_type) || (e.campaign_type || '').includes('newsletter') || (e.campaign_type || '').includes('nurturing')) },
+        { key: 'lead_magnet_brevo', title: 'Lead Magnet Brevo', logs: emailLogs.filter(e => (e.campaign_type || '').includes('lead_magnet') || (e.subject || '').toLowerCase().includes('checklist')), active: emailLogs.some(e => (e.campaign_type || '').includes('lead_magnet') || (e.subject || '').toLowerCase().includes('checklist')) }
+    ].map(item => ({ ...item, metrics: byStatus(item.logs) }));
+}
+
+function renderAutomationSummaryCards() {
+    const grid = document.getElementById('automationCardsGrid');
+    const summary = document.getElementById('automationCardsSummary');
+    if (!grid) return;
+    const cards = buildAutomationSummaryCards();
+    const cardsWithRealData = cards.filter(card => card.metrics.total > 0);
+    if (summary) summary.textContent = cardsWithRealData.length > 0
+        ? `${cardsWithRealData.length} ${tr('automações com registos', 'automations with logs', 'automatizaciones con registros')}`
+        : tr('Sem logs reais de automação', 'No real automation logs', 'Sin logs reales de automatización');
+    grid.innerHTML = cards.map(card => {
+        const accent = card.metrics.failed > 0 ? 'var(--orange)' : card.active ? 'var(--green)' : 'var(--text-muted)';
+        return `<div style="border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--bg);border-top:3px solid ${accent};display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text);">${esc(card.title)}</div>
+                <span class="badge ${card.active ? 'badge-success' : 'badge-secondary'}">${card.active ? tr('Ativa', 'Active', 'Activa') : tr('Sem dados', 'No data', 'Sin datos')}</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);">${tr('Último envio', 'Last send', 'Último envío')}: ${card.metrics.lastSentAt ? formatUiDate(card.metrics.lastSentAt) : tr('Sem dados', 'No data', 'Sin datos')}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">${tr('Total enviados', 'Total sent', 'Total enviados')}</div><div style="font-size:18px;font-weight:700;color:var(--text);">${formatMetricValue(card.metrics.total)}</div></div>
+                <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">${tr('Sucesso', 'Success', 'Éxito')}</div><div style="font-size:18px;font-weight:700;color:var(--green);">${card.metrics.total > 0 ? card.metrics.successRate : tr('Sem dados', 'No data', 'Sin datos')}</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">${tr('Falhas', 'Failures', 'Fallos')}</div><div style="font-size:16px;font-weight:700;color:var(--red);">${card.metrics.total > 0 ? card.metrics.failed : tr('Sem dados', 'No data', 'Sin datos')}</div></div>
+                <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">${tr('Taxa de falha', 'Failure rate', 'Tasa de fallo')}</div><div style="font-size:16px;font-weight:700;color:var(--orange);">${card.metrics.total > 0 ? card.metrics.failureRate : tr('Sem dados', 'No data', 'Sin datos')}</div></div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 function renderAutoEmailsMonitoring() {
     // Check both email_type and campaign_type columns (SQL functions use campaign_type, JS manual uses email_type)
     const isAutoType = (e, type) => e.email_type === type || e.campaign_type === type;
@@ -1180,6 +1347,7 @@ function renderAutoEmailsMonitoring() {
     setText('autoCrossCpPro', crossCpPro);
     setText('autoConversions', conversions);
     setText('autoConvRate', convRate);
+    renderAutomationSummaryCards();
     const tbody = document.getElementById('autoEmailsTable');
     if (!tbody) return;
     const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 20);
@@ -1327,45 +1495,155 @@ function exportCRMCSV() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  USER PROFILE MODAL
+//  MINI CRM SIDEBAR
 // ═══════════════════════════════════════════════════════════════
-function showUserProfile(email) {
-    const profiles = buildCRMProfiles();
-    const p = profiles.find(x => x.email === email);
-    if (!p) return;
-    document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${p.name || p.email}`;
-    document.getElementById('userProfileModal').style.display = 'flex';
-    const sentEmails = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === email);
-    const timeline = [...p.analyses, ...sentEmails].sort((a, b) => new Date(b.created_at || b.sent_at) - new Date(a.created_at || a.sent_at));
-    document.getElementById('userProfileBody').innerHTML = `
-        <div class="profile-section"><h4>Informação do Contacto</h4>
-            <div class="profile-row"><span>Email</span><span>${p.email}</span></div>
-            <div class="profile-row"><span>Nome</span><span>${p.name || '—'}</span></div>
-            <div class="profile-row"><span>Área Profissional</span><span>${p.professional_area || '—'}</span></div>
-            <div class="profile-row"><span>Senioridade</span><span>${p.seniority || '—'}</span></div>
-            <div class="profile-row"><span>Etapa do Funil</span><span>${getStageBadge(p.stage)}</span></div>
-            <div class="profile-row"><span>Primeira Interação</span><span>${new Date(p.firstInteraction).toLocaleDateString('pt-PT')}</span></div>
-            <div class="profile-row"><span>Última Interação</span><span>${new Date(p.lastInteraction).toLocaleDateString('pt-PT')}</span></div>
-        </div>
-        <div class="profile-section"><h4>Produtos & Compras</h4>
-            <div class="profile-row"><span>Análises Realizadas</span><span>${p.analyses.length}</span></div>
-            <div class="profile-row"><span>Produtos Comprados</span><span>${p.purchases.length}</span></div>
-            <div class="profile-row"><span>Total Gasto</span><span style="font-weight:700;color:var(--gold);">${p.totalSpent.toFixed(2)}€</span></div>
-        </div>
-        <div class="profile-section"><h4>Histórico de Atividade</h4>
-            ${timeline.slice(0, 10).map(item => {
-                const isEmail = item.sent_at;
-                const date = new Date(item.created_at || item.sent_at).toLocaleDateString('pt-PT');
-                const desc = isEmail ? `Email: ${item.subject || item.email_type || 'Follow-up'}` : `Análise ${getAnalysisType(item)} — Score: ${item.score || '—'}`;
-                return `<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div>${desc}</div><div class="timeline-date">${date}</div></div></div>`;
-            }).join('')}
-        </div>
-        <div style="display:flex;gap:8px;margin-top:16px;">
-            <button class="btn btn-gold btn-sm" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\'")}','${p.stage || ''}')"><i class="fas fa-envelope"></i> Enviar Email</button>
-            <button class="btn btn-outline btn-sm" onclick="closeUserProfile()">Fechar</button>
+function normalizePlanLabel(value, fallback = '') {
+    const source = `${value || ''} ${fallback || ''}`.toLowerCase();
+    if (!source.trim()) return tr('Sem dados', 'No data', 'Sin datos');
+    if (source.includes('student')) return 'Student Pack';
+    if (source.includes('bundle')) return 'Bundle';
+    if (source.includes('career path')) return 'Career Path';
+    if (source.includes('career intelligence')) return 'Career Intelligence';
+    if (source.includes('linkedin')) return 'LinkedIn Roaster';
+    if (source.includes('cv')) return 'CV Analyser';
+    return value || fallback || tr('Sem dados', 'No data', 'Sin datos');
+}
+
+function buildMiniCRMProfile(email) {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    if (!normalizedEmail) return null;
+
+    const crmProfile = buildCRMProfiles().find(x => x.email === normalizedEmail) || null;
+    const mergedUser = getMergedUsers().find(u => (u.email || '').toLowerCase() === normalizedEmail) || null;
+    const vouchers = allVouchers.filter(v => (v.email || '').trim().toLowerCase() === normalizedEmail);
+
+    const analysesMap = new Map();
+    [...(crmProfile?.analyses || []), ...(mergedUser?.analyses || [])].forEach(item => {
+        if (!item) return;
+        const key = `${item.created_at || ''}-${item.analysis_type || ''}-${item.user_id || ''}`;
+        if (!analysesMap.has(key)) analysesMap.set(key, item);
+    });
+    const analyses = [...analysesMap.values()].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    const purchaseEvents = [
+        ...(crmProfile?.purchases || []).map(item => ({
+            product: normalizePlanLabel(item.analysis_type, item.plan_name),
+            date: item.created_at,
+            amount: item.payment_amount,
+            source: 'analysis'
+        })),
+        ...vouchers.map(item => ({
+            product: normalizePlanLabel(item.plan_name, item.voucher_type),
+            date: item.created_at,
+            amount: item.amount_paid,
+            source: 'voucher'
+        })),
+        ...(mergedUser?.all_subs || []).map(item => ({
+            product: normalizePlanLabel(item.plan, item.status),
+            date: item.started_at || item.created_at,
+            amount: item.price_eur,
+            source: 'subscription',
+            active: item.status === 'active' && (!item.expires_at || new Date(item.expires_at) > new Date())
+        }))
+    ].filter(item => item.product && item.date).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const activeLicense = mergedUser?.active_sub
+        ? normalizePlanLabel(mergedUser.active_sub.plan, mergedUser.active_sub.status)
+        : vouchers.find(v => v.is_active === true || ((v.used_analyses || 0) < (v.total_analyses || 1)))
+            ? normalizePlanLabel(vouchers.find(v => v.is_active === true || ((v.used_analyses || 0) < (v.total_analyses || 1)))?.plan_name)
+            : null;
+
+    const firstAnalysisDate = analyses.length > 0 ? analyses[analyses.length - 1].created_at : null;
+    const lastAnalysisDate = analyses.length > 0 ? analyses[0].created_at : null;
+    const name = (mergedUser && `${mergedUser.first_name || ''} ${mergedUser.last_name || ''}`.trim()) || crmProfile?.name || allContacts.find(c => (c.email || '').toLowerCase() === normalizedEmail)?.name || '';
+
+    return {
+        email: normalizedEmail,
+        name: name || tr('Sem nome', 'No name', 'Sin nombre'),
+        totalAnalyses: analyses.length,
+        firstAnalysisDate,
+        lastAnalysisDate,
+        activeLicense,
+        activeLicenseExpiresAt: mergedUser?.active_sub?.expires_at || null,
+        products: purchaseEvents,
+        totalSpent: crmProfile?.totalSpent || 0,
+        stage: crmProfile?.stage || null,
+        professionalArea: crmProfile?.professional_area || mergedUser?.professional_area || '',
+        analyses,
+        mergedUser
+    };
+}
+
+function renderMiniCRMHtml(profile, options = {}) {
+    if (!profile) {
+        return `<div class="mini-crm-empty">${tr('Sem dados reais deste contacto.', 'No real data available for this contact.', 'No hay datos reales de este contacto.')}</div>`;
+    }
+    const productsHtml = profile.products.length > 0
+        ? `<div class="mini-crm-list">${profile.products.slice(0, 8).map(item => `
+            <div class="mini-crm-list-item">
+                <div>
+                    <div class="mini-crm-list-title">${esc(item.product)}</div>
+                    <div class="mini-crm-list-meta">${formatUiDate(item.date)}${item.amount ? ` · ${Number(item.amount).toFixed(2)}€` : ''}</div>
+                </div>
+                <span class="badge ${item.active ? 'badge-success' : 'badge-secondary'}">${item.active ? tr('Ativa', 'Active', 'Activa') : tr('Registo', 'Record', 'Registro')}</span>
+            </div>`).join('')}</div>`
+        : `<div class="mini-crm-empty">${tr('Sem compras ou licenças registadas.', 'No purchases or licenses recorded.', 'Sin compras o licencias registradas.')}</div>`;
+
+    const activityHtml = profile.analyses.length > 0
+        ? `<div class="mini-crm-list">${profile.analyses.slice(0, 6).map(item => `
+            <div class="mini-crm-list-item">
+                <div>
+                    <div class="mini-crm-list-title">${esc(normalizePlanLabel(item.analysis_type))}</div>
+                    <div class="mini-crm-list-meta">${formatUiDate(item.created_at)}${item.score ? ` · Score ${item.score}` : ''}</div>
+                </div>
+            </div>`).join('')}</div>`
+        : `<div class="mini-crm-empty">${tr('Sem análises registadas.', 'No analyses recorded.', 'Sin análisis registrados.')}</div>`;
+
+    return `
+        <div class="mini-crm-card">
+            <div class="mini-crm-header-row">
+                <div>
+                    <div class="mini-crm-eyebrow">${tr('Mini CRM', 'Mini CRM', 'Mini CRM')}</div>
+                    <h4>${esc(profile.name)}</h4>
+                    <div class="mini-crm-muted">${esc(profile.email)}</div>
+                </div>
+                <div>${profile.stage ? getStageBadge(profile.stage) : `<span class="badge badge-secondary">${tr('Sem etapa', 'No stage', 'Sin etapa')}</span>`}</div>
+            </div>
+            <div class="mini-crm-grid">
+                <div class="mini-crm-stat"><span>${tr('Licença ativa', 'Active license', 'Licencia activa')}</span><strong>${profile.activeLicense ? esc(profile.activeLicense) : tr('Sem licença ativa', 'No active license', 'Sin licencia activa')}</strong><small>${profile.activeLicenseExpiresAt ? formatUiDate(profile.activeLicenseExpiresAt) : tr('Sem data de expiração', 'No expiry date', 'Sin fecha de expiración')}</small></div>
+                <div class="mini-crm-stat"><span>${tr('Total de análises', 'Total analyses', 'Análisis totales')}</span><strong>${profile.totalAnalyses > 0 ? profile.totalAnalyses : tr('Sem dados', 'No data', 'Sin datos')}</strong><small>${profile.lastAnalysisDate ? formatUiDate(profile.lastAnalysisDate) : tr('Sem atividade recente', 'No recent activity', 'Sin actividad reciente')}</small></div>
+                <div class="mini-crm-stat"><span>${tr('Primeira análise', 'First analysis', 'Primer análisis')}</span><strong>${profile.firstAnalysisDate ? formatUiDate(profile.firstAnalysisDate, { hour: undefined, minute: undefined }) : tr('Sem dados', 'No data', 'Sin datos')}</strong><small>${profile.professionalArea ? esc(profile.professionalArea) : tr('Área não disponível', 'Area unavailable', 'Área no disponible')}</small></div>
+                <div class="mini-crm-stat"><span>${tr('Total gasto', 'Total spent', 'Total gastado')}</span><strong>${profile.totalSpent > 0 ? `${profile.totalSpent.toFixed(2)}€` : tr('Sem dados', 'No data', 'Sin datos')}</strong><small>${profile.products.length > 0 ? `${profile.products.length} ${tr('registos', 'records', 'registros')}` : tr('Sem compras', 'No purchases', 'Sin compras')}</small></div>
+            </div>
+            <div class="mini-crm-section">
+                <div class="mini-crm-section-title">${tr('Produtos adquiridos', 'Products acquired', 'Productos adquiridos')}</div>
+                ${productsHtml}
+            </div>
+            ${options.hideActivity ? '' : `<div class="mini-crm-section"><div class="mini-crm-section-title">${tr('Histórico de análises', 'Analysis history', 'Historial de análisis')}</div>${activityHtml}</div>`}
+            <div class="mini-crm-actions">
+                <button class="btn btn-gold btn-sm" onclick="openEmailModal('${profile.email}','${(profile.name || '').replace(/'/g, '&apos;')}','${profile.stage || ''}')"><i class="fas fa-envelope"></i> ${tr('Enviar Email', 'Send email', 'Enviar email')}</button>
+                <button class="btn btn-outline btn-sm" onclick="closeUserProfile()">${tr('Fechar', 'Close', 'Cerrar')}</button>
+            </div>
         </div>`;
 }
-function closeUserProfile() { document.getElementById('userProfileModal').style.display = 'none'; }
+
+function showUserProfile(email) {
+    const profile = buildMiniCRMProfile(email);
+    if (!profile) {
+        showToast(tr('Sem dados reais para este utilizador.', 'No real data for this user.', 'Sin datos reales para este usuario.'), 'warning');
+        return;
+    }
+    const modal = document.getElementById('userProfileModal');
+    modal.dataset.email = profile.email;
+    document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${tr('Mini CRM do Utilizador', 'User mini CRM', 'Mini CRM del usuario')}`;
+    document.getElementById('userProfileBody').innerHTML = renderMiniCRMHtml(profile);
+    modal.style.display = 'flex';
+}
+function closeUserProfile() {
+    const modal = document.getElementById('userProfileModal');
+    modal.style.display = 'none';
+    delete modal.dataset.email;
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  ANÁLISES TAB
@@ -1561,6 +1839,14 @@ function loadEmailTemplate() {
             upsell_ci: { subject: 'Career Intelligence PRO — take your career to the next level', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">You already have your Career Path. Now it's time to go deeper with <strong style="color:#C9A961;">Career Intelligence PRO</strong> — a deep analysis of your professional market.</p><p style="font-size:15px;color:#333;line-height:1.7;">What you'll discover:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Salary trends in your field</li><li>Top hiring companies for your profile</li><li>Emerging skills in the market</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explore Career Intelligence →</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>` },
             followup: { subject: 'Can we help with your career?', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you visited <strong>Share2Inspire</strong> recently. We hope you found useful information for your career.</p><p style="font-size:15px;color:#333;line-height:1.7;">If you have any questions about our tools — CV analysis, Career Path, Career Intelligence, or the Student Pack — we're here to help.</p><p style="font-size:15px;color:#333;line-height:1.7;">Simply reply to this email and we'll get back to you shortly.</p><p style="font-size:14px;color:#666;">Best regards,<br><strong>Share2Inspire Team</strong></p>` },
             testimonial: { subject: 'Your opinion matters to us', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We hope your experience with <strong>Share2Inspire</strong> has been positive! Your feedback helps us improve and support more professionals.</p><p style="font-size:15px;color:#333;line-height:1.7;">We'd love for you to share a brief testimonial about how our tools helped your career.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">⭐ Leave a Google Review →</a></p><p style="font-size:14px;color:#666;">Thank you for your time!<br><strong>Share2Inspire Team</strong></p>` }
+        },
+        es: {
+            upsell_cv: { subject: 'Tu CV merece más — desbloquea el análisis completo', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Hemos visto que hiciste un <strong>análisis gratuito de tu CV</strong> en Share2Inspire. Los resultados preliminares ya te dieron una visión general, pero hay mucho más por descubrir.</p><p style="font-size:15px;color:#333;line-height:1.7;">Con la <strong style="color:#C9A961;">versión completa</strong> recibes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Recomendaciones detalladas por sección del CV</li><li>Sugerencias de palabras clave para ATS</li><li>Comparación con perfiles de éxito en tu área</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Desbloquear análisis completo →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>` },
+            upsell_cp: { subject: 'Tu Career Path personalizado te está esperando', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">A partir del análisis de tu CV, hemos preparado un <strong style="color:#C9A961;">Career Path personalizado</strong> para ti. Descubre qué roles encajan mejor con tu perfil y qué competencias deberías desarrollar ahora.</p><p style="font-size:15px;color:#333;line-height:1.7;">Tu Career Path incluye:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Mapa de oportunidades profesionales</li><li>Análisis de competencias frente al mercado</li><li>Roadmap de desarrollo profesional</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Descubrir mi Career Path →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>` },
+            upsell_student_pack: { subject: 'El Student Pack puede darte ventaja al empezar tu carrera', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">El <strong style="color:#C9A961;">Student Pack</strong> fue creado para estudiantes y recién graduados que quieren presentarse mejor y postular con más confianza.</p><p style="font-size:15px;color:#333;line-height:1.7;">Es una solución práctica para mejorar tu CV, organizar mejor tus candidaturas y aclarar tus próximos pasos profesionales.</p><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/student-pack" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar el Student Pack →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>` },
+            upsell_ci: { subject: 'Career Intelligence PRO — lleva tu carrera al siguiente nivel', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Ya tienes tu Career Path. Ahora es el momento de profundizar con <strong style="color:#C9A961;">Career Intelligence PRO</strong>, un análisis profundo de tu mercado profesional.</p><p style="font-size:15px;color:#333;line-height:1.7;">Lo que descubrirás:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Tendencias salariales en tu área</li><li>Empresas que más contratan perfiles como el tuyo</li><li>Competencias emergentes en el mercado</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar Career Intelligence →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>` },
+            followup: { subject: '¿Podemos ayudarte con tu carrera?', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Hemos visto que visitaste <strong>Share2Inspire</strong> recientemente. Esperamos que hayas encontrado información útil para tu carrera.</p><p style="font-size:15px;color:#333;line-height:1.7;">Si tienes alguna pregunta sobre nuestras herramientas — análisis de CV, Career Path, Career Intelligence o Student Pack — estamos aquí para ayudarte.</p><p style="font-size:15px;color:#333;line-height:1.7;">Solo tienes que responder a este correo y te contestaremos en breve.</p><p style="font-size:14px;color:#666;">Un saludo,<br><strong>Equipo Share2Inspire</strong></p>` },
+            testimonial: { subject: 'Tu opinión es importante para nosotros', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Esperamos que tu experiencia con <strong>Share2Inspire</strong> haya sido positiva. Tu opinión nos ayuda a mejorar y a apoyar a más profesionales.</p><p style="font-size:15px;color:#333;line-height:1.7;">Nos encantaría que compartieras un breve testimonio sobre cómo nuestras herramientas te ayudaron en tu carrera.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">⭐ Dejar reseña en Google →</a></p><p style="font-size:14px;color:#666;">Gracias por tu tiempo.<br><strong>Equipo Share2Inspire</strong></p>` }
         }
     };
     const t = templates[lang]?.[tpl];
@@ -1572,10 +1858,11 @@ function loadEmailTemplate() {
 
 function wrapEmailTemplate(bodyHtml, lang = 'pt') {
     const isEn = lang === 'en';
-    const reviewText = isEn ? 'How was your experience? Leave us a review' : 'Como foi a tua experiência? Deixa-nos uma avaliação';
-    const followText = isEn ? 'Follow us' : 'Segue-nos';
-    const unsubText = isEn ? 'You received this email because you interacted with Share2Inspire.' : 'Recebeste este email porque interagiste com o Share2Inspire.';
-    const rightsText = isEn ? 'All rights reserved.' : 'Todos os direitos reservados.';
+    const isEs = lang === 'es';
+    const reviewText = isEn ? 'How was your experience? Leave us a review' : isEs ? '¿Cómo fue tu experiencia? Déjanos una reseña' : 'Como foi a tua experiência? Deixa-nos uma avaliação';
+    const followText = isEn ? 'Follow us' : isEs ? 'Síguenos' : 'Segue-nos';
+    const unsubText = isEn ? 'You received this email because you interacted with Share2Inspire.' : isEs ? 'Recibiste este correo porque interactuaste con Share2Inspire.' : 'Recebeste este email porque interagiste com o Share2Inspire.';
+    const rightsText = isEn ? 'All rights reserved.' : isEs ? 'Todos los derechos reservados.' : 'Todos os direitos reservados.';
     return `<!DOCTYPE html>
 <html lang="${lang}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
@@ -1665,6 +1952,7 @@ function renderNurturingSegments() {
     const profiles = buildCRMProfiles().filter(p => {
         if (lang === 'pt') return filterByLang(p.analyses, 'pt').length > 0;
         if (lang === 'en') return filterByLang(p.analyses, 'en').length > 0;
+        if (lang === 'es') return filterByLang(p.analyses, 'es').length > 0;
         return true;
     });
     const leads = profiles.filter(p => p.stage === 'lead');
@@ -1714,6 +2002,7 @@ function filterCampaignRecipients() {
     let profiles = buildCRMProfiles().filter(p => {
         if (lang === 'pt') return filterByLang(p.analyses, 'pt').length > 0;
         if (lang === 'en') return filterByLang(p.analyses, 'en').length > 0;
+        if (lang === 'es') return filterByLang(p.analyses, 'es').length > 0;
         return true;
     });
     if (segment !== 'all') profiles = profiles.filter(p => p.stage === segment);
@@ -1771,6 +2060,14 @@ function loadCampaignTemplate() {
             upsell_ci: { subject: 'Career Intelligence PRO — take your career to the next level', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">You already have your Career Path. Now it\'s time to go deeper with <strong style="color:#C9A961;">Career Intelligence PRO</strong> — a deep analysis of your professional market.</p><p style="font-size:15px;color:#333;line-height:1.7;">What you\'ll discover:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Salary trends in your field</li><li>Top hiring companies for your profile</li><li>Emerging skills in the market</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explore Career Intelligence →</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>' },
             followup: { subject: 'Can we help with your career?', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you visited <strong>Share2Inspire</strong> recently. We hope you found useful information for your career.</p><p style="font-size:15px;color:#333;line-height:1.7;">If you have any questions about our tools — CV analysis, Career Path, Career Intelligence, or the Student Pack — we\'re here to help.</p><p style="font-size:15px;color:#333;line-height:1.7;">Simply reply to this email and we\'ll get back to you shortly.</p><p style="font-size:14px;color:#666;">Best regards,<br><strong>Share2Inspire Team</strong></p>' },
             testimonial: { subject: 'Your opinion matters to us', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We hope your experience with <strong>Share2Inspire</strong> has been positive! Your feedback helps us improve and support more professionals.</p><p style="font-size:15px;color:#333;line-height:1.7;">We\'d love for you to share a brief testimonial about how our tools helped your career.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">⭐ Leave a Google Review →</a></p><p style="font-size:14px;color:#666;">Thank you for your time!<br><strong>Share2Inspire Team</strong></p>' }
+        },
+        es: {
+            upsell_cv: { subject: 'Tu CV merece más — desbloquea el análisis completo', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Hemos visto que hiciste un <strong>análisis gratuito de tu CV</strong> en Share2Inspire. Los resultados preliminares ya te dieron una visión general, pero hay mucho más por descubrir.</p><p style="font-size:15px;color:#333;line-height:1.7;">Con la <strong style="color:#C9A961;">versión completa</strong> recibes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Recomendaciones detalladas por sección del CV</li><li>Sugerencias de palabras clave para ATS</li><li>Comparación con perfiles de éxito en tu área</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Desbloquear análisis completo →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>' },
+            upsell_cp: { subject: 'Tu Career Path personalizado te está esperando', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">A partir del análisis de tu CV, hemos preparado un <strong style="color:#C9A961;">Career Path personalizado</strong> para ti. Descubre qué roles encajan mejor con tu perfil y qué competencias deberías desarrollar ahora.</p><p style="font-size:15px;color:#333;line-height:1.7;">Tu Career Path incluye:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Mapa de oportunidades profesionales</li><li>Análisis de competencias frente al mercado</li><li>Roadmap de desarrollo profesional</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Descubrir mi Career Path →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>' },
+            upsell_student_pack: { subject: 'El Student Pack puede darte ventaja al empezar tu carrera', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">El <strong style="color:#C9A961;">Student Pack</strong> fue creado para estudiantes y recién graduados que quieren presentarse mejor y postular con más confianza.</p><p style="font-size:15px;color:#333;line-height:1.7;">Es una solución práctica para mejorar tu CV, organizar mejor tus candidaturas y aclarar tus próximos pasos profesionales.</p><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/student-pack" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar el Student Pack →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>' },
+            upsell_ci: { subject: 'Career Intelligence PRO — lleva tu carrera al siguiente nivel', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Ya tienes tu Career Path. Ahora es el momento de profundizar con <strong style="color:#C9A961;">Career Intelligence PRO</strong>, un análisis profundo de tu mercado profesional.</p><p style="font-size:15px;color:#333;line-height:1.7;">Lo que descubrirás:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Tendencias salariales en tu área</li><li>Empresas que más contratan perfiles como el tuyo</li><li>Competencias emergentes en el mercado</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/es/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar Career Intelligence →</a></p><p style="font-size:14px;color:#666;">Si tienes alguna duda, responde directamente a este correo.<br><strong>Equipo Share2Inspire</strong></p>' },
+            followup: { subject: '¿Podemos ayudarte con tu carrera?', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Hemos visto que visitaste <strong>Share2Inspire</strong> recientemente. Esperamos que hayas encontrado información útil para tu carrera.</p><p style="font-size:15px;color:#333;line-height:1.7;">Si tienes alguna pregunta sobre nuestras herramientas — análisis de CV, Career Path, Career Intelligence o Student Pack — estamos aquí para ayudarte.</p><p style="font-size:15px;color:#333;line-height:1.7;">Solo tienes que responder a este correo y te contestaremos en breve.</p><p style="font-size:14px;color:#666;">Un saludo,<br><strong>Equipo Share2Inspire</strong></p>' },
+            testimonial: { subject: 'Tu opinión es importante para nosotros', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hola,</p><p style="font-size:15px;color:#333;line-height:1.7;">Esperamos que tu experiencia con <strong>Share2Inspire</strong> haya sido positiva. Tu opinión nos ayuda a mejorar y a apoyar a más profesionales.</p><p style="font-size:15px;color:#333;line-height:1.7;">Nos encantaría que compartieras un breve testimonio sobre cómo nuestras herramientas te ayudaron en tu carrera.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">⭐ Dejar reseña en Google →</a></p><p style="font-size:14px;color:#666;">Gracias por tu tiempo.<br><strong>Equipo Share2Inspire</strong></p>' }
         }
     };
     const t = templates[lang]?.[tpl];
@@ -1837,8 +2134,6 @@ function renderEmailHistory() {
         </tr>`;
     }).join('');
 }
-
-let currentMsgId = null;
 
 function escapeHtml(str = '') {
     return String(str)
@@ -1935,7 +2230,6 @@ async function callSupportReply(payload) {
     }
     return data;
 }
-
 function renderContactMessages() {
     let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setText('messagesCount', `${data.length} mensagens`);
@@ -1962,12 +2256,12 @@ function openMsgModal(id) {
     const m = allContacts.find(c => c.id === id);
     if (!m) return;
     currentMsgId = id;
-    const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
     const lang = detectContactLangLocal(m);
+    const profile = buildMiniCRMProfile(m.email || '');
     document.getElementById('msgDetailName').textContent = m.name || '\u2014';
     document.getElementById('msgDetailEmail').textContent = m.email || '\u2014';
     document.getElementById('msgDetailSubject').textContent = m.subject || '\u2014';
-    document.getElementById('msgDetailDate').textContent = date;
+    document.getElementById('msgDetailDate').textContent = formatUiDate(m.created_at);
     document.getElementById('msgDetailBody').textContent = m.message || '\u2014';
     document.getElementById('msgDetailNotes').value = m.admin_notes || '';
     document.getElementById('msgReplyText').value = m.reply_text || '';
@@ -1975,11 +2269,15 @@ function openMsgModal(id) {
     document.getElementById('msgVoucherBox').style.display = 'none';
     document.getElementById('msgVoucherResult').innerHTML = '';
     renderSupportSuggestions([]);
+    const crmEl = document.getElementById('msgMiniCrm');
+    if (crmEl) crmEl.innerHTML = renderMiniCRMHtml(profile, { hideActivity: false });
     document.getElementById('msgModalOverlay').style.display = 'flex';
 }
 
 function closeMsgModal() {
     document.getElementById('msgModalOverlay').style.display = 'none';
+    const crmEl = document.getElementById('msgMiniCrm');
+    if (crmEl) crmEl.innerHTML = '';
     currentMsgId = null;
     window.__msgReplySuggestions = [];
 }
@@ -2740,11 +3038,13 @@ function updateAffLinkPreview() {
     el.innerHTML = products.map(p => {
         const ptPath = p === 'student-pack' ? 'estudante' : p;
         const enPath = p === 'student-pack' ? 'student-pack' : p;
-        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`];
-        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${enPath}?ref=${slug}`);
-        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
+        const esPath = p === 'student-pack' ? 'student-pack' : p;
+        const links = [`share2inspire.pt/${ptPath}?ref=${slug}`, `share2inspire.pt/es/${esPath}?ref=${slug}`];
+        if (p !== 'linkedin-roaster') links.splice(1, 0, `share2inspire.pt/en/${enPath}?ref=${slug}`);
+        return `<div style="font-size:12px;margin-bottom:8px;"><strong>${productLabels[p] || p}:</strong><br>${links.map(l => `<code style="display:block;color:var(--blue);margin:2px 0;">${l}</code>`).join('')}</div>`;
     }).join('');
 }
+
 
 
 function renderAffClicks() {
@@ -2829,8 +3129,10 @@ function copyAffLink(code, product) {
     products.forEach(p => {
         const ptPath = p === 'student-pack' ? 'estudante' : p;
         const enPath = p === 'student-pack' ? 'student-pack' : p;
+        const esPath = p === 'student-pack' ? 'student-pack' : p;
         allLinks.push(`${base}/${ptPath}?ref=${code}`);
         if (p !== 'linkedin-roaster') allLinks.push(`${base}/en/${enPath}?ref=${code}`);
+        allLinks.push(`${base}/es/${esPath}?ref=${code}`);
     });
     navigator.clipboard.writeText(allLinks.join('\n')).then(() => showToast(`${allLinks.length} link(s) copiado(s)`, 'success')).catch(() => prompt('Copia:', allLinks.join('\n')));
 }
@@ -3101,35 +3403,7 @@ function showUserDetail(userId) {
     const users = getMergedUsers();
     const u = users.find(x => x.id === userId);
     if (!u) return;
-    const name = `${u.first_name} ${u.last_name}`.trim() || 'Sem nome';
-    document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${name}`;
-    document.getElementById('userProfileModal').style.display = 'flex';
-    let subsHtml = u.all_subs.length > 0
-        ? `<table class="data-table" style="font-size:12px;"><thead><tr><th>Plano</th><th>Estado</th><th>Preço</th><th>Início</th><th>Expira</th></tr></thead><tbody>
-            ${u.all_subs.map(s => `<tr><td>${s.plan||'—'}</td><td>${s.status==='active'?'<span class="badge badge-success">Ativa</span>':'<span class="badge" style="background:var(--red);color:#fff;">Expirada</span>'}</td><td>${s.price_eur?s.price_eur+'€':'—'}</td><td>${s.started_at?new Date(s.started_at).toLocaleDateString('pt-PT'):'—'}</td><td>${s.expires_at?new Date(s.expires_at).toLocaleDateString('pt-PT'):'Sem limite'}</td></tr>`).join('')}
-           </tbody></table>` : '<p style="color:var(--text-muted);font-size:13px;">Nenhuma subscrição.</p>';
-    let analysesHtml = u.analyses.length > 0
-        ? `<table class="data-table" style="font-size:12px;"><thead><tr><th>Tipo</th><th>Data</th></tr></thead><tbody>
-            ${u.analyses.map(a => { const typeMap = {cv_analyser:'CV Analyser',career_path:'Career Path',career_intelligence_pro:'CI PRO',career_intelligence_full:'CI Full',linkedin_roaster:'LinkedIn Roaster',career_energy:'Career Energy'}; return `<tr><td>${typeMap[a.analysis_type]||a.analysis_type}</td><td>${new Date(a.created_at).toLocaleString('pt-PT')}</td></tr>`; }).join('')}
-           </tbody></table>` : '<p style="color:var(--text-muted);font-size:13px;">Nenhuma análise.</p>';
-    document.getElementById('userProfileBody').innerHTML = `
-        <div class="profile-section"><h4>Informação</h4>
-            <div class="profile-row"><span>Email</span><span>${u.email} ${u.email_confirmed?'✓':'✗'}</span></div>
-            <div class="profile-row"><span>Telefone</span><span>${u.phone||'—'}</span></div>
-            <div class="profile-row"><span>LinkedIn</span><span>${u.linkedin_url?`<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);">Ver</a>`:'—'}</span></div>
-            <div class="profile-row"><span>Registado</span><span>${new Date(u.created_at).toLocaleString('pt-PT')}</span></div>
-            <div class="profile-row"><span>Último Login</span><span>${u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleString('pt-PT'):'Nunca'}</span></div>
-        </div>
-        <div class="profile-section"><h4>Subscrições</h4>${subsHtml}</div>
-        <div class="profile-section"><h4>Análises (${u.analyses_count})</h4>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-                <span class="badge badge-cv">CV: ${u.cv_analyser_count}</span>
-                <span class="badge badge-career">CP: ${u.career_path_count}</span>
-                <span class="badge" style="background:#EDE9FE;color:#7C3AED;">CI: ${u.career_intelligence_count}</span>
-                <span class="badge" style="background:#E0F2FE;color:#0077B5;">LR: ${u.linkedin_roaster_count}</span>
-            </div>
-            ${analysesHtml}
-        </div>`;
+    showUserProfile(u.email || '');
 }
 
 function exportUsersCSV() {
@@ -3165,7 +3439,7 @@ function esc(str) {
 //  REFRESH ALL & INIT
 // ═══════════════════════════════════════════════════════════════
 async function refreshAll() {
-    showToast('A atualizar dados...', 'info');
+    showToast(tr('A atualizar dados...', 'Refreshing data...', 'Actualizando datos...'), 'info');
     await loadAllData();
     await Promise.all([loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
     updateDashboard();
@@ -3174,25 +3448,23 @@ async function refreshAll() {
     renderCRM();
     renderAutoEmailsMonitoring();
     renderNurturingSegments();
-    renderAnalyses();
-    renderVouchers();
-    renderEmailHistory();
-    renderContactMessages();
-    renderJobSearchTable();
-    renderCETable();
     renderHealthLogs();
+    renderContactMessages();
+    renderNewsletters();
+    renderEbookDownloads();
+    renderPartnerSubtab('affiliates');
     renderAffiliates();
     renderAffClicks();
     renderAffConversions();
     renderCoupons();
     renderUsers();
-    setText('lastUpdate', new Date().toLocaleTimeString('pt-PT'));
-    showToast('Dados atualizados!', 'success');
+    updateLastRefreshTimestamp(new Date());
+    showToast(tr('Dados atualizados!', 'Data refreshed!', '¡Datos actualizados!'), 'success');
 }
 
 // ── Init Cockpit (called after successful auth) ──
 async function initCockpit() {
-    showToast('A carregar dados...', 'info');
+    showToast(tr('A carregar dados...', 'Loading data...', 'Cargando datos...'), 'info');
     try {
         await loadAllData();
         await Promise.all([loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
@@ -3202,28 +3474,32 @@ async function initCockpit() {
         renderCRM();
         renderAutoEmailsMonitoring();
         renderNurturingSegments();
-        renderAnalyses();
-        renderVouchers();
-        renderEmailHistory();
-        renderContactMessages();
-        renderJobSearchTable();
-        renderCETable();
         renderHealthLogs();
+        renderContactMessages();
+        renderNewsletters();
+        renderEbookDownloads();
+        renderPartnerSubtab('affiliates');
         renderAffiliates();
         renderAffClicks();
         renderAffConversions();
         renderCoupons();
         renderUsers();
-        setText('lastUpdate', new Date().toLocaleTimeString('pt-PT'));
-        showToast('Cockpit carregado!', 'success');
+        updateLastRefreshTimestamp(new Date());
+        applyUILanguage();
+        showToast(tr('Cockpit carregado!', 'Dashboard loaded!', '¡Panel cargado!'), 'success');
     } catch (e) {
         console.error('Erro ao inicializar:', e);
-        showToast('Erro ao carregar dados: ' + e.message, 'danger');
+        showToast(tr('Erro ao carregar dados: ', 'Error loading data: ', 'Error al cargar datos: ') + e.message, 'danger');
     }
 }
 
 // ── DOMContentLoaded: check existing session ──
 document.addEventListener('DOMContentLoaded', async () => {
+    const uiLangBtn = [...document.querySelectorAll('#uiLangToggle button')].find(btn => btn.textContent.trim().toLowerCase() === uiLang);
+    document.querySelectorAll('#uiLangToggle button').forEach(btn => btn.classList.remove('active'));
+    if (uiLangBtn) uiLangBtn.classList.add('active');
+    applyUILanguage();
+    updateLastRefreshTimestamp(null);
     try {
         const { data: { session } } = await _supa.auth.getSession();
         if (session && session.user && session.user.email.toLowerCase() === ADMIN_EMAIL) {
@@ -3378,6 +3654,7 @@ async function loadWelcomeEmailsDashboard() {
     updateWelcomeEmailKpis();
     renderWelcomeEmailCharts();
     renderWelcomeEmails();
+    renderAutomationSummaryCards();
 }
 
 function updateWelcomeEmailKpis() {

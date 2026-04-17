@@ -756,9 +756,9 @@ Deno.serve(async (req: Request) => {
         ? "welcome_student_pack"
         : type === "linkedin_roaster"
           ? "welcome_linkedin_roaster"
-          ? "welcome_member_signup"
-          : type === "iscal_cold_email"
-            ? "iscal_cold_email";
+          : type === "member_signup"
+            ? "welcome_member_signup"
+            : "iscal_cold_email";
     let subject: string;
     let bodyHtml: string;
 
@@ -783,15 +783,19 @@ Deno.serve(async (req: Request) => {
           ? "¡Tu LinkedIn Roast está listo! 🔥"
           : "O teu LinkedIn Roast está pronto! 🔥";
       bodyHtml = linkedinRoasterWelcomeBody(name || "", language, score, results);
-    } else {
+    } else if (type === "member_signup") {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
         : language === "es"
           ? "¡Bienvenido a Share2Inspire — Tu Cuenta Está Lista!"
           : "Bem-vindo ao Share2Inspire — A Tua Conta Está Pronta!";
       bodyHtml = memberWelcomeBody(name || "", language);
-    } else if (type === "iscal_cold_email") {
-      subject = "Análise Gratuita do Teu Perfil LinkedIn - Parceria ISCAL";
+    } else {
+      subject = language === "en"
+        ? "Free LinkedIn profile analysis — ISCAL partnership"
+        : language === "es"
+          ? "Análisis gratuito de tu perfil de LinkedIn — colaboración ISCAL"
+          : "Análise Gratuita do Teu Perfil LinkedIn — Parceria ISCAL";
       bodyHtml = iscalColdEmailBody(
         name || "",
         language,

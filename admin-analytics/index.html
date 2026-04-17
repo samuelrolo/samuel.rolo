@@ -170,12 +170,21 @@
         .funnel-bar { height:32px; border-radius:6px; display:flex; align-items:center; padding:0 12px; color:white; font-size:12px; font-weight:700; transition:width .6s ease; min-width:40px; }
         .funnel-drop { font-size:10px; color:var(--red); margin-top:2px; text-align:right; }
 
-        /* ── TOAST ── */
-        .toast { position:fixed; top:16px; right:16px; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:500; color:var(--white); z-index:9999; opacity:0; transform:translateY(-10px); transition:all .3s; pointer-events:none; }
-        .toast.show { opacity:1; transform:translateY(0); }
-        .toast.info { background:var(--blue); }
-        .toast.success { background:var(--green); }
-        .toast.danger { background:var(--red); }
+        /* ── TOASTS ── */
+        .toast-stack { position:fixed; top:20px; left:50%; transform:translateX(-50%); width:min(92vw,560px); display:flex; flex-direction:column; gap:12px; z-index:10050; pointer-events:none; }
+        .toast { pointer-events:auto; display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border-radius:14px; color:#fff; box-shadow:0 18px 50px rgba(15,23,42,.28); border:1px solid rgba(255,255,255,.12); opacity:0; transform:translateY(-12px) scale(.98); transition:opacity .26s ease, transform .26s ease; }
+        .toast.show { opacity:1; transform:translateY(0) scale(1); }
+        .toast.toast-closing { opacity:0; transform:translateY(-8px) scale(.98); }
+        .toast-icon { width:38px; height:38px; flex:0 0 38px; border-radius:999px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:16px; }
+        .toast-content { flex:1; min-width:0; }
+        .toast-title { font-size:13px; font-weight:700; letter-spacing:.2px; margin-bottom:3px; }
+        .toast-message { font-size:14px; line-height:1.5; }
+        .toast-close { background:transparent; color:#fff; border:none; cursor:pointer; font-size:15px; padding:4px; opacity:.88; }
+        .toast-close:hover { opacity:1; }
+        .toast.info { background:linear-gradient(135deg, #2563EB, #1D4ED8); }
+        .toast.success { background:linear-gradient(135deg, #059669, #10B981); }
+        .toast.danger { background:linear-gradient(135deg, #DC2626, #EF4444); }
+        .toast.warning { background:linear-gradient(135deg, #D97706, #F59E0B); }
 
         /* ── SPINNER ── */
         .spinner { width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .6s linear infinite; margin:20px auto; }
@@ -184,6 +193,26 @@
         /* ── MODAL ── */
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(2px); }
         .modal-box { background:var(--white); border-radius:var(--radius); width:90%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.15); }
+        .mini-crm-overlay { justify-content:flex-end; background:rgba(15,23,42,.34); }
+        .mini-crm-panel { width:min(100%, 460px); max-width:460px; height:100vh; max-height:100vh; border-radius:0; margin-left:auto; }
+        .mini-crm-card { display:flex; flex-direction:column; gap:16px; }
+        .mini-crm-header-row { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+        .mini-crm-header-row h4 { font-size:18px; color:var(--dark); margin:4px 0 2px; }
+        .mini-crm-eyebrow { font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.08em; }
+        .mini-crm-muted { font-size:12px; color:var(--text-muted); }
+        .mini-crm-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .mini-crm-stat { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:4px; }
+        .mini-crm-stat span { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); font-weight:600; }
+        .mini-crm-stat strong { font-size:15px; color:var(--dark); }
+        .mini-crm-stat small { font-size:12px; color:var(--text-secondary); }
+        .mini-crm-section { display:flex; flex-direction:column; gap:10px; }
+        .mini-crm-section-title { font-size:12px; font-weight:700; color:var(--dark); text-transform:uppercase; letter-spacing:.05em; }
+        .mini-crm-list { display:flex; flex-direction:column; gap:8px; }
+        .mini-crm-list-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--border); background:var(--white); border-radius:10px; }
+        .mini-crm-list-title { font-size:13px; font-weight:600; color:var(--dark); }
+        .mini-crm-list-meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
+        .mini-crm-empty { padding:14px; border-radius:12px; background:var(--bg); border:1px dashed var(--border-hover); color:var(--text-muted); font-size:13px; }
+        .mini-crm-actions { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; padding-top:4px; }
         .modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
         .modal-header h3 { font-size:15px; font-weight:600; color:var(--dark); display:flex; align-items:center; }
         .modal-close { background:none; border:none; font-size:16px; color:var(--text-muted); cursor:pointer; padding:4px; }
@@ -215,11 +244,30 @@
         .cross-ref { background:var(--gold-bg); border:1px dashed var(--gold-border); border-radius:var(--radius-sm); padding:12px 16px; margin-bottom:16px; }
         .cross-ref-title { font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
         .cross-ref-text { font-size:12px; color:var(--text); }
+
+        @media (max-width: 960px) {
+            .header { height:auto; padding:14px 16px; flex-direction:column; align-items:flex-start; gap:12px; }
+            .header-actions { width:100%; flex-wrap:wrap; gap:10px; }
+            .nav-tabs { padding:0 12px; }
+            .tab-btn { padding:12px 14px; }
+            .main { padding:16px 12px 32px; }
+            .crm-subnav { overflow-x:auto; }
+            .crm-subtab { flex:0 0 auto; min-width:max-content; padding:10px 14px; }
+            .card-header, .card-body, .filter-bar { padding-left:14px; padding-right:14px; }
+            .mini-crm-panel { width:100%; max-width:100%; }
+        }
+
+        @media (max-width: 640px) {
+            .toast-stack { top:12px; width:min(94vw, 94vw); }
+            .toast { padding:13px 14px; }
+            .lang-toggle button, .period-btn, .btn-refresh { font-size:12px; }
+            .mini-crm-grid { grid-template-columns:1fr; }
+        }
     </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="b87daf50-31f5-47d2-8999-61c17d4050b5"></script>
 </head>
 <body>
-<div class="toast" id="toast"></div>
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
 
 <!-- ── LOGIN OVERLAY ── -->
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
@@ -239,7 +287,7 @@
     <div class="header-brand">
         <div>
             <h1>Share2Inspire</h1>
-            <span>Cockpit de Gestão</span>
+            <span id="headerSubtitle">Cockpit de Gestão</span>
         </div>
     </div>
     <div class="header-actions">
@@ -247,26 +295,37 @@
             <span class="health-dot green" id="healthDot"></span>
             <span class="header-status" id="healthStatus">Sistema operacional</span>
         </div>
-        <div class="lang-toggle" id="globalLangToggle">
-            <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
-            <button onclick="setGlobalLang('pt',this)">PT</button>
-            <button onclick="setGlobalLang('en',this)">EN</button>
+        <div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" id="uiLangLabel">Interface</div>
+            <div class="lang-toggle" id="uiLangToggle">
+                <button class="active" onclick="setUILang('pt',this)">PT</button>
+                <button onclick="setUILang('en',this)">EN</button>
+                <button onclick="setUILang('es',this)">ES</button>
+            </div>
+        </div>
+        <div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" id="dataLangLabel">Dados</div>
+            <div class="lang-toggle" id="globalLangToggle">
+                <button class="active" onclick="setGlobalLang('all',this)">All</button>
+                <button onclick="setGlobalLang('pt',this)">PT</button>
+                <button onclick="setGlobalLang('en',this)">EN</button>
+                <button onclick="setGlobalLang('es',this)">ES</button>
+            </div>
         </div>
         <span class="header-status" id="lastUpdate">A carregar...</span>
-        <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Atualizar</button>
-        <button class="btn-refresh" onclick="adminLogout()" style="border-color:var(--red);color:var(--red);" title="Terminar sessão"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> <span id="refreshBtnLabel">Atualizar</span></button>
+        <button class="btn-refresh" onclick="adminLogout()" style="border-color:var(--red);color:var(--red);" title="Terminar sessão"><i class="fas fa-sign-out-alt"></i> <span id="logoutBtnLabel">Sair</span></button>
     </div>
 </header>
 
 <!-- ── NAVIGATION (7 tabs instead of 13) ── -->
 <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('cockpit',this)"><i class="fas fa-gauge-high"></i> Cockpit</button>
-    <button class="tab-btn" onclick="switchTab('funnel',this)"><i class="fas fa-filter"></i> Funil</button>
-    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> CRM & Leads</button>
-    <button class="tab-btn" onclick="switchTab('market',this)"><i class="fas fa-chart-line"></i> Mercado</button>
-    <button class="tab-btn" onclick="switchTab('partnerships',this)"><i class="fas fa-handshake"></i> Parcerias</button>
-    <button class="tab-btn" onclick="switchTab('users',this)"><i class="fas fa-user-shield"></i> Utilizadores</button>
-    <button class="tab-btn" onclick="switchTab('system',this)"><i class="fas fa-server"></i> Sistema</button>
+    <button class="tab-btn active" onclick="switchTab('cockpit',this)"><i class="fas fa-gauge-high"></i> <span id="navCockpit">Cockpit</span></button>
+    <button class="tab-btn" onclick="switchTab('funnel',this)"><i class="fas fa-filter"></i> <span id="navFunnel">Funil</span></button>
+    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> <span id="navCrm">CRM & Leads</span></button>
+    <button class="tab-btn" onclick="switchTab('partnerships',this)"><i class="fas fa-handshake"></i> <span id="navPartnerships">Parcerias</span></button>
+    <button class="tab-btn" onclick="switchTab('users',this)"><i class="fas fa-user-shield"></i> <span id="navUsers">Utilizadores</span></button>
+    <button class="tab-btn" onclick="switchTab('system',this)"><i class="fas fa-server"></i> <span id="navSystem">Sistema</span></button>
 </nav>
 
 <main class="main">
@@ -737,6 +796,17 @@
                 </button>
             </div>
         </div>
+        <div class="card" style="margin-bottom:16px;">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-bolt" style="color:var(--gold);"></i> Estado por Automação</div>
+                <span style="font-size:12px;color:var(--text-muted);" id="automationCardsSummary">A carregar...</span>
+            </div>
+            <div class="card-body">
+                <div id="automationCardsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+                    <div style="padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text-muted);text-align:center;">A carregar automações...</div>
+                </div>
+            </div>
+        </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
             <div class="kpi-card" style="border-top:3px solid var(--blue);">
                 <div class="kpi-label">Upsell 2h Enviados</div>
@@ -804,6 +874,7 @@
             <div class="lang-toggle" id="nurturingLangToggle">
                 <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
                 <button onclick="setNurturingLang('en',this)">EN</button>
+                <button onclick="setNurturingLang('es',this)">ES</button>
             </div>
             <span style="font-size:12px;color:var(--text-muted);margin-left:auto;" id="campaignLastSent"></span>
         </div>
@@ -1282,6 +1353,7 @@
                 <select class="form-select" id="modalEmailLang" onchange="loadEmailTemplate()" style="width:100%;">
                     <option value="pt">PT Português</option>
                     <option value="en">EN English</option>
+                    <option value="es">ES Español</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1363,8 +1435,8 @@
 </div>
 
 <!-- Modal: Perfil do Utilizador -->
-<div class="modal-overlay" id="userProfileModal" style="display:none;" onclick="if(event.target===this)closeUserProfile()">
-    <div class="modal-box" style="max-width:680px;">
+<div class="modal-overlay mini-crm-overlay" id="userProfileModal" style="display:none;" onclick="if(event.target===this)closeUserProfile()">
+    <div class="modal-box mini-crm-panel">
         <div class="modal-header">
             <h3 id="userProfileTitle"><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Perfil do Utilizador</h3>
             <button class="modal-close" onclick="closeUserProfile()"><i class="fas fa-times"></i></button>
@@ -1528,13 +1600,14 @@
 </div>
 
 <!-- Modal: Ver Mensagem de Contacto -->
-<div class="modal-overlay" id="msgModalOverlay" style="display:none;" onclick="if(event.target===this)closeMsgModal()">
-    <div class="modal-box" style="max-width:640px;">
+<div class="modal-overlay mini-crm-overlay" id="msgModalOverlay" style="display:none;" onclick="if(event.target===this)closeMsgModal()">
+    <div class="modal-box mini-crm-panel">
         <div class="modal-header">
             <h3><i class="fas fa-envelope-open-text" style="color:var(--gold);margin-right:8px;"></i> Mensagem de Contacto</h3>
             <button class="modal-close" onclick="closeMsgModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
+            <div id="msgMiniCrm" style="margin-bottom:16px;"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                 <div>
                     <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Nome</div>
