@@ -19,6 +19,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { getDefaultCountryByLanguage, getCountries, getRegions } from "@/data/countries";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
+import ChromeExtensionCallout from "@/components/ChromeExtensionCallout";
 import useTranslation from "@/i18n/useTranslation";
 import { useCurrency } from "@/hooks/useCurrency";
 import { downloadAuthenticatedProfileCv, getAuthenticatedProfilePrefill } from "@/lib/profilePrefill";
@@ -1359,6 +1360,8 @@ export default function Home() {
           )}
 
           </div>
+
+          <ChromeExtensionCallout variant="form" />
 
           {/* Sem CV no telemóvel? — unified toggle with two options */}
           <button

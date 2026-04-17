@@ -15,6 +15,7 @@ import CvMaker from '@/components/CvMaker';
 import UpgradePage from './UpgradePage';
 import VagasFeed from '@/components/VagasFeed';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
+import MemberRotatingBanner from '@/components/MemberRotatingBanner';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
@@ -1652,6 +1653,8 @@ return null;
             </span>
           </button>
         </div>
+
+        <MemberRotatingBanner lang={lang} />
 
         {/* ═══════════════════════════════════════════════════════════════════ */}
         {/* CAREER PROGRESS (expanded) + NEXT STEP + LAST ACTIVITY            */}

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
-import PromoBanner from "@/components/PromoBanner";
+import RotatingPromoBanner from "@/components/RotatingPromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
@@ -175,7 +175,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <S2IHeader activePage="home" />
-      <PromoBanner />
+      <RotatingPromoBanner />
 
       {/* ─── HERO ─── */}
       <section

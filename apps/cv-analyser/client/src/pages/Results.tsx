@@ -14,6 +14,7 @@ import DimensionBar from "@/components/DimensionBar";
 import ScoreGauge from "@/components/ScoreGauge";
 import RecruiterPerception from "@/components/RecruiterPerception";
 import LockedSection from "@/components/LockedSection";
+import ChromeExtensionCallout from "@/components/ChromeExtensionCallout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
@@ -2015,6 +2016,8 @@ export default function Results() {
             </div>
           </div>
         )}
+
+        <ChromeExtensionCallout variant="results" />
 
         {/* ═══ ATS Rejection ═══ */}
         <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} />

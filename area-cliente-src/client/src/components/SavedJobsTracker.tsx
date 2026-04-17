@@ -52,6 +52,7 @@ const STATUS_CONFIG: Record<JobStatus, { labelPt: string; labelEn: string; color
 
 const ACTIVE_STATUSES: JobStatus[] = ['saved', 'applied', 'interview', 'offer', 'rejected'];
 const ALL_STATUSES: JobStatus[] = [...ACTIVE_STATUSES, 'archived'];
+const CHROME_WEB_STORE_URL = 'https://chromewebstore.google.com/detail/share2inspire-%E2%80%94-job-saver/depelnoienlhmoolnepgjpdmoaocfdem';
 
 const SOURCE_ICONS: Record<string, string> = {
   linkedin: '🔗',
@@ -262,7 +263,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">{tt('Extensão Chrome — Job Saver', 'Chrome Extension — Job Saver', 'Extensión Chrome — Job Saver')}</h3>
-                  <p className="text-[10px] text-[#BF9A33]">{tt('Guarda vagas com 1 clique', 'Save jobs with 1 click', 'Guarda empleos con 1 clic')}</p>
+                  <p className="text-[10px] text-[#BF9A33]">{tt('Guarda ofertas de emprego diretamente do LinkedIn', 'Save job offers directly from LinkedIn', 'Guarda ofertas de empleo directamente desde LinkedIn')}</p>
                 </div>
               </div>
               <p className="text-[11px] text-gray-400 mb-3 max-w-md">
@@ -273,9 +274,9 @@ export default function SavedJobsTracker({ lang }: Props) {
                 )}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                <a href="/assets/downloads/extension/share2inspire-job-saver.zip" download
+                <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#BF9A33] text-[#1a1a1a] rounded-lg hover:bg-[#d4ad3a] transition-all no-underline">
-                  <Download className="w-3.5 h-3.5" /> {tt('Descarregar Extensão (.zip)', 'Download Extension (.zip)', 'Descargar Extensión (.zip)')}
+                  <ExternalLink className="w-3.5 h-3.5" /> {tt('Instalar na Chrome Web Store', 'Install on Chrome Web Store', 'Instalar en Chrome Web Store')}
                 </a>
                 <a href={tt('/assets/downloads/extension/tutorial-extensao-pt.mp4', '/assets/downloads/extension/tutorial-extensao-en.mp4')} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium text-[#BF9A33] border border-[#BF9A33]/50 rounded-lg hover:bg-[#BF9A33]/10 transition-all no-underline">
