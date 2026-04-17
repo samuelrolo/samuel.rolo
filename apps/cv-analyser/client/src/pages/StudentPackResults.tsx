@@ -477,6 +477,16 @@ export default function StudentPackResults() {
         if (fallbackName2) return { ...perfilRaw, nome: fallbackName2 };
       }
     } catch {}
+    // Ultimate fallback: extract name from executive summary text
+    try {
+      const summaryText = perfilRaw?.resumo_executivo || analysis?.score_global?.resumo_executivo || '';
+      if (summaryText) {
+        // Pattern: "O/A [Name] apresenta" or "[Name], tu/o teu" or first capitalized words
+        const m = summaryText.match(/^(?:O|A|El|La)\s+([A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ][a-záàâãéèêíïóôõöúçñ]+(?:\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ][a-záàâãéèêíïóôõöúçñ]+)*)\s+(?:apresenta|refleja|reflects|shows|demonstra|possui|tiene|has|situa|posiciona)/i)
+          || summaryText.match(/([A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ][a-záàâãéèêíïóôõöúçñ]+(?:\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ][a-záàâãéèêíïóôõöúçñ]+)*),\s+(?:tu|o teu|el tu|your|the)/i);
+        if (m?.[1]) return { ...perfilRaw, nome: m[1] };
+      }
+    } catch {}
     return perfilRaw;
   })();
   const scoreGlobal = analysis?.score_global || {};
