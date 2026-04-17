@@ -12,6 +12,7 @@ const RUNTIME_SUPABASE_KEY = typeof window !== 'undefined' && typeof window.__SU
 const SUPABASE_KEY = RUNTIME_SUPABASE_KEY || SUPABASE_ANON_KEY_FALLBACK;
 const ADMIN_EMAIL = 'samuelrolo@gmail.com';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
+const SUPPORT_REPLY_FN_URL = `${SUPABASE_URL}/functions/v1/support-reply`;
 
 // ── Supabase Auth Client ──
 const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1839,6 +1840,102 @@ function renderEmailHistory() {
 
 let currentMsgId = null;
 
+function escapeHtml(str = '') {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function detectContactLangLocal(m = {}) {
+    const explicit = String(m.lang || m.language || '').toLowerCase();
+    if (['pt', 'pt-pt', 'pt-br', 'pt_br'].includes(explicit)) return 'pt';
+    if (['en', 'en-gb', 'en-us'].includes(explicit)) return 'en';
+    if (['es', 'es-es', 'es-mx'].includes(explicit)) return 'es';
+    const text = `${m.subject || ''} ${m.message || ''}`.toLowerCase();
+    const ptHints = ['olá', 'obrigado', 'currículo', 'carreira', 'ajuda'];
+    const enHints = ['hello', 'thank you', 'career', 'resume', 'support'];
+    const esHints = ['hola', 'gracias', 'currículum', 'ayuda', 'perfil'];
+    const score = hints => hints.reduce((sum, hint) => sum + (text.includes(hint) ? 1 : 0), 0);
+    const pt = score(ptHints), en = score(enHints), es = score(esHints);
+    if (es > pt && es > en) return 'es';
+    if (en > pt && en > es) return 'en';
+    return 'pt';
+}
+
+function buildVoucherReplySnippet(code, product, validUntil, lang = 'pt') {
+    const expiryText = validUntil ? new Date(validUntil).toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'pt-PT') : null;
+    if (lang === 'en') {
+        return `\n\nAs a goodwill gesture, we created a support voucher for you:\nCode: ${code}\nProduct: ${product || 'all'}${expiryText ? `\nValid until: ${expiryText}` : ''}\n\nYou can use it directly on Share2Inspire when applicable.`;
+    }
+    if (lang === 'es') {
+        return `\n\nComo gesto comercial, hemos creado un voucher de soporte para ti:\nCódigo: ${code}\nProducto: ${product || 'all'}${expiryText ? `\nVálido hasta: ${expiryText}` : ''}\n\nPuedes utilizarlo directamente en Share2Inspire cuando corresponda.`;
+    }
+    return `\n\nComo gesto comercial, criámos um voucher de suporte para ti:\nCódigo: ${code}\nProduto: ${product || 'all'}${expiryText ? `\nVálido até: ${expiryText}` : ''}\n\nPodes utilizá-lo diretamente no Share2Inspire quando aplicável.`;
+}
+
+function renderSupportSuggestions(suggestions = []) {
+    const wrap = document.getElementById('msgSuggestionsWrap');
+    const list = document.getElementById('msgReplySuggestions');
+    if (!wrap || !list) return;
+    if (!suggestions.length) {
+        wrap.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+    wrap.style.display = 'block';
+    list.innerHTML = suggestions.map((item, idx) => `
+        <div style="border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--card);">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px;">
+                <div>
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Sugestão ${idx + 1}</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--text);margin-top:4px;">${escapeHtml(item.subject || 'Sem assunto')}</div>
+                </div>
+                <button class="btn btn-outline" style="font-size:11px;padding:6px 10px;" onclick="useSuggestedReply(${idx})">Usar</button>
+            </div>
+            <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;">${escapeHtml(item.body || '')}</div>
+        </div>
+    `).join('');
+    window.__msgReplySuggestions = suggestions;
+}
+
+function useSuggestedReply(index) {
+    const suggestions = window.__msgReplySuggestions || [];
+    const selected = suggestions[index];
+    if (!selected) return;
+    const textarea = document.getElementById('msgReplyText');
+    if (textarea) textarea.value = selected.body || '';
+    showToast('Sugestão carregada para edição', 'success');
+}
+
+function setSupportButtonsBusy(isBusy, actionLabel = '') {
+    const buttons = [
+        document.getElementById('msgSuggestBtn'),
+        document.getElementById('msgVoucherBtn'),
+        document.getElementById('msgSendBtn')
+    ].filter(Boolean);
+    buttons.forEach(btn => { btn.disabled = isBusy; });
+    if (isBusy && actionLabel) {
+        const meta = document.getElementById('msgReplyMeta');
+        if (meta) meta.textContent = actionLabel;
+    }
+}
+
+async function callSupportReply(payload) {
+    const res = await fetch(SUPPORT_REPLY_FN_URL, {
+        method: 'POST',
+        headers: getSupabaseHeaders(false, { 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data?.success === false) {
+        throw new Error(data?.error || `Falha na edge function (${res.status})`);
+    }
+    return data;
+}
+
 function renderContactMessages() {
     let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setText('messagesCount', `${data.length} mensagens`);
@@ -1847,10 +1944,13 @@ function renderContactMessages() {
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem de contacto</td></tr>`; return; }
     tbody.innerHTML = data.map(m => {
         const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        const hasNotes = m.admin_notes ? ' style="background:rgba(201,169,97,0.08);"' : '';
-        return `<tr${hasNotes} onclick="openMsgModal(${m.id})" style="cursor:pointer;${m.admin_notes ? 'background:rgba(201,169,97,0.08);' : ''}">
+        const responded = m.responded_at || m.status === 'responded';
+        const highlight = responded
+            ? 'background:rgba(16,185,129,0.07);'
+            : (m.admin_notes ? 'background:rgba(201,169,97,0.08);' : '');
+        return `<tr onclick="openMsgModal(${m.id})" style="cursor:pointer;${highlight}">
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${m.name || '\u2014'}</td>
+            <td style="font-size:12px;">${m.name || '\u2014'}${responded ? '<div style="font-size:10px;color:var(--green);margin-top:3px;font-weight:600;">Respondida</div>' : ''}</td>
             <td style="font-size:12px;">${m.email || '\u2014'}</td>
             <td style="font-size:12px;">${m.subject || '\u2014'}</td>
             <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message || '\u2014'}</td>
@@ -1863,18 +1963,25 @@ function openMsgModal(id) {
     if (!m) return;
     currentMsgId = id;
     const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+    const lang = detectContactLangLocal(m);
     document.getElementById('msgDetailName').textContent = m.name || '\u2014';
     document.getElementById('msgDetailEmail').textContent = m.email || '\u2014';
     document.getElementById('msgDetailSubject').textContent = m.subject || '\u2014';
     document.getElementById('msgDetailDate').textContent = date;
     document.getElementById('msgDetailBody').textContent = m.message || '\u2014';
     document.getElementById('msgDetailNotes').value = m.admin_notes || '';
+    document.getElementById('msgReplyText').value = m.reply_text || '';
+    document.getElementById('msgReplyMeta').textContent = `Idioma detetado: ${lang.toUpperCase()}`;
+    document.getElementById('msgVoucherBox').style.display = 'none';
+    document.getElementById('msgVoucherResult').innerHTML = '';
+    renderSupportSuggestions([]);
     document.getElementById('msgModalOverlay').style.display = 'flex';
 }
 
 function closeMsgModal() {
     document.getElementById('msgModalOverlay').style.display = 'none';
     currentMsgId = null;
+    window.__msgReplySuggestions = [];
 }
 
 async function saveMsgNotes() {
@@ -1899,6 +2006,94 @@ async function deleteMsgFromModal() {
         renderContactMessages();
         showToast('Mensagem eliminada', 'success');
     } else { showToast('Erro ao eliminar', 'danger'); }
+}
+
+async function suggestMsgReply() {
+    if (!currentMsgId) return;
+    try {
+        setSupportButtonsBusy(true, 'A gerar sugestões...');
+        const data = await callSupportReply({ message_id: currentMsgId, action: 'suggest_reply' });
+        renderSupportSuggestions(data.suggestions || []);
+        const meta = document.getElementById('msgReplyMeta');
+        if (meta) meta.textContent = `Idioma: ${(data.language || 'pt').toUpperCase()} · ${data.suggestions?.length || 0} sugestão(ões)`;
+        showToast('Sugestões geradas com sucesso', 'success');
+    } catch (e) {
+        showToast('Erro ao sugerir resposta: ' + (e.message || e), 'danger');
+    } finally {
+        setSupportButtonsBusy(false);
+    }
+}
+
+async function generateMsgVoucher() {
+    if (!currentMsgId) return;
+    const msg = allContacts.find(c => c.id === currentMsgId);
+    const lang = detectContactLangLocal(msg || {});
+    const discountInput = prompt('Desconto do voucher em %', '20');
+    if (discountInput === null) return;
+    const productInput = prompt('Produto aplicável (all, cv_analyser, career_path, career_intelligence, linkedin_roaster, bundle, student_pack)', 'all');
+    if (productInput === null) return;
+    const validityInput = prompt('Validade em dias ou data YYYY-MM-DD', '30');
+    if (validityInput === null) return;
+    const discountPercent = Number(discountInput);
+    if (!Number.isFinite(discountPercent) || discountPercent <= 0) {
+        showToast('Desconto inválido', 'danger');
+        return;
+    }
+    const payload = { message_id: currentMsgId, action: 'generate_voucher', discount_percent: discountPercent, applicable_product: productInput.trim() || 'all' };
+    if (/^\d{4}-\d{2}-\d{2}$/.test(validityInput.trim())) payload.valid_until = validityInput.trim();
+    else payload.validity_days = Number(validityInput) || 30;
+    try {
+        setSupportButtonsBusy(true, 'A gerar voucher...');
+        const data = await callSupportReply(payload);
+        const box = document.getElementById('msgVoucherBox');
+        const result = document.getElementById('msgVoucherResult');
+        if (box && result) {
+            box.style.display = 'block';
+            const expiry = data.valid_until ? new Date(data.valid_until).toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'pt-PT') : '—';
+            result.innerHTML = `<strong style="font-size:18px;color:var(--gold);letter-spacing:0.08em;">${escapeHtml(data.voucher_code || '')}</strong><br><span style="color:var(--text-muted);">Produto: ${escapeHtml(data.applicable_product || productInput)} · Desconto: ${escapeHtml(String(data.discount_percent || discountPercent))}% · Válido até: ${escapeHtml(expiry)}</span>`;
+        }
+        const textarea = document.getElementById('msgReplyText');
+        if (textarea) {
+            const current = textarea.value.trim();
+            const snippet = buildVoucherReplySnippet(data.voucher_code, data.applicable_product || productInput, data.valid_until, lang);
+            textarea.value = current ? `${current}${snippet}` : snippet.trim();
+        }
+        showToast('Voucher gerado com sucesso', 'success');
+    } catch (e) {
+        showToast('Erro ao gerar voucher: ' + (e.message || e), 'danger');
+    } finally {
+        setSupportButtonsBusy(false);
+    }
+}
+
+async function sendMsgReply() {
+    if (!currentMsgId) return;
+    const textarea = document.getElementById('msgReplyText');
+    const msg = allContacts.find(c => c.id === currentMsgId);
+    const replyText = textarea?.value?.trim() || '';
+    if (!replyText && !confirm('O texto da resposta está vazio. Queres que a resposta final seja gerada automaticamente?')) return;
+    try {
+        setSupportButtonsBusy(true, 'A enviar resposta...');
+        const voucherCodeMatch = replyText.match(/S2I-[A-Z0-9]{6,10}/);
+        const data = await callSupportReply({
+            message_id: currentMsgId,
+            action: 'send_reply',
+            reply_text: replyText || undefined,
+            voucher_code: voucherCodeMatch ? voucherCodeMatch[0] : undefined
+        });
+        if (textarea) textarea.value = data.reply_text || replyText;
+        if (msg) {
+            msg.reply_text = data.reply_text || replyText;
+            msg.responded_at = new Date().toISOString();
+            msg.status = 'responded';
+        }
+        renderContactMessages();
+        showToast('Resposta enviada com sucesso', 'success');
+    } catch (e) {
+        showToast('Erro ao enviar resposta: ' + (e.message || e), 'danger');
+    } finally {
+        setSupportButtonsBusy(false);
+    }
 }
 
 function replyToMsg() {
