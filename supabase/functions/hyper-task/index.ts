@@ -5797,19 +5797,21 @@ REGRAS CRÍTICAS:
 
         // ===== FETCH USER DATA FROM SUPABASE =====
 
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+
+        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+
+        const supabase = supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
+
         let profileContext = '';
 
-        if (userId) {
+        let resolvedContactName = (profileName || '').trim();
+
+        let resolvedContactEmail = String(body.email || body.user_email || '').trim();
+
+        if (userId && supabase) {
 
           console.log(`📊 Career Coach: A carregar dados do utilizador ${userId}`);
-
-          const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
-
-          const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-
-          if (supabaseServiceKey) {
-
-            const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
             // Step 1: Get user profile - try by user_id first, then by auth.users id match
 
@@ -5827,6 +5829,8 @@ REGRAS CRÍTICAS:
 
               userEmail = userProfile.email || '';
 
+              if (!resolvedContactEmail && userEmail) resolvedContactEmail = userEmail;
+
             } else {
 
               // Fallback: get email from auth.users, then find profile by email
@@ -5836,6 +5840,8 @@ REGRAS CRÍTICAS:
               if (authUser?.user?.email) {
 
                 userEmail = authUser.user.email;
+
+                if (!resolvedContactEmail && userEmail) resolvedContactEmail = userEmail;
 
                 const profileByEmail = await supabase.from('user_profiles').select('first_name, last_name, email, linkedin_url, job_area, job_country, job_region, job_work_mode, cv_filename').eq('email', userEmail).maybeSingle();
 
@@ -5934,6 +5940,10 @@ REGRAS CRÍTICAS:
               if (userProfile) {
 
                 const fullName = `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim();
+
+                if (!resolvedContactName && fullName) resolvedContactName = fullName;
+
+                if (!resolvedContactEmail && userProfile.email) resolvedContactEmail = userProfile.email;
 
                 profileContext += isPT ? `\n\n--- PERFIL ---` : `\n\n--- PROFILE ---`;
 
@@ -6110,12 +6120,6 @@ REGRAS CRÍTICAS:
               console.log(`✅ Career Coach: Contexto do utilizador carregado (${profileContext.length} chars)`);
 
             }
-
-          } else {
-
-            console.warn('⚠️ Career Coach: SUPABASE_SERVICE_ROLE_KEY não disponível, a usar dados do body');
-
-          }
 
         }
 
@@ -6573,6 +6577,128 @@ USING COMPANY DATA:
         }
 
         const conversationHistory = history || [];
+
+        const normalizedHistory = conversationHistory.map((msg: any)=>({
+          role: msg?.role === 'user' ? 'user' : 'assistant',
+          content: String(msg?.content || '')
+        }));
+
+        const supportKeywords = [
+          'suporte', 'suportar', 'apoio técnico', 'ajuda técnica', 'problema técnico', 'erro na plataforma', 'bug', 'contactar a equipa', 'falar com a equipa', 'mensagem para a equipa',
+          'support', 'technical support', 'technical issue', 'contact the team', 'reach the team', 'message for the team',
+          'soporte', 'ayuda técnica', 'problema técnico', 'contactar al equipo', 'mensaje para el equipo'
+        ];
+
+        const supportRequestPrompts = [
+          'escreve aqui a mensagem que queres enviar à equipa',
+          'describe a mensagem de suporte',
+          'what would you like me to send to the team',
+          'write the support message you want me to send',
+          'escribe el mensaje que quieres enviar al equipo'
+        ];
+
+        const supportSuccessMarkers = [
+          'já registei a tua mensagem',
+          'mensagem enviada para a equipa',
+          'i have saved your message',
+          'your message has been sent to the team',
+          'ya he guardado tu mensaje',
+          'mensaje enviado al equipo'
+        ];
+
+        const extractSupportMessage = (input: string)=>{
+          const trimmed = String(input || '').trim();
+          if (!trimmed) return '';
+          const patterns = [
+            /(?:mensagem|message|mensaje)\s*(?:de)?\s*(?:suporte|support)?\s*[:\-]\s*(.+)$/is,
+            /(?:equipa|team|equipo)\s*[:\-]\s*(.+)$/is,
+            /(?:suporte|support|soporte)\s*[:\-]\s*(.+)$/is
+          ];
+          for (const pattern of patterns) {
+            const match = trimmed.match(pattern);
+            if (match?.[1]) return match[1].trim();
+          }
+          return '';
+        };
+
+        const hasSupportIntent = supportKeywords.some((keyword)=>msgLower.includes(keyword));
+
+        const assistantAskedForSupportMessage = normalizedHistory.some((msg)=>msg.role === 'assistant' && supportRequestPrompts.some((prompt)=>msg.content.toLowerCase().includes(prompt)));
+
+        const supportAlreadyConfirmed = normalizedHistory.some((msg)=>msg.role === 'assistant' && supportSuccessMarkers.some((marker)=>msg.content.toLowerCase().includes(marker)));
+
+        const explicitSupportMessage = extractSupportMessage(message || '');
+
+        const shouldCaptureSupportMessage = !supportAlreadyConfirmed && ((assistantAskedForSupportMessage && !hasSupportIntent) || explicitSupportMessage.length > 0);
+
+        if (hasSupportIntent && !explicitSupportMessage && !assistantAskedForSupportMessage) {
+          return jsonResponse({
+            success: true,
+            response: isPT
+              ? 'Claro — escreve aqui a mensagem que queres enviar à equipa de suporte e eu trato do registo. Se quiseres, inclui o problema, a página onde aconteceu e o melhor email para contacto.'
+              : isES
+                ? 'Claro — escribe aquí el mensaje que quieres enviar al equipo de soporte y yo me encargo de registrarlo. Si quieres, incluye el problema, la página donde ocurrió y el mejor email de contacto.'
+                : 'Of course — write the message you want to send to the support team and I will log it for you. If helpful, include the issue, the page where it happened, and the best contact email.'
+          });
+        }
+
+        if (shouldCaptureSupportMessage) {
+          const supportMessage = (explicitSupportMessage || String(message || '').trim()).trim();
+
+          if (supportMessage.length < 10) {
+            return jsonResponse({
+              success: true,
+              response: isPT
+                ? 'Recebi o pedido, mas preciso de um pouco mais de detalhe para enviar à equipa. Escreve a mensagem completa de suporte numa ou duas frases.'
+                : isES
+                  ? 'He recibido la solicitud, pero necesito un poco más de detalle para enviarla al equipo. Escribe el mensaje completo de soporte en una o dos frases.'
+                  : 'I got the request, but I need a bit more detail before sending it to the team. Please write the full support message in one or two sentences.'
+            });
+          }
+
+          if (!supabase) {
+            return jsonResponse({
+              success: false,
+              error: isPT
+                ? 'A configuração de base de dados não está disponível nesta função. Faz deploy com a service role do Supabase para activar o registo de mensagens.'
+                : isES
+                  ? 'La configuración de base de datos no está disponible en esta función. Haz deploy con la service role de Supabase para activar el registro de mensajes.'
+                  : 'Database configuration is not available in this function. Deploy with the Supabase service role to enable support message logging.'
+            }, 500);
+          }
+
+          const payload = {
+            name: resolvedContactName || null,
+            email: resolvedContactEmail || null,
+            subject: 'Mensagem via Career Advisory Bot',
+            message: supportMessage,
+            language: chatLang,
+            created_at: new Date().toISOString()
+          };
+
+          const { error: supportInsertError } = await supabase.from('contact_messages').insert(payload);
+
+          if (supportInsertError) {
+            console.error('❌ Career Coach support insert error:', supportInsertError);
+            return jsonResponse({
+              success: false,
+              error: isPT
+                ? 'Não consegui registar a tua mensagem agora. Tenta novamente dentro de momentos.'
+                : isES
+                  ? 'No he podido registrar tu mensaje ahora mismo. Inténtalo de nuevo en unos momentos.'
+                  : 'I could not log your message right now. Please try again in a moment.'
+            }, 500);
+          }
+
+          return jsonResponse({
+            success: true,
+            response: isPT
+              ? 'Perfeito — já registei a tua mensagem e a equipa poderá dar seguimento. Assunto: "Mensagem via Career Advisory Bot".'
+              : isES
+                ? 'Perfecto — ya he registrado tu mensaje y el equipo podrá darle seguimiento. Asunto: "Mensagem via Career Advisory Bot".'
+                : 'Done — I have logged your message and the team can follow up from here. Subject: "Mensagem via Career Advisory Bot".'
+          });
+        }
 
         const modelAck = isPT ? 'Compreendido. Sou o Career Advisory da Share2Inspire. Estou pronto para ajudar.' : isES ? 'Entendido. Soy el Career Advisory de Share2Inspire. Estoy listo para ayudar.' : 'Understood. I am the Career Advisory by Share2Inspire. Ready to help.';
 
