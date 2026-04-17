@@ -11,6 +11,7 @@ declare global {
 import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check, Menu, X, Search, FileSearch, Crosshair } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import { trackCVUpload, trackAnalysisStart, trackAnalysisComplete, trackPaymentStart, trackPurchase } from "@/lib/gtag";
@@ -345,7 +346,7 @@ export default function Home() {
     }, 4000);
     return () => clearInterval(interval);
   }, [loading]);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [mobileLeadDrawerOpen, setMobileLeadDrawerOpen] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
   const [wantsJobMatch, setWantsJobMatch] = useState(false);
   const [jobInput, setJobInput] = useState("");
@@ -445,6 +446,9 @@ export default function Home() {
       setError(null);
       setFile(selectedFile);
       trackCVUpload();
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        setMobileLeadDrawerOpen(true);
+      }
     }
   };
 
@@ -463,6 +467,7 @@ export default function Home() {
     }
     setAnalysisEmailError(null);
     sessionStorage.setItem('paymentEmail', analysisEmail.trim().toLowerCase());
+    setMobileLeadDrawerOpen(false);
     trackAnalysisStart('cv_analyser');
     setLoading(true);
     setError(null);
@@ -724,10 +729,6 @@ export default function Home() {
     }
     if (!selectedCountry) {
       setError(pick('Selecciona o teu país para resultados localizados.', 'Select your country for localised results.', 'Selecciona tu país para resultados localizados.'));
-      return;
-    }
-    if (!acceptedTerms) {
-      setError(pick('Aceita a Política de Privacidade para continuar.', 'Accept the Privacy Policy to continue.', 'Acepta la Política de Privacidad para continuar.'));
       return;
     }
     // Validate mandatory email
@@ -1136,8 +1137,58 @@ export default function Home() {
       </a>
 
       {/* Hero Section */}
-      <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
-        <div className="text-center space-y-3 md:space-y-6 mb-6 md:mb-12">
+      <main className="max-w-4xl mx-auto px-4 md:px-6 py-4 md:py-16">
+        <div className="md:hidden mb-4">
+          <div className="rounded-2xl border border-[#C9A961]/25 bg-gradient-to-b from-[#111111] to-[#1B1B1B] px-4 py-5 shadow-xl shadow-black/20 space-y-4">
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">
+              <Clock className="w-3.5 h-3.5" />
+              {pick('Análise gratuita em 30 segundos', 'Free analysis in 30 seconds', 'Análisis gratuito en 30 segundos')}
+            </p>
+            <h1 className="text-xl font-bold text-white leading-tight">
+              {pick('Carrega o teu CV e recebe feedback imediato.', 'Upload your CV and get instant feedback.', 'Sube tu CV y recibe feedback inmediato.')}
+            </h1>
+            <label
+              htmlFor="cv-upload-mobile"
+              className={`block w-full rounded-2xl text-center cursor-pointer font-semibold text-base transition-all duration-200 shadow-lg ${
+                file ? 'border-2 border-[#C9A961] bg-[#C9A961]/10 text-white px-4 py-4' : 'bg-[#C9A961] hover:bg-[#A88B4E] text-white px-5 py-5'
+              }`}
+            >
+              <input
+                id="cv-upload-mobile"
+                type="file"
+                accept=".pdf,.docx,.png,.jpg,.jpeg"
+                onChange={handleFileChange}
+                className="sr-only"
+                disabled={loading}
+              />
+              {file ? (
+                <span className="flex items-center justify-center gap-2">
+                  <FileText className="w-5 h-5 text-[#C9A961]" />
+                  <span className="truncate max-w-[220px]">{file.name}</span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Upload className="w-5 h-5" />
+                  {pick('Carregar CV grátis agora', 'Upload CV free now', 'Subir CV gratis ahora')}
+                </span>
+              )}
+            </label>
+            <p className="text-xs text-white/70">
+              {pick('PDF, DOCX ou imagem. Só pedimos email e país depois do upload.', 'PDF, DOCX or image. We only ask for email and country after upload.', 'PDF, DOCX o imagen. Solo pedimos email y país después de la subida.')}
+            </p>
+            {file && (
+              <button
+                type="button"
+                onClick={() => setMobileLeadDrawerOpen(true)}
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white transition-colors hover:border-[#C9A961]/60 hover:bg-white/10"
+              >
+                {pick('Continuar para a análise gratuita', 'Continue to free analysis', 'Continuar al análisis gratuito')}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="hidden md:block text-center space-y-3 md:space-y-6 mb-6 md:mb-12">
           <h1 className="text-2xl md:text-5xl font-bold text-foreground leading-tight transition-opacity duration-500" key={headlineIdx}>
             {headlines[headlineIdx].text} <span className="text-[#C9A961]">{headlines[headlineIdx].highlight}</span>
           </h1>
@@ -1175,41 +1226,39 @@ export default function Home() {
 
         {/* Upload Card */}
         <div className="bg-card border border-border rounded-2xl p-5 md:p-12 space-y-5 md:space-y-8">
-          {/* Mobile: Direct CTA Button */}
+          {/* Mobile: compact status after hero upload CTA */}
           <div className="md:hidden space-y-3">
-            <label
-              htmlFor="cv-upload-mobile"
-              className={`block w-full py-4 px-6 rounded-xl text-center cursor-pointer font-semibold text-base transition-all duration-200 ${
-                file ? 'bg-[#C9A961]/10 border-2 border-[#C9A961] text-foreground' : 'bg-[#C9A961] hover:bg-[#A88B4E] text-white'
-              }`}
-            >
-              <input
-                id="cv-upload-mobile"
-                type="file"
-                accept=".pdf,.docx,.png,.jpg,.jpeg"
-                onChange={handleFileChange}
-                className="sr-only"
-                disabled={loading}
-              />
-              {file ? (
-                <span className="flex items-center justify-center gap-2">
-                  <FileText className="w-5 h-5 text-[#C9A961]" />
-                  {file.name}
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  {pick('Analisar o Meu CV Agora', 'Analyse My CV Now', 'Analizar Mi CV Ahora')}
-                </span>
-              )}
-            </label>
-            <p className="text-[11px] text-muted-foreground text-center">{pick('PDF, DOCX ou Imagem • Grátis • Dados eliminados após análise', 'PDF, DOCX or Image • Free • Data deleted after analysis', 'PDF, DOCX o Imagen • Gratis • Datos eliminados tras el análisis')}</p>
+            {file ? (
+              <div className="rounded-2xl border border-[#C9A961]/30 bg-[#C9A961]/10 p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#C9A961]/15 border border-[#C9A961]/30 flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5 text-[#C9A961]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{pick('CV carregado', 'CV uploaded', 'CV subido')}</p>
+                    <p className="text-xs text-muted-foreground truncate">{file.name}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileLeadDrawerOpen(true)}
+                  className="w-full rounded-xl bg-[#C9A961] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#A88B4E]"
+                >
+                  {pick('Continuar para análise gratuita', 'Continue to free analysis', 'Continuar al análisis gratuito')}
+                </button>
+                <p className="text-[11px] text-muted-foreground text-center">{pick('Só faltam o email e o país.', 'Only your email and country are missing.', 'Solo faltan tu email y país.')}</p>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-border bg-muted/20 p-4 text-center">
+                <p className="text-sm font-semibold text-foreground">{pick('Faz upload acima para começar.', 'Upload above to start.', 'Sube arriba para empezar.')}</p>
+                <p className="text-xs text-muted-foreground mt-1">{pick('O formulário abre só depois de carregares o CV.', 'The form opens only after you upload your CV.', 'El formulario se abre solo después de subir tu CV.')}</p>
+              </div>
+            )}
             {!file && savedCvInfo && (
               <button
                 type="button"
                 onClick={async () => {
                   try {
-                    // Use authenticated endpoint for private bucket
                     const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
                     const stored = storageKey ? localStorage.getItem(storageKey) : null;
                     const accessToken = stored ? JSON.parse(stored)?.access_token : null;
@@ -1224,6 +1273,7 @@ export default function Home() {
                     const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
                     profileCvAutofillRef.current = true;
                     setFile(f);
+                    setMobileLeadDrawerOpen(true);
                   } catch { setError(pick('Não foi possível carregar o CV guardado.', 'It was not possible to load the saved CV.', 'No fue posible cargar el CV guardado.')); }
                 }}
                 className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
@@ -1330,6 +1380,128 @@ export default function Home() {
               <p className="text-sm text-red-500">{error}</p>
             </div>
           )}
+
+          <Drawer open={mobileLeadDrawerOpen} onOpenChange={setMobileLeadDrawerOpen}>
+            <DrawerContent className="md:hidden rounded-t-3xl">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>{pick('Último passo antes da análise', 'Last step before analysis', 'Último paso antes del análisis')}</DrawerTitle>
+                <DrawerDescription>
+                  {pick('Introduz o teu email e país para começares a análise gratuita.', 'Enter your email and country to start the free analysis.', 'Introduce tu email y país para empezar el análisis gratuito.')}
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="px-4 pb-2 space-y-4 overflow-y-auto">
+                {file && (
+                  <div className="rounded-xl border border-[#C9A961]/25 bg-[#C9A961]/10 p-3 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#C9A961]/15 border border-[#C9A961]/30 flex items-center justify-center shrink-0">
+                      <FileText className="w-4 h-4 text-[#C9A961]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{pick('CV pronto para análise', 'CV ready for analysis', 'CV listo para analizar')}</p>
+                      <p className="text-xs text-muted-foreground truncate">{file.name}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <label htmlFor="analysis-email-mobile" className="text-sm font-medium text-foreground flex items-center gap-1">
+                    <svg className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    {pick('O teu email', 'Your email', 'Tu email')}
+                  </label>
+                  <input
+                    id="analysis-email-mobile"
+                    type="email"
+                    value={analysisEmail}
+                    onChange={(e) => { setAnalysisEmail(e.target.value); setAnalysisEmailError(null); }}
+                    placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
+                    className={`w-full px-3 py-3 rounded-xl border ${analysisEmailError ? 'border-red-500 ring-2 ring-red-500/30' : 'border-border'} bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]`}
+                    disabled={loading}
+                  />
+                  {analysisEmailError && (
+                    <p className="text-xs text-red-500 flex items-center gap-1">
+                      <XCircle className="w-3 h-3" />
+                      {analysisEmailError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="analysis-country-mobile" className="text-sm font-medium text-foreground flex items-center gap-1">
+                    <Globe className="w-4 h-4 text-[#C9A961]" />
+                    {pick('País', 'Country', 'País')}
+                  </label>
+                  <select
+                    id="analysis-country-mobile"
+                    aria-label={pick('País para análise', 'Country for analysis', 'País para análisis')}
+                    value={selectedCountry}
+                    onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(''); }}
+                    className="w-full px-3 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
+                    disabled={loading}
+                  >
+                    <option value="">{pick('Selecciona o teu país...', 'Select your country...', 'Selecciona tu país...')}</option>
+                    {countries.map(c => (
+                      <option key={c.code} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {regionOptions.length > 1 && (
+                  <div className="space-y-1">
+                    <label htmlFor="analysis-region-mobile" className="text-sm font-medium text-foreground">
+                      {pick('Região (opcional)', 'Region (optional)', 'Región (opcional)')}
+                    </label>
+                    <select
+                      id="analysis-region-mobile"
+                      aria-label={pick('Região para análise', 'Region for analysis', 'Región para análisis')}
+                      value={selectedRegion}
+                      onChange={(e) => setSelectedRegion(e.target.value)}
+                      className="w-full px-3 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
+                      disabled={loading}
+                    >
+                      <option value="">{pick('Selecciona a região (opcional)...', 'Select region (optional)...', 'Selecciona la región (opcional)...')}</option>
+                      {regionOptions.map(r => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+              <DrawerFooter className="border-t border-border/60 bg-background">
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  {pick('Ao analisar, aceitas a ', 'By analysing, you accept the ', 'Al analizar, aceptas la ')}
+                  <a href={localePath('/politica-privacidade')} target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
+                    {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
+                  </a>
+                  {pick(' e o processamento dos teus dados para a análise do CV.', ' and the processing of your data for CV analysis.', ' y el tratamiento de tus datos para el análisis del CV.')}
+                </p>
+                <Button
+                  onClick={() => {
+                    const emailCheck = validateEmail(analysisEmail);
+                    if (!selectedCountry) {
+                      setError(pick('Selecciona o teu país para resultados localizados.', 'Select your country for localised results.', 'Selecciona tu país para resultados localizados.'));
+                      return;
+                    }
+                    if (!emailCheck.valid) {
+                      setAnalysisEmailError(emailCheck.error || pick('Email obrigatório.', 'Email required.', 'Email obligatorio.'));
+                      setError(emailCheck.error || pick('Introduz o teu email para continuar.', 'Enter your email to continue.', 'Introduce tu email para continuar.'));
+                      return;
+                    }
+                    handleAnalyze();
+                  }}
+                  disabled={loading || !file || !analysisEmail.trim() || !selectedCountry}
+                  className="w-full h-12 text-base font-semibold bg-[#C9A961] hover:bg-[#A88B4E] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      {loadingMessages[loadingStep]}
+                    </>
+                  ) : (
+                    pick('Analisar CV gratuitamente', 'Analyse CV for free', 'Analizar CV gratis')
+                  )}
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
 
           {/* Alternatives: LinkedIn + Email Link */}
           <div className="flex flex-col gap-2 pt-1">
@@ -1569,7 +1741,7 @@ export default function Home() {
           </div>
 
           {/* Country/Region Selector */}
-          <div className="space-y-1">
+          <div className={`space-y-1 ${!showLinkedIn ? 'hidden md:block' : ''}`}>
             <label htmlFor="analysis-country" className="text-sm font-medium text-foreground flex items-center gap-1">
               <Globe className="w-4 h-4 text-[#C9A961]" />
               {pick('País e região', 'Country and region', 'País y región')} <span className="text-red-500">*</span>
@@ -1608,7 +1780,7 @@ export default function Home() {
           </div>
 
           {/* Mandatory Email Field */}
-          <div className="space-y-1">
+          <div className={`space-y-1 ${!showLinkedIn ? 'hidden md:block' : ''}`}>
             <label htmlFor="analysis-email" className="text-sm font-medium text-foreground flex items-center gap-1">
               <svg className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
               {pick('O teu email', 'Your email', 'Tu email')} <span className="text-red-500">*</span>
@@ -1631,17 +1803,10 @@ export default function Home() {
             <p className="text-[11px] text-muted-foreground/70">{pick('Necessário para receberes os resultados e certificação.', 'Required to receive your results and certification.', 'Necesario para recibir tus resultados y certificación.')}</p>
           </div>
 
-          {/* Privacy Terms Checkbox */}
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/30">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded border-border text-[#C9A961] focus:ring-[#C9A961] cursor-pointer"
-            />
-            <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
-              {pick('Concordo com a', 'I agree to the', 'Acepto la')}{' '}
+          {/* Privacy Terms (Simplified) */}
+          <div className={`${!showLinkedIn ? 'hidden md:block' : ''} rounded-lg bg-muted/30 p-4`}>
+            <p className="text-sm text-muted-foreground">
+              {pick('Ao analisar, aceitas a', 'By analysing, you accept the', 'Al analizar, aceptas la')}{' '}
               <a 
                 href={localePath('/politica-privacidade')} 
                 target="_blank" 
@@ -1650,8 +1815,8 @@ export default function Home() {
               >
                 {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
               </a>
-              {' '}{pick('e autorizo o processamento dos meus dados para análise do CV.', 'and authorise the processing of my data for CV analysis.', 'y autorizo el procesamiento de mis datos para el análisis del CV.')}
-            </label>
+              {' '}{pick('e autorizas o processamento dos teus dados para a análise do CV.', 'and authorise the processing of your data for CV analysis.', 'y autorizas el tratamiento de tus datos para el análisis del CV.')}
+            </p>
           </div>
 
           {/* Analyze Button */}
@@ -1663,8 +1828,8 @@ export default function Home() {
                 handleAnalyze();
               }
             }}
-            disabled={loading || !acceptedTerms || !analysisEmail.trim() || !selectedCountry || (!file && !(linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn))}
-            className="w-full h-12 text-base font-semibold bg-[#C9A961] hover:bg-[#A88B4E] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !analysisEmail.trim() || !selectedCountry || (!file && !(linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn))}
+            className={`w-full h-12 text-base font-semibold bg-[#C9A961] hover:bg-[#A88B4E] text-white disabled:opacity-50 disabled:cursor-not-allowed ${!showLinkedIn ? 'hidden md:flex' : ''}`}
           >
             {loading ? (
               <>
