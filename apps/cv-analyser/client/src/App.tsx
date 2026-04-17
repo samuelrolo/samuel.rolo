@@ -16,6 +16,7 @@ const Results = lazy(() => import("./pages/Results"));
 const TestData = lazy(() => import("./pages/TestData"));
 const CareerPathHome = lazy(() => import("./pages/CareerPathHome"));
 const CareerPathResults = lazy(() => import("./pages/CareerPathResults"));
+const CareerPathExample = lazy(() => import("./pages/CareerPathExample"));
 const HomeEN = lazy(() => import("./pages/en/HomeEN"));
 const CareerPathHomeEN = lazy(() => import("./pages/en/CareerPathHomeEN"));
 const BundleHome = lazy(() => import("./pages/BundleHome"));
@@ -45,6 +46,7 @@ type RoutedPageView = {
   component: LocalizedComponents;
   resultsComponent?: ComponentType;
   testComponent?: ComponentType;
+  exampleComponent?: ComponentType;
 };
 
 type RoutablePageId = Exclude<PageId, "area-cliente">;
@@ -91,6 +93,7 @@ const pageViews: Record<RoutablePageId, RoutedPageView> = {
       es: CareerPathHome,
     },
     resultsComponent: CareerPathResults,
+    exampleComponent: CareerPathExample,
   },
   "career-intelligence": {
     component: {
@@ -176,11 +179,13 @@ function RoutedSwitch({
   homeComponent,
   resultsComponent,
   testComponent,
+  exampleComponent,
 }: {
   base: string;
   homeComponent: ComponentType;
   resultsComponent?: ComponentType;
   testComponent?: ComponentType;
+  exampleComponent?: ComponentType;
 }) {
   return (
     <Router base={base}>
@@ -188,6 +193,7 @@ function RoutedSwitch({
         <Route path="/" component={homeComponent} />
         {resultsComponent ? <Route path="/results" component={resultsComponent} /> : null}
         {testComponent ? <Route path="/test" component={testComponent} /> : null}
+        {exampleComponent ? <Route path="/example" component={exampleComponent} /> : null}
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -231,6 +237,7 @@ function AppRouter() {
       homeComponent={homeComponent}
       resultsComponent={view.resultsComponent}
       testComponent={view.testComponent}
+      exampleComponent={view.exampleComponent}
     />
   );
 }
