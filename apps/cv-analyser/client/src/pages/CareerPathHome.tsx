@@ -126,7 +126,6 @@ export default function CareerPathHome() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
@@ -714,8 +713,26 @@ export default function CareerPathHome() {
         {/* ═══ STEP 1: HERO — Promise + Examples (value-first) ═══ */}
         {step === 'hero' && (
           <div className="space-y-16 animate-in fade-in">
+            <div className="md:hidden rounded-3xl border border-[#C9A961]/20 bg-gradient-to-b from-[#111111] to-[#1b1b1b] p-5 shadow-xl shadow-black/20 space-y-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">
+                {pick('Roadmap em menos de 1 minuto', 'Roadmap in under 1 minute', 'Roadmap en menos de 1 minuto')}
+              </p>
+              <h1 className="text-2xl font-bold text-white leading-tight">
+                {pick('Descobre o teu próximo passo de carreira.', 'Discover your next career move.', 'Descubre tu próximo paso de carrera.')}
+              </h1>
+              <Button
+                onClick={() => setStep('upload')}
+                className="w-full h-14 rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white text-base font-semibold shadow-lg shadow-[#C9A961]/20"
+              >
+                <Compass className="w-5 h-5 mr-2" />
+                {pick('Carregar CV e continuar', 'Upload CV and continue', 'Subir CV y continuar')}
+              </Button>
+              <p className="text-xs text-white/70">
+                {pick(`Pagamento único de ${PRICE_DISPLAY} · Sem subscrição`, `One-time payment of ${PRICE_DISPLAY} · No subscription`, `Pago único de ${PRICE_DISPLAY} · Sin suscripción`)}
+              </p>
+            </div>
             {/* Hero */}
-            <div className="text-center space-y-6">
+            <div className="hidden md:block text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Compass className="w-4 h-4" />
                 {pick('Powered by IA Avançada', 'Powered by Advanced AI', 'Powered by IA Avanzada')}
@@ -1072,24 +1089,17 @@ export default function CareerPathHome() {
                 />
               </div>
 
-              {/* Terms */}
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="cp-terms"
-                  checked={acceptedTerms}
-                  onChange={(e) => setAcceptedTerms(e.target.checked)}
-                  disabled={loading}
-                  className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]"
-                />
-                <label htmlFor="cp-terms" className="text-sm text-muted-foreground cursor-pointer">
-                  {pick('Concordo com a', 'I agree with the', 'Acepto la')}{" "}
+              {/* Privacy */}
+              <div className="rounded-xl bg-muted/40 p-3">
+                <p className="text-sm text-muted-foreground">
+                  {pick('Ao continuar, aceitas a', 'By continuing, you accept the', 'Al continuar, aceptas la')}{' '}
                   <a href={localePath('/politica-privacidade/')} target="_blank" rel="noopener noreferrer" className="text-[#C9A961] hover:underline">
                     {pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}
-                  </a>{" "}
-                  {pick('e autorizo o processamento dos meus dados para análise de carreira.', 'and authorise the processing of my data for career analysis.', 'y autorizo el procesamiento de mis datos para análisis de carrera.')}
-                </label>
+                  </a>{' '}
+                  {pick('e o processamento dos teus dados para a análise de carreira.', 'and the processing of your data for career analysis.', 'y el tratamiento de tus datos para el análisis de carrera.')}
+                </p>
               </div>
+
 
               {/* Error */}
               {error && (
@@ -1099,7 +1109,7 @@ export default function CareerPathHome() {
               {/* Submit */}
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading}
+                disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (

@@ -93,7 +93,6 @@ export default function StudentPackHome() {
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState("");
@@ -203,7 +202,6 @@ export default function StudentPackHome() {
     if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick('Introduz um URL de LinkedIn válido', 'Enter a valid LinkedIn URL', 'Introduce una URL de LinkedIn válida')); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
     if (!selectedCountry) { setError(pick('Selecciona o teu país para resultados localizados', 'Select your country', 'Selecciona tu país')); return; }
-    if (!acceptedTerms) { setError(pick('Aceita a Política de Privacidade', 'Accept the Privacy Policy', 'Acepta la Política de Privacidad')); return; }
     setError(null);
     try {
       await persistStudentPackCvPayload(file);
@@ -257,26 +255,22 @@ export default function StudentPackHome() {
         body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
       });
 
+      let linkedinScrapeData: any = null;
+      let linkedinCvText = '';
+
       if (!linkedinScrapeResponse.ok) {
         const scrapeError = await linkedinScrapeResponse.json().catch(() => ({}));
-        throw new Error(scrapeError?.error || pick(
-          'Não foi possível extrair os dados do teu perfil LinkedIn. Verifica se o URL está correto e o perfil é público.',
-          'Could not extract your LinkedIn profile data. Check the URL and ensure the profile is public.',
-          'No se pudieron extraer los datos de tu perfil de LinkedIn. Verifica que la URL sea correcta y que el perfil sea público.'
-        ));
+        console.warn('[Student Pack] LinkedIn scrape falhou, a usar fallback de sinais públicos:', scrapeError?.error || linkedinScrapeResponse.statusText);
+      } else {
+        linkedinScrapeData = await linkedinScrapeResponse.json();
+        linkedinCvText = typeof linkedinScrapeData?.cv_text === 'string' ? linkedinScrapeData.cv_text.substring(0, 12000) : '';
       }
 
-      const linkedinScrapeData = await linkedinScrapeResponse.json();
-      if (!linkedinScrapeData?.success || !linkedinScrapeData?.cv_text) {
-        throw new Error(linkedinScrapeData?.error || pick(
-          'Não foi possível extrair dados estruturados do perfil LinkedIn.',
-          'Could not extract structured data from the LinkedIn profile.',
-          'No se pudieron extraer datos estructurados del perfil de LinkedIn.'
-        ));
+      if (!linkedinCvText) {
+        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
       }
 
-      const structuredLinkedinData = JSON.stringify(linkedinScrapeData, null, 2);
-      const linkedinCvText = linkedinScrapeData.cv_text.substring(0, 12000);
+      const structuredLinkedinData = JSON.stringify(linkedinScrapeData || { linkedin_url: currentLinkedinUrl, fallback: true }, null, 2);
 
       if (isPT) {
         // ─── PT: two-engine approach (same as EN/ES) ───
@@ -613,7 +607,15 @@ export default function StudentPackHome() {
       {/* ─── HERO ─── */}
       {step === 'hero' && (
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-20">
-          <div className="text-center space-y-4 md:space-y-6">
+          <div className="md:hidden rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#0f172a] to-[#111827] p-5 shadow-xl shadow-black/20 space-y-4 mb-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">{pick('Pack estudante com 43% de desconto', 'Student pack with 43% off', 'Pack estudiante con 43% de descuento')}</p>
+            <h1 className="text-2xl font-bold text-white leading-tight">{pick('Carrega o teu CV e melhora CV + LinkedIn num só passo.', 'Upload your CV and improve CV + LinkedIn in one go.', 'Sube tu CV y mejora CV + LinkedIn en un solo paso.')}</h1>
+            <Button onClick={() => setStep('upload')} className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold shadow-lg shadow-emerald-600/20">
+              {pick('Carregar CV e continuar', 'Upload CV and continue', 'Subir CV y continuar')} <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <p className="text-xs text-white/70">{pick('Pagamento único · Resultado imediato', 'One-time payment · Instant result', 'Pago único · Resultado inmediato')}</p>
+          </div>
+          <div className="hidden md:block text-center space-y-4 md:space-y-6">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 text-emerald-600 text-xs font-bold px-4 py-2 rounded-full border border-emerald-500/20 uppercase tracking-wider">
               <GraduationCap className="w-4 h-4" />
               {pick("Oferta Estudante — Poupas 43%", "Student Offer — Save 43%", "Oferta Estudiante — Ahorra 43%")}
@@ -793,17 +795,16 @@ export default function StudentPackHome() {
                 </select>
               )}
             </div>
-            <label htmlFor="student-pack-terms" className="flex items-start gap-3 cursor-pointer">
-              <input id="student-pack-terms" type="checkbox" aria-label={pick('Aceitar política de privacidade e termos', 'Accept privacy policy and terms', 'Aceptar política de privacidad y términos')} checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
-              <span className="text-xs text-slate-500">
-                {pick("Li e aceito a ", "I accept the ", "Acepto la ")}
-                <a href={localePath('/politica-privacidade')} target="_blank" className="text-emerald-600 underline">{pick("Política de Privacidade", "Privacy Policy", "Política de Privacidad")}</a>
-                {pick(" e os ", " and ", " y los ")}
-                <a href="/termos-condicoes" target="_blank" className="text-emerald-600 underline">{pick("Termos e Condições", "Terms & Conditions", "Términos y Condiciones")}</a>.
-              </span>
-            </label>
+            <div className="rounded-xl bg-emerald-50 p-3">
+              <p className="text-xs text-slate-600">
+                {pick('Ao continuar, aceitas a ', 'By continuing, you accept the ', 'Al continuar, aceptas la ')}
+                <a href={localePath('/politica-privacidade')} target="_blank" className="text-emerald-600 underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a>
+                {pick(' e os ', ' and the ', ' y los ')}
+                <a href="/termos-condicoes" target="_blank" className="text-emerald-600 underline">{pick('Termos e Condições', 'Terms & Conditions', 'Términos y Condiciones')}</a>.
+              </p>
+            </div>
             {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
-            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 transition-all">
+            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry} className="w-full h-14 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 transition-all">
               {appliedCoupon
                 ? <>{pick("Pagar — ", "Pay — ", "Pagar — ")}<span className="line-through text-slate-300 mr-1">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span> {isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</>
                 : <>{pick("Pagar e analisar — ", "Pay and analyse — ", "Pagar y analizar — ")}{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</>

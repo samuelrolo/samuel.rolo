@@ -78,7 +78,6 @@ export default function BundleHome() {
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [email, setEmail] = useState("");
   const [savedCvInfo, setSavedCvInfo] = useState<{ filename: string; url: string } | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string>(() => getDefaultCountryByLanguage(lang));
   const [selectedRegion, setSelectedRegion] = useState("");
@@ -161,7 +160,6 @@ export default function BundleHome() {
     if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick('Introduz um URL de LinkedIn válido', 'Enter a valid LinkedIn URL', 'Introduce una URL de LinkedIn válida')); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
     if (!selectedCountry) { setError(pick('Selecciona o teu país para resultados localizados', 'Please select your country for localised results', 'Selecciona tu país para resultados localizados')); return; }
-    if (!acceptedTerms) { setError(pick('Aceita a Política de Privacidade', 'Accept the Privacy Policy', 'Acepta la Política de Privacidad')); return; }
     setError(null);
 
     try {
@@ -637,8 +635,16 @@ export default function BundleHome() {
       {/* ─── HERO ─── */}
       {step === 'hero' && (
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
+          <div className="md:hidden rounded-3xl border border-[#C9A961]/20 bg-gradient-to-b from-[#111111] to-[#1b1b1b] p-5 shadow-xl shadow-black/20 space-y-4 mb-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">{pick('Bundle mais popular', 'Most popular bundle', 'Bundle más popular')}</p>
+            <h1 className="text-2xl font-bold text-white leading-tight">{pick('Carrega o teu CV e recebe diagnóstico + roadmap.', 'Upload your CV and get diagnosis + roadmap.', 'Sube tu CV y recibe diagnóstico + roadmap.')}</h1>
+            <Button onClick={() => setStep('upload')} className="w-full h-14 rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white text-base font-semibold shadow-lg shadow-[#C9A961]/20">
+              {pick('Carregar CV e continuar', 'Upload CV and continue', 'Subir CV y continuar')} <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <p className="text-xs text-white/70">{pick('Pagamento único · Sem subscrição', 'One-time payment · No subscription', 'Pago único · Sin suscripción')}</p>
+          </div>
           {/* ─── Hero ─── */}
-          <div className="text-center space-y-6">
+          <div className="hidden md:block text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 text-[#C9A961] text-xs font-bold px-4 py-2 rounded-full border border-[#C9A961]/20 uppercase tracking-wider">
               <Sparkles className="w-4 h-4" />
               {pick('Bundle mais popular', 'Most popular bundle', 'Bundle más popular')}
@@ -925,19 +931,15 @@ export default function BundleHome() {
               </div>
             </div>
 
-            {/* Terms */}
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                aria-label={pick('Aceito a Política de Privacidade e os Termos e Condições', 'I accept the Privacy Policy and Terms and Conditions', 'Acepto la Política de Privacidad y los Términos y Condiciones')}
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]"
-              />
-              <span className="text-xs text-slate-500">
-                {pick('Li e aceito a', 'I have read and accept the', 'He leído y acepto la')} <a href={localePath('/politica-privacidade')} target="_blank" className="text-[#C9A961] underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a> {pick('e os', 'and the', 'y los')} <a href={localePath('/termos-condicoes')} target="_blank" className="text-[#C9A961] underline">{pick('Termos e Condições', 'Terms and Conditions', 'Términos y Condiciones')}</a>.
-              </span>
-            </label>
+            {/* Privacy */}
+            <div className="rounded-xl bg-[#C9A961]/8 p-3">
+              <p className="text-xs text-slate-600">
+                {pick('Ao continuar, aceitas a ', 'By continuing, you accept the ', 'Al continuar, aceptas la ')}
+                <a href={localePath('/politica-privacidade')} target="_blank" className="text-[#C9A961] underline">{pick('Política de Privacidade', 'Privacy Policy', 'Política de Privacidad')}</a>
+                {pick(' e os ', ' and the ', ' y los ')}
+                <a href={localePath('/termos-condicoes')} target="_blank" className="text-[#C9A961] underline">{pick('Termos e Condições', 'Terms and Conditions', 'Términos y Condiciones')}</a>.
+              </p>
+            </div>
 
             {error && (
               <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl">
@@ -949,7 +951,7 @@ export default function BundleHome() {
             {/* CTA */}
             <Button
               onClick={handleProceedToPayment}
-              disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms}
+              disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry}
               className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all"
             >
               {appliedCoupon ? (

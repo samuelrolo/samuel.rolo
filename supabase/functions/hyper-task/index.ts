@@ -1687,143 +1687,120 @@ serve(async (req)=>{
 
     const linkedinUrlInput = body.linkedin_url || '';
 
-    // If no cv_text and no file, but linkedin_url is provided, scrape LinkedIn profile via Gemini
+    // If no cv_text and no file, but linkedin_url is provided, try backend scraping first and
+    // gracefully degrade to public-signal analysis instead of hard failing the conversion funnel.
 
     if (!cvText && !file && linkedinUrlInput && linkedinUrlInput.includes('linkedin.com')) {
 
-      console.log('🔗 Extraindo dados do perfil LinkedIn via Gemini:', linkedinUrlInput);
+      console.log('🔗 Extraindo dados do perfil LinkedIn para CV extraction:', linkedinUrlInput);
 
       try {
 
-        const scrapePrompt = `Visit this LinkedIn profile URL and extract ALL professional information as if it were a CV/resume in plain text format.
+        let extractedLinkedinText = '';
 
+        try {
+          console.log('🔎 Tentando scraping LinkedIn via backend share2inspire...');
+          const apifyResponse = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/scrape-linkedin', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ linkedin_url: linkedinUrlInput })
+          });
 
+          if (apifyResponse.ok) {
+            const apifyData = await apifyResponse.json();
+            const backendCvText = typeof apifyData?.cv_text === 'string' ? apifyData.cv_text.trim() : '';
+            if (apifyData?.success && backendCvText.length >= 50) {
+              extractedLinkedinText = backendCvText;
+              console.log(`✅ LinkedIn extraído via backend: ${backendCvText.length} caracteres`);
+            } else {
+              console.warn(`⚠️ Backend LinkedIn devolveu dados limitados: success=${apifyData?.success}, len=${backendCvText.length}`);
+            }
+          } else {
+            const apifyErrorText = await apifyResponse.text();
+            console.warn('⚠️ Backend LinkedIn scrape falhou:', apifyErrorText.substring(0, 300));
+          }
+        } catch (backendError) {
+          console.warn('⚠️ Erro no backend LinkedIn scrape:', backendError?.message || backendError);
+        }
+
+        if (!extractedLinkedinText) {
+          const scrapePrompt = `Visit this LinkedIn profile URL and extract ALL professional information as if it were a CV/resume in plain text format.
 
 LinkedIn URL: ${linkedinUrlInput}
 
-
-
 Extract and format the following sections (include ALL available information):
-
 - Full Name
-
 - Headline/Title
-
 - Location
-
 - About/Summary section (complete text)
-
 - Experience (all positions with company, title, dates, descriptions)
-
 - Education (all entries with institution, degree, dates)
-
 - Skills & Endorsements
-
 - Certifications
-
 - Languages
-
 - Volunteer Experience
-
 - Publications/Projects (if any)
-
-
 
 Return ONLY the extracted text in a clean CV-like format. If you cannot access the profile, return whatever public information is available from the URL.`;
 
-        const scrapeResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`, {
-
-          method: 'POST',
-
-          headers: {
-
-            'Content-Type': 'application/json'
-
-          },
-
-          body: JSON.stringify({
-
-            contents: [
-
-              {
-
-                role: 'user',
-
-                parts: [
-
-                  {
-
-                    text: scrapePrompt
-
-                  }
-
-                ]
-
-              }
-
-            ],
-
-            generationConfig: {
-
-              temperature: 0.1,
-
-              maxOutputTokens: 8192
-
+          const scrapeResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+              contents: [
+                {
+                  role: 'user',
+                  parts: [
+                    {
+                      text: scrapePrompt
+                    }
+                  ]
+                }
+              ],
+              generationConfig: {
+                temperature: 0.1,
+                maxOutputTokens: 8192
+              },
+              tools: [
+                {
+                  "google_search": {}
+                }
+              ]
+            })
+          });
 
-            tools: [
-
-              {
-
-                "google_search": {}
-
-              }
-
-            ]
-
-          })
-
-        });
-
-        if (!scrapeResponse.ok) {
-
-          const errText = await scrapeResponse.text();
-
-          console.error('❌ Gemini LinkedIn scrape failed:', errText);
-
-          throw new Error('Failed to extract LinkedIn profile data');
-
+          if (!scrapeResponse.ok) {
+            const errText = await scrapeResponse.text();
+            console.error('❌ Gemini LinkedIn scrape failed:', errText);
+          } else {
+            const scrapeData = await scrapeResponse.json();
+            const geminiText = typeof scrapeData?.candidates?.[0]?.content?.parts?.[0]?.text === 'string'
+              ? scrapeData.candidates[0].content.parts[0].text.trim()
+              : '';
+            if (geminiText.length >= 50) {
+              extractedLinkedinText = geminiText;
+              console.log(`✅ LinkedIn extraído via Gemini: ${geminiText.length} caracteres`);
+            } else {
+              console.warn(`⚠️ Gemini LinkedIn devolveu dados limitados: len=${geminiText.length}`);
+            }
+          }
         }
 
-        const scrapeData = await scrapeResponse.json();
-
-        cvText = scrapeData.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-        console.log(`✅ LinkedIn profile extracted: ${cvText.length} characters`);
-
-        if (!cvText || cvText.length < 50) {
-          console.error('❌ LinkedIn scrape returned insufficient data. Rejecting analysis.');
-          return jsonResponse({
-            success: false,
-            error: language === 'en'
-              ? 'Failed to extract enough data from the LinkedIn profile. The profile might be private or restricted, or the URL is incorrect. Please check the URL or try again later.'
-              : language === 'es'
-                ? 'No se pudieron extraer suficientes datos del perfil de LinkedIn. El perfil podría ser privado o restringido, o la URL es incorrecta. Por favor, verifica la URL o inténtalo de nuevo más tarde.'
-                : 'Não foi possível extrair dados suficientes do perfil LinkedIn. O perfil pode ser privado ou restrito, ou o URL está incorreto. Por favor, verifica o URL ou tenta novamente mais tarde.'
-          }, 400);
+        if (extractedLinkedinText) {
+          cvText = extractedLinkedinText;
+        } else {
+          cvText = `LinkedIn Profile URL: ${linkedinUrlInput}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+          console.warn('⚠️ A usar fallback de sinais públicos para não bloquear a análise LinkedIn.');
         }
 
       } catch (error) {
 
-        console.error('❌ Erro ao extrair perfil LinkedIn. Rejeitando análise:', error);
-        return jsonResponse({
-          success: false,
-          error: language === 'en'
-            ? 'An error occurred while extracting data from the LinkedIn profile. The profile might be private or restricted, or the URL is incorrect. Please check the URL or try again later.'
-            : language === 'es'
-              ? 'Ocurrió un error al extraer datos del perfil de LinkedIn. El perfil podría ser privado o restringido, o la URL es incorrecta. Por favor, verifica la URL o inténtalo de nuevo más tarde.'
-              : 'Ocorreu um erro ao extrair dados do perfil LinkedIn. O perfil pode ser privado ou restrito, ou o URL está incorreto. Por favor, verifica o URL ou tenta novamente mais tarde.'
-        }, 400);
+        console.error('❌ Erro ao extrair perfil LinkedIn. A usar fallback de sinais públicos:', error);
+        cvText = `LinkedIn Profile URL: ${linkedinUrlInput}\nNote: Automatic extraction failed. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
 
       }
 

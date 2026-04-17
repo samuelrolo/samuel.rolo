@@ -83,7 +83,6 @@ export default function LinkedInRoasterHome() {
   }, []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Payment state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -144,7 +143,6 @@ export default function LinkedInRoasterHome() {
   const handleProceedToPayment = () => {
     if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)", "Enter a valid LinkedIn URL (e.g. linkedin.com/in/yourname)", "Introduce un URL de LinkedIn válido (ej: linkedin.com/in/nombre)")); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick("Introduz um email válido", "Enter a valid email", "Introduce un email válido")); return; }
-    if (!acceptedTerms) { setError(pick("Aceita a Política de Privacidade", "Please accept the Privacy Policy", "Acepta la Política de Privacidad")); return; }
     setError(null);
     localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
     localStorage.setItem('linkedinRoasterUrl', linkedinUrl);
@@ -189,25 +187,22 @@ export default function LinkedInRoasterHome() {
         body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
       });
 
+      let scrapeData: any = null;
+      let linkedinCvText = '';
+
       if (!scrapeResponse.ok) {
         const scrapeError = await scrapeResponse.json().catch(() => ({}));
-        throw new Error(scrapeError?.error || pick(
-          'Não foi possível extrair os dados do teu perfil LinkedIn. Verifica se o URL está correto e o perfil é público.',
-          'Could not extract your LinkedIn profile data. Check the URL and ensure the profile is public.',
-          'No se pudieron extraer los datos de tu perfil de LinkedIn. Verifica que la URL sea correcta y que el perfil sea público.'
-        ));
+        console.warn('[LinkedIn Roaster] LinkedIn scrape falhou, a usar fallback de sinais públicos:', scrapeError?.error || scrapeResponse.statusText);
+      } else {
+        scrapeData = await scrapeResponse.json();
+        linkedinCvText = typeof scrapeData?.cv_text === 'string' ? scrapeData.cv_text.substring(0, 12000) : '';
       }
 
-      const scrapeData = await scrapeResponse.json();
-      if (!scrapeData?.success || !scrapeData?.cv_text) {
-        throw new Error(scrapeData?.error || pick(
-          'Não foi possível extrair dados estruturados do perfil LinkedIn.',
-          'Could not extract structured data from the LinkedIn profile.',
-          'No se pudieron extraer datos estructurados del perfil de LinkedIn.'
-        ));
+      if (!linkedinCvText) {
+        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
       }
 
-      const structuredLinkedinData = JSON.stringify(scrapeData, null, 2);
+      const structuredLinkedinData = JSON.stringify(scrapeData || { linkedin_url: currentLinkedinUrl, fallback: true }, null, 2);
 
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
@@ -222,7 +217,7 @@ export default function LinkedInRoasterHome() {
               email: candidateEmail,
               linkedin_url: currentLinkedinUrl,
               linkedin_data: structuredLinkedinData,
-              cv_text: scrapeData.cv_text.substring(0, 12000),
+              cv_text: linkedinCvText,
               language: lang,
               country: analysisCountry,
               region: analysisRegion || undefined,
@@ -463,11 +458,22 @@ export default function LinkedInRoasterHome() {
         </span>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-16">
+        <div className="md:hidden rounded-3xl border border-orange-200 bg-gradient-to-b from-[#1a1a2e] to-[#16213e] p-5 shadow-xl shadow-black/20 space-y-4 mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-300">{pick('Roast em 30 segundos', 'Roast in 30 seconds', 'Roast en 30 segundos')}</p>
+          <h1 className="text-2xl font-bold text-white leading-tight">{pick('Cola o teu LinkedIn e recebe feedback brutal.', 'Paste your LinkedIn and get brutally honest feedback.', 'Pega tu LinkedIn y recibe feedback brutal.')}</h1>
+          <button
+            onClick={() => document.getElementById('roast-input')?.scrollIntoView({ behavior: 'smooth' })}
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold text-base shadow-lg shadow-orange-500/25"
+          >
+            <Flame className="w-5 h-5" /> {pick('Colar LinkedIn agora', 'Paste LinkedIn now', 'Pegar LinkedIn ahora')}
+          </button>
+          <p className="text-xs text-white/70">{pick(`Apenas ${PRICE}€ · 100% confidencial`, `Only €${PRICE} · 100% confidential`, `Solo ${PRICE}€ · 100% confidencial`)}</p>
+        </div>
         {/* ═══ HERO SECTION ═══ */}
         <div className="space-y-16 animate-in fade-in">
           {/* Hero */}
-          <section className="text-center space-y-6">
+          <section className="hidden md:block text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 text-sm text-orange-700 font-medium">
               <Flame className="w-4 h-4" /> {pick("Brutal. Honesto. Eficaz.", "Brutal. Honest. Effective.", "Brutal. Honesto. Eficaz.")}
             </div>
@@ -575,14 +581,13 @@ export default function LinkedInRoasterHome() {
                 />
               </div>
 
-              <label htmlFor="linkedin-roaster-terms" className="flex items-start gap-2 cursor-pointer pt-1">
-                <input id="linkedin-roaster-terms" type="checkbox" aria-label={pick('Aceitar política de privacidade e termos', 'Accept privacy policy and terms', 'Aceptar política de privacidad y términos')} checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
-                <span className="text-xs text-slate-500">{pick(
-                  <>Aceito a <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidade</a> e os termos e condições. O perfil é analisado de forma confidencial.</>,
-                  <>I accept the <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Privacy Policy</a> and the terms and conditions. The profile is analysed confidentially.</>,
-                  <>Acepto la <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidad</a> y los términos y condiciones. El perfil se analiza de forma confidencial.</>
-                )}</span>
-              </label>
+              <div className="rounded-xl bg-orange-50 p-3">
+                <p className="text-xs text-slate-600">{pick(
+                  <>Ao continuar, aceitas a <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidade</a> e os termos e condições. O perfil é analisado de forma confidencial.</>,
+                  <>By continuing, you accept the <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Privacy Policy</a> and the terms and conditions. The profile is analysed confidentially.</>,
+                  <>Al continuar, aceptas la <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidad</a> y los términos y condiciones. El perfil se analiza de forma confidencial.</>
+                )}</p>
+              </div>
 
               {error && (
                 <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700">
@@ -592,7 +597,7 @@ export default function LinkedInRoasterHome() {
 
               <button
                 onClick={handleProceedToPayment}
-                disabled={!isValidLinkedinUrl(linkedinUrl) || !email.includes('@') || !acceptedTerms || loading}
+                disabled={!isValidLinkedinUrl(linkedinUrl) || !email.includes('@') || loading}
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all disabled:shadow-none disabled:cursor-not-allowed"
               >
                 {loading ? (
