@@ -323,6 +323,7 @@ export default function StudentPackHome() {
         sessionStorage.setItem('studentPackRegion', currentRegion);
         sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
         sessionStorage.setItem('studentPackPaid', 'true');
+        sessionStorage.setItem('studentPackDetectedName', cvAnalysisSourcePT?.candidate_profile?.detected_name || cvAnalysisSourcePT?.candidate_profile?.name || '');
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
         sessionStorage.setItem('analysisLang', 'pt');

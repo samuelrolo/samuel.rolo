@@ -454,7 +454,31 @@ export default function StudentPackResults() {
 
   // Extract data from the unified student_pack response, sanitize to prevent {txt,href} objects crashing React
   const analysis = deepSanitize(unified || rawData?.analysis || rawData?.data || rawData || {});
-  const perfil = analysis?.perfil || {};
+  const perfilRaw = analysis?.perfil || {};
+  // Bulletproof name fallback: try multiple sources
+  const perfil = (() => {
+    if (perfilRaw.nome) return perfilRaw;
+    // Try extracting name from raw CV data in sessionStorage
+    try {
+      const cvRawStr = sessionStorage.getItem('studentPackCvRaw');
+      if (cvRawStr) {
+        const cvRawData = JSON.parse(cvRawStr);
+        const cp = cvRawData?.candidate_profile || cvRawData;
+        const fallbackName = cp?.detected_name || cp?.name || cp?.nome || '';
+        if (fallbackName) return { ...perfilRaw, nome: fallbackName };
+      }
+      // Also try the full analysis object
+      const spStr = sessionStorage.getItem('studentPackAnalysis');
+      if (spStr) {
+        const spData = JSON.parse(spStr);
+        const srcCvRaw = spData?.sources?.cv_raw;
+        const cp2 = srcCvRaw?.candidate_profile || {};
+        const fallbackName2 = cp2?.detected_name || cp2?.name || cp2?.nome || '';
+        if (fallbackName2) return { ...perfilRaw, nome: fallbackName2 };
+      }
+    } catch {}
+    return perfilRaw;
+  })();
   const scoreGlobal = analysis?.score_global || {};
   const auditoria = analysis?.auditoria_perfil_dual || {};
   const capitalAcademico = analysis?.capital_academico || {};
