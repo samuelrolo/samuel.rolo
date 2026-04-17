@@ -17,9 +17,42 @@ const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
 const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let _accessToken = null; // filled after login
 
+_supa.auth.onAuthStateChange((_event, session) => {
+    _accessToken = session?.access_token || null;
+});
+
 // Get the current auth token (session token if logged in, fallback to anon key)
 function getAuthToken() {
     return _accessToken || SUPABASE_KEY;
+}
+
+async function getFreshAuthToken(requireAdminSession = false) {
+    try {
+        const { data, error } = await _supa.auth.getSession();
+        if (error) throw error;
+        const session = data?.session || null;
+        if (session?.access_token) {
+            _accessToken = session.access_token;
+            return session.access_token;
+        }
+    } catch (error) {
+        console.warn('Could not refresh admin session token:', error);
+    }
+
+    if (requireAdminSession) {
+        throw new Error('Sessão de administrador expirada. Volta a iniciar sessão.');
+    }
+
+    return getAuthToken();
+}
+
+async function getAdminEdgeHeaders(extraHeaders = {}) {
+    const token = await getFreshAuthToken(true);
+    return {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${token}`,
+        ...extraHeaders
+    };
 }
 
 async function adminLogin() {

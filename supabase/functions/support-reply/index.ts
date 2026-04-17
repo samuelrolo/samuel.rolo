@@ -21,6 +21,15 @@ type SupportAction = "suggest_reply" | "send_reply" | "generate_voucher";
 type Lang = "pt" | "en" | "es";
 type JsonRecord = Record<string, unknown>;
 
+class HttpError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 interface RequestBody {
   message_id?: number | string;
   action?: SupportAction;
@@ -234,7 +243,7 @@ function buildEmailHtml(params: { lang: Lang; recipientName?: string | null; rep
 
 async function requireAdmin(req: Request) {
   const authHeader = req.headers.get("Authorization") || "";
-  if (!authHeader) throw new Error("Missing Authorization header");
+  if (!authHeader) throw new HttpError(401, "Missing Authorization header");
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
   const apiKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
@@ -245,10 +254,14 @@ async function requireAdmin(req: Request) {
     },
   });
 
-  if (!res.ok) throw new Error("Unauthorized user");
+  if (!res.ok) {
+    const reason = res.status === 401 ? "Invalid or expired admin session" : "Unauthorized user";
+    throw new HttpError(res.status === 401 ? 401 : 403, reason);
+  }
+
   const user = await res.json();
   const email = String(user?.email || "").toLowerCase();
-  if (email !== ADMIN_EMAIL.toLowerCase()) throw new Error("Forbidden");
+  if (email !== ADMIN_EMAIL.toLowerCase()) throw new HttpError(403, "Forbidden");
   return user;
 }
 
@@ -580,9 +593,15 @@ Deno.serve(async (req) => {
       message: langLabels(lang).replySent,
     });
   } catch (error) {
+    const status = error instanceof HttpError ? error.status : 500;
+    console.error("support-reply error", {
+      status,
+      message: error instanceof Error ? error.message : "Unexpected error",
+    });
+
     return jsonResponse({
       success: false,
       error: error instanceof Error ? error.message : "Unexpected error",
-    }, 500);
+    }, status);
   }
 });
