@@ -6,6 +6,17 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "share2inspire.pt"
+        }
+      ],
+      "destination": "https://www.share2inspire.pt/:path*",
+      "statusCode": 308
+    },
+    {
       "source": "/home",
       "destination": "/",
       "permanent": true
