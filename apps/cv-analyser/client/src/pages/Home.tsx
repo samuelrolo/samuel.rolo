@@ -761,61 +761,69 @@ export default function Home() {
 
     try {
       console.log('[CV_ENGINE] Iniciando análise via LinkedIn:', linkedInUrl);
+      console.log('[CV_ENGINE] A enviar URL LinkedIn diretamente para a edge function...');
 
-      // Step 1: Scrape LinkedIn profile via backend (Apify)
-      console.log('[CV_ENGINE] Step 1: A extrair dados do perfil LinkedIn via Apify...');
-      const scrapeResponse = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/scrape-linkedin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ linkedin_url: linkedInUrl })
-      });
+      const normalizedEmail = analysisEmail.trim().toLowerCase();
+      let response: Response | null = null;
+      let responseData: any = null;
+      const maxRetries = 2;
 
-      if (!scrapeResponse.ok) {
-        const scrapeError = await scrapeResponse.json().catch(() => ({}));
-        throw new Error(scrapeError?.error || pick('Erro ao extrair dados do perfil LinkedIn.', 'Error extracting data from the LinkedIn profile.', 'Error al extraer datos del perfil de LinkedIn.'));
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        try {
+          const requestBody: any = {
+            mode: 'cv_extraction',
+            email: normalizedEmail,
+            language: lang,
+            country: selectedCountry,
+            region: selectedRegion || undefined,
+            linkedin_url: linkedInUrl,
+            ...(jobInput.trim() ? { job_description: jobInput.trim().substring(0, 3000) } : {})
+          };
+
+          response = await fetch(SUPABASE_EDGE_URL, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+          responseData = await response.json().catch(() => null);
+
+          if (response.ok && responseData?.success) break;
+
+          const shouldRetry = attempt < maxRetries && (!!response && response.status >= 500);
+          if (shouldRetry) {
+            console.warn(`[CV_ENGINE] Tentativa LinkedIn ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
+            await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            continue;
+          }
+
+          break;
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          if (attempt < maxRetries && fetchError.name !== 'AbortError') {
+            console.warn(`[CV_ENGINE] Tentativa LinkedIn ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
+            await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            continue;
+          }
+          throw fetchError;
+        }
       }
 
-      const scrapeData = await scrapeResponse.json();
-      if (!scrapeData?.success || !scrapeData?.cv_text) {
-        throw new Error(scrapeData?.error || pick('Não foi possível extrair dados do perfil LinkedIn.', 'It was not possible to extract data from the LinkedIn profile.', 'No fue posible extraer datos del perfil de LinkedIn.'));
+      if (!response?.ok) {
+        throw new Error(responseData?.error || pick('Erro ao analisar o perfil LinkedIn. Por favor, tente novamente.', 'Error analysing the LinkedIn profile. Please try again.', 'Error al analizar el perfil de LinkedIn. Por favor, inténtalo de nuevo.'));
       }
 
-      console.log('[CV_ENGINE] Step 1 OK: Extraídos', scrapeData.cv_text.length, 'chars do perfil', scrapeData.profile_name);
-
-      // Step 2: Send extracted text to edge function for AI analysis
-      console.log('[CV_ENGINE] Step 2: A enviar para análise IA...');
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000);
-
-      const requestBody: any = {
-        mode: 'cv_extraction',
-        language: lang,
-        country: selectedCountry,
-        region: selectedRegion || undefined,
-        cv_text: scrapeData.cv_text.substring(0, 8000),
-        linkedin_url: linkedInUrl,
-        ...(jobInput.trim() ? { job_description: jobInput.trim().substring(0, 3000) } : {})
-      };
-
-      const response = await fetch(SUPABASE_EDGE_URL, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(pick('Erro na análise IA. Por favor, tente novamente.', 'AI analysis error. Please try again.', 'Error en el análisis de IA. Por favor, inténtalo de nuevo.'));
-      }
-
-      const responseData = await response.json();
       if (!responseData?.success) {
-        throw new Error(responseData?.error || pick('Erro na análise IA.', 'AI analysis error.', 'Error en el análisis de IA.'));
+        throw new Error(responseData?.error || pick('Não foi possível extrair dados suficientes do perfil LinkedIn.', 'Could not extract enough data from the LinkedIn profile.', 'No fue posible extraer suficientes datos del perfil de LinkedIn.'));
       }
 
       const analysisSource = responseData.analysis || responseData;
@@ -828,20 +836,15 @@ export default function Home() {
       sessionStorage.removeItem('careerPathPaid');
       sessionStorage.removeItem('careerPathData');
       sessionStorage.removeItem('selectedPlan');
-      sessionStorage.removeItem('paymentEmail');
 
       sessionStorage.setItem('cvAnalysis', JSON.stringify(analysisResult));
       sessionStorage.setItem('cvFile', '');
       sessionStorage.setItem('cvFilename', 'linkedin-profile');
       sessionStorage.setItem('analysisLang', lang);
-      // Store scraped text for Live Match (LinkedIn flow)
-      if (scrapeData?.cv_text) {
-        sessionStorage.setItem('cvText', scrapeData.cv_text.substring(0, 15000));
-      }
+      sessionStorage.setItem('cvText', `LinkedIn Profile URL: ${linkedInUrl}`);
       sessionStorage.setItem('analysisCountry', selectedCountry);
       sessionStorage.setItem('analysisRegion', selectedRegion);
       sessionStorage.setItem('linkedinUrl', linkedInUrl);
-      // LinkedIn analysis is always paid - keep isPaid flag
       sessionStorage.setItem('isPaid', 'true');
       if (jobInput.trim()) {
         sessionStorage.setItem('jobDescription', jobInput.trim());
@@ -852,14 +855,15 @@ export default function Home() {
       logAnalysisToSupabase(analysisResult, analysisSource, `LinkedIn: ${linkedInUrl}`);
 
       // Fire-and-forget: send welcome email (LinkedIn flow)
-      const liEmail = sessionStorage.getItem('paymentEmail') || '';
-      if (liEmail) sendWelcomeEmail(liEmail, '', lang);
+      if (normalizedEmail) sendWelcomeEmail(normalizedEmail, '', lang);
 
       const elapsed = Date.now() - startTime;
       const remaining = 800 - elapsed;
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
 
       setLocation('/results');
+
+      return;
 
     } catch (err: any) {
       console.error('[CV_ENGINE] Erro LinkedIn:', err);
