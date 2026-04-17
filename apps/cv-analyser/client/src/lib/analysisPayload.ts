@@ -57,6 +57,26 @@ const preferObject = (...values: any[]): Record<string, any> => {
   return {};
 };
 
+const selectStudentPackCvRaw = (payload: any): Record<string, any> => {
+  const root = safeObject(payload);
+
+  if (hasMeaningfulValue(root.candidate_profile)) return root;
+  if (hasMeaningfulValue(root.data?.candidate_profile)) return safeObject(root.data);
+  if (hasMeaningfulValue(root.raw?.candidate_profile)) return safeObject(root.raw);
+  if (hasMeaningfulValue(root.analysis?.candidate_profile)) return safeObject(root.analysis);
+
+  return root;
+};
+
+const selectStudentPackCvAnalysis = (payload: any): Record<string, any> => {
+  const root = safeObject(payload);
+  return preferObject(root.analysis, root.data?.analysis, root.raw?.analysis, root);
+};
+
+const resolveCandidateName = (candidateProfile: Record<string, any>) => (
+  candidateProfile.detected_name || candidateProfile.name || candidateProfile.nome || ''
+);
+
 const hasMeaningfulValue = (value: any): boolean => {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string') return value.trim().length > 0;
@@ -292,7 +312,7 @@ function adaptStudentPackLegacyToUnified(params: {
 
   return {
     perfil: {
-      nome: cp.name || cp.nome || cp.detected_name || '',
+      nome: resolveCandidateName(cp),
       curso: cp.detected_role || cp.area || '',
       area_alvo: cv.perceivedRole || cp.detected_role || '',
       resumo_executivo: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
@@ -362,8 +382,10 @@ export function buildUnifiedStudentPackPayload(params: {
   language?: string;
 }) {
   const lang = normalizeLanguage(params.language);
-  const cvRaw = preferObject(params.cvRaw?.analysis, params.cvRaw);
-  const cvNormalized = transformGeminiResponse(cvRaw, lang);
+  const cvEnvelope = safeObject(params.cvRaw);
+  const cvRaw = selectStudentPackCvRaw(cvEnvelope);
+  const cvAnalysis = selectStudentPackCvAnalysis(cvEnvelope);
+  const cvNormalized = transformGeminiResponse(cvAnalysis, lang);
   const linkedinNormalized = normalizeLinkedinRoastPayload(params.linkedinRaw, lang);
   const analysis = adaptStudentPackLegacyToUnified({
     cv: cvNormalized,

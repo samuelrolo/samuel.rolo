@@ -307,13 +307,13 @@ export default function StudentPackHome() {
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
-        const cvAnalysisSourcePT = cvResponseDataPT.analysis || cvResponseDataPT;
         const unifiedStudentPackPT = buildUnifiedStudentPackPayload({
-          cvRaw: cvAnalysisSourcePT,
+          cvRaw: cvResponseDataPT,
           linkedinRaw: linkedinResponseDataPT || {},
           language: 'pt',
         });
         const cvAnalysisResultPT = unifiedStudentPackPT.sources.cv_normalized;
+        const rawCandidateProfilePT = unifiedStudentPackPT.sources.cv_raw?.candidate_profile || {};
         sessionStorage.setItem('studentPackAnalysis', JSON.stringify(unifiedStudentPackPT));
         sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('studentPackCvRaw', JSON.stringify(unifiedStudentPackPT.sources.cv_raw));
@@ -323,25 +323,25 @@ export default function StudentPackHome() {
         sessionStorage.setItem('studentPackRegion', currentRegion);
         sessionStorage.setItem('studentPackLinkedinUrl', currentLinkedinUrl);
         sessionStorage.setItem('studentPackPaid', 'true');
-        sessionStorage.setItem('studentPackDetectedName', cvAnalysisSourcePT?.candidate_profile?.detected_name || cvAnalysisSourcePT?.candidate_profile?.name || '');
+        sessionStorage.setItem('studentPackDetectedName', rawCandidateProfilePT?.detected_name || rawCandidateProfilePT?.name || rawCandidateProfilePT?.nome || '');
         sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResultPT));
         sessionStorage.setItem('isPaid', 'true');
         sessionStorage.setItem('analysisLang', 'pt');
         const analyticsTransactionIdPT = getStudentPackTransactionId() || `STUDPACK-PT-${Date.now()}`;
         try {
-          const cp = cvAnalysisSourcePT?.candidate_profile || {};
+          const cp = rawCandidateProfilePT;
           await persistStudentPackAnalysis({
             score: cvAnalysisResultPT.overallScore || 0,
             professional_area: cp.detected_role || null,
             analysis_type: 'student_pack',
-            analysis_result: cvAnalysisSourcePT,
+            analysis_result: unifiedStudentPackPT.sources.cv_raw,
             cv_text: cvText || null,
-            user_name: cp.name || null,
+            user_name: cp.detected_name || cp.name || cp.nome || null,
             user_email: currentEmail.trim().toLowerCase(),
             linkedin_url: currentLinkedinUrl,
           });
         } catch (_) {}
-        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentEmail.trim().toLowerCase(), name: cvAnalysisSourcePT?.candidate_profile?.name || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
+        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentEmail.trim().toLowerCase(), name: rawCandidateProfilePT?.detected_name || rawCandidateProfilePT?.name || rawCandidateProfilePT?.nome || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
         trackPurchase('student_pack', finalPrice, analyticsTransactionIdPT);
         if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: finalPrice, currency: 'EUR' });
         trackAffiliateConversion({ product: 'student_pack', amount: finalPrice, currency: 'EUR', payment_method: paymentMethod, customer_email: currentEmail, transaction_id: analyticsTransactionIdPT });
@@ -380,13 +380,13 @@ export default function StudentPackHome() {
             if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
-        const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
         const unifiedStudentPack = buildUnifiedStudentPackPayload({
-          cvRaw: cvAnalysisSource,
+          cvRaw: cvResponseData,
           linkedinRaw: linkedinResponseData || {},
           language: langCode,
         });
         const cvAnalysisResult = unifiedStudentPack.sources.cv_normalized;
+        const rawCandidateProfile = unifiedStudentPack.sources.cv_raw?.candidate_profile || {};
         sessionStorage.setItem('studentPackAnalysis', JSON.stringify(unifiedStudentPack));
         sessionStorage.setItem('studentPackCvAnalysis', JSON.stringify(cvAnalysisResult));
         sessionStorage.setItem('studentPackCvRaw', JSON.stringify(unifiedStudentPack.sources.cv_raw));
@@ -401,13 +401,13 @@ export default function StudentPackHome() {
         sessionStorage.setItem('analysisLang', langCode);
         const analyticsTransactionId = getStudentPackTransactionId() || `STUDPACK-${langCode.toUpperCase()}-${Date.now()}`;
         try {
-          const cp = cvAnalysisSource?.candidate_profile || {};
+          const cp = rawCandidateProfile;
           await persistStudentPackAnalysis({
             score: cvAnalysisResult.overallScore || 0,
             professional_area: cp.detected_role || null,
             analysis_type: 'student_pack',
-            analysis_result: cvAnalysisSource,
-            user_name: cp.name || null,
+            analysis_result: unifiedStudentPack.sources.cv_raw,
+            user_name: cp.detected_name || cp.name || cp.nome || null,
             user_email: currentEmail.trim().toLowerCase(),
             linkedin_url: currentLinkedinUrl,
           });
