@@ -15,18 +15,41 @@ export default function CareerPathExample() {
   useEffect(() => {
     const lang = (getLang() || 'pt') as CareerPathExampleLang;
     const payload = getCareerPathExample(lang);
+    const analysis = (payload as any).analysis || {};
+    const candidateName = analysis.candidate_name || analysis.name || 'Example Candidate';
+
+    // CareerPathResults requires `careerPathCvAnalysis` in storage, otherwise
+    // it redirects back to the Career Path home page. Provide a minimal stub
+    // derived from the example payload.
+    const cvAnalysisStub = {
+      candidate_profile: {
+        detected_name: candidateName,
+        name: candidateName,
+        current_role: analysis.current_role || '',
+        seniority: analysis.current_positioning?.seniority_level || '',
+        primary_domain: analysis.current_positioning?.primary_domain || '',
+        summary: analysis.current_positioning?.market_value_assessment || '',
+      },
+      raw: analysis,
+      analysis,
+    };
+
     try {
-      sessionStorage.setItem('careerPathData', JSON.stringify(payload));
+      const dataStr = JSON.stringify(payload);
+      const cvStr = JSON.stringify(cvAnalysisStub);
+      const linkedinUrl = analysis.linkedin_url || '';
+      sessionStorage.setItem('careerPathData', dataStr);
       sessionStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('careerPathCvAnalysis', cvStr);
       sessionStorage.setItem('analysisLang', payload.language);
-      sessionStorage.setItem('careerPathLinkedinUrl', payload.analysis.linkedin_url || '');
-      // Also write to localStorage so payment-status checks pass
-      localStorage.setItem('careerPathData', JSON.stringify(payload));
+      sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      // Also write to localStorage so payment-status checks pass on reload
+      localStorage.setItem('careerPathData', dataStr);
       localStorage.setItem('careerPathPaid', 'true');
+      localStorage.setItem('careerPathCvAnalysis', cvStr);
       localStorage.setItem('analysisLang', payload.language);
+      localStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
     } catch (err) {
-      // Silently ignore — even if storage fails the component will render
-      // a friendly fallback because CareerPathResults handles missing data.
       // eslint-disable-next-line no-console
       console.warn('[CareerPathExample] failed to seed storage', err);
     }
