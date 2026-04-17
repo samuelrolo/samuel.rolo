@@ -1,7 +1,7 @@
 // LandingPage — Share2Inspire Homepage (PT/EN/ES unified)
 // Sections: Hero, Trust Badges, Tools Grid, Target Audience, CTA, Testimonials
 import { useEffect } from "react";
-import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer } from "lucide-react";
+import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer, ArrowRight } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
 import RotatingPromoBanner from "@/components/RotatingPromoBanner";
@@ -203,34 +203,36 @@ export default function LandingPage() {
             )}
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
-            <a href={lp("/cv-analyser")} className="group mx-auto w-full max-w-xs rounded-xl border border-white/20 bg-white/10 px-5 py-4 text-left backdrop-blur transition-all hover:border-[#C9A961]/40 hover:bg-white/15 sm:mx-0 sm:px-6 sm:py-5">
+            <a href={lp("/cv-analyser")} className="group mx-auto w-full max-w-xs rounded-2xl border border-[#C9A961]/40 bg-[#102720]/88 px-5 py-5 text-left shadow-[0_20px_45px_-28px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5 hover:border-[#d9ba6b] hover:bg-[#143129]/92 hover:shadow-[0_26px_55px_-28px_rgba(0,0,0,0.82)] sm:mx-0 sm:px-6 sm:py-6">
               <h3 className="text-base font-semibold mb-1">
                 {pick("Quero melhorar o meu CV", "I want to improve my CV", "Quiero mejorar mi CV")}
               </h3>
-              <p className="text-sm text-white/50 mb-3">
+              <p className="mb-4 text-sm leading-relaxed text-white/78 sm:mb-5">
                 {pick(
                   "Percebe porque não estás a ser chamado e o que mudar.",
                   "Find out why you're not getting callbacks and what to change.",
                   "Descubre por qué no te llaman y qué cambiar."
                 )}
               </p>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">
-                {pick("Analisar o meu CV", "Analyse my CV", "Analizar mi CV")} &rarr;
+              <span className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#C9A961] px-4 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-[#10211c] shadow-[0_16px_28px_-16px_rgba(201,169,97,0.95)] transition-all group-hover:scale-[1.02] group-hover:bg-[#d8ba6a] group-hover:shadow-[0_18px_34px_-16px_rgba(201,169,97,1)]">
+                {pick("Analisar o meu CV", "Analyse my CV", "Analizar mi CV")}
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </span>
             </a>
-            <a href={lp("/career-path")} className="group mx-auto w-full max-w-xs rounded-xl border border-white/20 bg-white/10 px-5 py-4 text-left backdrop-blur transition-all hover:border-[#C9A961]/40 hover:bg-white/15 sm:mx-0 sm:px-6 sm:py-5">
+            <a href={lp("/career-path")} className="group mx-auto w-full max-w-xs rounded-2xl border border-[#2f6b57]/70 bg-[#0f241f]/90 px-5 py-5 text-left shadow-[0_20px_45px_-28px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5 hover:border-[#4e8d77] hover:bg-[#143129]/94 hover:shadow-[0_26px_55px_-28px_rgba(0,0,0,0.82)] sm:mx-0 sm:px-6 sm:py-6">
               <h3 className="text-base font-semibold mb-1">
                 {pick("Quero definir o meu próximo passo", "I want to define my next step", "Quiero definir mi próximo paso")}
               </h3>
-              <p className="text-sm text-white/50 mb-3">
+              <p className="mb-4 text-sm leading-relaxed text-white/78 sm:mb-5">
                 {pick(
                   "Descobre que caminho faz sentido para a tua evolução.",
                   "Discover which path makes sense for your career growth.",
                   "Descubre qué camino tiene sentido para tu evolución."
                 )}
               </p>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#C9A961]">
-                {pick("Explorar o meu caminho", "Explore my path", "Explorar mi camino")} &rarr;
+              <span className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#1f6b52] px-4 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-[0_16px_28px_-16px_rgba(31,107,82,0.95)] transition-all group-hover:scale-[1.02] group-hover:bg-[#267e60] group-hover:shadow-[0_18px_34px_-16px_rgba(31,107,82,1)]">
+                {pick("Explorar o meu caminho", "Explore my path", "Explorar mi camino")}
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </span>
             </a>
           </div>
