@@ -8116,22 +8116,45 @@ REGRAS CRÍTICAS:
 
         // ─── SECOND PASS: if development_plan or long_term_vision is missing, generate them ───
         const cpInner = careerPath.career_path || careerPath;
-        const needsSecondPass = !cpInner.development_plan || !cpInner.long_term_vision;
+        const nextRolesCount = Array.isArray(cpInner.next_roles) ? cpInner.next_roles.length : 0;
+        const formationsCount = Array.isArray(cpInner.development_plan?.formations) ? cpInner.development_plan.formations.length : 0;
+        const certificationsCount = Array.isArray(cpInner.development_plan?.certifications) ? cpInner.development_plan.certifications.length : 0;
+        const freeCoursesCount = Array.isArray(cpInner.development_plan?.free_courses) ? cpInner.development_plan.free_courses.length : 0;
+        const visibilityExercisesCount = Array.isArray(cpInner.development_plan?.visibility_exercises) ? cpInner.development_plan.visibility_exercises.length : 0;
+        const immediateActionsCount = Array.isArray(cpInner.immediate_actions) ? cpInner.immediate_actions.length : 0;
+        const needsSecondPass = !cpInner.development_plan || !cpInner.long_term_vision || nextRolesCount < 5 || formationsCount < 4 || certificationsCount < 3 || freeCoursesCount < 3 || visibilityExercisesCount < 4 || immediateActionsCount < 5;
 
         if (needsSecondPass) {
-          console.warn('⚠️ Career Path missing development_plan or long_term_vision — running second pass');
+          console.warn('⚠️ Career Path missing sections or below density threshold — running second pass', {
+            nextRolesCount,
+            formationsCount,
+            certificationsCount,
+            freeCoursesCount,
+            visibilityExercisesCount,
+            immediateActionsCount,
+            hasDevelopmentPlan: !!cpInner.development_plan,
+            hasLongTermVision: !!cpInner.long_term_vision
+          });
           try {
-            const existingRoles = (cpInner.next_roles || []).slice(0, 2).map((r: any) => r.role_title).join(', ');
+            const existingRoles = (cpInner.next_roles || []).map((r: any) => r.role_title).filter(Boolean).join(', ');
             const secondPassPrompt = isEN
-              ? `You are an elite Career Advisor. Based on this CV, generate ONLY the missing sections of a Career Path report in JSON.
+              ? `You are an elite Career Advisor. Based on this CV, generate a denser completion of this Career Path report in JSON.
 
 CV:
 ${sanitized.substring(0, 3000)}
 
-Already generated: current_positioning and next_roles (${existingRoles || 'see CV'}).
+Already generated but potentially incomplete:
+- next_roles (${nextRolesCount}/5+): ${existingRoles || 'none'}
+- formations (${formationsCount}/4+)
+- certifications (${certificationsCount}/3+)
+- free_courses (${freeCoursesCount}/3+)
+- visibility_exercises (${visibilityExercisesCount}/4+)
+- immediate_actions (${immediateActionsCount}/5+)
+- long_term_vision present: ${!!cpInner.long_term_vision}
 
 Generate ONLY this JSON (no other text):
 {
+  "next_roles": [{"role_title": "...", "timeline": "...", "fit_percentage": 85, "why_this_role": "...", "what_you_already_have": ["..."], "what_you_need": ["..."], "typical_companies": ["..."], "salary_range": "...", "salary_min": 75000, "salary_max": 110000, "salary_period": "annual"}],
   "development_plan": {
     "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Média|Baixa", "url": null}],
     "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Média|Baixa"}],
@@ -8145,17 +8168,25 @@ Generate ONLY this JSON (no other text):
     "key_milestones": [{"year": "Year 1", "milestone": "..."}]
   }
 }
-Rules: min 4 formations, 3 certifications, 3 free_courses, 4 visibility_exercises, 3 networking actions. All localized for ${authoritativeMarketCtx}. Return ONLY the JSON.`
+Rules: ALWAYS return a premium-density completion. Minimum 5 next_roles, 4 formations, 3 certifications, 3 free_courses, 4 visibility_exercises, 3 networking actions, and 5 immediate_actions. Keep or improve the current direction, but never reduce density. All localized for ${authoritativeMarketCtx}. Return ONLY the JSON.`
               : isES
-              ? `Eres un Career Advisor de élite. Basándote en este CV, genera SOLO las secciones faltantes del informe Career Path en JSON.
+              ? `Eres un Career Advisor de élite. Basándote en este CV, genera una versión más densa y completa del informe Career Path en JSON.
 
 CV:
 ${sanitized.substring(0, 3000)}
 
-Ya generado: current_positioning y next_roles (${existingRoles || 'ver CV'}).
+Ya generado pero potencialmente incompleto:
+- next_roles (${nextRolesCount}/5+): ${existingRoles || 'ninguno'}
+- formations (${formationsCount}/4+)
+- certifications (${certificationsCount}/3+)
+- free_courses (${freeCoursesCount}/3+)
+- visibility_exercises (${visibilityExercisesCount}/4+)
+- immediate_actions (${immediateActionsCount}/5+)
+- long_term_vision presente: ${!!cpInner.long_term_vision}
 
 Genera SOLO este JSON (sin otro texto):
 {
+  "next_roles": [{"role_title": "...", "timeline": "...", "fit_percentage": 85, "why_this_role": "...", "what_you_already_have": ["..."], "what_you_need": ["..."], "typical_companies": ["..."], "salary_range": "...", "salary_min": 75000, "salary_max": 110000, "salary_period": "annual"}],
   "development_plan": {
     "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Media|Baja", "url": null}],
     "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Media|Baja"}],
@@ -8169,16 +8200,24 @@ Genera SOLO este JSON (sin otro texto):
     "key_milestones": [{"year": "Año 1", "milestone": "..."}]
   }
 }
-Reglas: mín. 4 formaciones, 3 certificaciones, 3 cursos gratuitos, 4 ejercicios de visibilidad, 3 acciones de networking. Todo localizado para ${authoritativeMarketCtx}. Devuelve SOLO el JSON.`
-              : `És um Career Advisor de elite. Com base neste CV, gera APENAS as secções em falta do relatório Career Path em JSON.
+Reglas: devuelve SIEMPRE una versión premium y densa. Mínimo 5 next_roles, 4 formaciones, 3 certificaciones, 3 cursos gratuitos, 4 ejercicios de visibilidad, 3 acciones de networking y 5 immediate_actions. Mantén o mejora la dirección actual, pero nunca reduzcas la densidad. Todo localizado para ${authoritativeMarketCtx}. Devuelve SOLO el JSON.`
+              : `És um Career Advisor de elite. Com base neste CV, gera uma versão mais densa e completa do relatório Career Path em JSON.
 
 CV:
 ${sanitized.substring(0, 3000)}
 
-Já gerado: current_positioning e next_roles (${existingRoles || 'ver CV'}).
+Já gerado mas potencialmente incompleto:
+- next_roles (${nextRolesCount}/5+): ${existingRoles || 'nenhum'}
+- formations (${formationsCount}/4+)
+- certifications (${certificationsCount}/3+)
+- free_courses (${freeCoursesCount}/3+)
+- visibility_exercises (${visibilityExercisesCount}/4+)
+- immediate_actions (${immediateActionsCount}/5+)
+- long_term_vision presente: ${!!cpInner.long_term_vision}
 
 Gera APENAS este JSON (sem outro texto):
 {
+  "next_roles": [{"role_title": "...", "timeline": "...", "fit_percentage": 85, "why_this_role": "...", "what_you_already_have": ["..."], "what_you_need": ["..."], "typical_companies": ["..."], "salary_range": "...", "salary_min": 75000, "salary_max": 110000, "salary_period": "annual"}],
   "development_plan": {
     "formations": [{"name": "...", "provider": "...", "duration": "...", "cost": "...", "relevance": "...", "priority": "Alta|Média|Baixa", "url": null}],
     "certifications": [{"name": "...", "body": "...", "investment": "...", "impact": "...", "priority": "Alta|Média|Baixa"}],
@@ -8192,7 +8231,7 @@ Gera APENAS este JSON (sem outro texto):
     "key_milestones": [{"year": "Ano 1", "milestone": "..."}]
   }
 }
-Regras: mín. 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercícios de visibilidade, 3 acções de networking. Tudo localizado para ${authoritativeMarketCtx}. Retorna APENAS o JSON.`;
+Regras: devolve SEMPRE uma versão premium e densa. Mínimo 5 next_roles, 4 formações, 3 certificações, 3 cursos gratuitos, 4 exercícios de visibilidade, 3 acções de networking e 5 immediate_actions. Mantém ou melhora a direção atual, mas nunca reduzas a densidade. Tudo localizado para ${authoritativeMarketCtx}. Retorna APENAS o JSON.`;
 
             const sp2Response = await fetch(geminiUrl, {
               method: 'POST',
