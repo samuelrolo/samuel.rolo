@@ -144,12 +144,11 @@ export default function CareerIntelligenceResults() {
   const lang = getLang();
   const isEN = lang === 'en';
   const isES = lang === 'es';
-  const getAnalysisLanguage = () => ((localStorage.getItem('analysisLang') || sessionStorage.getItem('analysisLang')) || lang) as 'pt' | 'en' | 'es';
+  const getAnalysisLanguage = () => lang as 'pt' | 'en' | 'es';
 
   useEffect(() => {
-    const analysisLanguage = getAnalysisLanguage();
-    localStorage.setItem('analysisLang', analysisLanguage);
-    sessionStorage.setItem('analysisLang', analysisLanguage);
+    localStorage.setItem('analysisLang', lang);
+    sessionStorage.setItem('analysisLang', lang);
   }, [lang]);
 
   const handleSaveToAccount = async () => {
