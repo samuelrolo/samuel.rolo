@@ -1,6 +1,6 @@
 // Pack Estudante / Student Pack — CV Analyser + LinkedIn Roaster | Share2Inspire
 // Unified i18n component (PT/EN/ES) — uses pick() for all UI text
-// PT: single unified engine (student-pack edge fn), EN/ES: two separate engines (hyper-task)
+// Student Pack usa agora uma edge function dedicada, separada do endpoint genérico hyper-task.
 import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Sparkles, Check, ArrowRight, BarChart3, Zap, Globe, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/student-pack';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
