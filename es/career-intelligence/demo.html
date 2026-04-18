@@ -3,516 +3,1053 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inteligencia de Carrera — Informe Completo | Demo</title>
-<link rel="canonical" href="https://www.share2inspire.pt/es/career-intelligence/demo">
-<meta name="robots" content="noindex">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<title>Demo Career Intelligence — Resultados & Recomendación | Share2Inspire</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gold: #B8973A;
-    --gold-light: #D4AF55;
-    --gold-pale: #F5EDD0;
-    --green: #2E7D52;
-    --green-light: #E8F5EE;
-    --orange: #C4530A;
-    --orange-light: #FEF0E6;
-    --red: #B91C1C;
-    --red-light: #FEE2E2;
-    --gray-50: #FAFAFA;
-    --gray-100: #F4F4F5;
-    --gray-200: #E4E4E7;
-    --gray-300: #D1D1D6;
-    --gray-400: #A0A0AB;
-    --gray-600: #52525B;
-    --gray-700: #3F3F46;
-    --gray-800: #27272A;
-    --gray-900: #18181B;
-    --white: #FFFFFF;
+    --navy: #1a1a2e;
+    --navy-light: #232340;
+    --navy-mid: #2a2a4a;
+    --gold: #C9A961;
+    --gold-light: #d4bc7e;
+    --gold-pale: rgba(201,169,97,0.08);
+    --gold-border: rgba(201,169,97,0.18);
+    --white: #ffffff;
+    --off-white: #f8f7f4;
+    --text-primary: #1a1a2e;
+    --text-secondary: #5a5a72;
+    --text-muted: #8a8a9a;
+    --green: #2d8a4e;
+    --green-bg: rgba(45,138,78,0.08);
+    --orange: #d4820a;
+    --orange-bg: rgba(212,130,10,0.08);
+    --red-soft: #c0392b;
+    --border: #e8e6e1;
+    --card-shadow: 0 1px 3px rgba(26,26,46,0.04), 0 4px 16px rgba(26,26,46,0.06);
+    --card-shadow-hover: 0 2px 8px rgba(26,26,46,0.06), 0 8px 32px rgba(26,26,46,0.10);
     --radius: 12px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+    --radius-sm: 8px;
+    --radius-lg: 16px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--gray-50);
-    color: var(--gray-800);
-    font-size: 14px;
-    line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
+    background: var(--off-white);
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .topnav {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  /* ─── DEMO BANNER ─── */
+  .demo-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    color: var(--gold);
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 100;
   }
-  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
-  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
-  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
-  .topnav-brand svg { color: var(--gold); }
-  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .demo-banner span { opacity: 0.7; color: var(--white); margin-left: 8px; }
 
-  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
-  .report-header { margin-bottom: 24px; }
-  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
-  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+  /* ─── HEADER ─── */
+  .report-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 20px 36px;
+    text-align: center;
+  }
+  .report-badge {
+    display: inline-block;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 18px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+  }
+  .report-header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .report-header .subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .report-header .subtitle em {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 500;
+  }
+  .meta-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .meta-pill svg { width: 14px; height: 14px; opacity: 0.5; }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin: 32px 0;
+  }
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+  .section-label svg { width: 18px; height: 18px; color: var(--gold); }
 
   .card {
     background: var(--white);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.3s ease;
+  }
+  .card:hover { box-shadow: var(--card-shadow-hover); }
+  .card + .card { margin-top: 16px; }
+
+  /* ─── COMPANIES GRID ─── */
+  .companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .company-category h4 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .company-category ul {
+    list-style: none;
+    padding: 0;
+  }
+  .company-category li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .company-category li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    position: absolute;
+    left: 0;
+    top: 11px;
+  }
+
+  /* ─── INSIGHT BOXES ─── */
+  .insights-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  @media (max-width: 600px) { .insights-row { grid-template-columns: 1fr; } }
+  .insight-box {
+    background: var(--white);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--card-shadow);
   }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-label.orange { color: var(--orange); }
-  .section-label.gold { color: var(--gold); }
-  .section-label.green { color: var(--green); }
-  .section-label.gray { color: var(--gray-600); }
-
-  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
-  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
-  .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 99px;
-    font-size: 12px;
+  .insight-box h4 {
+    font-size: 0.7rem;
     font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
   }
-  .badge-green { background: var(--green-light); color: var(--green); }
-  .badge-orange { background: var(--orange-light); color: var(--orange); }
-  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
-
-  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
-
-  .warn-item {
-    display: flex; gap: 8px; align-items: flex-start;
-    background: var(--orange-light);
-    border-left: 3px solid var(--orange);
-    border-radius: 6px;
-    padding: 10px 12px;
-    font-size: 13px;
-    color: var(--orange);
-    margin-bottom: 8px;
-  }
-  .warn-item svg { flex-shrink: 0; margin-top: 2px; }
-
-  .ats-compat-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
-  }
-  .ats-compat-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
-    border: 1px solid var(--gray-200);
-  }
-  .ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
-  .ats-compat-row .boa { color: var(--green); font-weight: 600; }
-  .ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
-
-  .howto-list { list-style: none; margin-top: 12px; }
-  .howto-list li {
-    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
-    padding: 5px 0;
-  }
-  .howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
-
-  .issue-item { margin-bottom: 20px; }
-  .issue-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
-    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
-  }
-  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
-  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
-
-  .issue-section-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
-  }
-  .issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
-
-  .code-block {
-    background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
-    padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
-    color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+  .insight-box p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
   }
 
-  .suggestion-block {
-    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
-    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+  /* ─── DIFFERENTIATOR ─── */
+  .diff-text {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* ─── PATH CARDS ─── */
+  .path-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--card-shadow);
+    margin-top: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  .path-card:hover { box-shadow: var(--card-shadow-hover); }
+  .path-card.recommended {
+    border-color: var(--gold);
+    border-width: 1.5px;
+  }
+  .path-card.recommended::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+
+  .path-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+  .path-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .path-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .success-badge {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-bg);
+    padding: 4px 14px;
+    border-radius: 50px;
+    white-space: nowrap;
+  }
+  .success-badge.medium { color: var(--orange); background: var(--orange-bg); }
+
+  .path-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 18px;
+  }
+
+  .ideal-for {
+    background: var(--gold-pale);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 18px;
+  }
+  .ideal-for h5 {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .ideal-for p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
     line-height: 1.6;
   }
 
-  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
-
-  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .quadrant-cell {
-    border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+  .salary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
   }
-  .quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
-  .quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
-
-  .donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
-  .donut-container svg { transform: rotate(-90deg); }
-  .donut-val {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    font-size: 22px; font-weight: 700; color: var(--gray-900);
+  @media (max-width: 500px) { .salary-row { grid-template-columns: 1fr; } }
+  .salary-item {
+    text-align: center;
+    padding: 12px;
+    background: var(--off-white);
+    border-radius: var(--radius-sm);
   }
-  .benchmark-tag { font-size: 11px; color: var(--gray-400); }
-  .benchmark-tag span { color: var(--green); font-weight: 600; }
-
-  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
-  .factor-sub { font-size: 11px; color: var(--gray-400); }
-  .factor-bar-wrap { flex: 1; position: relative; }
-  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
-  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
-  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
-
-  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .tag {
-    padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
-    color: var(--gold); font-size: 12px; font-weight: 600;
-    border: 1px solid #E2C96A;
+  .salary-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
   }
-  .profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
-  .profile-line strong { color: var(--gray-900); }
-
-  .attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
-  .attention-list li {
-    counter-increment: attn; display: flex; gap: 10px;
-    font-size: 13px; color: var(--gray-600); padding: 6px 0;
-    border-bottom: 1px solid var(--gray-100);
-  }
-  .attention-list li::before {
-    content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
-    color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  .salary-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--navy);
   }
 
-  .message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
-  .message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+  .role-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .role-tag {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 50px;
+  }
 
-  .salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-  .salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
-  .salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-  .salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
-  .salary-cell .amount.highlight { color: var(--gold); }
-  .salary-cell .period { font-size: 10px; color: var(--gray-400); }
+  /* ─── ACTION PLAN ─── */
+  .action-step {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .action-step:last-child { border-bottom: none; }
+  .step-time {
+    flex-shrink: 0;
+    width: 70px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding-top: 2px;
+  }
+  .step-content {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .key-step-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--gold);
+    background: var(--gold-pale);
+    border: 1px solid var(--gold-border);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
 
-  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-  .benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
-  .benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-  .salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+  /* ─── COMPARISON TABLE ─── */
+  .comparison-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    min-width: 600px;
+  }
+  .comparison-table th {
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 0.78rem;
+  }
+  .comparison-table th:first-child {
+    border-radius: var(--radius-sm) 0 0 0;
+  }
+  .comparison-table th:last-child {
+    border-radius: 0 var(--radius-sm) 0 0;
+  }
+  .comparison-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .comparison-table td:first-child {
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
 
-  .market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
-  .market-stat { text-align: center; }
-  .market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
-  .market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
-  .market-stat .val.accent { color: var(--gold); }
+  /* ─── TRADE-OFFS ─── */
+  .tradeoff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) { .tradeoff-grid { grid-template-columns: 1fr; } }
+  .tradeoff-col h5 {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .tradeoff-col h5.gains { color: var(--green); }
+  .tradeoff-col h5.loses { color: var(--red-soft); }
+  .tradeoff-col p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .hidden-risk, .real-scenario {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    margin-top: 12px;
+  }
+  .hidden-risk {
+    background: rgba(192,57,43,0.04);
+    border-left: 3px solid var(--red-soft);
+  }
+  .real-scenario {
+    background: var(--gold-pale);
+    border-left: 3px solid var(--gold);
+  }
+  .hidden-risk h5, .real-scenario h5 {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hidden-risk h5 { color: var(--red-soft); }
+  .real-scenario h5 { color: var(--gold); }
+  .hidden-risk p, .real-scenario p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
 
-  .bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+  /* ─── RECOMMENDATION ─── */
+  .recommendation-card {
+    background: var(--white);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+  }
+  .recommendation-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .rec-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .rec-body {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .rec-subcard {
+    background: var(--gold-pale);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    margin-top: 16px;
+  }
+  .rec-subcard h5 {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .rec-subcard p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
 
-  .market-items { margin-top: 12px; }
-  .market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
-  .market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+  /* ─── CTA ─── */
+  .cta-section {
+    text-align: center;
+    padding: 48px 20px;
+    margin: 40px 0 20px;
+  }
+  .cta-section h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .cta-section p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--navy);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 14px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 16px rgba(201,169,97,0.3);
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(201,169,97,0.4);
+  }
 
-  .risk-bar-wrap { margin: 16px 0; }
-  .risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); padding: 0 4px; margin-bottom: 4px; }
-  .risk-bar { height: 10px; background: linear-gradient(to right, var(--green), #FDE047, var(--red)); border-radius: 99px; position: relative; }
-  .risk-indicator { position: absolute; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; background: white; border-radius: 50%; border: 3px solid var(--gray-800); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding: 24px 20px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--gold); text-decoration: none; }
 
-  .priority-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .priority-cell { border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; }
-  .priority-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; }
-  .priority-list { list-style: none; }
-  .priority-list li { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); padding: 5px 0; }
-  .priority-list li::before { content: '→'; color: var(--gold); font-weight: 700; }
 
-  .action-item { margin-bottom: 16px; }
-  .action-title { font-weight: 600; color: var(--gray-900); font-size: 14px; margin-bottom: 4px; }
-  .action-desc { font-size: 13px; color: var(--gray-600); }
+  .back-nav {
+    max-width: 900px;
+    margin: 22px auto 0;
+    padding: 0 20px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 10px 16px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.2s ease;
+  }
+  .back-link:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-1px);
+  }
 
-  .timeline { border-left: 2px solid var(--gray-200); margin: 20px 0 20px 10px; padding-left: 24px; }
-  .timeline-item { position: relative; margin-bottom: 24px; }
-  .timeline-dot { position: absolute; left: -34px; top: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold-pale); border: 3px solid var(--gold); }
-  .timeline-item.done .timeline-dot { background: var(--green); border-color: var(--green); }
-  .timeline-item.done .timeline-dot::after { content: '✓'; color: white; font-size: 10px; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-  .timeline-week { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-  .timeline-title { font-weight: 600; color: var(--gray-800); font-size: 14px; }
-  .timeline-desc { font-size: 13px; color: var(--gray-600); }
-
-  .linkedin-card { background: white; border-radius: 8px; border: 1px solid #E5E7EB; max-width: 550px; margin: 0 auto; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif; }
-  .linkedin-header { display: flex; padding: 12px 16px 0; }
-  .linkedin-avatar { width: 48px; height: 48px; border-radius: 50%; background: #FDE68A; margin-right: 12px; }
-  .linkedin-user { font-weight: 600; font-size: 14px; color: #171717; }
-  .linkedin-sub { font-size: 12px; color: #737373; }
-  .linkedin-body { padding: 8px 16px; font-size: 14px; color: #171717; line-height: 1.5; }
-  .linkedin-body strong { font-weight: 600; }
-  .linkedin-footer { padding: 8px 16px 12px; display: flex; gap: 8px; border-top: 1px solid #F3F4F6; margin-top: 8px; }
-  .linkedin-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #52525B; background: #F3F4F6; }
-
-  .cta-box { text-align: center; }
-  .cta-box h2 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--gray-900); margin-bottom: 8px; }
-  .cta-box p { color: var(--gray-600); margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto; }
-  .cta-btn { display: inline-block; background: var(--gold); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; }
-
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
 </style>
 </head>
 <body>
 
-<div class="topnav">
-  <div class="topnav-left">
-    <a href="/es/career-intelligence">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-      Volver
-    </a>
-  </div>
-  <div class="topnav-brand">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    share2inspire
-  </div>
-  <div class="topnav-right">
-    DEMO
-  </div>
+<div class="demo-banner">
+  DEMO — CAREER INTELLIGENCE<span>Datos anonimizados para demostración</span>
 </div>
 
-<div class="page">
-  <div class="report-header">
-    <p>Para Ingeniería de Software en Lisboa, Portugal</p>
-    <h1>Informe de Inteligencia de Carrera</h1>
+<!-- HEADER -->
+<header class="report-header">
+  <div class="report-badge">Informe Career Intelligence</div>
+  <h1>Ricardo M.</h1>
+  <p class="subtitle">HR Digital & Process Excellence Manager · <em>Senior</em></p>
+  <div class="meta-pills">
+    <span class="meta-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+      HR Digital & Process Excellence Manager
+    </span>
+    <span class="meta-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Senior
+    </span>
+    <span class="meta-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </span>
+  </div>
+</header>
+
+
+<div class="back-nav">
+  <a href="/es/career-intelligence" class="back-link">← Volver a Career Intelligence</a>
+</div>
+
+<div class="container">
+
+  <!-- MARKET CONTEXT -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Contexto de Mercado
+    </div>
+
+    <div class="card">
+      <h4 style="font-size:0.7rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Empresas Alineadas</h4>
+      <div class="companies-grid">
+        <div class="company-category">
+          <h4>Farmacéutica & Ciencias de la Vida</h4>
+          <ul>
+            <li>Bluepharma</li>
+            <li>Bial</li>
+            <li>Hovione</li>
+            <li>Novartis Portugal</li>
+          </ul>
+        </div>
+        <div class="company-category">
+          <h4>Tecnología & Centros de Servicios</h4>
+          <ul>
+            <li>Critical Software</li>
+            <li>Talkdesk</li>
+            <li>Cloudflare Portugal</li>
+            <li>Siemens Healthineers</li>
+          </ul>
+        </div>
+        <div class="company-category">
+          <h4>Banca & Servicios Financieros</h4>
+          <ul>
+            <li>Caixa Geral de Depósitos</li>
+            <li>Natixis en Portugal</li>
+            <li>Santander Digital</li>
+            <li>Banco Carregosa</li>
+          </ul>
+        </div>
+        <div class="company-category">
+          <h4>Consultoría de Gestión</h4>
+          <ul>
+            <li>McKinsey & Company</li>
+            <li>Boston Consulting Group</li>
+            <li>Accenture Strategy</li>
+            <li>PwC Portugal</li>
+          </ul>
+        </div>
+        <div class="company-category">
+          <h4>Retail & FMCG</h4>
+          <ul>
+            <li>Sonae</li>
+            <li>Jerónimo Martins</li>
+            <li>L'Oréal Portugal</li>
+            <li>Unilever FIMA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights-row">
+      <div class="insight-box">
+        <h4>Nivel de Demanda</h4>
+        <p>La demanda por la combinación de competencias de Ricardo, especialmente RRHH, Tecnología e IA, está en un pico histórico en Portugal. Con la descentralización del trabajo y la creación de centros de competencias globales, las empresas multinacionales buscan líderes que sepan digitalizar procesos sin perder el enfoque en las personas. Esta demanda está impulsada por la escasez de perfiles que hablen fluidamente “negocio”, “RRHH” y “TI”. Para Ricardo, esto se traduce en un elevado poder de negociación, donde su rareza en el mercado le permite dictar condiciones de flexibilidad y paquetes salariales por encima de la media nacional.</p>
+      </div>
+      <div class="insight-box">
+        <h4>Competitividad</h4>
+        <p>El mercado para este nivel de senioridad es competitivo, pero Ricardo se posiciona en un nicho protegido. La mayoría de los candidatos a Directores de RRHH en Portugal tienen un background puramente administrativo o jurídico. Los perfiles que vienen de consultoría Big 4 son los principales competidores, pero pocos tienen experiencia específica en IA Generativa e implementación de HRIS en contextos variados. La competitividad se refuerza por la capacidad de operar en inglés a un nivel nativo/avanzado, algo crítico para los hubs globales que están contratando en Portugal. Está en el top 5% de perfiles de "HR Transformation" en el país.</p>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="section-label green">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-        Resumen del mercado
+  <!-- WHAT SETS YOU APART -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Qué Te Diferencia
     </div>
-    <div class="ats-score-row">
+    <div class="card">
+      <p class="diff-text">Lo que realmente distingue a Ricardo es su "doble ciudadanía" profesional: la profundidad de un consultor estratégico combinada con la experiencia práctica de quien ejecuta en multinacionales de primera categoría. El paso por una Big 4 dio la estructura; la empresa farmacéutica global aporta la escala; y la certificación en IA ofrece el futuro. Esta tríada es casi imposible de replicar. En Portugal, probablemente es uno de los pocos profesionales con este nivel de exposición global, lo que le convierte en el candidato ideal para cualquier empresa que quiera globalizar sus operaciones de RRHH desde Portugal. La diferencia es ser un "Tech-Savvy HR Leader" que entiende de ROI y eficiencia en procesos tanto como de personas.</p>
+    </div>
+  </div>
+
+  <!-- CAREER PATHS -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Caminos Estratégicos de Carrera
+    </div>
+    <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Tres caminos distintos basados en tu perfil</p>
+
+    <!-- PATH 1 -->
+    <div class="path-card recommended">
+      <div class="path-header">
         <div>
-            <div class="ats-score-big">+12%</div>
+          <div class="path-label">Camino 1</div>
+          <div class="path-title">Liderazgo Global en Transformación Digital (Corporate)</div>
         </div>
+        <span class="success-badge">92% éxito</span>
+      </div>
+      <p class="path-desc">Este es el camino de menor resistencia y mayor retorno inmediato. Ya integrado en una estructura de élite, con el background de consultoría necesario para navegar la política corporativa. La lógica es capitalizar en la función actual para convertirse en el "dueño" de la agenda digital de RRHH a nivel global. El mercado farmacéutico y financiero valora mucho la estabilidad junto con la innovación. Este recorrido ofrece una progresión salarial previsible y robusta, con beneficios ejecutivos significativos.</p>
+      <div class="ideal-for">
+        <h5>Ideal Para</h5>
+        <p>Profesionales que valoran la estructura, el prestigio de marcas globales y la capacidad de implementar cambios a gran escala.</p>
+      </div>
+      <h5 style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Rangos Salariales</h5>
+      <div class="salary-row">
+        <div class="salary-item">
+          <div class="salary-label">Entrada</div>
+          <div class="salary-value">€75.000 – €90.000</div>
+        </div>
+        <div class="salary-item">
+          <div class="salary-label">3 años</div>
+          <div class="salary-value">€95.000 – €125.000</div>
+        </div>
+        <div class="salary-item">
+          <div class="salary-label">5 años</div>
+          <div class="salary-value">€130.000 – €170.000</div>
+        </div>
+      </div>
+      <div class="role-tags">
+        <span class="role-tag">HR Digital & Process Excellence Manager</span>
+        <span class="role-tag">Global Director of HR Transformation</span>
+        <span class="role-tag">VP of HR Technology & Operations</span>
+        <span class="role-tag">Global Head of People Digital Strategy</span>
+      </div>
+    </div>
+
+    <!-- PATH 2 -->
+    <div class="path-card">
+      <div class="path-header">
         <div>
-            <span class="badge badge-green">Alto crecimiento</span>
-            <p class="ats-desc" style="margin-top: 8px; margin-bottom: 0;">El mercado de la ingeniería de software en Lisboa muestra una fuerte tendencia al alza, con un aumento del 12% en las vacantes durante el último trimestre.</p>
+          <div class="path-label">Camino 2</div>
+          <div class="path-title">Pivot a Liderazgo en Scale-ups Tecnológicas (Tech Leadership)</div>
         </div>
+        <span class="success-badge medium">75% éxito</span>
+      </div>
+      <p class="path-desc">Este camino se centra en el ecosistema de innovación, aprovechando empresas remotas globales o hubs tecnológicos en Portugal. Aquí, dejaría las estructuras tradicionales para moldear la función de RRHH en empresas que crecen un 100% anual. La lógica estratégica es usar el conocimiento de "cómo hacen las grandes" para ayudar a las pequeñas a crecer con orden. Es un camino de mayor riesgo, pero con un potencial de "upside" financiero enorme a través de stock options.</p>
+      <div class="ideal-for">
+        <h5>Ideal Para</h5>
+        <p>Perfiles con apetito por el riesgo, que les gusta construir desde cero y quieren tener una voz directa en la estrategia de negocio.</p>
+      </div>
+      <h5 style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Rangos Salariales</h5>
+      <div class="salary-row">
+        <div class="salary-item">
+          <div class="salary-label">Entrada</div>
+          <div class="salary-value">€70.000 – €85.000</div>
+        </div>
+        <div class="salary-item">
+          <div class="salary-label">3 años</div>
+          <div class="salary-value">€100.000 – €140.000</div>
+        </div>
+        <div class="salary-item">
+          <div class="salary-label">5 años</div>
+          <div class="salary-value">€150.000 – €220.000</div>
+        </div>
+      </div>
+      <div class="role-tags">
+        <span class="role-tag">Head of People Operations</span>
+        <span class="role-tag">VP of People</span>
+        <span class="role-tag">Chief People Officer</span>
+        <span class="role-tag">People Strategy Lead</span>
+      </div>
     </div>
-    <div class="ats-compat-grid">
-        <div class="ats-compat-row"><span>Demanda de talento</span><span class="boa">Muy alta</span></div>
-        <div class="ats-compat-row"><span>Salario medio</span><span class="excelente">55.000 €/año</span></div>
-        <div class="ats-compat-row"><span>Trabajo remoto</span><span class="boa">65% híbrido/remoto</span></div>
-        <div class="ats-compat-row"><span>Sectores principales</span><span class="excelente">SaaS, Fintech</span></div>
-    </div>
-    <p class="ats-desc">Este informe ofrece un análisis completo del panorama actual del mercado para ingenieros de software en Lisboa, con foco en las tendencias clave, las referencias salariales y las competencias más demandadas.</p>
-  </div>
 
-  <div class="card">
-    <div class="section-label orange">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7l5 5-5 5M9 20h13M16 4h-1"/></svg>
-        Tendencias clave del sector
-    </div>
-    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 grandes tendencias que están dando forma al mercado laboral de la ingeniería de software.</p>
-
-    <div class="issue-item">
-      <p><span class="issue-num">1</span><span class="issue-title">Auge de los puestos de IA y aprendizaje automático</span></p>
-      <p class="issue-sub">Las empresas buscan cada vez más ingenieros con experiencia en IA/ML, creando oportunidades especializadas y mejor remuneradas.</p>
-      <div class="issue-section-label">Explicación completa</div>
-      <p class="issue-text">La integración de la inteligencia artificial en productos y servicios ya no es un nicho. Existe un aumento significativo de la demanda de ingenieros capaces de crear, desplegar y mantener modelos de aprendizaje automático. Esta tendencia está impactando puestos desde backend hasta ingeniería de datos.</p>
-    </div>
-    <hr class="issue-divider">
-    <div class="issue-item">
-      <p><span class="issue-num">2</span><span class="issue-title">Mayor demanda de competencias en ciberseguridad</span></p>
-      <p class="issue-sub">Con el aumento de las amenazas digitales, la ciberseguridad es una prioridad absoluta y los desarrolladores con conocimientos de seguridad son muy valorados.</p>
-      <div class="issue-section-label">Explicación completa</div>
-      <p class="issue-text">Las prácticas de DevSecOps se están convirtiendo en el estándar. Las empresas buscan desarrolladores que puedan escribir código seguro y entender el modelado de amenazas, no solo especialistas dedicados a seguridad. Esta competencia puede aumentar significativamente el valor de mercado de un candidato.</p>
-    </div>
-    <hr class="issue-divider">
-    <div class="issue-item">
-      <p><span class="issue-num">3</span><span class="issue-title">Predominio de las tecnologías cloud-native</span></p>
-      <p class="issue-sub">El dominio de plataformas cloud (AWS, Azure, GCP) y de la contenerización (Docker, Kubernetes) es ahora una expectativa básica.</p>
-      <div class="issue-section-label">Explicación completa</div>
-      <p class="issue-text">El mercado ha adoptado por completo las arquitecturas cloud-native. La experiencia con microservicios, computación serverless e infraestructura como código es crítica para la mayoría de los puestos de ingeniería de software de nivel intermedio y sénior.</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-label gold">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Referencias salariales por puesto
-    </div>
-    <div class="salary-grid">
-        <div class="salary-cell">
-            <div class="label">Ingeniero/a júnior</div>
-            <div class="amount">€35k</div>
-            <div class="period">/ año</div>
+    <!-- PATH 3 -->
+    <div class="path-card">
+      <div class="path-header">
+        <div>
+          <div class="path-label">Camino 3</div>
+          <div class="path-title">Regreso a Consultoría de Estrategia como Partner (Advisory)</div>
         </div>
-        <div class="salary-cell">
-            <div class="label">Ingeniero/a de nivel medio</div>
-            <div class="amount highlight">€55k</div>
-            <div class="period">/ año</div>
+        <span class="success-badge">85% éxito</span>
+      </div>
+      <p class="path-desc">Con la experiencia acumulada en el "lado del cliente" en multinacionales, se convierte en un activo muy valioso para las Big 4 o consultoras boutique. La lógica es que ahora no es solo un consultor, sino alguien que "estuvo allí y lo hizo". Este camino se centra en la vertiente comercial y de liderazgo de pensamiento. El potencial salarial es el más alto a largo plazo, pero el coste en términos de equilibrio vida-trabajo es también el mayor. Dada la senioridad previa, el regreso sería para un nivel de Director con rápida vista a Partner.</p>
+      <div class="ideal-for">
+        <h5>Ideal Para</h5>
+        <p>Individuos con fuerte vena comercial, que les gusta resolver problemas diferentes cada día y que prosperan bajo presión.</p>
+      </div>
+      <h5 style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Rangos Salariales</h5>
+      <div class="salary-row">
+        <div class="salary-item">
+          <div class="salary-label">Entrada</div>
+          <div class="salary-value">€80.000 – €100.000</div>
         </div>
-        <div class="salary-cell">
-            <div class="label">Ingeniero/a sénior</div>
-            <div class="amount">€75k</div>
-            <div class="period">/ año</div>
+        <div class="salary-item">
+          <div class="salary-label">3 años</div>
+          <div class="salary-value">€110.000 – €150.000</div>
         </div>
-        <div class="salary-cell">
-            <div class="label">Lead / Principal</div>
-            <div class="amount">€90k+</div>
-            <div class="period">/ año</div>
+        <div class="salary-item">
+          <div class="salary-label">5 años</div>
+          <div class="salary-value">€180.000 – €300.000+</div>
         </div>
-    </div>
-    <p class="ats-desc">Estas cifras representan los salarios base medios para los puestos de ingeniería de software en Lisboa. La compensación total puede ser mayor, incluyendo bonus y stock options.</p>
-    <p class="salary-source">Fuente: análisis de más de 5.000 ofertas de empleo y datos salariales del primer trimestre de 2026.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-label green">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
-        Previsión de demanda de competencias
-    </div>
-    <div class="factor-row">
-        <div class="factor-name">Python<div class="factor-sub">Volverend, AI/ML</div></div>
-        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 90%; background: var(--green);"></div></div></div>
-        <div class="factor-score" style="color: var(--green);">+15%</div>
-    </div>
-    <div class="factor-row">
-        <div class="factor-name">JavaScript/TS<div class="factor-sub">Frontend, desarrollo full stack</div></div>
-        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 85%; background: var(--green);"></div></div></div>
-        <div class="factor-score" style="color: var(--green);">+11%</div>
-    </div>
-    <div class="factor-row">
-        <div class="factor-name">Go<div class="factor-sub">Volverend, Systems</div></div>
-        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 75%; background: var(--gold);"></div></div></div>
-        <div class="factor-score" style="color: var(--gold);">+8%</div>
-    </div>
-    <div class="factor-row">
-        <div class="factor-name">Java<div class="factor-sub">Empresarial</div></div>
-        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 40%;"></div></div></div>
-        <div class="factor-score">+2%</div>
-    </div>
-    <div class="factor-row">
-        <div class="factor-name">PHP<div class="factor-sub">Web heredada</div></div>
-        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width: 20%; background: var(--orange);"></div></div></div>
-        <div class="factor-score" style="color: var(--orange);">-3%</div>
-    </div>
-    <p class="ats-desc" style="margin-top: 16px;">Crecimiento previsto de la demanda de lenguajes de programación durante los próximos 12 meses. El verde indica alto crecimiento, el dorado estabilidad y el naranja una demanda en descenso.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-label gold">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
-        Panorama competitivo
-    </div>
-    <div class="market-stats" style="justify-content: space-around;">
-        <div class="market-stat">
-            <div class="val accent">1,200+</div>
-            <div class="sub">Empresas contratando</div>
-        </div>
-        <div class="market-stat">
-            <div class="val">Lisbon</div>
-            <div class="sub">Ubicación principal</div>
-        </div>
-        <div class="market-stat">
-            <div class="val">35%</div>
-            <div class="sub">Peso de startups</div>
-        </div>
-    </div>
-    <div class="tags-row" style="margin-top: 24px;">
-        <span class="tag">Unbabel</span>
-        <span class="tag">Farfetch</span>
-        <span class="tag">Talkdesk</span>
-        <span class="tag">OutSystems</span>
-        <span class="tag">Microsoft</span>
-        <span class="tag">Google</span>
-        <span class="tag">Cloudflare</span>
-    </div>
-    <p class="ats-desc">El mercado combina grandes tecnológicas, scale-ups consolidadas y un ecosistema startup muy dinámico. La competencia por talento sénior es especialmente alta entre las empresas internacionales bien financiadas.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-label green">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-        Recomendaciones estratégicas
-    </div>
-    <div class="action-item">
-        <div class="action-title">Céntrate en las competencias de mayor crecimiento</div>
-        <p class="action-desc">Prioriza el aprendizaje y el desarrollo de proyectos con Python y frameworks de IA/ML. Es la vía más rápida para aumentar tu valor de mercado y acceder a oportunidades de primer nivel.</p>
-    </div>
-    <div class="action-item">
-        <div class="action-title">Destaca proyectos cloud-native</div>
-        <p class="action-desc">Asegúrate de que tu porfolio o CV destaque experiencia práctica con AWS/GCP, Docker y Kubernetes. La experiencia demostrable vale más que las certificaciones por sí solas.</p>
-    </div>
-    <div class="action-item">
-        <div class="action-title">Haz networking en los sectores objetivo</div>
-        <p class="action-desc">Conecta con profesionales de los sectores SaaS y Fintech en Lisboa. Asiste a meetups y foros online para crear contactos y conocer mejor la cultura de las empresas y sus procesos de selección.</p>
+      </div>
+      <div class="role-tags">
+        <span class="role-tag">Director, Human Capital Advisory</span>
+        <span class="role-tag">Associate Partner, Digital Transformation</span>
+        <span class="role-tag">Partner, People & Change</span>
+        <span class="role-tag">Managing Director, HR Strategy</span>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-label gold">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Explora rutas profesionales
+  <!-- ACTION PLAN -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Plan de Acción por Camino
     </div>
-    <p style="font-size:13px;color:var(--gray-600);margin-bottom:20px;">¿Quieres ver tu trayectoria profesional personalizada? Nuestra herramienta de Ruta Profesional analiza tu perfil frente a datos de mercado para definir tus próximos pasos, identificar brechas de competencias y crear un plan de desarrollo a medida.</p>
-    <div style="text-align: center;">
-        <a href="/es/career-path" class="cta-btn" style="background: var(--green); font-size: 13px; padding: 10px 20px;">Descubre tus futuros roles</a>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span class="path-label" style="margin:0;">Camino 1</span>
+        <span style="font-weight:600;color:var(--navy);font-size:0.95rem;">Liderazgo Global en Transformación Digital</span>
+        <span style="font-size:0.65rem;font-weight:600;color:var(--gold);background:var(--gold-pale);border:1px solid var(--gold-border);padding:2px 10px;border-radius:4px;">Recomendado</span>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 1</div>
+        <div class="step-content">
+          Establecer un plan de 90 días con KPIs claros enfocados en "Process Excellence" y automatización vía IA.
+          <br><span class="key-step-badge">Paso clave</span>
+        </div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 2–3</div>
+        <div class="step-content">Iniciar la certificación SHRM-SCP para reforzar la credibilidad estratégica global.</div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 4–6</div>
+        <div class="step-content">Identificar un mentor interno (preferentemente un VP Global de otra área) para navegar la política global.</div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 6–12</div>
+        <div class="step-content">Publicar el primer caso de éxito interno sobre transformación digital en el newsletter de la empresa o LinkedIn (con autorización).</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span class="path-label" style="margin:0;">Camino 2</span>
+        <span style="font-weight:600;color:var(--navy);font-size:0.95rem;">Pivot a Scale-ups Tecnológicas</span>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 1</div>
+        <div class="step-content">
+          Mapear las 20 principales scale-ups en Portugal con fuerte componente tecnológica.
+          <br><span class="key-step-badge">Paso clave</span>
+        </div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 2–3</div>
+        <div class="step-content">Participar en eventos de networking en hubs de innovación para conocer fundadores e inversores.</div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 6–12</div>
+        <div class="step-content">Realizar un curso intensivo de "Startup HR" o "People Analytics for Scale-ups".</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span class="path-label" style="margin:0;">Camino 3</span>
+        <span style="font-weight:600;color:var(--navy);font-size:0.95rem;">Regreso a Consultoría como Partner</span>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 1</div>
+        <div class="step-content">
+          Reactivar contactos con antiguos socios y colegas de las Big 4 para "coffee chats" informales.
+          <br><span class="key-step-badge">Paso clave</span>
+        </div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 3–6</div>
+        <div class="step-content">Desarrollar un "Business Case" personal enfocado en una nueva oferta de consultoría en IA para RRHH.</div>
+      </div>
+      <div class="action-step">
+        <div class="step-time">Mes 6–12</div>
+        <div class="step-content">Monitorizar vacantes de "Director" o "Associate Partner" en consultoras boutique en Lisboa.</div>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-label gray">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-        Vista previa de publicación en LinkedIn
+  <!-- STRATEGIC COMPARISON -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Comparación Estratégica
     </div>
-    <div class="linkedin-card">
-        <div class="linkedin-header">
-            <div class="linkedin-avatar"></div>
-            <div>
-                <div class="linkedin-user">Tu nombre</div>
-                <div class="linkedin-sub">2h • Edited • 🌍</div>
-            </div>
-        </div>
-        <div class="linkedin-body">
-            ¡Acabo de recibir mi informe de Inteligencia de Carrera de <strong>#share2inspire</strong>! Información fascinante sobre el ecosistema tecnológico de Lisboa. La demanda de competencias en IA/ML está creciendo más de un 15% interanual. Es momento de apostar aún más por mis proyectos de Python y TensorFlow. 🚀
-            <br><br>
-            Para cualquier persona que trabaje en ingeniería de software en Portugal, recomiendo mucho probar sus herramientas. Entender el mercado es el primer paso para tomar una decisión profesional inteligente.
-            <br><br>
-            <strong>#CrecimientoProfesional #TendenciasTech #LisboaTech #CarreraConDatos</strong>
-        </div>
-        <div class="linkedin-footer">
-            <div class="linkedin-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg> Me gusta</div>
-            <div class="linkedin-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Comentar</div>
-        </div>
+    <div class="card">
+      <div class="comparison-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Liderazgo Global (Corporate)</th>
+              <th>Scale-ups (Tech Leadership)</th>
+              <th>Consultoría (Advisory)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Probabilidad de éxito</td><td>92%</td><td>75%</td><td>85%</td></tr>
+            <tr><td>Tiempo estimado</td><td>2–4 años para Dirección Global</td><td>1–2 años para transición</td><td>3–5 años para Partnership</td></tr>
+            <tr><td>Esfuerzo</td><td>Medio/Alto</td><td>Muy Alto</td><td>Muy Alto</td></tr>
+            <tr><td>Riesgo</td><td>Bajo</td><td>Medio/Alto</td><td>Medio</td></tr>
+            <tr><td>Impacto salarial</td><td>+25-40% en 3 años</td><td>Potencial de duplicar vía equity en 5 años</td><td>Elevado potencial de bonificación</td></tr>
+            <tr><td>Rango salarial</td><td>75.000€ – 170.000€</td><td>70.000€ – 220.000€</td><td>80.000€ – 300.000€</td></tr>
+            <tr><td>Alineación</td><td>95%</td><td>80%</td><td>90%</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <div class="card cta-box">
-    <h2>¿Listo/a para analizar tu CV?</h2>
-    <p>Convierte tu CV en una herramienta poderosa que te ayude a conseguir trabajo. Nuestro Analizador de CV con IA te ofrece la misma información que usan los reclutadores para tomar decisiones.</p>
-    <a href="/es/cv-analyser" class="cta-btn">Obtén tu análisis gratuito</a>
+  <!-- TRADE-OFFS -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3l5 5-5 5"/><path d="M21 8H9"/><path d="M8 21l-5-5 5-5"/><path d="M3 16h12"/></svg>
+      Trade-offs por Camino
+    </div>
+
+    <!-- Trade-off 1 -->
+    <div class="card">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:14px;font-size:0.95rem;">1 &nbsp; Liderazgo Global en Transformación Digital (Corporate)</div>
+      <div class="tradeoff-grid">
+        <div class="tradeoff-col">
+          <h5 class="gains">Ganas</h5>
+          <p>Estabilidad financiera envidiable y el prestigio de liderar cambios en una de las mayores empresas del mundo. Acceso a recursos y presupuestos que no existen en otros contextos, permitiendo implementar tecnologías punteras a escala global. Equilibrio vida-trabajo más previsible que en consultoría.</p>
+        </div>
+        <div class="tradeoff-col">
+          <h5 class="loses">Pierdes</h5>
+          <p>Velocidad de ejecución. En grandes corporaciones, las decisiones pueden ser lentas y la política interna puede ser frustrante. Puedes sentir que pasas más tiempo "vendiendo" ideas internamente que ejecutándolas. La innovación puede estar limitada por sistemas heredados y una cultura de aversión al riesgo.</p>
+        </div>
+      </div>
+      <div class="hidden-risk">
+        <h5>Riesgo Oculto</h5>
+        <p>El riesgo de convertirte en un "especialista de una sola empresa". Si permaneces demasiado tiempo en una estructura específica, puedes perder agilidad en el mercado.</p>
+      </div>
+      <div class="real-scenario">
+        <h5>Escenario Real</h5>
+        <p>Los primeros 6 meses serán pasados en reuniones de alineación global, navegando diferentes husos horarios y tratando de entender quiénes son los verdaderos decisores. Sentirás la presión de entregar quick wins para justificar la inversión en IA, mientras lidias con la resistencia cultural de equipos locales.</p>
+      </div>
+    </div>
+
+    <!-- Trade-off 2 -->
+    <div class="card">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:14px;font-size:0.95rem;">2 &nbsp; Pivot a Liderazgo en Scale-ups Tecnológicas</div>
+      <div class="tradeoff-grid">
+        <div class="tradeoff-col">
+          <h5 class="gains">Ganas</h5>
+          <p>Agilidad sin precedentes y la oportunidad de ser un verdadero arquitecto organizacional. Tu voz cuenta directamente para la estrategia del CEO. El potencial de ganancia financiera a través de stock options puede ser transformador.</p>
+        </div>
+        <div class="tradeoff-col">
+          <h5 class="loses">Pierdes</h5>
+          <p>La red de seguridad de una gran marca y los procesos estructurados. El estrés es constante y las horas de trabajo pueden ser impredecibles. Pierdes los beneficios corporativos generosos y la claridad de un plan de carrera predefinido.</p>
+        </div>
+      </div>
+      <div class="hidden-risk">
+        <h5>Riesgo Oculto</h5>
+        <p>El riesgo de burnout y la inestabilidad financiera si la empresa no alcanza las metas de crecimiento o no consigue una nueva ronda de inversión.</p>
+      </div>
+    </div>
+
+    <!-- Trade-off 3 -->
+    <div class="card">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:14px;font-size:0.95rem;">3 &nbsp; Regreso a Consultoría de Estrategia como Partner</div>
+      <div class="tradeoff-grid">
+        <div class="tradeoff-col">
+          <h5 class="gains">Ganas</h5>
+          <p>La adrenalina de trabajar con múltiples clientes y sectores simultáneamente. Estatus de "Trusted Advisor" para CHROs de varias empresas. El techo financiero es mucho más alto, especialmente a nivel de Partner con participación en beneficios.</p>
+        </div>
+        <div class="tradeoff-col">
+          <h5 class="loses">Pierdes</h5>
+          <p>Tiempo personal. Viajes constantes y entregas bajo presión extrema son la norma. Pierdes la satisfacción de ver un proyecto implementado hasta el final y de vivir las consecuencias de tus decisiones a largo plazo.</p>
+        </div>
+      </div>
+      <div class="hidden-risk">
+        <h5>Riesgo Oculto</h5>
+        <p>El riesgo de convertirte en un "vendedor" en vez de un "hacedor". A medida que subes en consultoría, el éxito se mide por el volumen de ventas y no por la calidad técnica de la entrega.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATION -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Decisión Recomendada
+    </div>
+
+    <div class="recommendation-card">
+      <div class="rec-title">Liderazgo Global en Transformación Digital (Corporate)</div>
+      <p class="rec-body">Tras un análisis profundo del recorrido, la recomendación estratégica es centrarse en el camino de Liderazgo Global en Transformación Digital dentro del mundo corporativo. Esta decisión se basa en tres pilares fundamentales: timing, perfil y mercado. Primero, la entrada reciente en una organización de prestigio mundial ofrece la plataforma perfecta para consolidar la transición de consultor a líder de negocio. Segundo, el perfil es intrínsecamente estructurado y analítico, con una larga permanencia en consultoría que muestra prosperidad en entornos donde se valoran el rigor y la metodología. Tercero, el mercado portugués está viendo un crecimiento enorme de hubs de servicios globales y centros de excelencia. La combinación de competencias en IA, Process Excellence y HRIS posiciona a este profesional en la cima de la pirámide para liderar estos centros. Este camino ofrece el mejor equilibrio entre riesgo y recompensa, permitiendo alcanzar niveles salariales altos (por encima de los €130k) con una estabilidad que los otros caminos no garantizan.</p>
+
+      <div class="rec-subcard">
+        <h5>Cuándo Considerar Otro Camino</h5>
+        <p>Reconsiderar este camino si: 1) Tras 24 meses, no hay una progresión clara hacia una función de ámbito global o regional. 2) La empresa reduce la inversión en transformación digital e IA. 3) Surge una oportunidad de CPO en una scale-up tecnológica con una propuesta de equity que represente ganancia generacional. 4) Si el mercado de consultoría sufre una disrupción que haga el modelo de Partnership mucho más atractivo financieramente.</p>
+      </div>
+
+      <div class="rec-subcard">
+        <h5>Por Qué Este Camino Es el Mejor</h5>
+        <p>Este camino es superior al de Tech Leadership porque ofrece una red de seguridad y recursos que permiten una ejecución de mayor impacto global, sin la extrema volatilidad de las startups. Comparado con el regreso a Consultoría, permite ser el "dueño" de la estrategia y ver los resultados a largo plazo, con un equilibrio vida-trabajo significativamente mejor. Para quien ya ha dedicado una década a la consultoría, este es el momento de recoger los frutos de esa experiencia como líder top en el lado del cliente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h3>¿Quieres un roadmap detallado de carrera?</h3>
+    <p>El Career Path te ofrece los próximos cargos, formaciones, certificaciones, estrategia de networking y visión a 5 años.</p>
+    <a href="/es/career-intelligence" class="cta-btn">Probar Career Intelligence</a>
   </div>
 
 </div>
+
+<footer class="footer">
+  <p>Este informe fue generado por <a href="/es/career-intelligence">Career Intelligence</a> de Share2Inspire. Datos anonimizados para demostración.</p>
+</footer>
 
 </body>
 </html>
