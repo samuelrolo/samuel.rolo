@@ -1,0 +1,272 @@
+:root {
+  --s2i-header-bg: rgba(255, 255, 255, 0.96);
+  --s2i-header-border: rgba(15, 23, 42, 0.1);
+  --s2i-header-text: #475569;
+  --s2i-header-text-strong: #0f172a;
+  --s2i-header-accent: #c9a961;
+  --s2i-header-accent-hover: #b8954f;
+  --s2i-header-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+#s2i-header.s2i-kh-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  background: var(--s2i-header-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--s2i-header-border);
+  box-shadow: var(--s2i-header-shadow);
+  font-family: 'Poppins', sans-serif;
+}
+
+#s2i-header .s2i-kh-header__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+#s2i-header .s2i-kh-header__brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+#s2i-header .s2i-kh-header__brand img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+#s2i-header .s2i-kh-header__nav,
+#s2i-header .s2i-kh-header__actions,
+#s2i-header .s2i-kh-header__lang,
+#s2i-header .s2i-kh-header__mobile-actions {
+  display: flex;
+  align-items: center;
+}
+
+#s2i-header .s2i-kh-header__nav {
+  flex: 1 1 auto;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+#s2i-header .s2i-kh-header__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.6rem;
+  color: var(--s2i-header-text);
+  text-decoration: none;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+#s2i-header .s2i-kh-header__link:hover,
+#s2i-header .s2i-kh-header__link:focus-visible {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--s2i-header-text-strong);
+  outline: none;
+}
+
+#s2i-header .s2i-kh-header__actions {
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+#s2i-header .s2i-kh-header__login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 0.7rem;
+  background: var(--s2i-header-accent);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#s2i-header .s2i-kh-header__login:hover,
+#s2i-header .s2i-kh-header__login:focus-visible {
+  background: var(--s2i-header-accent-hover);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+#s2i-header .s2i-kh-header__lang {
+  position: relative;
+}
+
+#s2i-header .s2i-kh-header__lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #fff;
+  color: var(--s2i-header-text);
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.7rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+#s2i-header .s2i-kh-header__lang-toggle:hover,
+#s2i-header .s2i-kh-header__lang-toggle:focus-visible {
+  background: rgba(248, 250, 252, 1);
+  color: var(--s2i-header-text-strong);
+  border-color: rgba(148, 163, 184, 0.45);
+  outline: none;
+}
+
+#s2i-header .s2i-kh-header__lang-toggle svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+#s2i-header .s2i-kh-header__lang-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.45rem);
+  min-width: 10rem;
+  padding: 0.4rem;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.9rem;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.14);
+}
+
+#s2i-header .s2i-kh-header__lang-menu[hidden] {
+  display: none;
+}
+
+#s2i-header .s2i-kh-header__lang-option {
+  display: block;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.7rem;
+  color: var(--s2i-header-text);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#s2i-header .s2i-kh-header__lang-option:hover,
+#s2i-header .s2i-kh-header__lang-option:focus-visible,
+#s2i-header .s2i-kh-header__lang-option.is-active {
+  background: rgba(201, 169, 97, 0.12);
+  color: #8c6d28;
+  outline: none;
+}
+
+#s2i-header .s2i-kh-header__menu-toggle {
+  display: none;
+  width: 2.85rem;
+  height: 2.85rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.26rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #fff;
+  border-radius: 0.8rem;
+  cursor: pointer;
+}
+
+#s2i-header .s2i-kh-header__menu-toggle span {
+  display: block;
+  width: 1.1rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--s2i-header-text-strong);
+}
+
+#s2i-header .s2i-kh-header__mobile {
+  display: none;
+  padding: 0 1rem 1rem;
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+#s2i-header .s2i-kh-header__mobile[hidden] {
+  display: none;
+}
+
+#s2i-header .s2i-kh-header__mobile .s2i-kh-header__link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  margin-top: 0.2rem;
+  border-radius: 0.85rem;
+  font-size: 0.92rem;
+}
+
+#s2i-header .s2i-kh-header__mobile-actions {
+  padding-top: 0.9rem;
+  margin-top: 0.9rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+@media (max-width: 1180px) {
+  #s2i-header .s2i-kh-header__nav {
+    gap: 0.05rem;
+  }
+
+  #s2i-header .s2i-kh-header__link {
+    padding-inline: 0.62rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  #s2i-header .s2i-kh-header__nav,
+  #s2i-header .s2i-kh-header__actions {
+    display: none;
+  }
+
+  #s2i-header .s2i-kh-header__menu-toggle {
+    display: inline-flex;
+  }
+
+  #s2i-header .s2i-kh-header__mobile.is-open {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  #s2i-header .s2i-kh-header__inner {
+    padding: 0.8rem 0.9rem;
+  }
+
+  #s2i-header .s2i-kh-header__brand img {
+    height: 32px;
+  }
+
+  #s2i-header .s2i-kh-header__mobile {
+    padding-inline: 0.9rem;
+    padding-bottom: 0.9rem;
+  }
+}
