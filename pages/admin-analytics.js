@@ -3277,6 +3277,10 @@ function esc(str) {
 // ═══════════════════════════════════════════════════════════════
 //  REFRESH ALL & INIT
 // ═══════════════════════════════════════════════════════════════
+function renderNewsletters() {
+    // Feature descontinuada: manter no-op para evitar ReferenceError em ficheiros standalone antigos.
+}
+
 async function refreshAll() {
     showToast(tr('A atualizar dados...', 'Refreshing data...', 'Actualizando datos...'), 'info');
     await loadAllData();
