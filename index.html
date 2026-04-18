@@ -138,12 +138,37 @@ fbq('track', 'PageView');
       background: rgba(201, 169, 97, 0.08);
     }
 
-    @media (max-width: 639px) {
+    @media (max-width: 768px) {
+      #root section[style*="hero-samuel-blur"] div[class*="flex flex-col"][class*="justify-center"] {
+        gap: 0.625rem;
+      }
       #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
       #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
         max-width: 100%;
         width: 100%;
-        min-height: 11.75rem;
+        min-height: 10.75rem;
+        height: 10.75rem;
+        padding: 0.875rem 0.875rem 0.75rem;
+        border-radius: 0.875rem;
+      }
+      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] h3,
+      #root section[style*="hero-samuel-blur"] a[href="/career-path"] h3 {
+        min-height: 2.5rem;
+        margin-bottom: 0.375rem;
+        line-height: 1.25rem;
+      }
+      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] p,
+      #root section[style*="hero-samuel-blur"] a[href="/career-path"] p {
+        min-height: 2.75rem;
+        margin-bottom: 0.625rem;
+        line-height: 1.15rem;
+      }
+      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] span,
+      #root section[style*="hero-samuel-blur"] a[href="/career-path"] span {
+        min-height: 2.5rem;
+        padding: 0.625rem 0.875rem;
+        margin-top: auto;
+        border-radius: 0.625rem;
       }
     }
 
