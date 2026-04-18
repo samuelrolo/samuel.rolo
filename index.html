@@ -66,6 +66,96 @@ fbq('track', 'PageView');
 <link rel="modulepreload" crossorigin href="/assets/vendor-charts-DOFVeF4Y.js">
   <script type="module" crossorigin src="/assets/index-BGQFRXN8.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-CZ6Tcfmh.css">
+  <style>
+    @keyframes s2iHeroCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
+    #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width: min(100%, 20rem);
+      max-width: 20rem;
+      min-height: 12.75rem;
+      box-sizing: border-box;
+      align-self: stretch;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: s2iHeroCardIn 0.7s ease-out forwards;
+      will-change: opacity, transform;
+    }
+
+    #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
+      animation-delay: 0.12s;
+    }
+
+    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] h3,
+    #root section[style*="hero-samuel-blur"] a[href="/career-path"] h3 {
+      width: 100%;
+      min-height: 3rem;
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      text-align: left;
+      line-height: 1.5rem;
+    }
+
+    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] p,
+    #root section[style*="hero-samuel-blur"] a[href="/career-path"] p {
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 3.75rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      line-height: 1.25rem;
+    }
+
+    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] span,
+    #root section[style*="hero-samuel-blur"] a[href="/career-path"] span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 2.75rem;
+      margin-top: auto;
+      padding: 0.75rem 1rem;
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid rgba(201, 169, 97, 0.35);
+      border-radius: 0.75rem;
+      background: rgba(201, 169, 97, 0.08);
+    }
+
+    @media (max-width: 639px) {
+      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
+      #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
+        max-width: 100%;
+        width: 100%;
+        min-height: 11.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
+      #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
+        opacity: 1;
+        transform: none;
+        animation: none;
+      }
+    }
+  </style>
 </head>
 
   <body>
