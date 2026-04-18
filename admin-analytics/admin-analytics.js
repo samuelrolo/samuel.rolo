@@ -3472,6 +3472,10 @@ function renderNewsletters() {
     // Feature descontinuada: manter no-op para evitar ReferenceError em ficheiros standalone antigos.
 }
 
+function renderPartnerSubtab(_tab) {
+    // Fallback seguro para instalações standalone antigas onde a subtab de partners não está carregada.
+}
+
 async function refreshAll() {
     showToast(tr('A atualizar dados...', 'Refreshing data...', 'Actualizando datos...'), 'info');
     await loadAllData();
