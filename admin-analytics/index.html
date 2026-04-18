@@ -22,6 +22,7 @@
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/otpauth@9.5.0/dist/otpauth.umd.min.js" referrerpolicy="no-referrer"></script>
     <style>
         :root {
             --gold: #C9A961; --gold-light: #D4B96E; --gold-bg: #FBF8F1; --gold-border: #E8DFC8;
@@ -271,14 +272,47 @@
 
 <!-- ── LOGIN OVERLAY ── -->
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
-    <div style="background:var(--white);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow-md);max-width:400px;width:90%;text-align:center;">
+    <div style="background:var(--white);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow-md);max-width:420px;width:90%;text-align:center;">
         <h1 style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:4px;">Share2Inspire</h1>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Cockpit de Gestão &mdash; Acesso Restrito</p>
-        <div id="loginError" style="display:none;background:var(--red-bg);color:var(--red);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;"></div>
-        <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;" />
-        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:20px;outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')adminLogin()" />
-        <button id="loginBtn" onclick="adminLogin()" style="width:100%;padding:10px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Entrar</button>
-        <p style="font-size:11px;color:var(--text-muted);margin-top:16px;">Acesso exclusivo para administradores</p>
+        <p id="loginSubtitle" style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Cockpit de Gestão &mdash; Acesso Restrito</p>
+
+        <div id="loginCredentialsStep">
+            <div id="loginError" style="display:none;background:var(--red-bg);color:var(--red);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;"></div>
+            <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')adminLogin()" />
+            <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:20px;outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')adminLogin()" />
+            <button id="loginBtn" onclick="adminLogin()" style="width:100%;padding:10px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Entrar</button>
+            <div style="margin-top:14px;font-size:11px;">
+                <a href="?setup=true" style="color:var(--gold);text-decoration:none;font-weight:600;">Configurar Google Authenticator / Authy</a>
+            </div>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:16px;">Acesso exclusivo para administradores</p>
+        </div>
+
+        <div id="loginTotpStep" style="display:none;">
+            <div id="totpMessage" style="background:var(--gold-bg);color:var(--text-secondary);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:12px;line-height:1.5;">Introduce o código de 6 dígitos gerado no authenticator para concluir o login.</div>
+            <div id="totpError" style="display:none;background:var(--red-bg);color:var(--red);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;"></div>
+            <input id="loginTotpCode" type="text" inputmode="numeric" maxlength="6" placeholder="Código de 6 dígitos" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:16px;outline:none;font-family:inherit;text-align:center;letter-spacing:4px;" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')verifyAdminTotp()" />
+            <button id="totpBtn" onclick="verifyAdminTotp()" style="width:100%;padding:10px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Validar código</button>
+            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:14px;font-size:11px;align-items:center;">
+                <a href="?setup=true" style="color:var(--gold);text-decoration:none;font-weight:600;">Ver QR code / setup</a>
+                <button type="button" onclick="resetAdminLogin()" style="background:none;border:none;color:var(--text-muted);font:inherit;cursor:pointer;padding:0;">Voltar</button>
+            </div>
+        </div>
+
+        <div id="loginSetupStep" style="display:none;">
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6;">Digitaliza o QR code abaixo no Google Authenticator ou Authy. Se preferires, podes introduzir manualmente o secret.</p>
+            <div style="display:flex;justify-content:center;margin-bottom:16px;">
+                <img id="totpQrCode" alt="QR Code TOTP Share2Inspire" src="" style="width:200px;height:200px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);padding:8px;" />
+            </div>
+            <div style="background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:12px;text-align:left;margin-bottom:16px;">
+                <p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Secret manual</p>
+                <code id="totpManualSecret" style="display:block;font-size:13px;color:var(--dark);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;"></code>
+            </div>
+            <p style="font-size:11px;color:var(--text-muted);margin-bottom:16px;">Conta: <span id="totpAccountLabel" style="font-weight:600;color:var(--dark);"></span></p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <a href="./" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);color:var(--text-secondary);text-decoration:none;font-size:13px;font-weight:600;">Voltar ao login</a>
+                <button type="button" onclick="enterTotpChallengeFromSetup()" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Já configurei</button>
+            </div>
+        </div>
     </div>
 </div>
 

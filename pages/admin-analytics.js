@@ -12,18 +12,267 @@ const RUNTIME_SUPABASE_KEY = typeof window !== 'undefined' && typeof window.__SU
 const SUPABASE_KEY = RUNTIME_SUPABASE_KEY || SUPABASE_ANON_KEY_FALLBACK;
 const ADMIN_EMAIL = 'samuelrolo@gmail.com';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
+const ADMIN_TOTP_ISSUER = 'Share2Inspire Admin';
+const ADMIN_TOTP_LABEL = ADMIN_EMAIL;
+const ADMIN_TOTP_SECRET = 'RYAZYLXWNVP4Z3XHOPB7K3VNRWWMBX4T';
+const ADMIN_TOTP_SESSION_KEY = 's2i_admin_totp_verified';
+const ADMIN_TOTP_SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 
 // ── Supabase Auth Client ──
 const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let _accessToken = null; // filled after login
+let pendingTotpSession = null;
 
 _supa.auth.onAuthStateChange((_event, session) => {
     _accessToken = session?.access_token || null;
 });
 
+function getAdminTotp() {
+    if (!window.OTPAuth?.TOTP) {
+        throw new Error('A biblioteca OTPAuth não foi carregada.');
+    }
+    return new window.OTPAuth.TOTP({
+        issuer: ADMIN_TOTP_ISSUER,
+        label: ADMIN_TOTP_LABEL,
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        secret: ADMIN_TOTP_SECRET
+    });
+}
+
+function getAdminTotpUri() {
+    return getAdminTotp().toString();
+}
+
+function isTotpSetupRequested() {
+    return new URLSearchParams(window.location.search).get('setup') === 'true';
+}
+
+function updateTotpSetupParam(enabled) {
+    const url = new URL(window.location.href);
+    if (enabled) url.searchParams.set('setup', 'true');
+    else url.searchParams.delete('setup');
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+function updateAuthSubtitle(text) {
+    const el = document.getElementById('loginSubtitle');
+    if (el) el.innerHTML = text;
+}
+
+function setAuthError(targetId, message = '') {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    el.textContent = message;
+    el.style.display = message ? 'block' : 'none';
+}
+
+function setLoginError(message = '') {
+    setAuthError('loginError', message);
+}
+
+function setTotpError(message = '') {
+    setAuthError('totpError', message);
+}
+
+function clearTotpVerification() {
+    sessionStorage.removeItem(ADMIN_TOTP_SESSION_KEY);
+}
+
+function markTotpVerified(email = ADMIN_EMAIL) {
+    sessionStorage.setItem(ADMIN_TOTP_SESSION_KEY, JSON.stringify({
+        email: String(email || '').toLowerCase(),
+        verifiedAt: Date.now()
+    }));
+}
+
+function isTotpVerifiedFor(email = ADMIN_EMAIL) {
+    try {
+        const raw = sessionStorage.getItem(ADMIN_TOTP_SESSION_KEY);
+        if (!raw) return false;
+        const parsed = JSON.parse(raw);
+        const isFresh = parsed?.verifiedAt && (Date.now() - parsed.verifiedAt) < ADMIN_TOTP_SESSION_TTL_MS;
+        const sameEmail = String(parsed?.email || '').toLowerCase() === String(email || '').toLowerCase();
+        if (isFresh && sameEmail) return true;
+    } catch (error) {
+        console.warn('Could not read TOTP verification state:', error);
+    }
+    clearTotpVerification();
+    return false;
+}
+
+function updateTotpSetupUi() {
+    const qrEl = document.getElementById('totpQrCode');
+    const secretEl = document.getElementById('totpManualSecret');
+    const accountEl = document.getElementById('totpAccountLabel');
+    if (secretEl) secretEl.textContent = ADMIN_TOTP_SECRET;
+    if (accountEl) accountEl.textContent = `${ADMIN_TOTP_ISSUER} · ${ADMIN_TOTP_LABEL}`;
+    if (qrEl) {
+        try {
+            qrEl.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(getAdminTotpUri())}`;
+        } catch (error) {
+            console.error('Could not build TOTP QR code:', error);
+            qrEl.removeAttribute('src');
+            qrEl.alt = 'QR code indisponível';
+        }
+    }
+}
+
+function showLoginStep(step = 'credentials') {
+    const overlay = document.getElementById('loginOverlay');
+    const credentials = document.getElementById('loginCredentialsStep');
+    const totp = document.getElementById('loginTotpStep');
+    const setup = document.getElementById('loginSetupStep');
+    if (!overlay || !credentials || !totp || !setup) return;
+
+    overlay.style.display = 'flex';
+    credentials.style.display = step === 'credentials' ? 'block' : 'none';
+    totp.style.display = step === 'totp' ? 'block' : 'none';
+    setup.style.display = step === 'setup' ? 'block' : 'none';
+
+    if (step === 'credentials') {
+        updateAuthSubtitle('Cockpit de Gestão &mdash; Acesso Restrito');
+        setTimeout(() => document.getElementById('loginEmail')?.focus(), 0);
+        return;
+    }
+
+    if (step === 'totp') {
+        updateAuthSubtitle('Segundo fator de autenticação');
+        const msgEl = document.getElementById('totpMessage');
+        if (msgEl) {
+            msgEl.textContent = pendingTotpSession
+                ? 'Login com email e password concluído. Introduz agora o código de 6 dígitos gerado no authenticator.'
+                : 'Sessão de administrador detetada. Introduz o código de 6 dígitos para desbloquear o cockpit.';
+        }
+        setTimeout(() => {
+            const input = document.getElementById('loginTotpCode');
+            input?.focus();
+            input?.select();
+        }, 0);
+        return;
+    }
+
+    updateAuthSubtitle('Configuração do Google Authenticator / Authy');
+    updateTotpSetupUi();
+}
+
+async function resetAdminLogin() {
+    clearTotpVerification();
+    pendingTotpSession = null;
+    _accessToken = null;
+    try {
+        await _supa.auth.signOut();
+    } catch (error) {
+        console.warn('Could not reset admin session:', error);
+    }
+
+    const loginBtn = document.getElementById('loginBtn');
+    const totpBtn = document.getElementById('totpBtn');
+    const passwordInput = document.getElementById('loginPassword');
+    const totpInput = document.getElementById('loginTotpCode');
+
+    if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Entrar'; }
+    if (totpBtn) { totpBtn.disabled = false; totpBtn.textContent = 'Validar código'; }
+    if (passwordInput) passwordInput.value = '';
+    if (totpInput) totpInput.value = '';
+
+    setLoginError('');
+    setTotpError('');
+    updateTotpSetupParam(false);
+    showLoginStep('credentials');
+}
+
+function enterTotpChallengeFromSetup() {
+    updateTotpSetupParam(false);
+    setLoginError('');
+    setTotpError('');
+    if (pendingTotpSession || _accessToken) {
+        showLoginStep('totp');
+        return;
+    }
+    showLoginStep('credentials');
+    setLoginError('Primeiro autentica-te com email e password para concluires a ativação do segundo fator.');
+}
+
+function isValidTotpToken(token) {
+    const cleanToken = String(token || '').replace(/\s+/g, '');
+    if (!/^\d{6}$/.test(cleanToken)) return false;
+    return getAdminTotp().validate({ token: cleanToken, window: 1 }) !== null;
+}
+
+async function finalizeAdminAccess(session = null) {
+    if (session) pendingTotpSession = session;
+    if (!pendingTotpSession) {
+        const { data, error } = await _supa.auth.getSession();
+        if (error) throw error;
+        pendingTotpSession = data?.session || null;
+    }
+    if (!pendingTotpSession?.access_token) {
+        throw new Error('Sessão de administrador não encontrada. Volta a autenticar-te.');
+    }
+
+    _accessToken = pendingTotpSession.access_token;
+    markTotpVerified(pendingTotpSession?.user?.email || ADMIN_EMAIL);
+    const overlay = document.getElementById('loginOverlay');
+    if (overlay) overlay.style.display = 'none';
+    initCockpit();
+}
+
+async function verifyAdminTotp() {
+    const input = document.getElementById('loginTotpCode');
+    const btn = document.getElementById('totpBtn');
+    const cleanToken = String(input?.value || '').replace(/\s+/g, '');
+
+    setTotpError('');
+
+    if (!/^\d{6}$/.test(cleanToken)) {
+        setTotpError('Insere um código válido de 6 dígitos.');
+        return;
+    }
+
+    if (!pendingTotpSession?.access_token) {
+        try {
+            const { data, error } = await _supa.auth.getSession();
+            if (error) throw error;
+            const session = data?.session || null;
+            if (session?.user?.email?.toLowerCase() === ADMIN_EMAIL) {
+                pendingTotpSession = session;
+                _accessToken = session.access_token;
+            }
+        } catch (error) {
+            console.warn('Could not recover pending admin session for TOTP:', error);
+        }
+    }
+
+    if (!pendingTotpSession?.access_token) {
+        showLoginStep('credentials');
+        setLoginError('A sessão de login expirou. Volta a autenticar-te com email e password.');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'A validar...';
+
+    try {
+        if (!isValidTotpToken(cleanToken)) {
+            throw new Error('Código inválido ou expirado.');
+        }
+        if (input) input.value = '';
+        await finalizeAdminAccess(pendingTotpSession);
+    } catch (error) {
+        setTotpError(error.message || 'Não foi possível validar o segundo fator.');
+        input?.focus();
+        input?.select();
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Validar código';
+    }
+}
+
 // Get the current auth token (session token if logged in, fallback to anon key)
 function getAuthToken() {
-    return _accessToken || SUPABASE_KEY;
+    return isTotpVerifiedFor(ADMIN_EMAIL) ? (_accessToken || SUPABASE_KEY) : SUPABASE_KEY;
 }
 
 async function getFreshAuthToken(requireAdminSession = false) {
@@ -32,7 +281,14 @@ async function getFreshAuthToken(requireAdminSession = false) {
         if (error) throw error;
         const session = data?.session || null;
         if (session?.access_token) {
+            pendingTotpSession = session;
             _accessToken = session.access_token;
+            if (!isTotpVerifiedFor(session?.user?.email || ADMIN_EMAIL)) {
+                if (requireAdminSession) {
+                    throw new Error('Segundo fator pendente. Introduz o código do authenticator.');
+                }
+                return getAuthToken();
+            }
             return session.access_token;
         }
     } catch (error) {
@@ -58,29 +314,45 @@ async function getAdminEdgeHeaders(extraHeaders = {}) {
 async function adminLogin() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    const errDiv = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
-    errDiv.style.display = 'none';
-    if (!email || !password) { errDiv.textContent = 'Preenche email e password.'; errDiv.style.display = 'block'; return; }
-    btn.disabled = true; btn.textContent = 'A verificar...';
+
+    setLoginError('');
+    setTotpError('');
+
+    if (!email || !password) {
+        setLoginError('Preenche email e password.');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'A verificar...';
+
     try {
+        clearTotpVerification();
         const { data, error } = await _supa.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        if (data.user.email.toLowerCase() !== ADMIN_EMAIL) {
+        if (!data?.user?.email || data.user.email.toLowerCase() !== ADMIN_EMAIL) {
             await _supa.auth.signOut();
             throw new Error('Este email não tem permissões de administrador.');
         }
-        _accessToken = data.session.access_token;
-        document.getElementById('loginOverlay').style.display = 'none';
-        initCockpit();
+        pendingTotpSession = data.session;
+        _accessToken = data.session?.access_token || null;
+        updateTotpSetupUi();
+        updateTotpSetupParam(false);
+        showLoginStep('totp');
     } catch (e) {
-        errDiv.textContent = e.message || 'Erro ao autenticar.';
-        errDiv.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Entrar';
+        pendingTotpSession = null;
+        _accessToken = null;
+        clearTotpVerification();
+        setLoginError(e.message || 'Erro ao autenticar.');
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
     }
 }
 
 async function adminLogout() {
+    clearTotpVerification();
+    pendingTotpSession = null;
     await _supa.auth.signOut();
     _accessToken = null;
     location.reload();
@@ -3344,16 +3616,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (uiLangBtn) uiLangBtn.classList.add('active');
     applyUILanguage();
     updateLastRefreshTimestamp(null);
+    updateTotpSetupUi();
+    showLoginStep(isTotpSetupRequested() ? 'setup' : 'credentials');
     try {
         const { data: { session } } = await _supa.auth.getSession();
         if (session && session.user && session.user.email.toLowerCase() === ADMIN_EMAIL) {
+            pendingTotpSession = session;
             _accessToken = session.access_token;
-            document.getElementById('loginOverlay').style.display = 'none';
-            initCockpit();
+            if (isTotpSetupRequested()) {
+                showLoginStep('setup');
+                return;
+            }
+            if (isTotpVerifiedFor(session.user.email)) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                initCockpit();
+                return;
+            }
+            showLoginStep('totp');
+            return;
+        }
+        if (isTotpSetupRequested()) {
+            showLoginStep('setup');
         }
         // else: login overlay stays visible, user must authenticate
     } catch (e) {
         console.error('Session check failed:', e);
+        showLoginStep(isTotpSetupRequested() ? 'setup' : 'credentials');
     }
 });
 
