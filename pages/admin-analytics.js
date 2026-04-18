@@ -2391,14 +2391,11 @@ function renderCETable() {
     setText('ceCount', `${data.length} respostas`);
     const tbody = document.getElementById('ceTable');
     if (!tbody) return;
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>`; return; }
     tbody.innerHTML = data.slice(0, 50).map(ce => {
         const date = new Date(ce.created_at).toLocaleDateString('pt-PT');
         const score = ce.total_score || ce.score || ce.energy_score || 0;
         const scoreColor = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--orange)' : 'var(--red)';
-        const happiness = ce.country_happiness_score ? parseFloat(ce.country_happiness_score).toFixed(1) : '—';
-        const diff = ce.country_diff !== null && ce.country_diff !== undefined ? (ce.country_diff >= 0 ? '+' : '') + parseFloat(ce.country_diff).toFixed(1) : '—';
-        const diffColor = parseFloat(ce.country_diff) >= 0 ? 'var(--green)' : 'var(--red)';
         return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
             <td style="font-size:12px;">${ce.name || '—'}</td>
@@ -2406,8 +2403,8 @@ function renderCETable() {
             <td style="font-size:12px;">${ce.country_name || ce.country || '—'}</td>
             <td><span style="font-weight:600;color:${scoreColor};">${score}</span></td>
             <td style="font-size:12px;">${ce.level_label || ce.energy_level || '—'}</td>
-            <td style="font-size:12px;">${happiness}</td>
-            <td style="font-size:12px;font-weight:600;color:${diffColor};">${diff}</td>
+            
+            
         </tr>`;
     }).join('');
 }
@@ -2916,7 +2913,7 @@ function renderAffConversions() {
     const tbody = document.getElementById('affConversionsTable');
     if (!tbody) return;
     const data = [...allAffConversions].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
     tbody.innerHTML = data.slice(0, 50).map(c => {
         const date = new Date(c.created_at).toLocaleDateString('pt-PT');
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount||0).toFixed(2)}€</td><td style="font-size:12px;">${c.currency||'EUR'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:12px;"><code style="font-size:10px;">${c.transaction_id||'—'}</code></td></tr>`;
