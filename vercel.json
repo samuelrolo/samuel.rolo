@@ -72,6 +72,106 @@
       "permanent": true
     },
     {
+      "source": "/loja/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/loja",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/loja/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/loja",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-dashboard/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-dashboard",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/people-hub/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/people-hub",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-analytics/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-analytics",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-downloads-dashboard/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/hr-downloads-dashboard",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/samuel-rolo-report/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/samuel-rolo-report",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/criacao-conteudos/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/criacao-conteudos",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/criacao-conteudos/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/criacao-conteudos",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/estudos/:path*",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/estudos",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
       "source": "/pages/servicos",
       "destination": "/servicos",
       "permanent": true
