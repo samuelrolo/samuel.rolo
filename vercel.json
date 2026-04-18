@@ -566,39 +566,39 @@
     },
     {
       "source": "/area-cliente/auth",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/planos",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/perfil",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/membros",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/vagas",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/dashboard",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/upgrade",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/area-cliente/:match*",
-      "destination": "/area-cliente"
+      "destination": "/area-cliente/index.html"
     },
     {
       "source": "/en/cv-analyser/demo",
@@ -917,4 +917,4 @@
       "destination": "/index.html"
     }
   ]
-    }
+}
