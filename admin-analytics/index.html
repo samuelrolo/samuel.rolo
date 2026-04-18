@@ -23,6 +23,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/otpauth@9.5.0/dist/otpauth.umd.min.js" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <style>
         :root {
             --gold: #C9A961; --gold-light: #D4B96E; --gold-bg: #FBF8F1; --gold-border: #E8DFC8;
@@ -301,7 +302,7 @@
         <div id="loginSetupStep" style="display:none;">
             <p style="font-size:12px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6;">Digitaliza o QR code abaixo no Google Authenticator ou Authy. Se preferires, podes introduzir manualmente o secret.</p>
             <div style="display:flex;justify-content:center;margin-bottom:16px;">
-                <img id="totpQrCode" alt="QR Code TOTP Share2Inspire" src="" style="width:200px;height:200px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);padding:8px;" />
+                <canvas id="totpQrCode" style="width:200px;height:200px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);padding:8px;"></canvas>
             </div>
             <div style="background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:12px;text-align:left;margin-bottom:16px;">
                 <p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Secret manual</p>

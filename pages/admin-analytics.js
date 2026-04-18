@@ -108,13 +108,15 @@ function updateTotpSetupUi() {
     const accountEl = document.getElementById('totpAccountLabel');
     if (secretEl) secretEl.textContent = ADMIN_TOTP_SECRET;
     if (accountEl) accountEl.textContent = `${ADMIN_TOTP_ISSUER} · ${ADMIN_TOTP_LABEL}`;
-    if (qrEl) {
+    if (qrEl && typeof QRCode !== 'undefined') {
         try {
-            qrEl.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(getAdminTotpUri())}`;
+            QRCode.toCanvas(qrEl, getAdminTotpUri(), { width: 200, margin: 1 }, function(err) {
+                if (err) {
+                    console.error('Could not build TOTP QR code:', err);
+                }
+            });
         } catch (error) {
             console.error('Could not build TOTP QR code:', error);
-            qrEl.removeAttribute('src');
-            qrEl.alt = 'QR code indisponível';
         }
     }
 }
