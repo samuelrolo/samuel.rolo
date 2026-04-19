@@ -15,7 +15,7 @@ export default function PromoBanner() {
     "Career tools for €6.99",
     "Herramientas de carrera por 6,99€"
   );
-  const discount = pick("(-33%)", "(-33%)", "(-33%)");
+  const discount = pick("(-30%)", "(-30%)", "(-30%)");
   const cta = pick("Descobrir →", "Discover →", "Descubrir →");
   const bannerAriaLabel = pick("Promoção Pack Estudante", "Student Pack promotion", "Promoción Pack Estudiante");
   const closeLabel = pick("Fechar banner", "Close banner", "Cerrar banner");

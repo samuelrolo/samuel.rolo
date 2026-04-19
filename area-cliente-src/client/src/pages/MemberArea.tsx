@@ -1136,7 +1136,7 @@ export default function MemberArea() {
 
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+    const limit = planTier === 'pro' ? 2 : planTier === 'growth' ? 1 : 0;
     const isExtra = monthlyCareerPathUsed >= limit;
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
@@ -1159,7 +1159,7 @@ export default function MemberArea() {
 
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+    const limit = planTier === 'pro' ? 2 : planTier === 'growth' ? 1 : 0;
     const isExtra = monthlyCareerIntelUsed >= limit;
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
@@ -1290,9 +1290,9 @@ export default function MemberArea() {
     }
 
     if (tool.action === 'careerPath') {
-      const cpLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+      const cpLimit = planTier === 'pro' ? 2 : planTier === 'growth' ? 1 : 0;
       const cpAvailable = monthlyCareerPathUsed < cpLimit;
-      const cpExtraPrice = planTier === 'pro' ? '4,75€' : '9,50€';
+      const cpExtraPrice = '3,75€';
       const cpOriginalPrice = '19€';
       return (
         <div className="space-y-4">
@@ -1341,9 +1341,9 @@ export default function MemberArea() {
     }
 
     if (tool.action === 'careerIntelligence') {
-      const ciLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+      const ciLimit = planTier === 'pro' ? 2 : planTier === 'growth' ? 1 : 0;
       const ciAvailable = monthlyCareerIntelUsed < ciLimit;
-      const ciExtraPrice = planTier === 'pro' ? '9,75€' : '19,50€';
+      const ciExtraPrice = '6,25€';
       const ciOriginalPrice = '39€';
       return (
         <div className="space-y-4">
@@ -1789,10 +1789,10 @@ return null;
                         <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                       </div>
                       {tool.action === 'careerPath' && (planTier === 'pro' || planTier === 'growth') && (
-                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerPathUsed} ${t('member.includedMonth')}` : (planTier === 'pro' ? '4,75€' : '9,50€')}</span>
+                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerPathUsed < (planTier === 'pro' ? 2 : 1) ? `${(planTier === 'pro' ? 2 : 1) - monthlyCareerPathUsed} ${t('member.includedMonth')}` : '3,75€'}</span>
                       )}
                       {tool.action === 'careerIntelligence' && (planTier === 'pro' || planTier === 'growth') && (
-                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerIntelUsed} ${t('member.includedMonth')}` : (planTier === 'pro' ? '9,75€' : '19,50€')}</span>
+                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerIntelUsed < (planTier === 'pro' ? 2 : 1) ? `${(planTier === 'pro' ? 2 : 1) - monthlyCareerIntelUsed} ${t('member.includedMonth')}` : '6,25€'}</span>
                       )}
                       {expandedTool === tool.key ? <ChevronUp className="w-4 h-4 text-gold shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />}
                     </button>
@@ -2152,7 +2152,7 @@ return null;
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[#1a1a1a] font-medium">{pendingExtraRun === 'career_path' ? 'Career Path' : 'Career Intelligence'}</span>
                 <span className="text-sm font-bold text-[#1a1a1a]">
-                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '4,75€' : '9,50€') : (planTier === 'pro' ? '9,75€' : '19,50€')}
+                  {pendingExtraRun === 'career_path' ? '3,75€' : '6,25€'}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#999]">

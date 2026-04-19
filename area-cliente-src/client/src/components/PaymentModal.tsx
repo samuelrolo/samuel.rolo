@@ -20,16 +20,17 @@ import {
 } from 'lucide-react';
 
 type PeriodKey = 'monthly' | 'semiannual' | 'annual';
+type Tier = 'essential' | 'growth' | 'pro';
 type Step = 'select' | 'processing' | 'success' | 'error';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
-const planPrices: Record<PeriodKey, number> = {
-  monthly: 9.90,
-  semiannual: 49,
-  annual: 89,
+const planPrices: Record<Tier, Record<PeriodKey, number>> = {
+  essential: { monthly: 6.99, semiannual: 49, annual: 79 },
+  growth: { monthly: 14.49, semiannual: 99, annual: 159 },
+  pro: { monthly: 29.99, semiannual: 199, annual: 299 },
 };
 
 const planDurations: Record<PeriodKey, number> = {
@@ -54,6 +55,12 @@ function extractPeriod(planStr: string): PeriodKey {
   if (planStr.includes('semiannual')) return 'semiannual';
   if (planStr.includes('annual')) return 'annual';
   return 'monthly';
+}
+
+function extractTier(planStr: string): Tier {
+  if (planStr.includes('growth')) return 'growth';
+  if (planStr.includes('pro')) return 'pro';
+  return 'essential';
 }
 
 // ── Tracking helpers ──────────────────────────────────────────
@@ -152,9 +159,10 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
   const [discountApplied, setDiscountApplied] = useState(false);
 
   // Resolve plan string from either prop
-  const planStr = plan || planKey || 'monthly';
+  const planStr = plan || planKey || 'essential_monthly';
+  const tier = extractTier(planStr);
   const period = extractPeriod(planStr);
-  const basePrice = price ?? planPrices[period];
+  const basePrice = price ?? planPrices[tier][period];
   const finalPrice = discountPercent > 0 ? basePrice * (1 - discountPercent / 100) : basePrice;
 
   // Pre-fill from profile
@@ -170,9 +178,9 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
   }, [profile, user]);
 
   const planLabels: Record<PeriodKey, string> = {
-    monthly: t('sub.monthly'),
-    semiannual: t('sub.semiannual'),
-    annual: t('sub.annual'),
+    monthly: `${t(`sub.${tier}`)} — ${t('sub.monthly')}`,
+    semiannual: `${t(`sub.${tier}`)} — ${t('sub.semiannual')}`,
+    annual: `${t(`sub.${tier}`)} — ${t('sub.annual')}`,
   };
 
   const periodLabels: Record<PeriodKey, string> = {
@@ -215,9 +223,10 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
         if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(pick(lang, 'Este código ainda não está ativo.', 'This code is not active yet.', 'Este código aún no está activo.')); return; }
         if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(pick(lang, 'Este código já expirou.', 'This code has already expired.', 'Este código ya ha expirado.')); return; }
         if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(pick(lang, 'Este código atingiu o limite de utilizações.', 'This code has reached its usage limit.', 'Este código ha alcanzado el límite de usos.')); return; }
-        const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('subscription')) {
-          setDiscountError(pick(lang, 'Este código não é aplicável a subscrições.', 'This code does not apply to subscriptions.', 'Este código no es aplicable a suscripciones.'));
+        const products = (coupon.applicable_products || []).map((p: string) => String(p).toLowerCase());
+        const allowedProducts = ['all', 'subscription', tier, planStr, `${tier}_subscription`, `${tier}_${period}`];
+        if (products.length > 0 && !products.some((product: string) => allowedProducts.includes(product))) {
+          setDiscountError(pick(lang, 'Este código não é aplicável a este plano.', 'This code does not apply to this plan.', 'Este código no es aplicable a este plan.'));
           return;
         }
         setDiscountPercent(coupon.discount_percent);
@@ -386,7 +395,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                 ) : (
                   <div>
                     <p className="text-[10px] text-[#aaa] uppercase tracking-wider mb-2 flex items-center gap-1">
-                      <Tag className="w-3 h-3" /> {pick(lang, 'Código de desconto', 'Discount code', 'Código de descuento')}
+                      <Tag className="w-3 h-3" /> {pick(lang, 'Código de cupão', 'Coupon code', 'Código de cupón')}
                     </p>
                     <div className="flex gap-2">
                       <input

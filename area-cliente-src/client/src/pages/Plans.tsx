@@ -26,6 +26,7 @@ interface PriceMap { monthly: number; semiannual: number; annual: number; }
 
 interface TierConfig {
   tier: Tier; icon: React.ReactNode; prices: PriceMap;
+  oldMonthlyPrice?: number;
   tagline: string; benefits: string[]; limit: string;
   bonuses?: string[]; notIncluded?: string[]; badge?: string; highlight?: boolean; roi?: string; valueAnchor?: string;
 }
@@ -33,31 +34,35 @@ interface TierConfig {
 const tiers: TierConfig[] = [
   {
     tier: 'essential', icon: <Check className="w-4 h-4" />,
-    prices: { monthly: 9.90, semiannual: 49, annual: 79 },
+    prices: { monthly: 6.99, semiannual: 49, annual: 79 },
+    oldMonthlyPrice: 9.90,
     tagline: 'sub.essential.tagline',
     benefits: ['sub.essential.b1','sub.essential.b2','sub.essential.b3','sub.essential.b4','sub.essential.b5','sub.essential.b6'],
     limit: 'sub.essential.limit',
     roi: 'sub.essential.roi', valueAnchor: 'sub.essential.anchor',
+    bonuses: ['sub.extra.cp', 'sub.extra.ci'],
     notIncluded: ['sub.notIncluded.vagas','sub.notIncluded.ebooks','sub.notIncluded.careerPath','sub.notIncluded.careerIntel'],
   },
   {
     tier: 'growth', icon: <BarChart3 className="w-4 h-4" />,
-    prices: { monthly: 19.90, semiannual: 99, annual: 159 },
+    prices: { monthly: 14.49, semiannual: 99, annual: 159 },
+    oldMonthlyPrice: 19.90,
     tagline: 'sub.growth.tagline',
     benefits: ['sub.growth.b1','sub.growth.b2','sub.growth.b3','sub.growth.b4','sub.growth.b5'],
     limit: 'sub.growth.limit',
     roi: 'sub.growth.roi',
-    bonuses: ['sub.growth.bonus', 'sub.growth.bonus2'], notIncluded: [],
+    bonuses: ['sub.extra.cp', 'sub.extra.ci'], notIncluded: [],
     badge: 'sub.recommended', highlight: true,
   },
   {
     tier: 'pro', icon: <Zap className="w-4 h-4" />,
-    prices: { monthly: 39, semiannual: 199, annual: 299 },
+    prices: { monthly: 29.99, semiannual: 199, annual: 299 },
+    oldMonthlyPrice: 39.00,
     tagline: 'sub.pro.tagline',
     benefits: ['sub.pro.b1','sub.pro.b2','sub.pro.b3','sub.pro.b4','sub.pro.b5'],
     limit: 'sub.pro.limit',
     roi: 'sub.pro.roi',
-    bonuses: ['sub.pro.bonus1','sub.pro.bonus2'], badge: 'sub.bestValue',
+    bonuses: ['sub.extra.cp', 'sub.extra.ci'], badge: 'sub.bestValue',
   },
 ];
 
@@ -102,8 +107,9 @@ const COMPARISON_KEYS: [string, string, string, string][] = [
   ['cmp.blogArticles',        '\u2713',           '\u2713',                '\u2713'],
   ['cmp.jobFeed',             '\u2014',           'cmp.smartMatching','cmp.matchingSalary'],
   ['cmp.ebooksTemplates',     '\u2014',           '\u2713',                '\u2713'],
-  ['cmp.careerPathBonus',     '\u2014',           '9,50\u20ac',            '4,75\u20ac'],
-  ['cmp.careerIntelligence',  '\u2014',           '19,50\u20ac',           '9,75\u20ac'],
+  ['cmp.careerPathBonus',     '\u2014',           'cmp.included1',          'cmp.included2'],
+  ['cmp.careerIntelligence',  '\u2014',           'cmp.included1',          'cmp.included2'],
+  ['cmp.extraAnalyses',       'CP 3,75€ · CI 6,25€', 'CP 3,75€ · CI 6,25€', 'CP 3,75€ · CI 6,25€'],
   ['cmp.priorityProcessing',  '\u2014',           '\u2014',                '\u2713'],
   ['cmp.earlyAccess',         '\u2014',           '\u2014',                '\u2713'],
 ];
@@ -341,9 +347,15 @@ export default function Plans() {
 
                 {/* Price + equivalent per month */}
                 <div className="mb-4">
-                  <div className="flex items-baseline gap-1.5">
+                  <div className="flex items-baseline gap-1.5 flex-wrap">
+                    {period === 'monthly' && tc.oldMonthlyPrice && tc.oldMonthlyPrice > price && (
+                      <span className="text-sm text-[#bbb] line-through font-light">{formatPrice(tc.oldMonthlyPrice)}</span>
+                    )}
                     <span className="text-3xl font-semibold text-[#1a1a1a]">{formatPrice(price)}</span>
                     <span className="text-xs text-[#999] font-light">{t(periodSuffix[period])}</span>
+                    {period === 'monthly' && tc.oldMonthlyPrice && tc.oldMonthlyPrice > price && (
+                      <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-semibold">-25%</span>
+                    )}
                   </div>
                   {period !== 'monthly' && (
                     <p className="text-[11px] text-[#bbb] font-light mt-0.5">
