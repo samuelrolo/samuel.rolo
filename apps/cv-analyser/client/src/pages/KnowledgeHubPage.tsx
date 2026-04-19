@@ -201,6 +201,16 @@ const buildArticles = (pick: <T,>(pt: T, en: T, es: T) => T): Article[] => [
   {
     category: "carreira",
     tag: pick("VISIBILIDADE ONLINE", "ONLINE VISIBILITY", "VISIBILIDAD ONLINE"),
+    title: pick("Como Posicionar o Teu Perfil LinkedIn Para Ser Encontrado Por Recrutadores", "How to Position Your LinkedIn Profile to Be Found by Recruiters", "Cómo Posicionar Tu Perfil de LinkedIn Para Ser Encontrado Por Reclutadores"),
+    excerpt: pick("Ter um perfil tecnicamente impecável já não garante atenção, relevância nem escolha. O que distingue os perfis memoráveis é a clareza do seu posicionamento.", "A technically polished profile no longer guarantees attention, relevance or selection. What sets memorable profiles apart is the clarity of their positioning.", "Tener un perfil técnicamente impecable ya no garantiza atención, relevancia ni elección. Lo que distingue a los perfiles memorables es la claridad de su posicionamiento."),
+    author: "Samuel Rolo",
+    date: "19 Abr 2026",
+    readTime: "4 min",
+    link: pick("/blog/artigos/posicionamento-perfil-linkedin/", "/en/blog/artigos/linkedin-profile-positioning/", "/es/blog/artigos/posicionamiento-perfil-linkedin/"),
+  },
+  {
+    category: "carreira",
+    tag: pick("VISIBILIDADE ONLINE", "ONLINE VISIBILITY", "VISIBILIDAD ONLINE"),
     title: pick("Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores", "How to Improve Your LinkedIn to Appear in Recruiter Searches", "Cómo Mejorar tu LinkedIn para Aparecer en las Búsquedas de Reclutadores"),
     excerpt: pick("Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.", "Small profile adjustments that can significantly increase your visibility.", "Pequeños ajustes en el perfil que pueden aumentar significativamente tu visibilidad."),
     author: "Samuel Rolo",
