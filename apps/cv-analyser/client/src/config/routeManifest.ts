@@ -54,7 +54,7 @@ type FlattenedRouteEntry = {
   menuVisible: boolean;
 };
 
-export const MENU_PAGE_IDS: PageId[] = ['home', 'servicos', 'conhecimento', 'blog', 'sobre', 'contactos'];
+export const MENU_PAGE_IDS: PageId[] = ['home', 'servicos', 'conhecimento', 'sobre', 'contactos'];
 export const SERVICE_PAGE_IDS = new Set<PageId>([
   'cv-analyser',
   'career-path',
@@ -162,9 +162,9 @@ export const routeManifest: RouteDefinition[] = [
     group: 'menu',
     allowChildren: true,
     localized: {
-      pt: { path: '/blog', label: 'Blog', menuVisible: true },
-      en: { path: '/en/blog', label: 'Blog', menuVisible: true },
-      es: { path: '/es/blog', label: 'Blog', menuVisible: true },
+      pt: { path: '/blog', label: 'Blog', menuVisible: false },
+      en: { path: '/en/blog', label: 'Blog', menuVisible: false },
+      es: { path: '/es/blog', label: 'Blog', menuVisible: false },
     },
   },
   {
