@@ -140,7 +140,7 @@ const i18n = {
       ['Bilingue PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
-    compPrice: ['Preço mensal', '9,90€', '$29', '$49,95', '$19', '$24,99'],
+    compPrice: ['Preço mensal', '6,99€', '$29', '$49,95', '$19', '$24,99'],
     plansTag: 'Planos',
     plansTitle: 'Investe na tua carreira',
     plansSubtitle: 'Preço de fundador — aproveita antes que aumente.',
@@ -148,7 +148,7 @@ const i18n = {
       {
         name: 'Essential',
         tagline: 'Para melhorares o teu posicionamento',
-        price: '9,90',
+        price: '6,99',
         period: '/mês',
         features: ['CV Maker com acesso contínuo', 'CV Analyser — 1 análise/semana', 'LinkedIn Roaster — 1 análise/semana', 'Career Bot com respostas base', 'Acompanhamento de progresso'],
         highlight: 'Melhora o teu score ATS em média 23 pontos',
@@ -158,7 +158,7 @@ const i18n = {
       {
         name: 'Growth',
         tagline: 'Para evoluíres com mais contexto',
-        price: '19,90',
+        price: '14,49',
         period: '/mês',
         features: ['Tudo do Essential + mais', 'CV + LinkedIn — 5 análises/semana', 'Feed de Vagas com match inteligente', 'E-books e templates premium', 'Career Bot avançado'],
         highlight: 'Aumenta visualizações de perfil em 40%',
@@ -168,7 +168,7 @@ const i18n = {
       {
         name: 'Pro',
         tagline: 'Para acelerar a tua evolução',
-        price: '39,00',
+        price: '29,99',
         period: '/mês',
         features: ['Tudo do Growth + acesso total', 'Análises ilimitadas', 'Feed com estimativa salarial', 'Prioridade no processamento', 'Acesso antecipado a novidades'],
         highlight: 'Vagas com salários 15% acima da média',
@@ -176,7 +176,7 @@ const i18n = {
         popular: false,
       },
     ],
-    plansBilling: 'Semestral -17% · Anual -33%',
+    plansBilling: 'Semestral até -39% · Anual até -44%',
     testimonialsTag: 'Testemunhos',
     testimonialsTitle: 'O que dizem os nossos membros',
     testimonials: [
@@ -308,7 +308,7 @@ const i18n = {
       ['Bilingual PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
-    compPrice: ['Monthly price', '€9.90', '$29', '$49.95', '$19', '$24.99'],
+    compPrice: ['Monthly price', '€6.99', '$29', '$49.95', '$19', '$24.99'],
     plansTag: 'Plans',
     plansTitle: 'Invest in your career',
     plansSubtitle: 'Founder pricing — take advantage before it increases.',
@@ -316,7 +316,7 @@ const i18n = {
       {
         name: 'Essential',
         tagline: 'To improve your positioning',
-        price: '9.90',
+        price: '6.99',
         period: '/mo',
         features: ['CV Maker with continuous access', 'CV Analyser — 1 analysis/week', 'LinkedIn Roaster — 1 analysis/week', 'Career Bot with basic answers', 'Progress tracking'],
         highlight: 'Improve your ATS score by 23 points on average',
@@ -326,7 +326,7 @@ const i18n = {
       {
         name: 'Growth',
         tagline: 'To evolve with more context',
-        price: '19.90',
+        price: '14.49',
         period: '/mo',
         features: ['Everything in Essential + more', 'CV + LinkedIn — 5 analyses/week', 'Job Feed with smart matching', 'E-books and premium templates', 'Advanced Career Bot'],
         highlight: 'Increase profile views by 40%',
@@ -336,7 +336,7 @@ const i18n = {
       {
         name: 'Pro',
         tagline: 'To accelerate your evolution',
-        price: '39.00',
+        price: '29.99',
         period: '/mo',
         features: ['Everything in Growth + full access', 'Unlimited analyses', 'Feed with salary estimates', 'Priority processing', 'Early access to new features'],
         highlight: 'Jobs with salaries 15% above average',
@@ -344,7 +344,7 @@ const i18n = {
         popular: false,
       },
     ],
-    plansBilling: 'Semi-annual -17% · Annual -33%',
+    plansBilling: 'Semi-annual up to -39% · Annual up to -44%',
     testimonialsTag: 'Testimonials',
     testimonialsTitle: 'What our members say',
     testimonials: [
@@ -476,7 +476,7 @@ compRows: [
   ['Bilingüe PT + EN', true, false, false, false, false],
   ['Enriquecimiento de Empresas', true, false, false, false, false],
 ],
-compPrice: ['Precio mensual', '€9.90', '$29', '$49.95', '$19', '$24.99'],
+compPrice: ['Precio mensual', '€6.99', '$29', '$49.95', '$19', '$24.99'],
 plansTag: 'Planes',
 plansTitle: 'Invierte en tu carrera',
 plansSubtitle: 'Precio fundador — aprovecha antes de que suba.',
@@ -484,7 +484,7 @@ plans: [
   {
     name: 'Essential',
     tagline: 'Para mejorar tu posicionamiento',
-    price: '9.90',
+    price: '6.99',
     period: '/mes',
     features: ['CV Maker con acceso continuo', 'CV Analyser — 1 análisis/semana', 'LinkedIn Roaster — 1 análisis/semana', 'Career Bot con respuestas básicas', 'Seguimiento de progreso'],
     highlight: 'Mejora tu puntuación ATS en 23 puntos de media',
@@ -494,7 +494,7 @@ plans: [
   {
     name: 'Growth',
     tagline: 'Para evolucionar con más contexto',
-    price: '19.90',
+    price: '14.49',
     period: '/mes',
     features: ['Todo en Essential + más', 'CV + LinkedIn — 5 análisis/semana', 'Job Feed con emparejamiento inteligente', 'E-books y plantillas premium', 'Career Bot avanzado'],
     highlight: 'Aumenta las visualizaciones de perfil en un 40%',
@@ -504,7 +504,7 @@ plans: [
   {
     name: 'Pro',
     tagline: 'Para acelerar tu evolución',
-    price: '39.00',
+    price: '29.99',
     period: '/mes',
     features: ['Todo en Growth + acceso completo', 'Análisis ilimitados', 'Feed con estimaciones salariales', 'Procesamiento prioritario', 'Acceso anticipado a nuevas funciones'],
     highlight: 'Empleos con salarios un 15% por encima de la media',
@@ -512,7 +512,7 @@ plans: [
     popular: false,
   },
 ],
-plansBilling: 'Semestral -17% · Anual -33%',
+plansBilling: 'Semestral hasta -39% · Anual hasta -44%',
 testimonialsTag: 'Testimonios',
 testimonialsTitle: 'Lo que dicen nuestros miembros',
 testimonials: [

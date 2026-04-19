@@ -28,9 +28,9 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
 const planPrices: Record<Tier, Record<PeriodKey, number>> = {
-  essential: { monthly: 6.99, semiannual: 49, annual: 79 },
-  growth: { monthly: 14.49, semiannual: 99, annual: 159 },
-  pro: { monthly: 29.99, semiannual: 199, annual: 299 },
+  essential: { monthly: 6.99, semiannual: 35.99, annual: 66.99 },
+  growth: { monthly: 14.49, semiannual: 74.99, annual: 138.99 },
+  pro: { monthly: 29.99, semiannual: 154.99, annual: 287.99 },
 };
 
 const planDurations: Record<PeriodKey, number> = {
@@ -403,7 +403,7 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
                         value={discountCode}
                         onChange={e => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); }}
                         onKeyDown={e => e.key === 'Enter' && handleDiscountValidate()}
-                        placeholder={pick(lang, 'CÓDIGO', 'CODE', 'CÓDIGO')}
+                        placeholder={pick(lang, 'S2I-FREE-XXXX', 'S2I-FREE-XXXX', 'S2I-FREE-XXXX')}
                         className="flex-1 px-3 py-2 text-xs border border-[#e5e5e5] rounded bg-white text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#C9A961]/40 uppercase"
                       />
                       <button

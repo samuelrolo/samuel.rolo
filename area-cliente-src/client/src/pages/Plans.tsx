@@ -34,7 +34,7 @@ interface TierConfig {
 const tiers: TierConfig[] = [
   {
     tier: 'essential', icon: <Check className="w-4 h-4" />,
-    prices: { monthly: 6.99, semiannual: 49, annual: 79 },
+    prices: { monthly: 6.99, semiannual: 35.99, annual: 66.99 },
     oldMonthlyPrice: 9.90,
     tagline: 'sub.essential.tagline',
     benefits: ['sub.essential.b1','sub.essential.b2','sub.essential.b3','sub.essential.b4','sub.essential.b5','sub.essential.b6'],
@@ -45,7 +45,7 @@ const tiers: TierConfig[] = [
   },
   {
     tier: 'growth', icon: <BarChart3 className="w-4 h-4" />,
-    prices: { monthly: 14.49, semiannual: 99, annual: 159 },
+    prices: { monthly: 14.49, semiannual: 74.99, annual: 138.99 },
     oldMonthlyPrice: 19.90,
     tagline: 'sub.growth.tagline',
     benefits: ['sub.growth.b1','sub.growth.b2','sub.growth.b3','sub.growth.b4','sub.growth.b5'],
@@ -56,7 +56,7 @@ const tiers: TierConfig[] = [
   },
   {
     tier: 'pro', icon: <Zap className="w-4 h-4" />,
-    prices: { monthly: 29.99, semiannual: 199, annual: 299 },
+    prices: { monthly: 29.99, semiannual: 154.99, annual: 287.99 },
     oldMonthlyPrice: 39.00,
     tagline: 'sub.pro.tagline',
     benefits: ['sub.pro.b1','sub.pro.b2','sub.pro.b3','sub.pro.b4','sub.pro.b5'],
@@ -83,11 +83,18 @@ const TIER_ORDER: Record<Tier,number> = { essential:1, growth:2, pro:3 };
 
 function formatPrice(p: number) { return p.toFixed(2).replace('.',',') + ' €'; }
 
-function savingsPct(prices: PriceMap, period: Period): number | null {
-  if (period === 'monthly') return null;
-  const months = period === 'semiannual' ? 6 : 12;
-  const equiv = prices[period] / months;
-  return Math.round((1 - equiv / prices.monthly) * 100);
+function getBillingMonths(period: Period): number {
+  return period === 'semiannual' ? 6 : period === 'annual' ? 12 : 1;
+}
+
+function getOldPriceForPeriod(oldMonthlyPrice: number | undefined, period: Period): number | null {
+  if (!oldMonthlyPrice) return null;
+  return oldMonthlyPrice * getBillingMonths(period);
+}
+
+function savingsPct(currentPrice: number, oldPrice: number | null): number | null {
+  if (!oldPrice || oldPrice <= currentPrice) return null;
+  return Math.round((1 - currentPrice / oldPrice) * 100);
 }
 
 function getPlanTier(plan?: string): Tier | null {
@@ -167,7 +174,7 @@ export default function Plans() {
                 user_id: user.id,
                 plan: storedPlan,
                 status: 'active',
-                price_eur: data.amount ? data.amount / 100 : 9.90,
+                price_eur: data.amount ? data.amount / 100 : getPlanPrice(storedPlan),
                 started_at: now.toISOString(),
                 expires_at: endDate.toISOString(),
                 payment_method: 'stripe',
@@ -277,7 +284,7 @@ export default function Plans() {
         <div className="flex flex-col items-center mb-12 gap-2">
           <div className="inline-flex bg-[#f5f5f4] rounded-lg p-1 gap-0.5">
             {(['monthly','semiannual','annual'] as Period[]).map(p => {
-              const savings = savingsPct(tiers[1].prices, p);
+              const savings = savingsPct(tiers[1].prices[p], getOldPriceForPeriod(tiers[1].oldMonthlyPrice, p));
               return (
                 <button key={p} onClick={() => setPeriod(p)}
                   className={`relative px-5 py-2 text-sm font-medium rounded-md transition-all duration-300 ${
@@ -304,8 +311,9 @@ export default function Plans() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mb-10">
           {tiers.map(tc => {
             const price = tc.prices[period];
-            const savings = savingsPct(tc.prices, period);
-            const months = period === 'semiannual' ? 6 : period === 'annual' ? 12 : 1;
+            const months = getBillingMonths(period);
+            const oldPrice = getOldPriceForPeriod(tc.oldMonthlyPrice, period);
+            const savings = savingsPct(price, oldPrice);
             const current = isCurrent(tc.tier);
             const upgrade = isUpgrade(tc.tier);
 
@@ -348,19 +356,18 @@ export default function Plans() {
                 {/* Price + equivalent per month */}
                 <div className="mb-4">
                   <div className="flex items-baseline gap-1.5 flex-wrap">
-                    {period === 'monthly' && tc.oldMonthlyPrice && tc.oldMonthlyPrice > price && (
-                      <span className="text-sm text-[#bbb] line-through font-light">{formatPrice(tc.oldMonthlyPrice)}</span>
+                    {oldPrice && oldPrice > price && (
+                      <span className="text-sm text-[#bbb] line-through font-light">{formatPrice(oldPrice)}</span>
                     )}
                     <span className="text-3xl font-semibold text-[#1a1a1a]">{formatPrice(price)}</span>
                     <span className="text-xs text-[#999] font-light">{t(periodSuffix[period])}</span>
-                    {period === 'monthly' && tc.oldMonthlyPrice && tc.oldMonthlyPrice > price && (
-                      <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-semibold">-25%</span>
+                    {savings && (
+                      <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-semibold">-{savings}%</span>
                     )}
                   </div>
                   {period !== 'monthly' && (
                     <p className="text-[11px] text-[#bbb] font-light mt-0.5">
                       ≈ {formatPrice(price / months)} {t('plans.perMonth')}
-                      {savings && <span className="ml-1.5 text-gold font-medium">(-{savings}%)</span>}
                     </p>
                   )}
                 </div>

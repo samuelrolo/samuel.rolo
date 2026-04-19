@@ -29,6 +29,7 @@ interface TierConfig {
   tier: Tier;
   icon: React.ReactNode;
   prices: PriceMap;
+  oldMonthlyPrice?: number;
   taglineKey: string;
   benefits: string[];
   limitKey: string;
@@ -52,7 +53,8 @@ const tiers: TierConfig[] = [
   {
     tier: 'essential',
     icon: <Check className="w-4 h-4" />,
-    prices: { monthly: 9.90, semiannual: 49, annual: 79 },
+    prices: { monthly: 6.99, semiannual: 35.99, annual: 66.99 },
+    oldMonthlyPrice: 9.90,
     taglineKey: 'sub.essential.tagline',
     benefits: ['sub.essential.b1','sub.essential.b2','sub.essential.b3','sub.essential.b4','sub.essential.b5','sub.essential.b6'],
     limitKey: 'sub.essential.limit',
@@ -63,7 +65,8 @@ const tiers: TierConfig[] = [
   {
     tier: 'growth',
     icon: <BarChart3 className="w-4 h-4" />,
-    prices: { monthly: 19.90, semiannual: 99, annual: 159 },
+    prices: { monthly: 14.49, semiannual: 74.99, annual: 138.99 },
+    oldMonthlyPrice: 19.90,
     taglineKey: 'sub.growth.tagline',
     benefits: ['sub.growth.b1','sub.growth.b2','sub.growth.b3','sub.growth.b4','sub.growth.b5'],
     limitKey: 'sub.growth.limit',
@@ -76,7 +79,8 @@ const tiers: TierConfig[] = [
   {
     tier: 'pro',
     icon: <Zap className="w-4 h-4" />,
-    prices: { monthly: 39, semiannual: 199, annual: 299 },
+    prices: { monthly: 29.99, semiannual: 154.99, annual: 287.99 },
+    oldMonthlyPrice: 39.00,
     taglineKey: 'sub.pro.tagline',
     benefits: ['sub.pro.b1','sub.pro.b2','sub.pro.b3','sub.pro.b4','sub.pro.b5'],
     limitKey: 'sub.pro.limit',
@@ -347,11 +351,18 @@ export default function UpgradePage() {
     ? 'Suscríbete para desbloquear todas las herramientas y acelerar tu carrera.'
     : 'Subscribe to unlock all tools and accelerate your career.';
 
-  function getSaving(prices: PriceMap): number | null {
-    if (period === 'monthly') return null;
-    const months = period === 'semiannual' ? 6 : 12;
-    const equiv = prices[period] / months;
-    return Math.round((1 - equiv / prices.monthly) * 100);
+  function getBillingMonths(periodKey: Period): number {
+    return periodKey === 'semiannual' ? 6 : periodKey === 'annual' ? 12 : 1;
+  }
+
+  function getOldPriceForPeriod(oldMonthlyPrice: number | undefined, periodKey: Period): number | null {
+    if (!oldMonthlyPrice) return null;
+    return oldMonthlyPrice * getBillingMonths(periodKey);
+  }
+
+  function getSaving(currentPrice: number, oldPrice: number | null): number | null {
+    if (!oldPrice || oldPrice <= currentPrice) return null;
+    return Math.round((1 - currentPrice / oldPrice) * 100);
   }
 
   function handleSubscribe(tier: Tier) {
@@ -630,7 +641,7 @@ export default function UpgradePage() {
                 {periodLabels[p]}
                 {p !== 'monthly' && (
                   <span className="ml-1.5 text-[10px] text-emerald-600 font-semibold">
-                    {getSaving(tiers[0].prices) !== null ? `-${getSaving(tiers[0].prices)}%` : ''}
+                    {getSaving(tiers[0].prices[p], getOldPriceForPeriod(tiers[0].oldMonthlyPrice, p)) !== null ? `-${getSaving(tiers[0].prices[p], getOldPriceForPeriod(tiers[0].oldMonthlyPrice, p))}%` : ''}
                   </span>
                 )}
               </button>
@@ -642,7 +653,9 @@ export default function UpgradePage() {
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {tiers.map((tc) => {
             const price = tc.prices[period];
-            const saving = getSaving(tc.prices);
+            const months = getBillingMonths(period);
+            const oldPrice = getOldPriceForPeriod(tc.oldMonthlyPrice, period);
+            const saving = getSaving(price, oldPrice);
             return (
               <div
                 key={tc.tier}
@@ -672,14 +685,18 @@ export default function UpgradePage() {
 
                 {/* Price */}
                 <div className="mb-4">
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex items-baseline gap-1.5 flex-wrap">
+                    {oldPrice && oldPrice > price && (
+                      <span className="text-sm text-[#bbb] line-through font-light">€{oldPrice.toFixed(2).replace('.',',')}</span>
+                    )}
                     <span className="text-2xl font-bold text-[#1a1a1a]">€{price.toFixed(2).replace('.',',')}</span>
                     <span className="text-xs text-[#999] font-light">{periodSuffix[period]}</span>
+                    {saving && (
+                      <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-semibold">-{saving}%</span>
+                    )}
                   </div>
-                  {saving && (
-                    <span className="text-[10px] text-emerald-600 font-semibold">
-                      {lang === 'pt' ? `Poupas ${saving}%` : `Save ${saving}%`}
-                    </span>
+                  {period !== 'monthly' && (
+                    <p className="text-[11px] text-[#999] font-light mt-1">≈ €{(price / months).toFixed(2).replace('.',',')} {lang === 'pt' ? '/mês' : lang === 'es' ? '/mes' : '/month'}</p>
                   )}
                   {/* ROI */}
                   {tc.roiKey && (
