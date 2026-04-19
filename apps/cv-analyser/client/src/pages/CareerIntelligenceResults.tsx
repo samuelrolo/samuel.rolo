@@ -570,8 +570,8 @@ export default function CareerIntelligenceResults() {
   };
 
   // ─── Payment handlers ───
-  const CI_PRICE = getLang() === 'en' ? 49 : 49;
-  const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `€${CI_PRICE}`, `${CI_PRICE}€`);
+  const CI_PRICE = 24.99;
+  const CI_PRICE_DISPLAY = pick('24,99€', '€24.99', '24,99€');
 
   const openPaymentModal = () => {
     setPaymentStep('payment');

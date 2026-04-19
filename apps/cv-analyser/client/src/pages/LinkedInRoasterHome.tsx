@@ -22,6 +22,73 @@ const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 const PRICE_NUM = 3.49;
 
+const buildLinkedinPublicFallback = (linkedinUrl: string, lang: string) => {
+  const pickLang = (pt: string, en: string, es: string) => lang === 'en' ? en : lang === 'es' ? es : pt;
+  let slug = '';
+  try {
+    const pathname = new URL(linkedinUrl).pathname || '';
+    const match = pathname.match(/\/in\/([^/?#]+)/i);
+    slug = match?.[1] || '';
+  } catch {
+    const match = linkedinUrl.match(/linkedin\.com\/in\/([^/?#]+)/i);
+    slug = match?.[1] || '';
+  }
+
+  const cleanedSlug = decodeURIComponent(slug).replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const slugParts = cleanedSlug.split(' ').filter(Boolean);
+  const guessedName = slugParts
+    .filter(part => !/^[0-9]+$/.test(part))
+    .slice(0, 3)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ')
+    .trim();
+  const keywords = slugParts.filter(part => part.length > 2 && !/^[0-9]+$/.test(part)).slice(0, 6);
+  const publicSignals = [
+    guessedName ? pickLang(`Nome provável do perfil: ${guessedName}`, `Probable profile name: ${guessedName}`, `Nombre probable del perfil: ${guessedName}`) : '',
+    slug ? pickLang(`Slug público detectado: ${slug}`, `Detected public slug: ${slug}`, `Slug público detectado: ${slug}`) : '',
+    keywords.length > 0 ? pickLang(`Keywords públicas inferidas do URL: ${keywords.join(', ')}`, `Public keywords inferred from the URL: ${keywords.join(', ')}`, `Keywords públicas inferidas del URL: ${keywords.join(', ')}`) : '',
+    pickLang('Avaliar clareza de posicionamento, especialização percebida, memorabilidade do headline e credibilidade da proposta de valor mesmo com dados limitados.', 'Assess positioning clarity, perceived specialization, headline memorability and value proposition credibility even with limited data.', 'Evaluar claridad de posicionamiento, especialización percibida, memorabilidad del titular y credibilidad de la propuesta de valor incluso con datos limitados.'),
+  ].filter(Boolean);
+
+  const unavailableNote = pickLang(
+    'A extração automática do LinkedIn falhou temporariamente. Continua a análise com base nos sinais públicos disponíveis do URL e assinala explicitamente quaisquer secções com dados insuficientes.',
+    'Automatic LinkedIn extraction failed temporarily. Continue the analysis based on the public signals available from the URL and explicitly flag any sections with insufficient data.',
+    'La extracción automática de LinkedIn falló temporalmente. Continúa el análisis con base en las señales públicas disponibles en el URL e indica explícitamente cualquier sección con datos insuficientes.'
+  );
+
+  const fallbackCvText = [
+    `LinkedIn Profile URL: ${linkedinUrl}`,
+    guessedName ? `Probable profile name: ${guessedName}` : '',
+    slug ? `Public slug: ${slug}` : '',
+    keywords.length > 0 ? `Potential public keywords from URL: ${keywords.join(', ')}` : '',
+    `Fallback note: ${unavailableNote}`,
+    'Instruction: Produce the LinkedIn roast using only the public signals above. Do not claim the profile is private. Do not invent sections that were not observed. When data is missing, explicitly say that the assessment is based on limited public signals from the URL and still provide practical recommendations that are useful in most LinkedIn profiles.',
+  ].filter(Boolean).join('\n');
+
+  return {
+    linkedin_url: linkedinUrl,
+    fallback: true,
+    limited_public_signals: true,
+    scrape_status: 'fallback_public_signals',
+    profile_slug: slug,
+    probable_name: guessedName,
+    inferred_keywords: keywords,
+    public_signals: publicSignals,
+    note: unavailableNote,
+    fallback_cv_text: fallbackCvText,
+    user_message: pickLang(
+      'Não foi possível ler automaticamente o perfil agora. Ainda assim, vamos gerar o roast com base nos sinais públicos disponíveis do URL e assinalar onde os dados são mais limitados.',
+      'We could not automatically read the profile right now. We will still generate the roast based on the public signals available from the URL and flag where the data is more limited.',
+      'No hemos podido leer automáticamente el perfil en este momento. Aun así, generaremos el roast con base en las señales públicas disponibles en el URL e indicaremos dónde los datos son más limitados.'
+    ),
+    final_error_message: pickLang(
+      'O LinkedIn está a limitar a extração automática neste momento. Tentámos analisar o perfil com sinais públicos do URL, mas não foi possível gerar um relatório fiável agora. O URL parece válido e o problema não significa necessariamente que o perfil não seja público. Tenta novamente dentro de alguns minutos.',
+      'LinkedIn is limiting automatic extraction right now. We tried to analyse the profile using the public signals from the URL, but could not generate a reliable report at the moment. The URL appears valid and this does not necessarily mean the profile is not public. Please try again in a few minutes.',
+      'LinkedIn está limitando la extracción automática en este momento. Hemos intentado analizar el perfil usando las señales públicas del URL, pero no fue posible generar un informe fiable ahora mismo. El URL parece válido y esto no significa necesariamente que el perfil no sea público. Inténtalo de nuevo en unos minutos.'
+    ),
+  };
+};
+
 /* ─── COMPONENT ─── */
 
 export default function LinkedInRoasterHome() {
@@ -197,28 +264,50 @@ export default function LinkedInRoasterHome() {
       const analysisRegion = localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '';
 
       setLoadingMsg(pick("A extrair dados reais do teu LinkedIn...", "Extracting real data from your LinkedIn...", "Extrayendo datos reales de tu LinkedIn..."));
-      const scrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
-      });
-
+      const publicFallback = buildLinkedinPublicFallback(currentLinkedinUrl, lang);
       let scrapeData: any = null;
       let linkedinCvText = '';
+      let fallbackUserMessage = '';
+      let fallbackFinalErrorMessage = publicFallback.final_error_message;
+      let scrapeMode: 'full' | 'fallback_public_signals' = 'fallback_public_signals';
 
-      if (!scrapeResponse.ok) {
-        const scrapeError = await scrapeResponse.json().catch(() => ({}));
-        console.warn('[LinkedIn Roaster] LinkedIn scrape falhou, a usar fallback de sinais públicos:', scrapeError?.error || scrapeResponse.statusText);
-      } else {
-        scrapeData = await scrapeResponse.json();
-        linkedinCvText = typeof scrapeData?.cv_text === 'string' ? scrapeData.cv_text.substring(0, 12000) : '';
+      try {
+        const scrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
+        });
+
+        if (!scrapeResponse.ok) {
+          const scrapeError = await scrapeResponse.json().catch(() => ({}));
+          console.warn('[LinkedIn Roaster] LinkedIn scrape falhou, a usar fallback de sinais públicos:', scrapeError?.error || scrapeResponse.statusText);
+          fallbackUserMessage = publicFallback.user_message;
+          scrapeData = { ...publicFallback, scrape_error: scrapeError?.error || scrapeResponse.statusText };
+          linkedinCvText = publicFallback.fallback_cv_text;
+        } else {
+          scrapeData = await scrapeResponse.json();
+          linkedinCvText = typeof scrapeData?.cv_text === 'string' ? scrapeData.cv_text.substring(0, 12000) : '';
+          if (linkedinCvText.trim()) {
+            scrapeMode = 'full';
+          } else {
+            console.warn('[LinkedIn Roaster] LinkedIn scrape devolveu dados incompletos, a reforçar fallback com sinais públicos.');
+            fallbackUserMessage = publicFallback.user_message;
+            scrapeData = { ...scrapeData, ...publicFallback, scrape_status: 'fallback_public_signals_after_empty_scrape' };
+            linkedinCvText = publicFallback.fallback_cv_text;
+          }
+        }
+      } catch (scrapeErr: any) {
+        console.warn('[LinkedIn Roaster] LinkedIn scrape lançou erro, a usar fallback de sinais públicos:', scrapeErr?.message || scrapeErr);
+        fallbackUserMessage = publicFallback.user_message;
+        scrapeData = { ...publicFallback, scrape_error: scrapeErr?.message || String(scrapeErr) };
+        linkedinCvText = publicFallback.fallback_cv_text;
       }
 
-      if (!linkedinCvText) {
-        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+      if (scrapeMode !== 'full' && fallbackUserMessage) {
+        setLoadingMsg(fallbackUserMessage);
       }
 
-      const structuredLinkedinData = JSON.stringify(scrapeData || { linkedin_url: currentLinkedinUrl, fallback: true }, null, 2);
+      const structuredLinkedinData = JSON.stringify(scrapeData || publicFallback, null, 2);
 
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
@@ -255,14 +344,23 @@ export default function LinkedInRoasterHome() {
       }
 
       if (!responseData?.success) {
-        throw new Error(responseData?.error || pick(
-          'Não foi possível analisar o perfil. Verifica se o URL está correto e o perfil é público.',
-          'Could not analyse the profile. Check the URL and ensure the profile is public.',
-          'No fue posible analizar el perfil. Verifica que el URL sea correcto y el perfil sea público.'
-        ));
+        throw new Error(
+          scrapeMode !== 'full'
+            ? (responseData?.error || fallbackFinalErrorMessage)
+            : (responseData?.error || pick(
+                'Não foi possível analisar o perfil agora. O URL parece válido, mas a extração automática do LinkedIn pode estar temporariamente instável. Tenta novamente dentro de alguns minutos.',
+                'Could not analyse the profile right now. The URL appears valid, but LinkedIn automatic extraction may be temporarily unstable. Please try again in a few minutes.',
+                'No fue posible analizar el perfil ahora mismo. El URL parece válido, pero la extracción automática de LinkedIn puede estar temporalmente inestable. Inténtalo de nuevo dentro de unos minutos.'
+              ))
+        );
       }
 
-      const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(responseData, lang);
+      const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(
+        scrapeMode === 'full'
+          ? responseData
+          : { ...responseData, fallback_used: true, fallback_note: fallbackUserMessage || publicFallback.note, scrape_status: scrapeData?.scrape_status || 'fallback_public_signals', public_signals: scrapeData?.public_signals || publicFallback.public_signals },
+        lang
+      );
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
       if (candidateEmail) {
         sessionStorage.setItem('linkedinRoasterEmail', candidateEmail);

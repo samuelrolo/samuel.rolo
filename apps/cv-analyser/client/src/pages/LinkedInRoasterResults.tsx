@@ -245,6 +245,7 @@ export default function LinkedInRoasterResults() {
   const teaser = deepSanitize(normalizedData.teaser || {});
   const analysis: AnaliseCompleta = deepSanitize(normalizedData.analysis || {});
 
+  const fallbackNote = normalizedData?.raw?.fallback_note || '';
   const notaGeral = teaser?.nota_geral || 0;
   const hookVendas = teaser?.hook_vendas || '';
   const visibilidade = analysis?.visibilidade_algoritmo || '';
@@ -306,6 +307,15 @@ export default function LinkedInRoasterResults() {
         <S2IHeader activePage="linkedin-roaster" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-8">
+          {fallbackNote && (
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-amber-900">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold">{pick('Análise com sinais públicos limitados', 'Analysis with limited public signals', 'Análisis con señales públicas limitadas')}</p>
+                <p className="text-sm leading-relaxed">{fallbackNote}</p>
+              </div>
+            </div>
+          )}
           <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -372,6 +382,15 @@ export default function LinkedInRoasterResults() {
       <S2IHeader activePage="linkedin-roaster" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+        {fallbackNote && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-amber-900">
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold">{pick('Análise com sinais públicos limitados', 'Analysis with limited public signals', 'Análisis con señales públicas limitadas')}</p>
+              <p className="text-sm leading-relaxed">{fallbackNote}</p>
+            </div>
+          </div>
+        )}
         {/* Action buttons */}
         <div className="flex justify-end gap-2 mb-6">
           <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 transition-colors">
@@ -724,9 +743,9 @@ export default function LinkedInRoasterResults() {
                 <GraduationCap className="w-4 h-4 text-emerald-600" />
                 <p className="text-sm font-bold text-slate-800">{pick('Queres CV + LinkedIn juntos?', 'Want CV + LinkedIn together?', '¿Quieres CV + LinkedIn juntos?')}</p>
               </div>
-              <p className="text-xs text-slate-500 mb-4">{pick('O Pack Estudante combina análise CV + LinkedIn num só relatório cruzado por apenas 7,99€.', 'The Student Pack combines CV + LinkedIn analysis in a single cross-checked report for only €7.99.', 'El Pack Estudiante combina análisis de CV + LinkedIn en un único informe cruzado por solo 7,99€.')}</p>
+              <p className="text-xs text-slate-500 mb-4">{pick('O Pack Estudante combina análise CV + LinkedIn num só relatório cruzado por apenas 6,99€.', 'The Student Pack combines CV + LinkedIn analysis in a single cross-checked report for only €6.99.', 'El Pack Estudiante combina análisis de CV + LinkedIn en un único informe cruzado por solo 6,99€.')}</p>
               <a href={localePath('/estudante')} className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
-                {pick('Ver Pack Estudante — Poupar 43%', 'View Student Pack — Save 43%', 'Ver Pack Estudiante — Ahorrar 43%')} <ArrowRight className="w-4 h-4" />
+                {pick('Ver Pack Estudante — Poupar 33%', 'View Student Pack — Save 33%', 'Ver Pack Estudiante — Ahorrar 33%')} <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </>

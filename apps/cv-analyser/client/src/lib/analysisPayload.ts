@@ -225,6 +225,13 @@ function adaptStudentPackLegacyToUnified(params: {
   const liAnalysis = linkedinNormalized.analysis;
   const cp = safeObject(cvRaw.candidate_profile);
   const overallScore = typeof cv.overallScore === 'number' ? cv.overallScore : 0;
+  const linkedinUnavailable = linkedin?.unavailable === true || linkedinNormalized.raw?.unavailable === true || (!hasMeaningfulValue(liTeaser) && !hasMeaningfulValue(liAnalysis));
+  const linkedinUnavailableNote = linkedin?.note || linkedinNormalized.raw?.note || localize(
+    lang,
+    'Os dados do LinkedIn não estavam disponíveis. Este relatório foi gerado apenas com base no CV.',
+    'LinkedIn data was not available. This report was generated using the CV only.',
+    'Los datos de LinkedIn no estaban disponibles. Este informe se generó solo con base en el CV.'
+  );
   const nivel = overallScore >= 75
     ? localize(lang, 'Destacado', 'Outstanding', 'Destacado')
     : overallScore >= 50
@@ -311,34 +318,44 @@ function adaptStudentPackLegacyToUnified(params: {
   const allStrengths = strengths.concat(weaknesses);
 
   return {
+    data_availability: {
+      linkedin_available: !linkedinUnavailable,
+      linkedin_note: linkedinUnavailable ? linkedinUnavailableNote : '',
+    },
     perfil: {
       nome: resolveCandidateName(cp),
       curso: cp.detected_role || cp.area || '',
       area_alvo: cv.perceivedRole || cp.detected_role || '',
-      resumo_executivo: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
+      resumo_executivo: linkedinUnavailable
+        ? localize(lang, 'Relatório gerado com base no CV. Os dados do LinkedIn não estavam disponíveis nesta análise.', 'Report generated from the CV. LinkedIn data was not available for this analysis.', 'Informe generado con base en el CV. Los datos de LinkedIn no estaban disponibles en este análisis.')
+        : (liAnalysis.sumario_executivo || liTeaser.hook_vendas || ''),
     },
     score_global: {
       valor: overallScore,
       nivel,
-      interpretacao: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
-      vs_mercado_entrada: liAnalysis.benchmarking?.resumo || '',
+      interpretacao: linkedinUnavailable ? linkedinUnavailableNote : (liAnalysis.sumario_executivo || liTeaser.hook_vendas || ''),
+      vs_mercado_entrada: linkedinUnavailable ? '' : (liAnalysis.benchmarking?.resumo || ''),
     },
     auditoria_perfil_dual: {
-      coerencia_cv_linkedin: overallScore >= 65
-        ? localize(lang, 'Alta', 'High', 'Alta')
-        : overallScore >= 45
-          ? localize(lang, 'Média', 'Medium', 'Media')
-          : localize(lang, 'Baixa', 'Low', 'Baja'),
-      analise_coerencia: liAnalysis.sumario_executivo || liTeaser.hook_vendas || '',
+      coerencia_cv_linkedin: linkedinUnavailable
+        ? localize(lang, 'Indisponível', 'Unavailable', 'No disponible')
+        : overallScore >= 65
+          ? localize(lang, 'Alta', 'High', 'Alta')
+          : overallScore >= 45
+            ? localize(lang, 'Média', 'Medium', 'Media')
+            : localize(lang, 'Baixa', 'Low', 'Baja'),
+      analise_coerencia: linkedinUnavailable ? linkedinUnavailableNote : (liAnalysis.sumario_executivo || liTeaser.hook_vendas || ''),
       primeira_impressao_cv: strengths.slice(0, 2).join('. ') || '',
-      primeira_impressao_linkedin: liTeaser.hook_vendas || liAnalysis.hook_vendas || liAnalysis.sumario_executivo || '',
+      primeira_impressao_linkedin: linkedinUnavailable ? linkedinUnavailableNote : (liTeaser.hook_vendas || liAnalysis.hook_vendas || liAnalysis.sumario_executivo || ''),
       scores_cv: scoresCv,
-      scores_linkedin: scoresLinkedin,
+      scores_linkedin: linkedinUnavailable ? {} : scoresLinkedin,
+      linkedin_available: !linkedinUnavailable,
+      linkedin_note: linkedinUnavailable ? linkedinUnavailableNote : '',
     },
     prontidao_mercado: {
       score_estagio: Math.min(100, Math.round(overallScore * 1.1)),
       score_primeiro_emprego: Math.min(100, overallScore),
-      analise_prontidao: liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || '',
+      analise_prontidao: linkedinUnavailable ? linkedinUnavailableNote : (liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || ''),
       o_que_ja_tens: strengths.slice(0, 5),
       o_que_ainda_precisas: weaknesses.slice(0, 5),
     },
@@ -357,22 +374,24 @@ function adaptStudentPackLegacyToUnified(params: {
     },
     estrategia_keywords_unificada: {
       ats_score: typeof cv.atsRejectionRate === 'number' ? (100 - cv.atsRejectionRate) : 0,
-      seo_linkedin_score: liAnalysis.dimensoes?.visibilidade_seo?.score || 0,
+      seo_linkedin_score: linkedinUnavailable ? 0 : (liAnalysis.dimensoes?.visibilidade_seo?.score || 0),
       keywords_presentes: safeArray<string>(cv.keywords).map((keyword: string) => ({ keyword, onde: 'CV' })),
       keywords_em_falta: [],
+      linkedin_note: linkedinUnavailable ? linkedinUnavailableNote : '',
     },
     marca_pessoal_estudante: {
-      headline_linkedin_sugeridas: (safeArray<string>(liAnalysis.headlines_sugeridas).length > 0 ? safeArray<string>(liAnalysis.headlines_sugeridas) : headlines).slice(0, 3),
-      resumo_linkedin_sugerido: liAnalysis.resumo_linkedin_sugerido || '',
+      headline_linkedin_sugeridas: linkedinUnavailable ? [] : (safeArray<string>(liAnalysis.headlines_sugeridas).length > 0 ? safeArray<string>(liAnalysis.headlines_sugeridas) : headlines).slice(0, 3),
+      resumo_linkedin_sugerido: linkedinUnavailable ? '' : (liAnalysis.resumo_linkedin_sugerido || ''),
       problemas_criticos_cv: problemasCv,
-      acoes_linkedin_prioritarias: safeArray(liAnalysis.areas_melhoria)
+      acoes_linkedin_prioritarias: linkedinUnavailable ? [] : safeArray(liAnalysis.areas_melhoria)
         .map((entry: any) => entry?.diagnostico || entry?.recomendacao || '')
         .filter(Boolean)
         .slice(0, 5),
+      linkedin_note: linkedinUnavailable ? linkedinUnavailableNote : '',
     },
     primeiros_cargos_alvo: [],
     plano_90_dias: plano90,
-    recomendacao_prioritaria: liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || '',
+    recomendacao_prioritaria: linkedinUnavailable ? linkedinUnavailableNote : (liAnalysis.recomendacao_prioritaria || liTeaser.hook_vendas || ''),
   };
 }
 

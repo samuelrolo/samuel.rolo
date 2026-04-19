@@ -11,11 +11,11 @@ export default function PromoBanner() {
 
   const badge = pick("PACK ESTUDANTE", "STUDENT PACK", "PACK ESTUDIANTE");
   const text = pick(
-    "Ferramentas de carreira por 7,99€",
-    "Career tools for €7.99",
-    "Herramientas de carrera por 7,99€"
+    "Ferramentas de carreira por 6,99€",
+    "Career tools for €6.99",
+    "Herramientas de carrera por 6,99€"
   );
-  const discount = pick("(-43%)", "(-43%)", "(-43%)");
+  const discount = pick("(-33%)", "(-33%)", "(-33%)");
   const cta = pick("Descobrir →", "Discover →", "Descubrir →");
   const bannerAriaLabel = pick("Promoção Pack Estudante", "Student Pack promotion", "Promoción Pack Estudiante");
   const closeLabel = pick("Fechar banner", "Close banner", "Cerrar banner");

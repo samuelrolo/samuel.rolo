@@ -274,28 +274,78 @@ export default function StudentPackHome() {
       const useServerExtraction = cvText.length < 50 && !!base64Content;
 
       setAnalysisMsg(pick("A extrair dados reais do teu LinkedIn...", "Extracting real data from your LinkedIn...", "Extrayendo datos reales de tu LinkedIn..."));
-      const linkedinScrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
-      });
 
       let linkedinScrapeData: any = null;
       let linkedinCvText = '';
+      let linkedinAvailable = false;
+      let linkedinUnavailableNote = '';
 
-      if (!linkedinScrapeResponse.ok) {
-        const scrapeError = await linkedinScrapeResponse.json().catch(() => ({}));
-        console.warn('[Student Pack] LinkedIn scrape falhou, a usar fallback de sinais públicos:', scrapeError?.error || linkedinScrapeResponse.statusText);
+      try {
+        const linkedinScrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ linkedin_url: currentLinkedinUrl })
+        });
+
+        if (!linkedinScrapeResponse.ok) {
+          const scrapeError = await linkedinScrapeResponse.json().catch(() => ({}));
+          linkedinUnavailableNote = pick(
+            'Não foi possível obter os dados do LinkedIn. O relatório continua com base no CV e os blocos de LinkedIn ficam assinalados como indisponíveis.',
+            'We could not retrieve your LinkedIn data. The report will continue based on your CV and LinkedIn blocks will be marked as unavailable.',
+            'No fue posible obtener los datos de LinkedIn. El informe continuará con base en tu CV y los bloques de LinkedIn quedarán marcados como no disponibles.'
+          );
+          console.warn('[Student Pack] LinkedIn scrape falhou; a análise vai continuar só com o CV:', scrapeError?.error || linkedinScrapeResponse.statusText);
+        } else {
+          linkedinScrapeData = await linkedinScrapeResponse.json();
+          linkedinCvText = typeof linkedinScrapeData?.cv_text === 'string' ? linkedinScrapeData.cv_text.substring(0, 12000) : '';
+          linkedinAvailable = Boolean(linkedinCvText.trim());
+          if (!linkedinAvailable) {
+            linkedinUnavailableNote = pick(
+              'Os dados públicos do LinkedIn vieram incompletos. O relatório continua com base no CV e as secções de LinkedIn ficam assinaladas como indisponíveis.',
+              'The public LinkedIn data came back incomplete. The report will continue based on your CV and LinkedIn sections will be marked as unavailable.',
+              'Los datos públicos de LinkedIn llegaron incompletos. El informe continuará con base en tu CV y las secciones de LinkedIn quedarán marcadas como no disponibles.'
+            );
+            console.warn('[Student Pack] LinkedIn scrape sem dados suficientes; a análise vai continuar só com o CV.');
+          }
+        }
+      } catch (scrapeErr: any) {
+        linkedinUnavailableNote = pick(
+          'Não foi possível obter os dados do LinkedIn. O relatório continua com base no CV e os blocos de LinkedIn ficam assinalados como indisponíveis.',
+          'We could not retrieve your LinkedIn data. The report will continue based on your CV and LinkedIn blocks will be marked as unavailable.',
+          'No fue posible obtener los datos de LinkedIn. El informe continuará con base en tu CV y los bloques de LinkedIn quedarán marcados como no disponibles.'
+        );
+        console.warn('[Student Pack] LinkedIn scrape lançou erro; a análise vai continuar só com o CV:', scrapeErr?.message || scrapeErr);
+      }
+
+      const structuredLinkedinData = JSON.stringify(
+        linkedinAvailable
+          ? (linkedinScrapeData || { linkedin_url: currentLinkedinUrl })
+          : { linkedin_url: currentLinkedinUrl, unavailable: true, note: linkedinUnavailableNote },
+        null,
+        2
+      );
+
+      sessionStorage.setItem('studentPackLinkedinAvailable', linkedinAvailable ? 'true' : 'false');
+      if (linkedinUnavailableNote) {
+        sessionStorage.setItem('studentPackLinkedinUnavailableNote', linkedinUnavailableNote);
       } else {
-        linkedinScrapeData = await linkedinScrapeResponse.json();
-        linkedinCvText = typeof linkedinScrapeData?.cv_text === 'string' ? linkedinScrapeData.cv_text.substring(0, 12000) : '';
+        sessionStorage.removeItem('studentPackLinkedinUnavailableNote');
       }
 
-      if (!linkedinCvText) {
-        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+      localStorage.setItem('studentPackLinkedinAvailable', linkedinAvailable ? 'true' : 'false');
+      if (linkedinUnavailableNote) {
+        localStorage.setItem('studentPackLinkedinUnavailableNote', linkedinUnavailableNote);
+      } else {
+        localStorage.removeItem('studentPackLinkedinUnavailableNote');
       }
 
-      const structuredLinkedinData = JSON.stringify(linkedinScrapeData || { linkedin_url: currentLinkedinUrl, fallback: true }, null, 2);
+      if (!linkedinAvailable) {
+        setAnalysisMsg(pick(
+          'Não foi possível extrair o LinkedIn. Vamos continuar a análise apenas com o CV.',
+          'We could not extract LinkedIn data. We will continue the analysis using only your CV.',
+          'No hemos podido extraer los datos de LinkedIn. Continuaremos el análisis solo con tu CV.'
+        ));
+      }
 
       if (isPT) {
         // ─── PT: two-engine approach (same as EN/ES) ───
@@ -314,21 +364,22 @@ export default function StudentPackHome() {
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
         if (!cvResponseDataPT?.success) throw new Error(pick('Erro na análise do CV. Tenta novamente.', 'Error analysing CV. Please try again.', 'Error al analizar el CV. Inténtalo de nuevo.'));
-        setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
-        // Engine 2: LinkedIn roast
         let linkedinResponseDataPT: any = null;
-        for (let attempt = 0; attempt <= 2; attempt++) {
-          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
-          try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
-            clearTimeout(tid);
-            if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
-            if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-          } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
+        if (linkedinAvailable) {
+          setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
+          for (let attempt = 0; attempt <= 2; attempt++) {
+            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+            try {
+              const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+              clearTimeout(tid);
+              if (res.ok) { linkedinResponseDataPT = await res.json(); if (linkedinResponseDataPT.success) break; }
+              if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
+          }
         }
         const unifiedStudentPackPT = buildUnifiedStudentPackPayload({
           cvRaw: cvResponseDataPT,
-          linkedinRaw: linkedinResponseDataPT || {},
+          linkedinRaw: linkedinAvailable ? (linkedinResponseDataPT || {}) : { unavailable: true, note: linkedinUnavailableNote, linkedin_url: currentLinkedinUrl },
           language: 'pt',
         });
         const cvAnalysisResultPT = unifiedStudentPackPT.sources.cv_normalized;
@@ -388,20 +439,22 @@ export default function StudentPackHome() {
           } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
         }
         if (!cvResponseData?.success) throw new Error(pick('Erro na análise do CV.', 'Error analysing CV. Please try again.', 'Error al analizar el CV. Inténtalo de nuevo.'));
-        // Engine 2: LinkedIn
         let linkedinResponseData: any = null;
-        for (let attempt = 0; attempt <= 2; attempt++) {
-          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
-          try {
-            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
-            clearTimeout(tid);
-            if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
-            if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-          } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
+        if (linkedinAvailable) {
+          setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
+          for (let attempt = 0; attempt <= 2; attempt++) {
+            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+            try {
+              const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+              clearTimeout(tid);
+              if (res.ok) { linkedinResponseData = await res.json(); if (linkedinResponseData.success) break; }
+              if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            } catch (e: any) { clearTimeout(tid); if (attempt < 2 && e.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); else throw e; }
+          }
         }
         const unifiedStudentPack = buildUnifiedStudentPackPayload({
           cvRaw: cvResponseData,
-          linkedinRaw: linkedinResponseData || {},
+          linkedinRaw: linkedinAvailable ? (linkedinResponseData || {}) : { unavailable: true, note: linkedinUnavailableNote, linkedin_url: currentLinkedinUrl },
           language: langCode,
         });
         const cvAnalysisResult = unifiedStudentPack.sources.cv_normalized;

@@ -1,6 +1,6 @@
 // Bundle — CV Analyser + Career Path | Share2Inspire
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
-// Preço PT: €29,00
+// Preço PT: €15,99
 import { useState, useEffect, useRef } from "react";
 import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const PRICE_NUM = 29.00;
+const PRICE_NUM = 15.99;
 
 
 async function extractTextFromPDF(file: File): Promise<string> {
@@ -64,7 +64,7 @@ const buildBundleHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
 export default function BundleHome() {
   const { pick, lang, localePath } = useTranslation();
   const { symbol: CUR } = useCurrency();
-  const PRICE = pick('29,00', '29', '29');
+  const PRICE = pick('15,99', '15.99', '15,99');
   const bundleHeadlines = buildBundleHeadlines(pick);
   const isPT = lang === 'pt';
   usePageSEO(pageSeo.bundle);

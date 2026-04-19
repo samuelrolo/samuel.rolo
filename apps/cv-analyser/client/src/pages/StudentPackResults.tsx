@@ -499,6 +499,16 @@ export default function StudentPackResults() {
   const cargosAlvo = analysis?.primeiros_cargos_alvo || [];
   const plano90 = analysis?.plano_90_dias || {};
   const recomendacaoPrioritaria = analysis?.recomendacao_prioritaria || '';
+  const storedLinkedinUnavailableNote = sessionStorage.getItem('studentPackLinkedinUnavailableNote') || localStorage.getItem('studentPackLinkedinUnavailableNote') || '';
+  const linkedinUnavailableNote = analysis?.data_availability?.linkedin_available === false || storedLinkedinUnavailableNote
+    ? (analysis?.data_availability?.linkedin_note
+      || auditoria?.linkedin_note
+      || marcaPessoal?.linkedin_note
+      || keywords?.linkedin_note
+      || storedLinkedinUnavailableNote
+      || pick('Os dados do LinkedIn não estavam disponíveis nesta análise. O relatório abaixo foi gerado com base no CV.', 'LinkedIn data was not available for this analysis. The report below was generated using the CV only.', 'Los datos de LinkedIn no estaban disponibles en este análisis. El informe siguiente se generó solo con base en el CV.'))
+    : '';
+  const linkedinAvailable = !linkedinUnavailableNote;
 
   const globalScore = scoreGlobal?.valor || 0;
   const nivel = scoreGlobal?.nivel || '';
@@ -621,8 +631,19 @@ export default function StudentPackResults() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <S2IHeader activePage="estudante" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
-        {/* Action buttons */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+          {linkedinUnavailableNote && (
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-amber-900">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold">{pick('Dados do LinkedIn indisponíveis', 'LinkedIn data unavailable', 'Datos de LinkedIn no disponibles')}</p>
+                <p className="text-sm leading-relaxed">{linkedinUnavailableNote}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Action buttons */}
+
         <div className="flex justify-end gap-2 mb-6">
           <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 transition-colors">
             <Download className="w-4 h-4" /> {t('exportar_pdf')}
@@ -711,14 +732,21 @@ export default function StudentPackResults() {
 
             {/* ═══ SECÇÃO 2 — AUDITORIA DUAL ═══ */}
             {Object.keys(auditoria).length > 0 && (
-              <Section title={pick('Auditoria de Perfil Dual', 'Dual Profile Audit', 'Auditoría de Perfil Dual')} subtitle={pick('CV + LinkedIn como sistema único', 'CV + LinkedIn as a single system', 'CV + LinkedIn como un sistema único')} icon={Eye} defaultOpen={true} color="blue"
+              <Section
+                title={pick('Auditoria de Perfil Dual', 'Dual Profile Audit', 'Auditoría de Perfil Dual')}
+                subtitle={pick('CV + LinkedIn como sistema único', 'CV + LinkedIn as a single system', 'CV + LinkedIn como un sistema único')}
+                icon={Eye}
+                defaultOpen={true}
+                color="blue"
                 badge={auditoria.coerencia_cv_linkedin && (
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
                     ['Alta', 'High'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-green-50 text-green-700 border-green-200' :
                     ['Média', 'Medium', 'Media'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                    ['Indisponível', 'Unavailable', 'No disponible'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-slate-100 text-slate-700 border-slate-200' :
                     'bg-red-50 text-red-700 border-red-200'
                   }`}>{pick('Coerência', 'Consistency', 'Coherencia')}: {auditoria.coerencia_cv_linkedin}</span>
-                )}>
+                )}
+              >
                 <div className="space-y-4">
                   {auditoria.analise_coerencia && (
                     <p className="text-sm text-slate-700 leading-relaxed bg-blue-50/50 border border-blue-100 rounded-xl p-4">{auditoria.analise_coerencia}</p>
@@ -757,7 +785,7 @@ export default function StudentPackResults() {
                   )}
 
                   {/* LinkedIn Scores */}
-                  {auditoria.scores_linkedin && (
+                  {linkedinAvailable && auditoria.scores_linkedin && Object.keys(auditoria.scores_linkedin).length > 0 && (
                     <div>
                       <h4 className="font-semibold text-slate-800 text-sm mb-3 flex items-center gap-1.5"><Linkedin className="w-4 h-4 text-blue-600" /> {pick('Scores LinkedIn', 'LinkedIn Scores', 'Puntuaciones LinkedIn')}</h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

@@ -2007,6 +2007,414 @@ export default function Results() {
             onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
           />
         </main>
+
+        {/* ═══ Payment Modal (available in gated preview too) ═══ */}
+        <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {paymentStep === 'confirm' && (t('confirmar_pacote'))}
+                {paymentStep === 'payment' && (t('dados_de_pagamento'))}
+                {paymentStep === 'polling' && (t('a_aguardar_pagamento'))}
+                {paymentStep === 'success' && (isPaid ? (t('anlise_desbloqueada')) : (t('pagamento_iniciado')))}
+              </DialogTitle>
+            </DialogHeader>
+
+            {paymentStep === 'confirm' && (
+              <div className="space-y-5 py-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">{t('escolhe_o_teu_pacote')}</p>
+                  <div className="space-y-2">
+                    {[
+                      {
+                        name: t('relatrio_cv'),
+                        price: P.cv,
+                        analyses: 1,
+                        voucher_type: 'standard',
+                        includes_career_path: false,
+                        features: pick(
+                          ['Análise ATS completa', 'Sugestões de melhoria', 'Palavras-chave em falta', 'Estimativa salarial'],
+                          ['Full ATS analysis', 'Improvement suggestions', 'Missing keywords', 'Salary estimate'],
+                          ['Análisis ATS completo', 'Sugerencias de mejora', 'Palabras clave que faltan', 'Estimación salarial']
+                        ),
+                      },
+                      {
+                        name: t('diagnstico_de_carreira_completo'),
+                        price: P.cp,
+                        analyses: 1,
+                        voucher_type: 'standard',
+                        includes_career_path: true,
+                        popular: true,
+                        features: pick(
+                          ['Análise CV completa', 'Plano de Carreira baseado no LinkedIn', 'Análise de skills gap', 'Estimativa salarial', 'Recomendações de formação', 'Estratégia de candidatura'],
+                          ['Full CV analysis', 'Career Path from LinkedIn', 'Skills gap analysis', 'Salary estimate', 'Training recommendations', 'Application strategy'],
+                          ['Análisis CV completo', 'Plan de Carrera basado en LinkedIn', 'Análisis de brechas de habilidades', 'Estimación salarial', 'Recomendaciones de formación', 'Estrategia de candidatura']
+                        ),
+                      },
+                    ].map((plan) => (
+                      <button
+                        key={plan.name}
+                        onClick={() => setSelectedPlan(plan)}
+                        className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                          selectedPlan.name === plan.name
+                            ? 'border-[#C9A961] bg-[#C9A961]/5'
+                            : 'border-border hover:border-[#C9A961]/30'
+                        } ${(plan as any).popular ? 'ring-1 ring-[#C9A961]/20' : ''}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                              selectedPlan.name === plan.name ? 'border-[#C9A961]' : 'border-muted-foreground/40'
+                            }`}>
+                              {selectedPlan.name === plan.name && (
+                                <div className="w-2 h-2 rounded-full bg-[#C9A961]" />
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-foreground">{plan.name}</span>
+                              {(plan as any).popular && (
+                                <span className="text-[9px] font-bold bg-[#C9A961] text-white px-1.5 py-0.5 rounded">{t('melhor_valor')}</span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-lg font-bold text-[#C9A961]">
+                            {appliedCoupon ? (
+                              <><span className="text-sm line-through text-slate-400 mr-1">{CUR}{plan.price}</span>{CUR}{getDiscountedPrice(plan.price)}</>
+                            ) : (
+                              <>{CUR}{plan.price}</>
+                            )}
+                          </span>
+                        </div>
+                        <div className="ml-7 space-y-0.5">
+                          {(plan as any).features?.map((f: string, fi: number) => (
+                            <p key={fi} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                              <Check className="w-3 h-3 text-[#C9A961] shrink-0" /> {f}
+                            </p>
+                          ))}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedPlan.includes_career_path && (
+                  <div className="p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                    <p className="text-xs font-semibold text-green-600 mb-1">{t('career_path_includo')}</p>
+                    <p className="text-xs text-muted-foreground">{t('aps_o_pagamento_o_career')}</p>
+                  </div>
+                )}
+
+                <Button
+                  onClick={() => setPaymentStep('payment')}
+                  className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
+                >
+                  {appliedCoupon ? (
+                    pick({
+                      pt: <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                      en: <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                      es: <>Continuar al Pago — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+                    })
+                  ) : (
+                    pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar al Pago — ${CUR}${selectedPlan.price}`)
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {paymentStep === 'payment' && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">{t('mtodo_de_pagamento')}</label>
+                  <div className={`grid gap-3 ${t('gridcols2')}`}>
+                    {lang !== 'pt' ? (
+                      <>
+                        <button
+                          onClick={() => setPaymentMethod('stripe')}
+                          className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                            paymentMethod === 'stripe'
+                              ? 'border-[#635BFF] bg-[#635BFF]/5'
+                              : 'border-border hover:border-[#635BFF]/30'
+                          }`}
+                        >
+                          <CreditCard className="w-6 h-6 text-[#635BFF]" />
+                          <span className="text-sm font-semibold text-foreground">{pick('Cartão', 'Card', 'Tarjeta')}</span>
+                        </button>
+                        <button
+                          onClick={() => setPaymentMethod('paypal')}
+                          className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                            paymentMethod === 'paypal'
+                              ? 'border-[#0070BA] bg-[#0070BA]/5'
+                              : 'border-border hover:border-[#0070BA]/30'
+                          }`}
+                        >
+                          <PayPalIcon className="w-6 h-6 text-[#0070BA]" />
+                          <span className="text-sm font-semibold text-foreground">{pick('PayPal', 'PayPal', 'PayPal')}</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => setPaymentMethod('mbway')}
+                          className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                            paymentMethod === 'mbway'
+                              ? 'border-[#C9A961] bg-[#C9A961]/5'
+                              : 'border-border hover:border-[#C9A961]/30'
+                          }`}
+                        >
+                          <CreditCard className="w-6 h-6 text-[#C9A961]" />
+                          <span className="text-sm font-semibold text-foreground">{pick('MB WAY', 'MB WAY', 'MB WAY')}</span>
+                        </button>
+                        <button
+                          onClick={() => setPaymentMethod('paypal')}
+                          className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                            paymentMethod === 'paypal'
+                              ? 'border-[#0070BA] bg-[#0070BA]/5'
+                              : 'border-border hover:border-[#0070BA]/30'
+                          }`}
+                        >
+                          <PayPalIcon className="w-6 h-6 text-[#0070BA]" />
+                          <span className="text-sm font-semibold text-foreground">{pick('PayPal', 'PayPal', 'PayPal')}</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-foreground">
+                      {pick('Email', 'Email', 'Email')}
+                    </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('seuemailcom')}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                  />
+                </div>
+
+                {paymentMethod === 'mbway' && (
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-sm font-medium text-foreground">
+                      {t('telemvel_mb_way')}
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder={pick('912345678', '912345678', '912345678')}
+                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                    />
+                  </div>
+                )}
+
+                {paymentError && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-sm text-red-500">{paymentError}</p>
+                  </div>
+                )}
+
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-center justify-between text-sm border-t border-border pt-3">
+                    <span className="text-muted-foreground">{pick('Total', 'Total', 'Total')}</span>
+                    <span className="text-lg font-bold text-foreground">
+                      {appliedCoupon ? (
+                        <><span className="line-through text-muted-foreground mr-2">{CUR}{selectedPlan.price}</span><span className="text-green-600">{CUR}{getDiscountedPrice(selectedPlan.price)}</span></>
+                      ) : (
+                        <>{CUR}{selectedPlan.price}</>
+                      )}
+                    </span>
+                  </div>
+                  {appliedCoupon && (
+                    <p className="text-xs text-green-600 text-right -mt-2">{appliedCoupon.percent}% {t('desconto')} ({appliedCoupon.code})</p>
+                  )}
+                  <Button
+                    onClick={handlePayment}
+                    disabled={loading}
+                    className={`w-full font-semibold ${
+                      paymentMethod === 'stripe'
+                        ? 'bg-[#635BFF] hover:bg-[#5046E5] text-white'
+                        : paymentMethod === 'paypal'
+                          ? 'bg-[#0070BA] hover:bg-[#005EA6] text-white'
+                          : 'bg-[#C9A961] hover:bg-[#A88B4E] text-white'
+                    }`}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t('a_processar')}
+                      </>
+                    ) : paymentMethod === 'stripe' ? (
+                      pick('Pagar com Cartão', 'Pay with Card', 'Pagar con Tarjeta')
+                    ) : paymentMethod === 'mbway' ? (
+                      t('pagar_com_mb_way')
+                    ) : (
+                      <>
+                        <PayPalIcon className="w-4 h-4 mr-2" />
+                        {t('pagar_com_paypal')}
+                      </>
+                    )}
+                  </Button>
+                  <button
+                    onClick={() => setPaymentStep('confirm')}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {t('voltar_2')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {paymentStep === 'polling' && (
+              <div className="space-y-5 py-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto">
+                  <CreditCard className="w-8 h-8 text-[#C9A961]" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-foreground">{t('pedido_enviado_para_mb_way')}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {pick({
+                      pt: <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                      en: <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                      es: <>Abre la app MB WAY en el móvil y aprueba el pago de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>,
+                    })}
+                  </p>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-4 space-y-2">
+                  <div className="flex items-center gap-2 justify-center">
+                    {!pollingExpired ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-[#C9A961]" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-amber-500" />
+                    )}
+                    <span className="text-sm text-muted-foreground">{pollingMessage}</span>
+                  </div>
+                </div>
+                {pollingExpired && (
+                  <Button
+                    onClick={handleManualCheck}
+                    className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    {t('j_paguei_verificar_novamente')}
+                  </Button>
+                )}
+                <Button
+                  onClick={() => setShowPaymentModal(false)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {t('fechar_o_pagamento_continua_a')}
+                </Button>
+              </div>
+            )}
+
+            {paymentStep === 'success' && (
+              <div className="space-y-5 py-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+                  {isPaid ? (
+                    <Unlock className="w-8 h-8 text-green-500" />
+                  ) : (
+                    <FileCheck className="w-8 h-8 text-[#C9A961]" />
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {isPaid && selectedPlan.includes_career_path ? (
+                    <>
+                      <h3 className="text-lg font-bold text-green-600">{t('pagamento_confirmado')}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {t('fornece_o_teu_perfil_linkedin')}
+                      </p>
+                      <div className="mt-4 space-y-3 text-left">
+                        <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                          <p className="text-xs font-semibold text-blue-600 mb-2 flex items-center gap-1.5"><Linkedin className="w-3.5 h-3.5" /> {t('o_que_analisamos_do_linkedin')}</p>
+                          <div className="space-y-1">
+                            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('experincia_profissional')}</p>
+                            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('rea_de_actuao')}</p>
+                            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('competncias_identificadas')}</p>
+                            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><Check className="w-3 h-3 text-blue-500 shrink-0" /> {t('evoluo_de_funes')}</p>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-2 italic">{t('nenhum_dado_ser_publicado_ou')}</p>
+                        </div>
+                        <input
+                          type="url"
+                          aria-label={pick('Perfil LinkedIn para o plano de carreira', 'LinkedIn profile for the career path', 'Perfil de LinkedIn para el plan de carrera')}
+                          value={careerPathLinkedin}
+                          onChange={(e) => setCareerPathLinkedin(e.target.value)}
+                          placeholder={t('httpslinkedincominteuperfil')}
+                          className="w-full px-3 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961] text-sm"
+                        />
+                      </div>
+                      <div className="p-3 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg mt-2">
+                        <p className="text-xs font-semibold text-[#C9A961] mb-1">{t('o_teu_pacote_inclui')}</p>
+                        <div className="space-y-1">
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {t('relatrio_cv_completo_com_anlise')}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-green-500" /> {t('career_path_com_roadmap_personalizado')}</p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          unlockFullReport();
+                          updateAnalysisPayment(P.cp, 'stripe');
+                          setShowPaymentModal(false);
+                          setShowCareerPathModal(true);
+                          setCareerPathPaymentStep('generating');
+                          generateCareerPath();
+                        }}
+                        className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold mt-2"
+                      >
+                        <Rocket className="w-4 h-4 mr-2" />
+                        {t('lanar_as_duas_anlises')}
+                      </Button>
+                    </>
+                  ) : isPaid ? (
+                    <>
+                      <h3 className="text-lg font-bold text-green-600">{t('anlise_completa_desbloqueada')}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {t('todas_as_seces_foram_desbloqueadas')}
+                      </p>
+                      {storedVoucherCode && storedVoucherRemaining && parseInt(storedVoucherRemaining) > 0 && (
+                        <div className="mt-4 p-4 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-lg">
+                          <p className="text-xs text-muted-foreground mb-1">{t('o_teu_cdigo_para_futuras')}</p>
+                          <p className="text-xl font-mono font-bold text-[#C9A961]">{storedVoucherCode}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise${storedVoucherRemaining === 1 ? '' : 's'}`, `${storedVoucherRemaining} ${storedVoucherRemaining === 1 ? 'analysis' : 'analyses'} remaining`, `Quedan ${storedVoucherRemaining} análisis`)}</p>
+                        </div>
+                      )}
+                    </>
+                  ) : paymentMethod === 'paypal' ? (
+                    <>
+                      <h3 className="text-lg font-bold text-foreground">{t('pagamento_paypal')}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {t('completa_o_pagamento_na_janela')}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {t('para_confirmao_imediata_usa_mb')}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-bold text-foreground">{t('pagamento_em_processamento')}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {t('o_pagamento_est_a_ser')}
+                      </p>
+                    </>
+                  )}
+                </div>
+                {!(isPaid && selectedPlan.includes_career_path) && (
+                  <Button
+                    onClick={() => setShowPaymentModal(false)}
+                    className={isPaid ? "w-full bg-green-600 hover:bg-green-700 text-white font-semibold" : "w-full"}
+                    variant={isPaid ? "default" : "outline"}
+                  >
+                    {isPaid ? (t('ver_anlise_completa')) : (t('fechar'))}
+                  </Button>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

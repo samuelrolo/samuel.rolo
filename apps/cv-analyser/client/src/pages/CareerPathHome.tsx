@@ -880,10 +880,10 @@ export default function CareerPathHome() {
                       <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">{pick('POUPAR', 'SAVE', 'AHORRAR')}</span>
                       <span className="text-sm font-semibold text-foreground">{pick('Começa com Career Path', 'Start with Career Path', 'Empieza con Career Path')}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 flex-1">{pick(`Obtém o teu Career Path por ${PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.`, `Get your Career Path for ${PRICE_DISPLAY} and upgrade to Career Intelligence for just €29.`, `Obtén tu Career Path por ${PRICE_DISPLAY} y haz upgrade a Career Intelligence por solo 29€.`)}</p>
+                    <p className="text-xs text-muted-foreground mt-2 flex-1">{pick(`Obtém o teu Career Path por ${PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €12,49.`, `Get your Career Path for ${PRICE_DISPLAY} and upgrade to Career Intelligence for just €12.49.`, `Obtén tu Career Path por ${PRICE_DISPLAY} y haz upgrade a Career Intelligence por solo 12,49€.`)}</p>
                     <div className="flex items-baseline gap-1.5 mt-2">
                       <span className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</span>
-                      <span className="text-xs text-muted-foreground">{pick('depois +€29 upgrade', 'then +€29 upgrade', 'luego +29€ upgrade')}</span>
+                      <span className="text-xs text-muted-foreground">{pick('depois +€12,49 upgrade', 'then +€12.49 upgrade', 'luego +12,49€ upgrade')}</span>
                     </div>
                   </div>
                   {/* Opção 2: Career Intelligence completo */}
@@ -894,7 +894,7 @@ export default function CareerPathHome() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-2 flex-1">{pick('Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.', 'Everything in Career Path + strategic comparison, trade-offs and final recommendation.', 'Todo del Career Path + comparación estratégica, trade-offs y recomendación final.')}</p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-lg font-bold text-purple-600">{pick('€49', '€49', '49€')}</span>
+                      <span className="text-lg font-bold text-purple-600">{pick('24,99€', '€24.99', '24,99€')}</span>
                         <a
                           href={localePath('/career-intelligence')}
 
