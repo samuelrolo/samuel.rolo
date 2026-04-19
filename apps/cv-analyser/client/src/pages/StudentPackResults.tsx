@@ -10,6 +10,7 @@ import {
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import EmailResultsGate from "@/components/EmailResultsGate";
+import ResultsUnlockModal from "@/components/ResultsUnlockModal";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
@@ -405,6 +406,7 @@ export default function StudentPackResults() {
 
   const [isPaid, setIsPaid] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -581,10 +583,31 @@ export default function StudentPackResults() {
             previewDescription={pick('Desbloqueia o relatório completo para veres a leitura cruzada CV + LinkedIn, os cargos-alvo, a estratégia de keywords, a marca pessoal e o plano de execução dos próximos 90 dias.', 'Unlock the full report to see the cross-checked CV + LinkedIn reading, target roles, keyword strategy, personal brand recommendations and the next 90-day execution plan.', 'Desbloquea el informe completo para ver la lectura cruzada CV + LinkedIn, los puestos objetivo, la estrategia de keywords, la marca personal y el plan de ejecución de los próximos 90 días.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onCtaClick={() => {
-              const homePath = localePath('/estudante');
-              const params = new URLSearchParams({ openPayment: '1', fromResults: '1' });
-              window.location.href = `${homePath}?${params.toString()}`;
+            onCtaClick={() => setShowUnlockModal(true)}
+          />
+
+          <ResultsUnlockModal
+            open={showUnlockModal}
+            onOpenChange={setShowUnlockModal}
+            productType="student_pack"
+            couponProductKey="student_pack"
+            productLabel={pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')}
+            price={6.99}
+            successPath={localePath('/estudante/results')}
+            theme="emerald"
+            emailStorageKey="studentPackEmail"
+            pendingOrderStorageKey="studentPackPendingOrderId"
+            verifiedSessionStorageKey="studentPackVerifiedTransactionId"
+            verifiedOrderStorageKey="studentPackVerifiedOrderId"
+            accessTypeStorageKey="studentPackAccessType"
+            onPaid={({ email }) => {
+              if (email) {
+                localStorage.setItem('studentPackEmail', email);
+                sessionStorage.setItem('studentPackEmail', email);
+              }
+              sessionStorage.setItem('studentPackPaid', 'true');
+              localStorage.setItem('studentPackAccessType', 'paid_verified');
+              setIsPaid(true);
             }}
           />
         </div>

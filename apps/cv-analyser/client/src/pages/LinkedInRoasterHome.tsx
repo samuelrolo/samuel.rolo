@@ -155,16 +155,20 @@ export default function LinkedInRoasterHome() {
   const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
   const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 
-  // Step 1: Validate and show payment modal
+  // Step 1: Validate and start the free analysis
   const handleProceedToPayment = () => {
     if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick("Introduz um URL de LinkedIn válido (ex: linkedin.com/in/nome)", "Enter a valid LinkedIn URL (e.g. linkedin.com/in/yourname)", "Introduce un URL de LinkedIn válido (ej: linkedin.com/in/nombre)")); return; }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick("Introduz um email válido", "Enter a valid email", "Introduce un email válido")); return; }
     setError(null);
-    localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
     localStorage.setItem('linkedinRoasterUrl', linkedinUrl);
-    setPaymentStep('payment');
-    setPaymentError(null);
-    setShowPaymentModal(true);
+    if (email.trim()) {
+      localStorage.setItem('linkedinRoasterEmail', email.trim().toLowerCase());
+    } else {
+      localStorage.removeItem('linkedinRoasterEmail');
+    }
+    localStorage.removeItem('linkedinRoasterPendingOrderId');
+    localStorage.removeItem('linkedinRoasterVerifiedTransactionId');
+    sessionStorage.removeItem('linkedinRoasterPaid');
+    runAnalysis();
   };
 
   // Step 2: Run analysis
@@ -189,10 +193,6 @@ export default function LinkedInRoasterHome() {
     const msgInterval = setInterval(() => { msgIdx = (msgIdx + 1) % messages.length; setLoadingMsg(messages[msgIdx]); }, 3000);
 
     try {
-      sendConversion(PRICE_NUM, 'EUR', `roast-${Date.now()}`);
-      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
-      if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: 'linkedin_roaster', value: PRICE_NUM, currency: 'EUR' });
-
       const analysisCountry = localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang);
       const analysisRegion = localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '';
 
@@ -264,21 +264,27 @@ export default function LinkedInRoasterHome() {
 
       const normalizedLinkedinAnalysis = normalizeLinkedinRoastPayload(responseData, lang);
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
-      sessionStorage.setItem('linkedinRoasterEmail', candidateEmail);
+      if (candidateEmail) {
+        sessionStorage.setItem('linkedinRoasterEmail', candidateEmail);
+      } else {
+        sessionStorage.removeItem('linkedinRoasterEmail');
+      }
       sessionStorage.setItem('linkedinRoasterUrl', currentLinkedinUrl);
-      sessionStorage.setItem('linkedinRoasterPaid', 'true');
+      sessionStorage.removeItem('linkedinRoasterPaid');
       sessionStorage.setItem('analysisLang', normalizedLinkedinAnalysis.language);
       sessionStorage.setItem('analysisCountry', localStorage.getItem('analysisCountry') || sessionStorage.getItem('analysisCountry') || getDefaultCountryByLanguage(lang));
       sessionStorage.setItem('analysisRegion', localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '');
 
-      // Trigger welcome email
-      try {
-        fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
-          method: 'POST',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: candidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
-        }).catch(() => {});
-      } catch (_) {}
+      // Trigger welcome email only after an email exists
+      if (candidateEmail) {
+        try {
+          fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+            method: 'POST',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: candidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
+          }).catch(() => {});
+        } catch (_) {}
+      }
 
       const elapsed = Date.now() - startTime;
       if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
@@ -584,19 +590,6 @@ export default function LinkedInRoasterHome() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="linkedin-roaster-email" className="text-sm font-medium text-slate-700 mb-1.5 block">{pick("Email para receber o roast", "Email to receive the roast", "Email para recibir el roast")}</label>
-                <input
-                  id="linkedin-roaster-email"
-                  aria-label={pick('Email para receber o roast', 'Email to receive the roast', 'Email para recibir el roast')}
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={pick("teu@email.com", "your@email.com", "tu@email.com")}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
-                />
-              </div>
-
               <div className="rounded-xl bg-orange-50 p-3">
                 <p className="text-xs text-slate-600">{pick(
                   <>Ao continuar, aceitas a <a href={privacyPolicyPath} className="text-[#C9A961] underline" target="_blank" rel="noreferrer">Política de Privacidade</a> e os termos e condições. O perfil é analisado de forma confidencial.</>,
@@ -613,26 +606,15 @@ export default function LinkedInRoasterHome() {
 
               <button
                 onClick={handleProceedToPayment}
-                disabled={!isValidLinkedinUrl(linkedinUrl) || !email.includes('@') || loading}
+                disabled={!isValidLinkedinUrl(linkedinUrl) || loading}
                 className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-lg shadow-lg shadow-orange-500/25 transition-all disabled:shadow-none disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {loadingMsg || pick('A preparar o teu roast...', 'Preparing your roast...', 'Preparando tu roast...')}</>
                 ) : (
-                  <><Flame className="w-5 h-5" /> {appliedCoupon
-                    ? pick(`Pagar ${finalPriceStr}€ e receber o roast`, `Pay €${finalPriceStr} & get roasted`, `Pagar ${finalPriceStr}€ y recibir el roast`)
-                    : pick(`Pagar ${PRICE}€ e receber o roast`, `Pay €${PRICE} & get roasted`, `Pagar ${PRICE}€ y recibir el roast`)
-                  } 🔥</>
+                  <><Flame className="w-5 h-5" /> {pick('Analisar perfil gratuitamente', 'Analyse profile for free', 'Analizar perfil gratis')} 🔥</>
                 )}
               </button>
-
-              {appliedCoupon && (
-                <div className="text-center">
-                  <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 rounded-full px-3 py-1 text-xs font-medium text-green-700">
-                    <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}: -{appliedCoupon.percent}% {pick("aplicado", "applied", "aplicado")}
-                  </span>
-                </div>
-              )}
 
               <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2">
                 <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> {pick("100% Confidencial", "100% Confidential", "100% Confidencial")}</span>
@@ -640,11 +622,6 @@ export default function LinkedInRoasterHome() {
                 <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> {pick("Pagamento seguro", "Secure payment", "Pago seguro")}</span>
               </div>
 
-              <div className="text-center pt-1">
-                <button onClick={() => setShowDiscountModal(true)} className="text-xs text-[#C9A961] hover:underline inline-flex items-center gap-1">
-                  <Ticket className="w-3 h-3" /> {pick("Tens um código de desconto?", "Have a discount code?", "¿Tienes un código de descuento?")}
-                </button>
-              </div>
             </div>
           </section>
 

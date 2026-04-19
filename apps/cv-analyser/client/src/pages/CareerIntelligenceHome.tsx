@@ -408,12 +408,6 @@ export default function CareerIntelligenceHome() {
       setError(pick('Por favor, introduz o teu perfil LinkedIn (ex: https://linkedin.com/in/o-teu-perfil)', 'Please enter your LinkedIn profile (e.g. https://linkedin.com/in/your-profile)', 'Por favor, introduce tu perfil LinkedIn (ej: https://linkedin.com/in/tu-perfil)'));
       return;
     }
-    // Validate mandatory email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email.trim())) {
-      setError(pick('Por favor, introduz um email válido para continuar.', 'Please enter a valid email to continue.', 'Por favor, introduce un email válido para continuar.'));
-      return;
-    }
     const pageLang = persistAnalysisContext();
     clearCareerIntelligenceRunData();
     trackAnalysisStart('career_intelligence_full');
@@ -1151,20 +1145,6 @@ export default function CareerIntelligenceHome() {
                 </div>
               </div>
 
-              {/* Email */}
-              <div className="space-y-2">
-                <label htmlFor="career-intelligence-email" className="text-sm font-medium">{pick('5. E-mail', '5. Email', '5. Correo electrónico')} <span className="text-red-500">*</span></label>
-                <input
-                  id="career-intelligence-email"
-                  aria-label={pick('E-mail', 'Email', 'Correo electrónico')}
-                  type="email"
-                  placeholder={pick('o-teu@email.com', 'your@email.com', 'tu@email.com')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
-                />
-              </div>
-
               {/* Privacy */}
               <div className="rounded-xl bg-muted/40 p-3">
                 <p className="text-sm text-muted-foreground">
@@ -1182,7 +1162,7 @@ export default function CareerIntelligenceHome() {
 
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading}
+                disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !country || loading}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
@@ -1191,7 +1171,7 @@ export default function CareerIntelligenceHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  pick('Iniciar análise', 'Start analysis', 'Iniciar análisis')
+                  pick('Analisar gratuitamente', 'Analyse for free', 'Analizar gratis')
                 )}
               </Button>
 

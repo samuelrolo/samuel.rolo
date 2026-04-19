@@ -216,23 +216,28 @@ export default function StudentPackHome() {
 
   const isValidLinkedinUrl = (url: string) => url.trim().toLowerCase().includes('linkedin.com/in/') && url.trim().length > 25;
 
-  /* ─── Proceed to Payment ─── */
+  /* ─── Start free analysis ─── */
   const handleProceedToPayment = async () => {
     if (!file) { setError(pick('Faz upload do teu CV (PDF ou DOCX)', 'Upload your CV (PDF or DOCX)', 'Sube tu CV (PDF o DOCX)')); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError(pick('Introduz um URL de LinkedIn válido', 'Enter a valid LinkedIn URL', 'Introduce una URL de LinkedIn válida')); return; }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
     if (!selectedCountry) { setError(pick('Selecciona o teu país para resultados localizados', 'Select your country', 'Selecciona tu país')); return; }
     setError(null);
     try {
       await persistStudentPackCvPayload(file);
       localStorage.setItem('studentPackLinkedinUrl', linkedinUrl);
-      localStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      if (email.trim()) {
+        localStorage.setItem('studentPackEmail', email.trim().toLowerCase());
+      } else {
+        localStorage.removeItem('studentPackEmail');
+      }
       localStorage.setItem('studentPackCountry', selectedCountry || 'Portugal');
       localStorage.setItem('studentPackRegion', selectedRegion || '');
+      localStorage.removeItem('studentPackPendingOrderId');
+      localStorage.removeItem('studentPackVerifiedTransactionId');
+      sessionStorage.removeItem('studentPackPaid');
+      setStudentPackAccessType('free');
     } catch (e) { console.warn('[StudentPack] Pre-extraction warning:', e); }
-    setPaymentStep('payment');
-    setPaymentError(null);
-    setShowPaymentModal(true);
+    runBothEngines();
   };
 
   /* ─── Run Engines ─── */
@@ -798,10 +803,6 @@ export default function StudentPackHome() {
               <label htmlFor="student-pack-linkedin" className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> {pick("Perfil LinkedIn", "LinkedIn Profile", "Perfil de LinkedIn")}</label>
               <input id="student-pack-linkedin" type="url" aria-label={pick('Perfil LinkedIn', 'LinkedIn profile', 'Perfil de LinkedIn')} placeholder={pick('https://linkedin.com/in/o-teu-perfil', 'https://linkedin.com/in/your-profile', 'https://linkedin.com/in/tu-perfil')} value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
             </div>
-            <div>
-              <label htmlFor="student-pack-email" className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> {pick('E-mail', 'Email', 'Correo electrónico')}</label>
-              <input id="student-pack-email" type="email" aria-label={pick('E-mail', 'Email', 'Correo electrónico')} placeholder={pick("o-teu@email.com", "your@email.com", "tu@email.com")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all" />
-            </div>
             <div className="space-y-2">
               <label htmlFor="student-pack-country" className="block text-sm font-semibold text-slate-700"><Globe className="w-4 h-4 inline mr-1 text-emerald-600" /> {pick("País", "Country", "País")} <span className="text-slate-400 font-normal text-xs">({pick("para dados salariais", "for salary data", "para datos salariales")})</span></label>
               <select id="student-pack-country" aria-label={pick('País', 'Country', 'País')} value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 outline-none transition-all bg-white text-slate-700">
@@ -824,22 +825,9 @@ export default function StudentPackHome() {
               </p>
             </div>
             {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
-            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry} className="w-full h-14 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 transition-all">
-              {appliedCoupon
-                ? <>{pick("Pagar — ", "Pay — ", "Pagar — ")}<span className="line-through text-slate-300 mr-1">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span> {isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</>
-                : <>{pick("Pagar e analisar — ", "Pay and analyse — ", "Pagar y analizar — ")}{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</>
-              }
+            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !selectedCountry} className="w-full h-14 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 transition-all">
+              {pick("Analisar gratuitamente", "Analyse for free", "Analizar gratis")}
             </Button>
-            {appliedCoupon ? (
-              <div className="w-full text-center text-sm text-green-600 bg-green-50 rounded-xl py-2 px-3 flex items-center justify-center gap-2">
-                <Check className="w-4 h-4" /> {pick("Cupão", "Coupon", "Cupón")} <span className="font-bold">{appliedCoupon.code}</span> — {appliedCoupon.percent}% {pick("desconto", "off", "descuento")}
-                <button onClick={() => setAppliedCoupon(null)} className="ml-2 text-xs text-slate-400 hover:text-red-500 underline">{pick("remover", "remove", "eliminar")}</button>
-              </div>
-            ) : (
-              <button onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-emerald-600 transition-colors flex items-center justify-center gap-2">
-                <Ticket className="w-4 h-4" /> {pick("Tenho um código de desconto", "I have a discount code", "Tengo un código de descuento")}
-              </button>
-            )}
             <p className="text-center text-xs text-slate-400">
               {pick("Pagamento seguro via MB WAY, Cartão ou PayPal", "Secure payment via Card or PayPal", "Pago seguro con Tarjeta o PayPal")}
             </p>

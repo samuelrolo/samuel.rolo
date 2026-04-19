@@ -11,6 +11,7 @@ import {
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
 import EmailResultsGate from "@/components/EmailResultsGate";
+import ResultsUnlockModal from "@/components/ResultsUnlockModal";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
@@ -193,6 +194,7 @@ export default function LinkedInRoasterResults() {
 
   const [isPaid, setIsPaid] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
   const normalizedData = useMemo(() => {
     const storedLang = sessionStorage.getItem('analysisLang') || lang;
     return normalizeLinkedinRoastPayload(rawData, storedLang);
@@ -334,10 +336,28 @@ export default function LinkedInRoasterResults() {
             previewDescription={sumario || pick('O preview mostra o posicionamento geral, mas o relatório completo detalha secções, benchmark, keywords e ações recomendadas para melhorares a descoberta e a conversão do perfil.', 'The preview shows the overall positioning, but the full report breaks down sections, benchmark, keywords and recommended actions to improve profile discovery and conversion.', 'La vista previa muestra el posicionamiento general, pero el informe completo detalla secciones, benchmark, keywords y acciones recomendadas para mejorar la visibilidad y la conversión del perfil.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onCtaClick={() => {
-              const homePath = localePath('/linkedin-roaster');
-              const params = new URLSearchParams({ openPayment: '1', fromResults: '1' });
-              window.location.href = `${homePath}?${params.toString()}`;
+            onCtaClick={() => setShowUnlockModal(true)}
+          />
+
+          <ResultsUnlockModal
+            open={showUnlockModal}
+            onOpenChange={setShowUnlockModal}
+            productType="linkedin_roast"
+            couponProductKey="linkedin_roast"
+            productLabel={pick('LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}
+            price={3.49}
+            successPath={localePath('/linkedin-roaster/results')}
+            theme="orange"
+            emailStorageKey="linkedinRoasterEmail"
+            pendingOrderStorageKey="linkedinRoasterPendingOrderId"
+            verifiedSessionStorageKey="linkedinRoasterVerifiedTransactionId"
+            verifiedOrderStorageKey="linkedinRoasterVerifiedOrderId"
+            onPaid={({ email }) => {
+              if (email) {
+                sessionStorage.setItem('linkedinRoasterEmail', email);
+              }
+              sessionStorage.setItem('linkedinRoasterPaid', 'true');
+              setIsPaid(true);
             }}
           />
         </div>
