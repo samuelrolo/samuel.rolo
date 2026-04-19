@@ -26,7 +26,6 @@ import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerPathPayload } from "@/lib/analysisPayload";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
-import { readEmailGateState } from "@/lib/emailGate";
 import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
@@ -290,7 +289,6 @@ export default function CareerPathResults() {
   // Payment modal
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const lang = getLang();
-  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('career-path-results'));
   const isEN = lang === 'en';
   const careerPathHomePath = '/';
   const isES = lang === 'es';
@@ -1021,7 +1019,7 @@ export default function CareerPathResults() {
     },
   ];
 
-  if (!emailGateState.unlocked) {
+  if (!isPaid) {
     return (
       <div className="min-h-screen bg-background">
         <header className="sticky top-0 z-30 border-b border-foreground/10 bg-background/95 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4">
@@ -1069,18 +1067,12 @@ export default function CareerPathResults() {
           </div>
 
           <EmailResultsGate
-            storageKey="career-path-results"
-            initialEmail={emailGateState.email || localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || ''}
             productLabel={pick('Career Path', 'Career Path', 'Career Path')}
             previewTitle={pick('Tens já uma leitura clara do teu potencial e da próxima direção.', 'You already have a clear reading of your potential and next direction.', 'Ya tienes una lectura clara de tu potencial y de la próxima dirección.')}
             previewDescription={pick('Desbloqueia o relatório completo para veres o roadmap detalhado, os cargos-alvo, as formações recomendadas, a estratégia de networking e o plano de execução por fases.', 'Unlock the full report to view the detailed roadmap, target roles, recommended training, networking strategy and phased execution plan.', 'Desbloquea el informe completo para ver la hoja de ruta detallada, los puestos objetivo, la formación recomendada, la estrategia de networking y el plan de ejecución por fases.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onUnlocked={async (email) => {
-              localStorage.setItem('cpPaymentEmail', email);
-              sessionStorage.setItem('cpPaymentEmail', email);
-              setEmailGateState({ unlocked: true, email });
-            }}
+            onCtaClick={() => openPaymentModal()}
           />
         </main>
       </div>

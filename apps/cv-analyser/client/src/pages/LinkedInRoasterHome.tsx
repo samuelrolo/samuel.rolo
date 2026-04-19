@@ -105,6 +105,22 @@ export default function LinkedInRoasterHome() {
   const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
   const privacyPolicyPath = pick('/politica-privacidade/', '/en/politica-privacidade/', '/es/politica-privacidade/');
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openPayment') !== '1') return;
+
+    const savedEmail = localStorage.getItem('linkedinRoasterEmail') || '';
+    const savedUrl = localStorage.getItem('linkedinRoasterUrl') || '';
+
+    if (savedEmail) setEmail(savedEmail);
+    if (savedUrl) setLinkedinUrl(savedUrl);
+
+    setPaymentStep('payment');
+    setPaymentError(null);
+    setShowPaymentModal(true);
+    window.history.replaceState({}, '', lp('/linkedin-roaster'));
+  }, [lp]);
+
   const verifyStripeSessionPayment = async (sessionId: string) => {
     const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
       method: 'POST',

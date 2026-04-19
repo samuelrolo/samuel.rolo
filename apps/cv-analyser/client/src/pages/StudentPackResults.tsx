@@ -16,7 +16,6 @@ import { t, pick, getLang, localePath } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
-import { readEmailGateState } from "@/lib/emailGate";
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -406,7 +405,6 @@ export default function StudentPackResults() {
 
   const [isPaid, setIsPaid] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
-  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('student-pack-results'));
 
   useEffect(() => {
     let cancelled = false;
@@ -440,9 +438,6 @@ export default function StudentPackResults() {
         if (paymentStatus.success && paymentStatus.paid) {
           setIsPaid(true);
           sessionStorage.setItem('studentPackPaid', 'true');
-        } else if (!(storedPaidFlag && hasAnalysis)) {
-          window.location.href = localePath('/estudante');
-          return;
         }
         setAccessChecked(true);
       }
@@ -509,7 +504,7 @@ export default function StudentPackResults() {
   const [expandedCargo, setExpandedCargo] = useState<number | null>(0);
   const [expandedProblema, setExpandedProblema] = useState<number | null>(null);
 
-  if (!accessChecked || !isPaid) return null;
+  if (!accessChecked) return null;
 
   const hasData = globalScore > 0 || perfil?.nome || Object.keys(auditoria).length > 0;
   const previewTargetRole = Array.isArray(cargosAlvo) && cargosAlvo.length > 0 ? cargosAlvo[0] : null;
@@ -552,7 +547,7 @@ export default function StudentPackResults() {
     },
   ];
 
-  if (!emailGateState.unlocked) {
+  if (!isPaid) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         <S2IHeader activePage="estudante" />
@@ -581,17 +576,15 @@ export default function StudentPackResults() {
           </div>
 
           <EmailResultsGate
-            storageKey="student-pack-results"
-            initialEmail={emailGateState.email || sessionStorage.getItem('studentPackEmail') || localStorage.getItem('studentPackEmail') || ''}
             productLabel={pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')}
             previewTitle={pick('Tens já uma visão muito clara do teu potencial de entrada no mercado.', 'You already have a very clear view of your early-career potential.', 'Ya tienes una visión muy clara de tu potencial de entrada en el mercado.')}
             previewDescription={pick('Desbloqueia o relatório completo para veres a leitura cruzada CV + LinkedIn, os cargos-alvo, a estratégia de keywords, a marca pessoal e o plano de execução dos próximos 90 dias.', 'Unlock the full report to see the cross-checked CV + LinkedIn reading, target roles, keyword strategy, personal brand recommendations and the next 90-day execution plan.', 'Desbloquea el informe completo para ver la lectura cruzada CV + LinkedIn, los puestos objetivo, la estrategia de keywords, la marca personal y el plan de ejecución de los próximos 90 días.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onUnlocked={async (email) => {
-              sessionStorage.setItem('studentPackEmail', email);
-              localStorage.setItem('studentPackEmail', email);
-              setEmailGateState({ unlocked: true, email });
+            onCtaClick={() => {
+              const homePath = localePath('/estudante');
+              const params = new URLSearchParams({ openPayment: '1', fromResults: '1' });
+              window.location.href = `${homePath}?${params.toString()}`;
             }}
           />
         </div>

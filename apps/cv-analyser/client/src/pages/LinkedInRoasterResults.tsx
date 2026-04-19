@@ -18,7 +18,6 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
-import { readEmailGateState } from "@/lib/emailGate";
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -231,9 +230,6 @@ export default function LinkedInRoasterResults() {
         if (paymentStatus.success && paymentStatus.paid) {
           setIsPaid(true);
           sessionStorage.setItem('linkedinRoasterPaid', 'true');
-        } else if (!(storedPaidFlag && hasCachedAnalysis)) {
-          window.location.href = localePath('/linkedin-roaster');
-          return;
         }
         setAccessChecked(true);
       }
@@ -266,9 +262,8 @@ export default function LinkedInRoasterResults() {
 
   const [expandedMelhoria, setExpandedMelhoria] = useState<number | null>(null);
   const [seoTab, setSeoTab] = useState('headline');
-  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('linkedin-roaster-results'));
 
-  if (!accessChecked || !isPaid) return null;
+  if (!accessChecked) return null;
 
   const hasData = notaGeral > 0 || sumario || Object.keys(dimensoes).length > 0;
   const strongestDimension = Object.entries(dimensoes)
@@ -303,7 +298,7 @@ export default function LinkedInRoasterResults() {
     },
   ].filter(Boolean) as Array<{ title: string; description: string; icon?: ReactNode }>;
 
-  if (!emailGateState.unlocked) {
+  if (!isPaid) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         <S2IHeader activePage="linkedin-roaster" />
@@ -334,17 +329,15 @@ export default function LinkedInRoasterResults() {
           </div>
 
           <EmailResultsGate
-            storageKey="linkedin-roaster-results"
-            initialEmail={emailGateState.email || sessionStorage.getItem('linkedinRoasterEmail') || localStorage.getItem('linkedinRoasterEmail') || ''}
             productLabel={pick('LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}
             previewTitle={pick('Já tens um diagnóstico forte do teu perfil LinkedIn.', 'You already have a strong diagnosis of your LinkedIn profile.', 'Ya tienes un diagnóstico sólido de tu perfil de LinkedIn.')}
             previewDescription={sumario || pick('O preview mostra o posicionamento geral, mas o relatório completo detalha secções, benchmark, keywords e ações recomendadas para melhorares a descoberta e a conversão do perfil.', 'The preview shows the overall positioning, but the full report breaks down sections, benchmark, keywords and recommended actions to improve profile discovery and conversion.', 'La vista previa muestra el posicionamiento general, pero el informe completo detalla secciones, benchmark, keywords y acciones recomendadas para mejorar la visibilidad y la conversión del perfil.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onUnlocked={async (email) => {
-              sessionStorage.setItem('linkedinRoasterEmail', email);
-              localStorage.setItem('linkedinRoasterEmail', email);
-              setEmailGateState({ unlocked: true, email });
+            onCtaClick={() => {
+              const homePath = localePath('/linkedin-roaster');
+              const params = new URLSearchParams({ openPayment: '1', fromResults: '1' });
+              window.location.href = `${homePath}?${params.toString()}`;
             }}
           />
         </div>

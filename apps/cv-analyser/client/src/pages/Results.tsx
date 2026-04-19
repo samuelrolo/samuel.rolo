@@ -32,7 +32,6 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { saveToUserAnalyses } from '@/lib/saveToUserAnalyses';
 import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
-import { readEmailGateState } from '@/lib/emailGate';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -359,7 +358,6 @@ export default function Results() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [email, setEmail] = useState("");
-  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('cv-analyser-results'));
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -1960,7 +1958,7 @@ export default function Results() {
     },
   ];
 
-  if (!emailGateState.unlocked) {
+  if (!isPaid) {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b border-foreground/10 px-3 sm:px-6 py-3 sm:py-4 sticky top-0 bg-background/90 backdrop-blur-lg z-50">
@@ -2003,20 +2001,12 @@ export default function Results() {
           </div>
 
           <EmailResultsGate
-            storageKey="cv-analyser-results"
-            initialEmail={emailGateState.email || email || sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail') || ''}
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
             previewTitle={pick('Tens já os sinais certos para perceber o valor do teu resultado.', 'You already have the right signals to understand the value of your result.', 'Ya tienes las señales adecuadas para entender el valor de tu resultado.')}
             previewDescription={pick('Desbloqueia o relatório completo para veres a leitura por quadrantes, o benchmark completo, a percepção do recrutador, a estimativa salarial e o plano de melhoria priorizado.', 'Unlock the full report to view the quadrant reading, full benchmark, recruiter perception, salary estimate and prioritised improvement plan.', 'Desbloquea el informe completo para ver la lectura por cuadrantes, el benchmark completo, la percepción del recruiter, la estimación salarial y el plan de mejora priorizado.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            onUnlocked={async (unlockedEmail) => {
-              setEmail(unlockedEmail);
-              sessionStorage.setItem('paymentEmail', unlockedEmail);
-              localStorage.setItem('paymentEmail', unlockedEmail);
-              updateAnalysisEmail(unlockedEmail);
-              setEmailGateState({ unlocked: true, email: unlockedEmail });
-            }}
+            onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
           />
         </main>
       </div>

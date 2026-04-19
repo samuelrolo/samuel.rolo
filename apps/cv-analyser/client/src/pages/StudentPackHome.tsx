@@ -147,6 +147,26 @@ export default function StudentPackHome() {
   const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
   const finalPriceStr = isPT ? finalPrice.toFixed(2).replace('.', ',') : finalPrice.toFixed(2);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openPayment') !== '1') return;
+
+    const savedEmail = localStorage.getItem('studentPackEmail') || '';
+    const savedLinkedinUrl = localStorage.getItem('studentPackLinkedinUrl') || '';
+    const savedCountry = localStorage.getItem('studentPackCountry') || '';
+    const savedRegion = localStorage.getItem('studentPackRegion') || '';
+
+    if (savedEmail) setEmail(savedEmail);
+    if (savedLinkedinUrl) setLinkedinUrl(savedLinkedinUrl);
+    if (savedCountry) setSelectedCountry(savedCountry);
+    if (savedRegion) setSelectedRegion(savedRegion);
+
+    setPaymentStep('payment');
+    setPaymentError(null);
+    setShowPaymentModal(true);
+    window.history.replaceState({}, '', localePath('/estudante'));
+  }, [localePath]);
+
   const setStudentPackAccessType = (value: 'free' | 'paid_pending' | 'paid_verified') => {
     localStorage.setItem('studentPackAccessType', value);
   };
