@@ -68,6 +68,18 @@
         .article-card ul { margin: .3rem 0 1.2rem 1.2rem; padding: 0; color: #334155; }
         .article-card li { margin: 0 0 .65rem; padding-left: .2rem; }
         .article-card blockquote { margin: 1.3rem 0; padding: 1rem 1.2rem; border-left: 3px solid #C9A961; background: #f8f6f0; color: #1f2937; font-size: 1.02rem; font-weight: 500; }
+
+        .video-card { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 18px; box-shadow: 0 20px 50px rgba(15,23,42,.05); overflow: hidden; }
+        .video-card__frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #0f172a; }
+        .video-card__button { position: relative; display: block; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; background: transparent; }
+        .video-card__button img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .video-card__overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(15,23,42,.12) 0%, rgba(15,23,42,.38) 100%); }
+        .video-card__play { width: 78px; height: 78px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.94); box-shadow: 0 14px 30px rgba(15,23,42,.25); }
+        .video-card__play::before { content: ''; margin-left: 4px; border-style: solid; border-width: 12px 0 12px 20px; border-color: transparent transparent transparent #111827; }
+        .video-card__caption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .95rem 1.1rem; background: #fff; color: #334155; font-size: .9rem; }
+        .video-card__caption strong { color: #111827; }
+        .video-card__caption span { color: #64748b; font-size: .82rem; }
+        .video-card__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
         .share-card { padding: 1.15rem 1.2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
         .share-card strong { font-size: .88rem; color: #475569; }
         .share-links { display: flex; flex-wrap: wrap; gap: .7rem; }
@@ -92,6 +104,7 @@
             .hero h1 { font-size: clamp(1.7rem, 8vw, 2.45rem); }
         }
     </style>
+    <script type="application/ld+json">{"@type":"VideoObject","name":"Why your optimized LinkedIn profile is making you invisible","description":"Companion video to the article on strategic LinkedIn positioning, showing why technical optimisation without a clear value proposition makes you forgettable.","thumbnailUrl":["https://i.ytimg.com/vi/n-2FYE1lAGU/maxresdefault.jpg","https://i.ytimg.com/vi/n-2FYE1lAGU/hqdefault.jpg"],"uploadDate":"2026-04-19","embedUrl":"https://www.youtube-nocookie.com/embed/n-2FYE1lAGU?autoplay=1&rel=0","contentUrl":"https://youtu.be/n-2FYE1lAGU","mainEntityOfPage":"https://www.share2inspire.pt/en/blog/artigos/linkedin-profile-positioning","inLanguage":"en","author":{"@type":"Person","name":"Samuel Rolo"},"publisher":{"@type":"Organization","name":"Share2Inspire","logo":{"@type":"ImageObject","url":"https://www.share2inspire.pt/images/og-share2inspire.png"}},"about":"Why Your &quot;Optimized&quot; LinkedIn Profile Is Actually Making You Invisible: The Strategic Shift from Technical to Tactical","keywords":"A technically optimized LinkedIn profile is no longer enough. Learn why strategic positioning, not profile completion, is what makes you memorable and relevant."}</script>
 </head>
 <body>
     <header class="s2i-kh-header" id="s2i-header">
@@ -171,6 +184,18 @@
     </section>
     <main class="page">
         <div class="article-shell">
+            <section class="video-card">
+                <div class="video-card__frame" data-video-embed data-embed-url="https://www.youtube-nocookie.com/embed/n-2FYE1lAGU?autoplay=1&rel=0">
+                    <button type="button" class="video-card__button" data-video-button aria-label="Watch companion video">
+                        <img src="https://i.ytimg.com/vi/n-2FYE1lAGU/maxresdefault.jpg" alt="Companion video: strategic positioning on LinkedIn" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/n-2FYE1lAGU/hqdefault.jpg';">
+                        <span class="video-card__overlay"><span class="video-card__play" aria-hidden="true"></span></span>
+                    </button>
+                </div>
+                <div class="video-card__caption">
+                    <strong>Watch companion video</strong>
+                    <span>Companion video: strategic positioning on LinkedIn</span>
+                </div>
+            </section>
             <section class="language-links" aria-label="Language versions">
                 <strong>Read in another language</strong>
                 <nav>
@@ -259,5 +284,24 @@
         </div>
     </footer>
     <script defer src="/js/knowledge-hub-navbar.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[data-video-embed]').forEach(function (container) {
+        const button = container.querySelector('[data-video-button]');
+        if (!button) return;
+        button.addEventListener('click', function () {
+          const iframe = document.createElement('iframe');
+          iframe.src = container.getAttribute('data-embed-url');
+          iframe.title = button.getAttribute('aria-label') || 'YouTube video';
+          iframe.loading = 'lazy';
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+          iframe.allowFullscreen = true;
+          container.innerHTML = '';
+          container.appendChild(iframe);
+        }, { once: true });
+      });
+    });
+    </script>
 </body>
 </html>
