@@ -66,9 +66,9 @@ export default function LandingPage() {
       icon: <GraduationCap className="w-6 h-6" />,
       title: pick("Pack Estudante", "Student Pack", "Pack Estudiante"),
       desc: pick(
-        "CV Analyser + LinkedIn Roaster num só pack. Diagnóstico completo por 7,99\u20AC.",
-        "CV Analyser + LinkedIn Roaster in one pack. Full diagnosis for \u20AC7.99.",
-        "CV Analyser + LinkedIn Roaster en un solo pack. Diagnóstico completo por 7,99\u20AC."
+        "CV Analyser + LinkedIn Roaster num só pack. Diagnóstico completo por 6,99\u20AC.",
+        "CV Analyser + LinkedIn Roaster in one pack. Full diagnosis for \u20AC6.99.",
+        "CV Analyser + LinkedIn Roaster en un solo pack. Diagnóstico completo por 6,99\u20AC."
       ),
       link: lp("/estudante"),
       cta: pick("Poupar 43%", "Save 43%", "Ahorrar 43%"),

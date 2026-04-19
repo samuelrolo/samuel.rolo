@@ -1,0 +1,999 @@
+===== apps/cv-analyser/client/src/pages/Home.tsx =====
+33:pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+46:    const sentKey = `welcome_email_sent_${email}`;
+49:    fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+53:        'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+87:    fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
+92:        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+173:      "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+174:      "It was worth far more than the €9.99 I paid. The normal-curve positioning was an eye-opener — I realised I was in the 40th percentile and now I’m in the 75th.",
+175:      "Valía mucho más que los 9,99€ que pagué. El posicionamiento en la curva normal fue revelador: entendí que estaba en el percentil 40 y ahora estoy en el 75."
+184:    price: pick("9,99", "9.99", "9,99"),
+185:    analyses: 1,
+186:    perUnit: pick("9,99", "9.99", "9,99"),
+188:    badge: null,
+200:    price: pick("15,99", "15.99", "15,99"),
+201:    analyses: 3,
+202:    perUnit: pick("5,33", "5.33", "5,33"),
+204:    badge: null,
+206:      pick("3 análises completas", "3 full analyses", "3 análisis completos"),
+209:      pick("Código reutilizável para futuras análises", "Reusable code for future analyses", "Código reutilizable para futuros análisis"),
+216:    price: pick("20,49", "20.49", "20,49"),
+217:    analyses: 5,
+218:    perUnit: pick("4,10", "4.10", "4,10"),
+220:    badge: null,
+222:      pick("5 análises completas", "5 full analyses", "5 análisis completos"),
+225:      pick("Código reutilizável para futuras análises", "Reusable code for future analyses", "Código reutilizable para futuros análisis"),
+242:  { feature: pick("Análise gratuita incluída", "Free analysis included", "Análisis gratuito incluido"), us: true, competitor1: false, competitor2: true },
+247:  { feature: pick("Preço", "Price", "Precio"), usText: pick("Desde €9,99", "From €9.99", "Desde 9,99€"), comp1Text: pick("€19,99/mês", "€19.99/month", "19,99€/mes"), comp2Text: pick("€9,99", "€9.99", "9,99€") },
+311:      const path = `${userId}/cv.${ext}`;
+312:      fetch(`${SUPABASE_URL}/storage/v1/object/user-cvs/${path}`, {
+314:        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
+318:          const storagePath = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${path}`;
+319:          fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}`, {
+321:            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+405:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+416:    if (/^(.)\1{2,}$/.test(localPart)) return { valid: false, error: 'Por favor, usa o teu email verdadeiro.' };
+419:    if (fakeDomains.includes(domain)) return { valid: false, error: 'Por favor, usa o teu email verdadeiro.' };
+436:      if (!validTypes.includes(selectedFile.type)) {
+537:              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+554:            console.warn(`[CV_ENGINE] Tentativa ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
+563:            console.warn(`[CV_ENGINE] Tentativa ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
+623:      // Save to user_analyses for area-cliente dashboard
+654:      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+655:        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+674:          sessionStorage.setItem('transactionId', `COUPON-${code}`);
+686:        setLinkedInVoucherError(pick(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`, `${coupon.discount_percent}% discount applied! It will be used at payment.`, `¡Descuento de ${coupon.discount_percent}% aplicado! Se usará en el pago.`));
+693:      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
+694:        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+702:      const remaining = (voucher.total_analyses || 0) - (voucher.used_analyses || 0);
+704:        setLinkedInVoucherError(pick('Este código já não tem análises disponíveis.', 'This code no longer has analyses available.', 'Este código ya no tiene análisis disponibles.'));
+726:    if (!linkedInUrl.toLowerCase().includes('linkedin.com')) {
+792:              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+806:            console.warn(`[CV_ENGINE] Tentativa LinkedIn ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
+815:            console.warn(`[CV_ENGINE] Tentativa LinkedIn ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
+846:      sessionStorage.setItem('cvText', `LinkedIn Profile URL: ${linkedInUrl}`);
+857:      logAnalysisToSupabase(analysisResult, analysisSource, `LinkedIn: ${linkedInUrl}`);
+883:    if (!liPaywallEmail.includes('@')) {
+899:      const orderId = `LI-${Date.now()}`;
+910:          product: `CV Analyser - ${plan.name} (LinkedIn)`,
+911:          description: `LinkedIn ${plan.name} - ${plan.analyses} análise(s)`,
+922:          const checkRes = await fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`);
+934:      const code = `S2I-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+939:        total_analyses: plan.analyses,
+940:        used_analyses: 0,
+947:      const voucherRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers`, {
+952:          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+961:        const retryPayload = { code, email: liPaywallEmail, total_analyses: plan.analyses, used_analyses: 0, amount_paid: parseFloat(plan.price.replace(',', '.')), voucher_type: 'standard', is_active: true };
+962:        const retryRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers`, {
+967:            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+1002:    if (!voucherEmail.includes('@')) {
+1018:      const orderId = `VC-${Date.now()}`;
+1029:          product: `CV Analyser - ${plan.name} (Voucher)`,
+1030:          description: `Voucher ${plan.name} - ${plan.analyses} análise(s)`,
+1041:          const checkRes = await fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`);
+1053:      const code = `S2I-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+1058:        total_analyses: plan.analyses,
+1059:        used_analyses: 0,
+1066:      const voucherRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers`, {
+1071:          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+1080:        const retryPayload = { code, email: voucherEmail, total_analyses: plan.analyses, used_analyses: 0, amount_paid: parseFloat(plan.price.replace(',', '.')), voucher_type: 'standard', is_active: true };
+1081:        const retryRes = await fetch(`${SUPABASE_URL}/rest/v1/vouchers`, {
+1086:            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+1107:          totalAnalyses: plan.analyses,
+1108:          remainingAnalyses: plan.analyses,
+1143:            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">
+1152:              className={`block w-full rounded-2xl text-center cursor-pointer font-semibold text-base transition-all duration-200 shadow-lg ${
+1266:                    const filePath = `${userId}/cv.pdf`;
+1267:                    const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+1269:                      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+1304:                  ${file ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border hover:border-[#C9A961]/50 hover:bg-muted/50'}
+1352:                        const filePath = `${userId}/cv.pdf`;
+1353:                        const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+1355:                          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+1407:                    <svg className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+1416:                    className={`w-full px-3 py-3 rounded-xl border ${analysisEmailError ? 'border-red-500 ring-2 ring-red-500/30' : 'border-border'} bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]`}
+1514:              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+1572:                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+1597:                    if (emailForLink.includes('@')) {
+1598:                      fetch(`${SUPABASE_URL}/rest/v1/email_links`, {
+1600:                        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+1646:                        className={`p-2 rounded-lg border text-center transition-all text-xs ${
+1652:                        <p className="font-semibold">{plan.price}€</p>
+1653:                        <p className="text-[10px] text-muted-foreground">{pick(`${plan.analyses} análise${plan.analyses > 1 ? 's' : ''}`, `${plan.analyses} analysis${plan.analyses > 1 ? 'es' : ''}`, `${plan.analyses} análisis`)}</p>
+1693:                      <>{pick('Comprar Voucher', 'Buy Voucher', 'Comprar Voucher')} — {pricingPlans[voucherSelectedPlan].price}€</>
+1715:              <div className={`w-11 h-6 rounded-full transition-colors duration-200 flex items-center px-0.5 ${
+1718:                <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+1744:          <div className={`space-y-1 ${!showLinkedIn ? 'hidden md:block' : ''}`}>
+1783:          <div className={`space-y-1 ${!showLinkedIn ? 'hidden md:block' : ''}`}>
+1785:              <svg className="w-4 h-4 text-[#C9A961]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+1794:              className={`w-full px-3 py-2.5 rounded-lg border ${analysisEmailError ? 'border-red-500 ring-2 ring-red-500/30' : 'border-border'} bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]`}
+1807:          <div className={`${!showLinkedIn ? 'hidden md:block' : ''} rounded-lg bg-muted/30 p-4`}>
+1825:              if (linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn) {
+1831:            disabled={loading || !analysisEmail.trim() || !selectedCountry || (!file && !(linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn))}
+1832:            className={`w-full h-12 text-base font-semibold bg-[#C9A961] hover:bg-[#A88B4E] text-white disabled:opacity-50 disabled:cursor-not-allowed ${!showLinkedIn ? 'hidden md:flex' : ''}`}
+1839:            ) : linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn ? (
+1851:                  <svg className="w-6 h-6 text-[#C9A961]" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+1914:                        <p className="text-lg font-bold text-[#C9A961]">{plan.price}€</p>
+1915:                        <p className="text-xs text-white/60">{pick(`${plan.analyses} análise${plan.analyses > 1 ? 's' : ''}`, `${plan.analyses} analysis${plan.analyses > 1 ? 'es' : ''}`, `${plan.analyses} análisis`)}</p>
+1916:                        <p className="text-[10px] text-white/40 mt-0.5">{plan.perUnit}€/un.</p>
+1935:                      {pricingPlans[liPaywallPlan].name} — {pricingPlans[liPaywallPlan].price}€
+1971:                      <>{pick('Comprar e Analisar', 'Buy and Analyse', 'Comprar y Analizar')} — {pricingPlans[liPaywallPlan].price}€</>
+1992:                <div className="h-full bg-[#C9A961] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(((loadingStep + 1) / loadingMessages.length) * 100, 95)}%` }} />
+2027:                      <tr key={i} className={`border-t border-border ${i % 2 === 0 ? '' : 'bg-muted/20'}`}>
+2087:            {pick('O que inclui a análise gratuita?', "What's included in the free analysis?", '¿Qué incluye el análisis gratuito?')}
+2157:              <p className="text-3xl font-bold text-foreground">5.000+</p>
+2167:                  <Star key={i} className={`w-4 h-4 ${i <= 4 ? 'text-[#C9A961] fill-[#C9A961]' : 'text-[#C9A961]/40 fill-[#C9A961]/40'}`} />
+2189:                      <Star key={s} className={`w-4 h-4 ${s <= t.rating ? 'text-[#C9A961] fill-[#C9A961]' : 'text-muted'}`} />
+2222:                <p className="text-sm text-muted-foreground">{pick("Desde €9,99 por análise", "From €9.99 per analysis", "Desde 9,99€ por análisis")}</p>
+2237:                  className={`relative rounded-xl border p-6 space-y-5 ${
+2248:                  {plan.badge && (
+2250:                      {plan.badge}
+2254:                    <h3 className={`text-lg font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{plan.name}</h3>
+2255:                    <p className={`text-sm ${plan.popular ? 'text-white/80' : 'text-muted-foreground'}`}>
+2256:                      {plan.name === 'Completo' ? 'CV + Career Path' : `${plan.analyses} ${plan.analyses === 1 ? pick('Análise Completa', 'Full Analysis', 'Análisis Completo') : pick('Análises Completas', 'Full Analyses', 'Análisis Completos')}`}
+2261:                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{plan.price}€</span>
+2263:                    <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
+2267:                        <>{plan.perUnit}€ {pick('por análise', 'per analysis', 'por análisis')}</>
+2273:                      <li key={j} className={`text-sm flex items-start gap-2 ${plan.popular ? 'text-white/90' : 'text-muted-foreground'}`}>
+2274:                        <CheckCircle2 className={`w-4 h-4 mt-0.5 shrink-0 ${plan.popular ? 'text-white' : 'text-[#C9A961]'}`} />
+2280:                    className={`w-full font-semibold ${
+2308:              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: pick("Preço Justo, Sem Subscrição", "Fair Price, No Subscription", "Precio Justo, Sin Suscripción"), desc: pick("Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.", "Pay only when you need it. No monthly fees, no commitments. From €9.99 per full analysis.", "Paga solo cuando lo necesitas. Sin mensualidades, sin compromisos. Desde €9,99 por análisis completo.") },
+2342:            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+2345:          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">{pick('Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.', 'With a subscription plan, you get weekly CV analyses, Career Path, exclusive content, personalised job feed and much more.', 'Con un plan de suscripción, tienes análisis de CV incluidos cada semana, Career Path, contenidos exclusivos, feed de empleos personalizado y mucho más.')}</p>
+2350:            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
+2352:          <p className="text-xs text-slate-400 mt-3">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
+
+===== apps/cv-analyser/client/src/pages/LinkedInRoasterHome.tsx =====
+21:const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
+23:const PRICE_NUM = 3.99;
+31:  const PRICE = pick('3,99', '3.99', '3.99');
+32:  const priceDisplay = pick(`${PRICE}€`, `€${PRICE}`, `€${PRICE}`);
+104:  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+125:    const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+143:    `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`,
+144:    `Pay €${appliedCoupon ? finalPriceStr : PRICE}`,
+145:    `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`
+150:    return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
+161:    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick("Introduz um email válido", "Enter a valid email", "Introduce un email válido")); return; }
+192:      sendConversion(PRICE_NUM, 'EUR', `roast-${Date.now()}`);
+193:      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Purchase', { value: PRICE_NUM, currency: 'EUR', content_name: 'linkedin_roaster' });
+194:      if (typeof (window as any).umami !== 'undefined') (window as any).umami.track('purchase', { product: 'linkedin_roaster', value: PRICE_NUM, currency: 'EUR' });
+218:        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+230:            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+276:        fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+278:          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+307:      const orderId = `ROAST-${Date.now()}`;
+308:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+311:        body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: PRICE_NUM.toFixed(2), email, product: 'LinkedIn Roaster — Share2Inspire', description: pick('LinkedIn Roaster — Roast Brutal ao Perfil LinkedIn', 'LinkedIn Roaster — Brutal Profile Roast', 'LinkedIn Roaster — Roast Brutal al Perfil LinkedIn') })
+327:      const orderId = `ROAST-${isPT ? '' : lang.toUpperCase() + '-'}${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+330:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+333:        body: JSON.stringify({ email, name: email.split('@')[0], amount: isPT ? PRICE_NUM : finalPrice, currency: 'eur', product_type: 'linkedin_roast', language: lang, description: appliedCoupon ? `LinkedIn Roaster — Share2Inspire (${appliedCoupon.percent}% off)` : pick('LinkedIn Roaster — Roast Brutal — Share2Inspire', 'LinkedIn Roaster — Brutal Profile Roast — Share2Inspire', 'LinkedIn Roaster — Roast Brutal — Share2Inspire'), orderId, success_url: `${window.location.origin}${currentPath}?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${window.location.origin}${currentPath}` }),
+343:    window.open(`https://paypal.me/SamuelRolo/${isPT ? PRICE_NUM : finalPrice}EUR`, '_blank');
+354:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId }) });
+369:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
+378:    fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
+379:      method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+389:      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+405:        ? `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`
+406:        : `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_used=eq.false&select=*`;
+407:      const vRes = await fetch(vQuery, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+415:        fetch(`${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: patchBody }).catch(() => {});
+468:          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{priceDisplay}</span>
+479:          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-300">{pick('Roast em 30 segundos', 'Roast in 30 seconds', 'Roast en 30 segundos')}</p>
+487:          <p className="text-xs text-white/70">{pick(`Apenas ${PRICE}€ · 100% confidencial`, `Only €${PRICE} · 100% confidential`, `Solo ${PRICE}€ · 100% confidencial`)}</p>
+507:                <>Our AI analyses your LinkedIn profile like a senior recruiter with 20 years of experience — and <strong>tells you the truth nobody else will</strong>. In 30 seconds.</>,
+512:            {/* Feature badges */}
+529:              <p className="text-xs text-slate-400 mt-3">{pick(`Apenas ${PRICE}€ · Resultado em 30 segundos · 100% confidencial`, `Only €${PRICE} · Results in 30 seconds · 100% confidential`, `Solo ${PRICE}€ · Resultado en 30 segundos · 100% confidencial`)}</p>
+535:            <div><span className="text-2xl font-bold text-slate-900">{isPT ? '12.847+' : '12,847+'}</span><p className="text-xs text-slate-500">{pick("Perfis roasted", "Profiles roasted", "Perfiles roasted")}</p></div>
+616:                disabled={!isValidLinkedinUrl(linkedinUrl) || !email.includes('@') || loading}
+623:                    ? pick(`Pagar ${finalPriceStr}€ e receber o roast`, `Pay €${finalPriceStr} & get roasted`, `Pagar ${finalPriceStr}€ y recibir el roast`)
+624:                    : pick(`Pagar ${PRICE}€ e receber o roast`, `Pay €${PRICE} & get roasted`, `Pagar ${PRICE}€ y recibir el roast`)
+704:                `Roast completo por apenas ${PRICE}€. Resultado em 30 segundos. Sem rodeios.`,
+705:                `Complete roast for just €${PRICE}. Results in 30 seconds. No sugarcoating.`,
+706:                `Roast completo por solo ${PRICE}€. Resultado en 30 segundos. Sin rodeos.`
+749:                    <span className="text-sm font-bold text-green-800">{finalPriceStr}{isPT ? '€' : ''} {!isPT && '€'}<span className="line-through text-slate-400 font-normal text-xs">{PRICE}{isPT ? '€' : ''}</span></span>
+756:                    <button onClick={() => setPaymentMethod('mbway')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'mbway' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+760:                  <button onClick={() => setPaymentMethod('stripe')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'stripe' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+763:                  <button onClick={() => setPaymentMethod('paypal')} className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${paymentMethod === 'paypal' ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+782:                  {paymentLoading ? pick('A processar...', 'Processing...', 'Procesando...') : pick(`Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`, `Pay €${appliedCoupon ? finalPriceStr : PRICE}`, `Pagar ${appliedCoupon ? finalPriceStr : PRICE}€`)}
+
+===== apps/cv-analyser/client/src/pages/LinkedInRoasterResults.tsx =====
+71:  if (lower.includes('alta') || lower.includes('high')) return 'bg-green-100 text-green-700 border-green-300';
+72:  if (lower.includes('média') || lower.includes('media') || lower.includes('medium')) return 'bg-amber-100 text-amber-700 border-amber-300';
+154:function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, badge }: {
+156:  badge?: React.ReactNode;
+172:          {badge}
+279:    { label: pick('Score geral', 'Overall score', 'Puntuación global'), value: `${notaGeral || 0}/10`, helper: hookVendas || pick('Primeira leitura do posicionamento atual do perfil.', 'First reading of the current profile positioning.', 'Primera lectura del posicionamiento actual del perfil.') },
+281:    { label: pick('Benchmark', 'Benchmark', 'Benchmark'), value: percentileValue ? `Top ${100 - percentileValue}%` : pick('Setor identificado', 'Sector identified', 'Sector identificado'), helper: benchmarking?.setor ? pick(`Comparação com ${benchmarking.setor}.`, `Comparison with ${benchmarking.setor}.`, `Comparación con ${benchmarking.setor}.`) : pick('Comparação com perfis semelhantes.', 'Comparison with similar profiles.', 'Comparación con perfiles similares.') },
+286:      description: `${dimensionLabels[strongestDimension[0]] || strongestDimension[0]} · ${strongestDimension[1]?.score || 0}/10`,
+291:      description: `${sectionLabels[weakestSection[0]] || weakestSection[0]} · ${weakestSection[1]?.score || 0}/10`,
+340:              window.location.href = `${homePath}?${params.toString()}`;
+412:                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${visibilityColor(visibilidade)}`}>
+434:                badge={<span className="text-sm font-bold text-slate-400">{Object.keys(dimensoes).length} {pick('dimensões', 'dimensions', 'dimensiones')}</span>}>
+450:                      <div key={key} className={`rounded-xl p-4 border ${scoreBg(sec.score)} transition-all hover:shadow-md`}>
+455:                        <p className={`text-2xl font-bold mb-1 ${scoreColor(sec.score)}`}>{sec.score}<span className="text-xs text-slate-400">/10</span></p>
+466:              <Section title={pick('Benchmarking', 'Benchmarking', 'Benchmarking')} subtitle={pick(`Comparação com profissionais de ${benchmarking.setor}`, `Comparison with professionals in ${benchmarking.setor}`, `Comparación con profesionales de ${benchmarking.setor}`)} icon={TrendingUp} defaultOpen={true}
+467:                badge={<span className={`text-sm font-bold ${scoreColor(benchmarking.percentil_estimado || 0, 100)}`}>{pick(`Top ${100 - (benchmarking.percentil_estimado || 50)}%`, `Top ${100 - (benchmarking.percentil_estimado || 50)}%`, `Top ${100 - (benchmarking.percentil_estimado || 50)}%`)}</span>}>
+472:                      <span className="text-sm font-semibold text-slate-700">{pick(`Percentil no setor ${benchmarking.setor}`, `Percentile in the ${benchmarking.setor} sector`, `Percentil en el sector ${benchmarking.setor}`)}</span>
+473:                      <span className={`text-2xl font-bold ${scoreColor(benchmarking.percentil_estimado || 0, 100)}`}>{benchmarking.percentil_estimado || 0}%</span>
+477:                        style={{ width: `${benchmarking.percentil_estimado || 0}%` }} />
+479:                    <p className="text-xs text-slate-500 mt-2">{pick(`Estás melhor que ${benchmarking.percentil_estimado}% dos perfis analisados neste setor`, `You perform better than ${benchmarking.percentil_estimado}% of analysed profiles in this sector`, `Estás mejor que el ${benchmarking.percentil_estimado}% de los perfiles analizados en este sector`)}</p>
+563:                badge={seoLinkedin.densidade_score ? <span className={`text-sm font-bold ${scoreColor(seoLinkedin.densidade_score)}`}>{seoLinkedin.densidade_score}/10</span> : undefined}>
+570:                        <span className={`text-xl font-bold ${scoreColor(seoLinkedin.densidade_score)}`}>{seoLinkedin.densidade_score}/10</span>
+574:                          style={{ width: `${(seoLinkedin.densidade_score / 10) * 100}%` }} />
+579:                  {/* Keywords badges */}
+620:                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${seoTab === tab ? 'bg-orange-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+707:              <p className="text-xs text-slate-500 mb-4">{pick('O Pack Estudante combina análise CV + LinkedIn num só relatório cruzado por apenas 7,99€.', 'The Student Pack combines CV + LinkedIn analysis in a single cross-checked report for only €7.99.', 'El Pack Estudiante combina análisis de CV + LinkedIn en un único informe cruzado por solo 7,99€.')}</p>
+725:    <div className={`rounded-xl border transition-all ${expanded ? 'bg-orange-50/30 border-orange-200' : 'border-slate-200 hover:border-orange-200'}`}>
+730:            <span className={`text-lg font-bold ${scoreColor(score)}`}>{score}<span className="text-xs text-slate-400">/10</span></span>
+733:            <div className={`h-full rounded-full transition-all duration-700 ${score >= 7 ? 'bg-green-500' : score >= 5 ? 'bg-amber-500' : 'bg-red-500'}`}
+734:              style={{ width: `${(score / 10) * 100}%` }} />
+
+===== apps/cv-analyser/client/src/pages/CareerPathHome.tsx =====
+3:// Preço: €19,99
+28:pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+76:const PRICE_DISPLAY_BASE = '19,99€';
+77:const PRICE_DISPLAY_GROWTH = '19,99€';
+78:const PRICE_DISPLAY_PRO = '19,99€';
+124:    return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
+148:      const computedLocation = region ? `${region}, ${country}` : country;
+237:  const PRICE = pick('19,99', '19.99', '19,99');
+238:  const PRICE_NUM = 19.99;
+239:  const PRICE_DISPLAY = `${CUR}${PRICE}`;
+241:  const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
+249:      if (!validTypes.includes(selectedFile.type)) {
+274:        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+275:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+291:          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+294:          localStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
+303:        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
+304:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+310:        if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já não tem utilizações disponíveis', 'This code has no uses left', 'Este código ya no tiene usos disponibles')); return; }
+311:        if (v.voucher_type !== 'career_path' && !v.includes_career_path) { setDiscountError(pick('Este código não é válido para o Career Path', 'This code is not valid for Career Path', 'Este código no es válido para Career Path')); return; }
+313:          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+316:            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+317:            body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+322:        localStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
+343:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+386:          const computedLocation = region ? `${region}, ${country}` : country;
+406:              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+422:            console.warn(`[CAREER_PATH] Tentativa ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
+428:            console.warn(`[CAREER_PATH] Tentativa ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
+455:      const currentLocation = region ? `${region}, ${country}` : country;
+510:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+518:      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+522:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+527:          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
+551:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+556:    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}EUR`, '_blank');
+559:    trackPurchase('career_path', FINAL_PRICE, `CP-PAYPAL-${Date.now()}`);
+560:    trackAffiliateConversion({ product: 'career_path', amount: FINAL_PRICE, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+565:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+571:      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+573:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+587:          success_url: `${window.location.origin}${localePath('/career-path/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+588:          cancel_url: `${window.location.origin}${localePath('/career-path')}`,
+618:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+677:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+717:              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">
+731:                {pick(`Pagamento único de ${PRICE_DISPLAY} · Sem subscrição`, `One-time payment of ${PRICE_DISPLAY} · No subscription`, `Pago único de ${PRICE_DISPLAY} · Sin suscripción`)}
+744:                {pick('A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.', 'Our AI analyses your CV and LinkedIn to map your career roadmap with the highest growth potential — in less than 1 minute.', 'Nuestra IA analiza tu CV y LinkedIn para trazar tu roadmap de carrera con mayor potencial de crecimiento — en menos de 1 minuto.')}
+756:                <p className="text-xs text-muted-foreground">{pick(`Pagamento único de ${PRICE_DISPLAY} · Sem subscrição · Resultado em menos de 1 minuto`, `One-time payment of ${PRICE_DISPLAY} · No subscription · Results in less than 1 minute`, `Pago único de ${PRICE_DISPLAY} · Sin suscripción · Resultado en menos de 1 minuto`)}</p>
+759:              {/* Trust badges — inline */}
+765:                ].map((badge, i) => (
+767:                    <span className="text-[#C9A961]">{badge.icon}</span>
+768:                    {badge.label}
+820:              ].map((badge, i) => (
+822:                  <span className="text-[#C9A961]">{badge.icon}</span>
+823:                  <span className="text-xs font-medium text-muted-foreground">{badge.label}</span>
+857:                  { step: "2", title: pick("A IA analisa tudo", "AI analyses everything", "La IA analiza todo"), desc: pick("Cruzamos experiência, competências e mercado.", "We cross-reference experience, skills and market.", "Cruzamos experiencia, competencias y mercado."), time: pick("30 seg", "30 sec", "30 seg") },
+880:                  {pick('O', 'The', 'El')} <strong className="text-foreground">{pick("Career Intelligence", "Career Intelligence", "Career Intelligence")}</strong> {pick('compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.', 'compares multiple strategic career directions side by side, analyses trade-offs and gives you a well-founded recommendation — to decide with confidence.', 'compara múltiples direcciones estratégicas de carrera lado a lado, analiza trade-offs y te da una recomendación fundamentada — para decidir con confianza.')}
+889:                    <p className="text-xs text-muted-foreground mt-2 flex-1">{pick(`Obtém o teu Career Path por ${PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.`, `Get your Career Path for ${PRICE_DISPLAY} and upgrade to Career Intelligence for just €29.`, `Obtén tu Career Path por ${PRICE_DISPLAY} y haz upgrade a Career Intelligence por solo 29€.`)}</p>
+892:                      <span className="text-xs text-muted-foreground">{pick('depois +€29 upgrade', 'then +€29 upgrade', 'luego +29€ upgrade')}</span>
+903:                      <span className="text-lg font-bold text-purple-600">{pick('€49', '€49', '49€')}</span>
+941:              <p className="text-muted-foreground">{pick(`Análise completa por ${PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.`, `Complete analysis for ${PRICE_DISPLAY}. One-time payment. No subscription. Results in less than 1 minute.`, `Análisis completo por ${PRICE_DISPLAY}. Pago único. Sin suscripción. Resultado en menos de 1 minuto.`)}{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">({pick('desconto de membro', 'member discount', 'descuento de miembro')} {pick(memberTier === 'pro' ? 'Pro' : 'Growth', memberTier === 'pro' ? 'Pro' : 'Growth', memberTier === 'pro' ? 'Pro' : 'Growth')})</span>}</p>
+966:                  className={`relative block w-full border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${file ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border hover:border-[#C9A961]/50 hover:bg-muted/50'}`}
+1033:                      className={`p-2.5 rounded-lg border text-xs font-medium transition-all text-left ${
+1128:                    <div className="h-full bg-[#C9A961] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(((loadingStep + 1) / loadingMessages.length) * 100, 95)}%` }} />
+1231:                {pick(`Desbloquear Career Path — ${CUR}${PRICE}`, `Unlock Career Path — ${CUR}${PRICE}`, `Desbloquear Career Path — ${CUR}${PRICE}`)}
+1266:                      <p className="text-xs text-muted-foreground line-through">{PRICE}€</p>
+1267:                      <p className="text-lg font-bold text-[#C9A961]">{FINAL_PRICE_DISPLAY}€</p>
+1271:                    <p className="text-lg font-bold text-[#C9A961]">{PRICE}€</p>
+1299:                {discountValid && <p className="text-xs text-green-600 font-semibold">{pick(`Desconto de ${discountPercent}% aplicado!`, `${discountPercent}% discount applied!`, `¡Descuento del ${discountPercent}% aplicado!`)}</p>}
+1325:                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+1369:                      className={`flex-1 font-semibold text-white ${
+1373:                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${FINAL_PRICE_DISPLAY}`}
+1390:                      localStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+1450:          <p className="text-sm text-slate-500 mb-4 leading-relaxed">{pick('Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.', 'With a Growth or Pro plan, get Career Path included monthly + weekly CV Analyser, exclusive content and much more.', 'Con un plan Growth o Pro, tienes Career Path incluido mensualmente + CV Analyser semanal, contenidos exclusivos y mucho más.')}</p>
+1455:            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
+1457:          <p className="text-xs text-slate-400 mt-3">{pick('Career Path incluído a partir do plano Growth (19,99€/mês)', 'Career Path included from the Growth plan (€19.99/month)', 'Career Path incluido a partir del plan Growth (19,99€/mes)')}</p>
+
+===== apps/cv-analyser/client/src/pages/CareerPathResults.tsx =====
+2:// Mostra preview gratuito + desbloqueia roadmap completo por €19,99
+103:    fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
+108:        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+123:        payment_amount: paymentId?.startsWith('CP-VOUCHER') ? 0 : 19.99,
+143:    <div className={`${size} rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0`}>
+229:function getPlans(en: boolean, cur = '€', p = en ? { cv: '19.99', cp: '19.99' } : { cv: '19,99', cp: '19,99' }) {
+236:      badge: null,
+297:  const selectedLocation = getFirstStoredValue(['analysisLocation'], localStorage, sessionStorage) || (selectedRegion && selectedCountry ? `${selectedRegion}, ${selectedCountry}` : selectedCountry || selectedRegion || '');
+305:    ? { cv: '9.99', cp: '19.99' }
+306:    : { cv: '9,99', cp: '19,99' };
+310:  const fmtPrice = (price: string | number) => pick(`${price}€`, `€${price}`, `${price}€`);
+316:      .replace(/€€+/g, '€')
+317:      .replace(/\$\$+/g, '$')
+329:    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
+330:    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
+331:    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
+337:    if (['alta', 'high'].includes(normalized)) return pick('Alta', 'High', 'Alta');
+338:    if (['média', 'media', 'medium'].includes(normalized)) return pick('Média', 'Medium', 'Media');
+339:    if (['baixa', 'low'].includes(normalized)) return pick('Baixa', 'Low', 'Baja');
+345:    if (['alta', 'high'].includes(normalized)) return 'bg-red-500/10 text-red-500 border border-red-500/20';
+346:    if (['média', 'media', 'medium'].includes(normalized)) return 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
+446:      const currentLocation = (localStorage.getItem('analysisLocation') || sessionStorage.getItem('analysisLocation')) || (currentRegion && currentCountry ? `${currentRegion}, ${currentCountry}` : currentCountry || currentRegion || undefined);
+475:      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+478:          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+502:      // Save to user_analyses for area-cliente
+602:      bootstrapPaidAccess(`stored-paid:${getFirstStoredValue(['cpOrderId', 'stripeSessionId']) || 'career-path'}`);
+613:      bootstrapPaidAccess(`stripe-return:${sessionId}`);
+623:            trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
+624:            trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: t('eur'), payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
+646:      bootstrapPaidAccess(`verified:${paymentVerification.session_id || paymentVerification.order_id || 'career-path'}`);
+665:        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+666:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+679:          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+695:        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
+696:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+702:      if (v.used_analyses >= v.total_analyses) throw new Error(t('este_cdigo_j_no_tem_2'));
+703:      if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error(t('este_cdigo_no_vlido_para'));
+705:        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+708:          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+709:          body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+736:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+743:      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+747:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+752:          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
+756:          description: appliedCoupon ? `Share2Inspire - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `Share2Inspire - ${selectedPlan.name}`,
+776:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+780:    window.open(`https://paypal.me/SamuelRolo/${getDiscountedPriceNum(selectedPlan.price)}${CURRENCY_CODE}`, '_blank');
+786:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+791:      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+794:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+807:          success_url: `${window.location.origin}${localePath('/career-path/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+808:          cancel_url: `${window.location.origin}${localePath('/career-path/results')}?payment=cancelled`
+842:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+873:            console.log(`[CP-POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s)`);
+907:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+947:      await fetch(`${BACKEND_URL}/api/payment/${cpEmailRoute}`, {
+995:      value: `${previewScore}/100`,
+1049:          <div className="relative overflow-hidden rounded-2xl border border-[#C9A961]/20 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03] px-3 sm:px-8 py-5 sm:py-10">
+1050:            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
+1150:          <div className="absolute inset-0 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03]" />
+1151:          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
+1223:                  style={{ width: `${Math.min(((genStep + 1) / genMessages.length) * 100, 95)}%` }}
+1269:                            strokeDasharray={`${(energyScore / 100) * 327} 327`} />
+1295:                          { path: cvAnalysis.perceivedRole ? pick(`Líder de ${cvAnalysis.perceivedRole}`, `${cvAnalysis.perceivedRole} Lead`, `Líder de ${cvAnalysis.perceivedRole}`) : pick('Transformação Digital Lead', 'Digital Transformation Lead', 'Líder de Transformación Digital'), fit: Math.min(energyScore + 15, 95) },
+1296:                          { path: cvAnalysis.keywords?.[0] ? pick(`Especialista em ${cvAnalysis.keywords[0]}`, `${cvAnalysis.keywords[0]} Specialist`, `Especialista en ${cvAnalysis.keywords[0]}`) : pick('People Analytics', 'People Analytics', 'People Analytics'), fit: Math.min(energyScore + 8, 90) },
+1395:                        {pick(`Desbloquear Career Path Completo — ${fmtPrice(P.cp)}`, `Unlock Full Career Path — ${fmtPrice(P.cp)}`, `Desbloquear Career Path Completo — ${fmtPrice(P.cp)}`)}
+1425:                              <div className="h-full bg-[#C9A961] rounded-full" style={{ width: `${f.val}%` }} />
+1450:            {/* What's included preview (when paid but no data yet) */}
+1540:                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+1616:                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}${selectedLocation ? `&location=${encodeURIComponent(selectedLocation)}` : selectedCountry ? `&location=${encodeURIComponent(selectedCountry)}` : ''}`}
+1622:                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Buscar "${role.role_title}" en LinkedIn`)}
+1645:                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(f.priority)}`}>{translatePriorityLabel(f.priority)}</span>
+1651:                          href={`https://www.google.com/search?q=${encodeURIComponent(f.name + ' ' + (f.provider || '') + ' curso')}`}
+1659:                          href={`https://www.coursera.org/search?query=${encodeURIComponent(f.name)}`}
+1667:                          href={`https://www.udemy.com/courses/search/?q=${encodeURIComponent(f.name)}`}
+1705:                      ? `${platformBase}${encodeURIComponent(query)}`
+1706:                      : `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (fc.platform || '') + ' free course')}`;
+1719:                          {fc.duration && ` · ${fc.duration}`}
+1751:                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${getPriorityTone(c.priority)}`}>{translatePriorityLabel(c.priority)}</span>
+1883:                href={t('careerintelligenceupgradecareerpath')}
+2003:              const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
+2009:                  `Acabei de ter a minha carreira analisada pelo Career Path da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me uma visão clara e baseada em dados sobre a minha trajectória de carreira, próximos cargos e competências a desenvolver.\n\nSe estás a pensar no teu próximo passo de carreira — recomendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesenvolvimentoProfissional #Carreira #Share2Inspire`,
+2010:                  `I just had my career analysed by @share2inspire_'s AI Career Path tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me a clear, data-driven view of my career trajectory, next roles, and what skills to develop.\n\nIf you're thinking about your next career move — I highly recommend it.\n\n🔗 ${shareUrl}\n\n#CareerPath #CareerDevelopment #ProfessionalGrowth #Share2Inspire`,
+2011:                  `Acabo de tener mi carrera analizada por la herramienta AI Career Path de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio una visión clara y basada en datos sobre mi trayectoria profesional, próximos roles y competencias a desarrollar.\n\nSi estás pensando en tu próximo paso profesional — lo recomiendo.\n\n🔗 ${shareUrl}\n\n#CareerPath #DesarrolloProfesional #Carrera #Share2Inspire`
+2064:                ctx.fillText(`${score}/100`, 90, 280);
+2077:                ctx.fillText(pick(`Top ${topPct}%`, `Top ${topPct}%`, `Top ${topPct}%`), 400, 280);
+2095:                    ctx.fillText(`${t('ano')} ${stage.timeline || i + 1}`, 90, y + 12);
+2122:                ctx.fillText(`${score}`, cx, cy + 12);
+2136:                 ctx.fillText(pick(`Career Path • ${today}`, `Career Path • ${today}`, `Career Path • ${today}`), 230, 600);
+2216:                  className={`relative p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+2223:                  {plan.badge && (
+2225:                      {plan.badge}
+2238:                      className={`w-full text-sm font-semibold ${
+2281:                    className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
+2295:                            <p className="text-sm line-through text-muted-foreground">{fmtPrice(plan.price)}</p>
+2301:                        {plan.badge && <span className="text-[10px] font-bold text-[#C9A961]">{plan.badge}</span>}
+2312:                  <>{pick(`Continuar com ${selectedPlan.name}`, `Continue with ${selectedPlan.name}`, `Continuar con ${selectedPlan.name}`)} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</>
+2314:                  pick(`Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`, `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`)
+2326:                    <p className="text-sm line-through text-muted-foreground">{fmtPrice(selectedPlan.price)}</p>
+2351:                <div className={`grid gap-2 ${lang === 'pt' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+2371:                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+2374:                            : `border-border text-muted-foreground ${hoverClass}`
+2416:                  className={`flex-1 font-semibold text-white ${
+2421:                    pick(`Pagar ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`, `Pay ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`, `Pagar ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`)
+2423:                    pick(`Pagar ${fmtPrice(selectedPlan.price)}`, `Pay ${fmtPrice(selectedPlan.price)}`, `Pagar ${fmtPrice(selectedPlan.price)}`)
+
+===== apps/cv-analyser/client/src/pages/CareerIntelligenceHome.tsx =====
+1:// Career Intelligence — Standalone (49€)
+29:pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+35:/** Save analysis to user_analyses for area-cliente dashboard */
+93:    text: pick("Estava indeciso entre Product Manager e Engineering Manager. Em vez de meses a pesquisar, tive a resposta em 1 minuto — com dados concretos de mercado e trade-offs claros.", "I was undecided between Product Manager and Engineering Manager. Instead of months researching, I got the answer in 1 minute — with concrete market data and clear trade-offs.", "Estaba indeciso entre Product Manager e Engineering Manager. En vez de meses investigando, tuve la respuesta en 1 minuto — con datos concretos de mercado y trade-offs claros."),
+104:const PRICE_DISPLAY_BASE = '49,99€';
+105:const PRICE_BASE = '49,99';
+106:const PRICE_NUM_BASE = 49.99;
+107:const PRICE_DISPLAY_UPGRADE = '29€';
+108:const PRICE_UPGRADE = '29,00';
+109:const PRICE_NUM_UPGRADE = 29.00;
+110:const PRICE_DISPLAY_MEMBER_PRO = '9,99€';
+111:const PRICE_MEMBER_PRO = '9,99';
+112:const PRICE_NUM_MEMBER_PRO = 9.99;
+125:  const careerPathOfferText = pick('Career Path por 19,99€ →', 'Career Path for €19.99 →', 'Career Path por 19,99€ →');
+127:  const discountAppliedText = (percent: number) => pick(`Desconto de ${percent}% aplicado!`, `${percent}% discount applied!`, `¡Descuento de ${percent}% aplicado!`);
+136:  // Detect upgrade from Career Path (via URL param or sessionStorage)
+139:    if (params.get('upgrade') === 'careerpath') return true;
+149:  const PRICE_NUM = isMemberPro ? PRICE_NUM_MEMBER_PRO : isUpgrade ? PRICE_NUM_UPGRADE : PRICE_NUM_BASE;
+178:    return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
+281:  const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
+289:      if (!validTypes.includes(selectedFile.type)) {
+314:      const couponRes = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
+329:        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+330:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+360:        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
+361:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+367:        if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já não tem utilizações disponíveis', 'This code has no uses left', 'Este código ya no tiene usos disponibles')); return; }
+368:        if (v.voucher_type !== 'career_intelligence_full' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
+373:          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+376:            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+377:            body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+389:        localStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
+391:        trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: 'EUR', payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
+412:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+468:              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+556:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+563:      const orderId = `CI-FREE-${Date.now()}`;
+575:      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+579:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+584:          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
+612:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+626:    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE.toFixed(2)}EUR`, '_blank');
+629:    const txId = `CI-PAYPAL-${Date.now()}`;
+636:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+652:      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+653:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+667:          success_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+668:          cancel_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=cancelled`,
+696:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+763:    // Save to user_analyses for area-cliente dashboard
+783:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+828:              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">
+842:                {pick(`Análise completa por ${PRICE_DISPLAY}`, `Complete analysis for ${PRICE_DISPLAY}`, `Análisis completo por ${PRICE_DISPLAY}`)}
+855:                {pick('A nossa IA analisa o teu CV e LinkedIn, compara os 3 caminhos de carreira com maior potencial e entrega uma recomendação final — com dados, não com intuição.', 'Our AI analyses your CV and LinkedIn, compares the 3 career paths with the most potential and delivers a final recommendation — with data, not intuition.', 'Nuestra IA analiza tu CV y LinkedIn, compara los 3 caminos de carrera con mayor potencial y entrega una recomendación final — con datos, no con intuición.')}
+867:                <p className="text-xs text-muted-foreground">{pick('Análise completa por', 'Complete analysis for', 'Análisis completo por')} {PRICE_DISPLAY} · {pick('Pagamento único', 'One-time payment', 'Pago único')} · {pick('Resultado em menos de 1 minuto', 'Result in less than 1 minute', 'Resultado en menos de 1 minuto')}{isUpgrade && <span className="ml-1 text-green-600 font-medium">({pick('preço upgrade Career Path', 'Career Path upgrade price', 'precio upgrade Career Path')})</span>}</p>
+870:              {/* Trust badges inline */}
+876:                ].map((badge, i) => (
+878:                    <span className="text-[#C9A961]">{badge.icon}</span>
+879:                    {badge.label}
+885:            {/* What's included — simplified */}
+928:                  style={{ background: 'rgba(201,169,97,0.07)' }}
+946:                  { step: "2", title: pick('A IA analisa tudo', 'AI analyses everything', 'La IA analiza todo'), desc: pick('Cruzamos experiência, competências, mercado e probabilidades.', 'We cross-reference experience, skills, market and probabilities.', 'Cruzamos experiencia, competencias, mercado y probabilidades.'), time: pick('30 seg', '30 sec', '30 seg') },
+966:                {pick('Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por', 'A career coach charges between €300 and €600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and well-founded recommendation — for', 'Un coach de carrera cobra entre 300€ y 600€ por sesión para ayudarte a decidir. El Career Intelligence entrega el mismo análisis — con datos objetivos, comparación estructurada y recomendación fundamentada — por')} <strong className="text-[#C9A961]">{PRICE_DISPLAY}</strong>.
+994:              <p className="text-muted-foreground">{pick('Diagnóstico completo + decisão estratégica por', 'Complete diagnosis + strategic decision for', 'Diagnóstico completo + decisión estratégica por')} {PRICE_DISPLAY}. {pick('Pagamento único. Sem subscrição.', 'One-time payment. No subscription.', 'Pago único. Sin suscripción.')}</p>
+1023:                  className={`relative block w-full border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${file ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border hover:border-[#C9A961]/50 hover:bg-muted/50'}`}
+1109:                      className={`p-2.5 rounded-lg border text-xs font-medium transition-all text-left ${
+1201:                    <div className="h-full bg-[#C9A961] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(((loadingStep + 1) / loadingMessages.length) * 100, 95)}%` }} />
+1295:                {pick(`Desbloquear Career Intelligence — ${CUR}${PRICE}`, `Unlock Career Intelligence — ${CUR}${PRICE}`, `Desbloquear Career Intelligence — ${CUR}${PRICE}`)}
+1330:                      <p className="text-xs text-muted-foreground line-through">{PRICE_DISPLAY}</p>
+1331:                      <p className="text-lg font-bold text-[#C9A961]">{FINAL_PRICE_DISPLAY}€</p>
+1389:                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+1428:                      className={`flex-1 font-semibold text-white ${
+1432:                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${FINAL_PRICE_DISPLAY}`}
+1450:                      localStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
+1501:          <p className="text-sm text-slate-500 mb-4 leading-relaxed">{pick('Com o plano Pro, tens Career Intelligence incluído mensalmente + todas as outras ferramentas, conteúdos exclusivos e muito mais.', 'With the Pro plan, you get Career Intelligence included monthly + all other tools, exclusive content and much more.', 'Con el plan Pro, tienes Career Intelligence incluido mensualmente + todas las demás herramientas, contenidos exclusivos y mucho más.')}</p>
+1506:            {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
+1508:          <p className="text-xs text-slate-400 mt-3">{pick('Career Intelligence incluído no plano Pro (39,99€/mês)', 'Career Intelligence included in the Pro plan (€39.99/month)', 'Career Intelligence incluido en el plan Pro (39,99€/mes)')}</p>
+
+===== apps/cv-analyser/client/src/pages/CareerIntelligenceResults.tsx =====
+94:    <div className={`${size} rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0`}>
+241:  /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
+244:    let cleaned = s.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+246:      cleaned = cleaned.replace(/\$/g, '€');
+249:      cleaned = cleaned.replace(/\$/g, '€');
+252:    cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+273:    if (minLabel && maxLabel) return `${minLabel} - ${maxLabel}`;
+302:      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+305:          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+332:      // Save to user_analyses for area-cliente
+479:            trackPurchase('career_intelligence_full', stripeAmount, `CI-STRIPE-${sessionId}`);
+480:            trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount, currency: t('eur'), payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
+501:        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+502:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+516:          trackPurchase('career_intelligence_full', 0, `COUPON-${code}`);
+517:          trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+534:        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
+535:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+541:        if (v.used_analyses >= v.total_analyses) { setDiscountError(t('este_cdigo_j_no_tem_2')); return; }
+546:          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+549:            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+550:            body: JSON.stringify({ used_analyses: (v.used_analyses || 0) + 1, is_active: ((v.used_analyses || 0) + 1) < v.total_analyses }),
+553:        trackPurchase('career_intelligence_full', 0, `CI-VOUCHER-${code}`);
+554:        trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: t('eur'), payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
+574:  const CI_PRICE_DISPLAY = pick(`${CI_PRICE}€`, `€${CI_PRICE}`, `${CI_PRICE}€`);
+589:      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+592:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+597:          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
+622:      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+623:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+634:          success_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+635:          cancel_url: `${window.location.origin}${localePath('/career-intelligence/results')}?payment=cancelled`,
+654:    window.open(`https://paypal.me/SamuelRolo/${CI_PRICE}${CURRENCY_CODE}`, '_blank');
+667:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+700:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+742:      await fetch(`${BACKEND_URL}/api/payment/${ciEmailRoute}`, {
+843:          <div className="absolute inset-0 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03]" />
+844:          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
+904:                {pick(`Passo ${genStep + 1} de ${genMessages.length}`, `Step ${genStep + 1} of ${genMessages.length}`, `Paso ${genStep + 1} de ${genMessages.length}`)}
+911:                  style={{ width: `${Math.min(((genStep + 1) / genMessages.length) * 100, 95)}%` }}
+1298:              const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
+1303:                  `Acabei de ter a minha carreira analisada estrategicamente pelo Career Intelligence da @share2inspire_, com recurso a inteligência artificial.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% dos profissionais analisados.\n\nEsta análise deu-me 3 caminhos estratégicos de carreira, uma comparação completa com trade-offs e uma recomendação clara sobre qual caminho seguir.\n\nSe estás a decidir o teu próximo passo de carreira — recomendo.\n\n🔗 https://share2inspire.pt/career-intelligence\n\n#CareerIntelligence #EstratégiaDeCarreira #Carreira #Share2Inspire`,
+1304:                  `I just had my career strategically analysed by @share2inspire_'s AI Career Intelligence tool.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% of analysed professionals.\n\nThis gave me 3 strategic career paths, a full comparison with trade-offs, and a clear recommendation on which path to take.\n\nIf you're deciding your next career move — I highly recommend it.\n\n🔗 https://share2inspire.pt/en/career-intelligence\n\n#CareerIntelligence #CareerStrategy #ProfessionalGrowth #Share2Inspire`,
+1305:                  `Acabo de analizar estratégicamente mi carrera con la herramienta de IA Career Intelligence de @share2inspire_.\n\nCareer Potential Score: ${score}/100 — ${label}\nTop ${topPct}% de los profesionales analizados.\n\nEste análisis me dio 3 caminos estratégicos de carrera, una comparación completa con trade-offs y una recomendación clara sobre qué camino seguir.\n\nSi estás decidiendo tu próximo paso profesional — lo recomiendo.\n\n🔗 https://share2inspire.pt/career-intelligence\n\n#CareerIntelligence #EstrategiaProfesional #Carrera #Share2Inspire`
+1354:                ctx.fillText(`${score}/100`, 90, 280);
+1367:                ctx.fillText(`Top ${topPct}%`, 400, 280);
+1385:                    ctx.fillText(`${t('caminho_2')} ${i + 1}`, 90, y + 12);
+1412:                ctx.fillText(`${score}`, cx, cy + 12);
+1426:                ctx.fillText(`Career Intelligence • ${today}`, 230, 600);
+1498:            {/* What's included */}
+1525:                  {pick(`Desbloquear Career Intelligence — ${CI_PRICE_DISPLAY}`, `Unlock Career Intelligence — ${CI_PRICE_DISPLAY}`, `Desbloquear Career Intelligence — ${CI_PRICE_DISPLAY}`)}
+1587:                      className={`p-2.5 rounded-lg border text-xs font-semibold transition-all ${
+1636:                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (pick(`Pagar ${CI_PRICE_DISPLAY}`, `Pay ${CI_PRICE_DISPLAY}`, `Pagar ${CI_PRICE_DISPLAY}`))}
+
+===== apps/cv-analyser/client/src/pages/StudentPackHome.tsx =====
+26:pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+32:const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
+33:const PRICE_NUM = 7.99;
+34:const PRICE_PT = '7,99';
+35:const PRICE_ORIGINAL_PT = '13,98';
+36:const PRICE_ORIGINAL_EN = '13.98';
+147:  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+185:    await fetch(`${BACKEND_URL}/api/cv-analysis/log`, {
+217:  const isValidLinkedinUrl = (url: string) => url.trim().toLowerCase().includes('linkedin.com/in/') && url.trim().length > 25;
+223:    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
+290:        linkedinCvText = `LinkedIn Profile URL: ${currentLinkedinUrl}\nNote: Automatic extraction returned limited public data. Analyse the public signals available from the profile URL and clearly flag any missing information instead of assuming the profile is private.`;
+305:            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+318:            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+344:        const analyticsTransactionIdPT = getStudentPackTransactionId() || `STUDPACK-PT-${Date.now()}`;
+358:        try { fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentEmail.trim().toLowerCase(), name: rawCandidateProfilePT?.detected_name || rawCandidateProfilePT?.name || rawCandidateProfilePT?.nome || '', source: 'student_pack', language: 'pt' }) }).catch(() => {}); } catch (_e) {}
+367:        try { saveToUserAnalyses('student_pack', { score: cvAnalysisResultPT.overallScore || 0, analysis_id: `studpack-${Date.now()}` }); } catch (_) {}
+379:            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+391:            const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
+416:        const analyticsTransactionId = getStudentPackTransactionId() || `STUDPACK-${langCode.toUpperCase()}-${Date.now()}`;
+456:      const orderId = `STUDPACK-${Date.now()}`;
+461:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, phone: formattedPhone, mobileNumber: formattedPhone, amount: finalPrice.toFixed(2), email, product: pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster'), description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster', 'Student Pack — CV Analyser + LinkedIn Roaster', 'Pack Estudiante — CV Analyser + LinkedIn Roaster') }) });
+473:    const paypalTransactionId = `STUDPACK-PAYPAL-${Date.now()}`;
+478:    window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
+491:      const orderId = `STUDPACK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+496:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode, product_type: 'student_pack', language: lang, description: appliedCoupon ? `${pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')} — Share2Inspire (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')})` : pick('Pack Estudante — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Student Pack — CV Analyser + LinkedIn Roaster — Share2Inspire', 'Pack Estudiante — CV Analyser + LinkedIn Roaster — Share2Inspire'), orderId, success_url: `${window.location.origin}${successPath}?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${window.location.origin}${cancelPath}` }) });
+513:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId }) });
+531:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId }) });
+545:      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+562:      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
+566:      if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já foi totalmente utilizado.', 'This code has been fully used.', 'Este código ya ha sido totalmente utilizado.')); return; }
+591:        const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+631:            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">{pick('Pack estudante com 43% de desconto', 'Student pack with 43% off', 'Pack estudiante con 43% de descuento')}</p>
+656:                  <span className="text-2xl line-through text-slate-400">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span>
+657:                  <span className="text-4xl font-bold text-green-600">{isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</span>
+661:                  <span className="text-lg line-through text-slate-400">{isPT ? `${PRICE_ORIGINAL_PT}€` : `${CUR}${PRICE_ORIGINAL_EN}`}</span>
+662:                  <span className="text-4xl font-bold text-slate-900">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span>
+671:              <Button onClick={() => setStep('upload')} className="h-14 md:h-16 px-10 md:px-12 text-base md:text-lg font-bold rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+675:                {pick("Pagamento único · Sem subscrição · Resultados imediatos", "One-time payment · No subscription · Immediate results", "Pago único · Sin suscripción · Resultados inmediatos")}
+683:                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("CV Analyser", "CV Analyser", "CV Analyser")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 9,99€", "Value: €9.99", "Valor: €9,99")}</p></div>
+695:                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 3,99€", "Value: €3.99", "Valor: €3,99")}</p></div>
+728:                { icon: <CreditCard className="w-5 h-5 text-emerald-600" />, title: pick(`Paga ${finalPriceStr}€`, `Pay ${CUR}${finalPriceStr}`, `Paga ${CUR}${finalPriceStr}`), desc: pick("Pagamento único via MB WAY, Cartão ou PayPal. Sem subscrição.", "One-time payment via Card or PayPal. No subscription.", "Pago único con Tarjeta o PayPal. Sin suscripción.") },
+749:            <Button onClick={() => setStep('upload')} className="h-16 px-12 text-lg font-bold rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+769:              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-emerald-500 bg-white'}`}>
+829:                ? <>{pick("Pagar — ", "Pay — ", "Pagar — ")}<span className="line-through text-slate-300 mr-1">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span> {isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</>
+830:                : <>{pick("Pagar e analisar — ", "Pay and analyse — ", "Pagar y analizar — ")}{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</>
+863:                  <div className="bg-emerald-600 h-2 rounded-full transition-all duration-500" style={{ width: `${((analysisProgress + 1) / loadingMessages.length) * 100}%` }} />
+893:                    ? <><span className="text-lg line-through text-slate-400">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span><span className="text-2xl font-bold text-green-600">{isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`}</span></>
+894:                    : <span className="text-2xl font-bold text-slate-900">{isPT ? `${PRICE_PT}€` : `${CUR}${PRICE_NUM.toFixed(2)}`}</span>
+901:                  <button key={m} onClick={() => setPaymentMethod(m as any)} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${paymentMethod === m ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+910:                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : pick(`Pagar ${finalPriceStr}€ com MB WAY`, `Pay ${finalPriceStr}€ with MB WAY`, `Pagar ${finalPriceStr}€ con MB WAY`)}
+916:                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick("Pagar", "Pay", "Pagar")} ${isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`} ${pick("com Cartão", "with Card", "con Tarjeta")}`}
+921:                  {pick("Pagar", "Pay", "Pagar")} {isPT ? `${finalPriceStr}€` : `${CUR}${finalPriceStr}`} {pick("com PayPal", "with PayPal", "con PayPal")}
+
+===== apps/cv-analyser/client/src/pages/StudentPackResults.tsx =====
+31:  if (l.includes('destacado') || l.includes('outstanding')) return 'bg-green-100 text-green-700 border-green-300';
+32:  if (l.includes('competitivo') || l.includes('competitive')) return 'bg-blue-100 text-blue-700 border-blue-300';
+61:  .replace(/^_+|_+$/g, '');
+142:  if (normalized.includes('primeiro_estagio') || normalized.includes('first_internship') || normalized.includes('internship') || normalized.includes('practicas')) {
+145:  if (normalized.includes('primeiro_emprego') || normalized.includes('first_job') || normalized.includes('primer_empleo')) {
+198:function Section({ title, subtitle, icon: Icon, children, defaultOpen = false, badge, color = 'emerald' }: {
+199:  title: string; subtitle?: string; icon: any; children: React.ReactNode; defaultOpen?: boolean; badge?: React.ReactNode; color?: string;
+208:          <div className={`w-10 h-10 ${bgMap[color] || bgMap.emerald} rounded-xl flex items-center justify-center`}>
+209:            <Icon className={`w-5 h-5 ${txtMap[color] || txtMap.emerald}`} />
+217:          {badge}
+231:      <div className={`h-full rounded-full bg-gradient-to-r ${colorMap[color] || colorMap.emerald} transition-all duration-1000`}
+232:        style={{ width: `${pct}%` }} />
+357:        const relevantEvidence = allStrengths.find((s: string) => s.toLowerCase().includes(kw.toLowerCase().substring(0, 6))) || allStrengths[idx] || '';
+518:      value: `${globalScore || 0}/100`,
+524:      helper: scoreGlobal?.percentil_estudantes ? pick(`Top ${100 - scoreGlobal.percentil_estudantes}% estudantes.`, `Top ${100 - scoreGlobal.percentil_estudantes}% students.`, `Top ${100 - scoreGlobal.percentil_estudantes}% estudiantes.`) : pick('Comparação com outros perfis de entrada no mercado.', 'Comparison with other early-career profiles.', 'Comparación con otros perfiles de entrada al mercado.'),
+529:      helper: previewTargetRole?.fit_percentagem ? `${previewTargetRole.fit_percentagem}% fit` : pick('Com fit, empresas e gap de competências.', 'With fit, companies and skill gap.', 'Con fit, empresas y gap de habilidades.'),
+587:              window.location.href = `${homePath}?${params.toString()}`;
+658:                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${nivelBadge(nivel)}`}>
+664:                        {pick(`Top ${100 - scoreGlobal.percentil_estudantes}% estudantes`, `Top ${100 - scoreGlobal.percentil_estudantes}% students`, `Top ${100 - scoreGlobal.percentil_estudantes}% estudiantes`)}
+692:                badge={auditoria.coerencia_cv_linkedin && (
+693:                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+694:                    ['Alta', 'High'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-green-50 text-green-700 border-green-200' :
+695:                    ['Média', 'Medium', 'Media'].includes(auditoria.coerencia_cv_linkedin) ? 'bg-amber-50 text-amber-700 border-amber-200' :
+726:                          <div key={key} className={`rounded-xl p-3 border ${scoreBg(val?.valor || 0)}`}>
+727:                            <p className={`text-2xl font-bold ${scoreColor(val?.valor || 0, true)}`}>{val?.valor || 0}</p>
+742:                          <div key={key} className={`rounded-xl p-3 border ${scoreBg((val?.valor || 0) * 10)}`}>
+745:                              <span className={`text-lg font-bold ${scoreColor((val?.valor || 0) * 10, true)}`}>{val?.valor || 0}<span className="text-xs text-slate-400">/10</span></span>
+760:                badge={<span className={`text-sm font-bold ${scoreColor(prontidao.score_estagio || 0, true)}`}>{pick('Estágio', 'Internship', 'Prácticas')}: {prontidao.score_estagio || 0}%</span>}>
+767:                        <span className={`text-2xl font-bold ${scoreColor(prontidao.score_estagio || 0, true)}`}>{prontidao.score_estagio || 0}%</span>
+774:                        <span className={`text-2xl font-bold ${scoreColor(prontidao.score_primeiro_emprego || 0, true)}`}>{prontidao.score_primeiro_emprego || 0}%</span>
+829:                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+830:                        ['Alta', 'High'].includes(capitalAcademico.instituicao_prestigio) ? 'bg-green-50 text-green-700 border-green-200' :
+831:                        ['Emergente', 'Emerging'].includes(capitalAcademico.instituicao_prestigio) ? 'bg-blue-50 text-blue-700 border-blue-200' :
+881:                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${urgencyBadgeClass(cert.urgencia || '')}`}>{cert.urgencia}</span>
+936:                badge={keywords.ats_score ? <span className="text-xs font-bold text-slate-500">ATS: {keywords.ats_score}% · SEO: {keywords.seo_linkedin_score}/10</span> : undefined}>
+940:                      <p className={`text-2xl font-bold ${scoreColor(keywords.ats_score || 0, true)}`}>{keywords.ats_score || 0}%</p>
+944:                      <p className={`text-2xl font-bold ${scoreColor((keywords.seo_linkedin_score || 0) * 10, true)}`}>{keywords.seo_linkedin_score || 0}/10</p>
+954:                          <span key={i} className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
+955:                            ['Ambos', 'Both'].includes(kw.onde) ? 'bg-green-50 text-green-700 border-green-200' :
+1085:                    <div key={i} className={`border rounded-xl overflow-hidden transition-all ${expandedCargo === i ? 'border-blue-300 shadow-md' : 'border-slate-200'}`}>
+1089:                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${scoreBg(cargo.fit_percentagem || 0)}`}>
+1090:                            <span className={`text-lg font-bold ${scoreColor(cargo.fit_percentagem || 0, true)}`}>{cargo.fit_percentagem || 0}%</span>
+1096:                              {cargo.salary_range && <span className="text-xs text-emerald-600 font-medium">{typeof cargo.salary_range === 'object' ? `${cargo.salary_range.moeda || '€'}${cargo.salary_range.min || '?'}–${cargo.salary_range.max || '?'}/${cargo.salary_range.periodo || pick('mês', 'month', 'mes')}` : `€${cargo.salary_range}/${pick('mês', 'month', 'mes')}`}</span>}
+1154:                      <div key={key} className={`rounded-xl p-4 border border-${phaseColor}-200 bg-${phaseColor}-50/30`}>
+1156:                          <div className={`w-8 h-8 rounded-lg bg-${phaseColor}-100 flex items-center justify-center`}>
+1157:                            <PhaseIcon className={`w-4 h-4 text-${phaseColor}-600`} />
+
+===== apps/cv-analyser/client/src/pages/Results.tsx =====
+43:  return (t.includes('linkedin.com/jobs') || t.includes('linkedin.com/job')) && t.startsWith('http');
+55:    fetch(`${SUPABASE_URL}/rest/v1/cv_analysis?id=eq.${analysisId}`, {
+60:        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+82:    fetch(`${SUPABASE_URL}/rest/v1/cv_analysis?id=eq.${analysisId}`, {
+87:        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+124:    <div className={`${size} rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0`}>
+143:      const z = (i - 50) / 16.67;
+144:      const y = padding + curveHeight - (curveHeight * 0.95 * Math.exp(-0.5 * z * z));
+145:      pts.push(`${x},${y}`);
+151:    const pts: string[] = [`${padding},${padding + curveHeight}`];
+154:      const z = (i - 50) / 16.67;
+155:      const y = padding + curveHeight - (curveHeight * 0.95 * Math.exp(-0.5 * z * z));
+156:      pts.push(`${x},${y}`);
+158:    pts.push(`${padding + curveWidth},${padding + curveHeight}`);
+163:  const userZ = (percentile - 50) / 16.67;
+164:  const userY = padding + curveHeight - (curveHeight * 0.95 * Math.exp(-0.5 * userZ * userZ));
+167:    <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-w-md mx-auto">
+184:function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, CUR = '€' }: { blurred: boolean; salaryDetailed?: any; perceivedSeniority?: string; CUR?: string }) {
+203:          <p className="text-xs text-muted-foreground">{pick(`Com base no perfil (${perceivedSeniority || 'N/D'}) e mercado português`, `Based on profile (${perceivedSeniority || 'N/A'}) and market data`, `Basado en el perfil (${perceivedSeniority || 'N/D'}) y los datos del mercado`)}</p>
+242:              <p className="text-xs font-semibold text-foreground mb-3">{pick(`Benefícios típicos para ${perceivedSeniority || 'este nível'} na indústria:`, `Typical benefits for ${perceivedSeniority || 'this level'} in the industry:`, `Beneficios típicos para ${perceivedSeniority || 'este nivel'} en la industria:`)}</p>
+310:                <span className={`text-xs font-semibold px-2 py-0.5 rounded ${levelColor}`}>{ar.level} — {ar.percentage}%</span>
+315:              <div className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all duration-500`} style={{ width: `${ar.percentage}%` }} />
+344:      <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+377:    ? { cv: '9.99', cp: '19.99', career: '19.99' }
+378:    : { cv: '9,99', cp: '19,99', career: '19,99' };
+386:  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
+389:    analyses: 1,
+391:    includes_career_path: false,
+474:  const [careerPathIsUpgrade, setCareerPathIsUpgrade] = useState(false); // true when coming from post-CV upsell (14.99)
+632:            const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 9.99;
+633:            const productName = restoredPlan?.includes_career_path ? 'bundle' : 'cv_analyser';
+634:            trackPurchase(productName, priceVal, `CV-STRIPE-${sessionId}`);
+636:            trackAffiliateConversion({ product: productName, amount: priceVal, currency: t('eur'), payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
+637:            updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
+639:            if (restoredPlan?.includes_career_path) {
+679:          const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+682:              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+730:          const scrapeRes = await fetch(`${BACKEND_URL}/api/scrape-linkedin-job`, {
+773:                'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+791:                setJobScrapeMessage(pick(`Análise atualizada com dados reais de "${scrapeData.job_data.title}"`, `Analysis updated with real data from "${scrapeData.job_data.title}"`, `Análisis actualizado con datos reales de "${scrapeData.job_data.title}"`));
+800:              setJobScrapeMessage(pick(`Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`, `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`, `Oferta extraída: "${scrapeData.job_data.title}" — usa el Análisis en Vivo para una comparación detallada`));
+815:    // Save to user_analyses for area-cliente dashboard
+843:  const openPaymentModal = (plan?: { name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }) => {
+864:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+873:      const orderId = `CVA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+889:          description: `CV Analyser — ${selectedPlan.name} — Share2Inspire`,
+890:          success_url: `${window.location.origin}${t('cvanalyser')}/results?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+891:          cancel_url: `${window.location.origin}${t('cvanalyser')}/results?payment=cancelled`,
+919:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+925:    const phoneRegex = /^(9[1236]\d{7}|2\d{8})$/;
+943:      const orderId = `CVA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+946:      const formattedPhone = `351${cleanPhone}`;
+956:          description: appliedCoupon ? `CV Analyser - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `CV Analyser - ${selectedPlan.name}`,
+993:    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+1008:      window.open(`https://paypal.me/SamuelRolo/${priceNum}${CURRENCY_CODE}`, '_blank');
+1058:          console.warn(`[POLLING] Erro ${response.status} (tentativa ${attempts}/${maxAttempts})`);
+1076:          if (selectedPlan.analyses > 1 || selectedPlan.includes_career_path) {
+1085:          if (selectedPlan.includes_career_path) {
+1099:            console.log(`[POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s < 90s)`);
+1153:        if (selectedPlan.analyses > 1 || selectedPlan.includes_career_path) {
+1158:        if (selectedPlan.includes_career_path) {
+1177:  const createVoucher = async (userEmail: string, plan: { name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }, orderId: string) => {
+1179:      const code = `S2I-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+1181:      const response = await fetch(`${SUPABASE_URL}/rest/v1/vouchers`, {
+1186:          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+1193:          total_analyses: plan.analyses,
+1194:          used_analyses: 1, // First analysis is used now
+1199:          includes_career_path: plan.includes_career_path || false
+1208:        sessionStorage.setItem('voucherRemaining', String(plan.analyses - 1));
+1210:        if (plan.includes_career_path) {
+1214:        if (!plan.includes_career_path) {
+1215:          await sendVoucherEmail(userEmail, code, plan.name, plan.analyses);
+1238:        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+1239:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+1257:          trackAffiliateConversion({ product: 'cv_analyser', amount: 0, currency: t('eur'), payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+1264:        setDiscountSuccess(pick(`Desconto de ${coupon.discount_percent}% aplicado!`, `${coupon.discount_percent}% discount applied!`, `¡Descuento de ${coupon.discount_percent}% aplicado!`));
+1271:        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=*`,
+1272:        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+1284:      const remaining = voucher.total_analyses - voucher.used_analyses;
+1292:        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${voucher.id}`,
+1295:          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
+1296:          body: JSON.stringify({ used_analyses: voucher.used_analyses + 1, is_active: remaining - 1 > 0, updated_at: new Date().toISOString() })
+1301:        setDiscountSuccess(pick(`Código válido! Análise desbloqueada. Restam ${remaining - 1} análise${remaining - 1 === 1 ? '' : 's'}.`, `Valid code! Analysis unlocked. ${remaining - 1} ${remaining - 1 === 1 ? 'use' : 'uses'} remaining.`, `¡Código válido! Análisis desbloqueado. Quedan ${remaining - 1} análisis.`));
+1305:        if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
+1307:          setDiscountSuccess(pick(`Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise${remaining - 1 === 1 ? '' : 's'}.`, `Valid code! Analysis + Career Path unlocked. ${remaining - 1} ${remaining - 1 === 1 ? 'use' : 'uses'} remaining.`, `¡Código válido! Análisis + Career Path desbloqueados. Quedan ${remaining - 1} análisis.`));
+1338:      const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+1340:      const cpAmount = careerPathIsUpgrade ? '14.99' : '19.99';
+1358:            success_url: `${window.location.origin}${t('cvanalyser')}/results?payment=success&session_id={CHECKOUT_SESSION_ID}&product=career_path`,
+1359:            cancel_url: `${window.location.origin}${t('cvanalyser')}/results?payment=cancelled`,
+1375:        window.open(`https://paypal.me/SamuelRolo/${cpAmount}${cpCurrencyCode.toUpperCase()}`, '_blank');
+1386:          phone: (() => { const cp = careerPathPhone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${cp}`; })(),
+1419:              console.log(`[CP-POLLING] Ignorando expired prematuro (${Math.round(elapsed/1000)}s)`);
+1460:      const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+1463:          'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+1587:  const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
+1848:            `${pick('Score actual', 'Current score', 'Puntuación actual')}: ${item.currentScore}/100`
+1852:            `${pick('Score estimado após melhoria', 'Estimated score after improvement', 'Puntuación estimada tras la mejora')}: ${item.potentialScore}/100`
+1881:  const benchmarkGapLabel = (gap: number) => `${gap >= 0 ? '+' : ''}${gap} vs ${t('benchmark_label')}`;
+1896:      const response = await fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/${emailRoute}`, {
+1929:      value: `${Math.round(avgScore)}/100`,
+1934:      value: `${atsCompatibilityScore}%`,
+1939:      value: `Top ${100 - percentile}%`,
+2009:            onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+2094:        {/* Voucher info banner (only if remaining analyses > 0) */}
+2123:          <div className={`rounded-lg p-4 mb-6 flex items-center gap-3 border ${
+2167:                  <circle cx="60" cy="60" r="52" fill="none" strokeWidth="8" strokeDasharray={`${analysisData.jobMatch.atsCompatibilityScore * 3.267} 326.7`}
+2207:                        {pick(`${analysisData.jobMatch.keywordGaps.length} palavras-chave identificadas`, `${analysisData.jobMatch.keywordGaps.length} keywords identified`, `${analysisData.jobMatch.keywordGaps.length} palabras clave identificadas`)}
+2217:                        {pick(`${analysisData.jobMatch.matchedKeywords.length} palavras-chave encontradas`, `${analysisData.jobMatch.matchedKeywords.length} keywords matched`, `${analysisData.jobMatch.matchedKeywords.length} palabras clave encontradas`)}
+2386:                      <span className={`text-[11px] font-bold px-3 py-1 rounded-full ${
+2403:                    <AlertTriangle className={`w-3.5 h-3.5 ${impactLevel === 'critical' ? 'text-red-500' : impactLevel === 'moderate' ? 'text-amber-500' : 'text-[#C9A961]'}`} />
+2404:                    <p className={`text-[11px] font-semibold tracking-wider ${impactLevel === 'critical' ? 'text-red-500' : impactLevel === 'moderate' ? 'text-amber-500' : 'text-[#C9A961]'}`}>
+2408:                  <div className={`rounded-lg p-4 text-center space-y-1.5 ${
+2413:                    <p className={`text-xs font-semibold ${
+2495:                    {pick(`Desbloquear Relatório Completo — desde ${CUR}${P.cv}`, `Unlock Full Report — from ${CUR}${P.cv}`, `Desbloquear Informe Completo — desde ${CUR}${P.cv}`)}
+2565:                {pick(`→ O teu CV está ${avgScore >= 70 ? 'acima' : 'abaixo'} da média global do mercado (${Math.round(avgScore)} vs 69)`, `→ Your CV is ${avgScore >= 70 ? 'above' : 'below'} the global market average (${Math.round(avgScore)} vs 69)`, `→ Tu CV está ${avgScore >= 70 ? 'por encima' : 'por debajo'} del promedio global del mercado (${Math.round(avgScore)} vs 69)`)}
+2617:                `O teu CV tem ${100 - analysisData.atsRejectionRate}% de compatibilidade com sistemas ATS. ${100 - analysisData.atsRejectionRate >= 70 ? 'Boa compatibilidade.' : 'Vê o relatório completo para saber como melhorar.'}`,
+2618:                `Your CV has ${100 - analysisData.atsRejectionRate}% compatibility with ATS systems. ${100 - analysisData.atsRejectionRate >= 70 ? 'Good compatibility.' : 'See the full report to learn how to improve.'}`,
+2619:                `Tu CV tiene ${100 - analysisData.atsRejectionRate}% de compatibilidad con sistemas ATS. ${100 - analysisData.atsRejectionRate >= 70 ? 'Buena compatibilidad.' : 'Consulta el informe completo para saber cómo mejorar.'}`
+2671:              <p className="text-xl font-bold text-[#C9A961]">{pick(`Top ${100 - percentile}%`, `Top ${100 - percentile}%`, `Top ${100 - percentile}%`)}</p>
+2690:                    `O teu CV está no top ${100 - percentile}% dos candidatos analisados. Isto coloca-te numa posição de excelência — num processo com 100 candidatos, o teu CV seria melhor que ${percentile} deles. O teu perfil destaca-se pela qualidade da estrutura, conteúdo e apresentação. Mantém este nível e foca-te em personalizar o CV para cada candidatura específica.`,
+2691:                    `Your CV is in the top ${100 - percentile}% of analysed candidates. This places you in a position of excellence — in a process with 100 candidates, your CV would be better than ${percentile} of them. Your profile stands out for the quality of structure, content and presentation. Maintain this level and focus on customising your CV for each specific application.`,
+2692:                    `Tu CV está en el top ${100 - percentile}% de los candidatos analizados. Esto te sitúa en una posición de excelencia: en un proceso con 100 candidatos, tu CV sería mejor que el de ${percentile} de ellos. Tu perfil destaca por la calidad de la estructura, el contenido y la presentación. Mantén este nivel y céntrate en personalizar el CV para cada candidatura específica.`
+2696:                    `Com um score no percentil ${percentile}, o teu CV posiciona-se acima da grande maioria dos candidatos. Num processo com 100 candidatos, superarias ${percentile} deles. Estás a ${90 - percentile} pontos percentuais do top 10% — pequenos ajustes nas áreas identificadas podem fazer a diferença para atingir a excelência.`,
+2697:                    `With a score in percentile ${percentile}, your CV ranks above the vast majority of candidates. In a process with 100 candidates, you would surpass ${percentile} of them. You are ${90 - percentile} percentile points from the top 10% — small adjustments in the identified areas can make the difference to reach excellence.`,
+2698:                    `Con una puntuación en el percentil ${percentile}, tu CV se sitúa por encima de la gran mayoría de los candidatos. En un proceso con 100 candidatos, superarías a ${percentile} de ellos. Estás a ${90 - percentile} puntos percentiles del top 10%: pequeños ajustes en las áreas identificadas pueden marcar la diferencia para alcanzar la excelencia.`
+2702:                    `O teu CV está no percentil ${percentile}, acima da média mas com margem significativa de melhoria. Num processo competitivo, poderias perder para candidatos com CVs mais optimizados. Foca-te nas dimensões com score mais baixo para subir rapidamente de posição.`,
+2703:                    `Your CV is in percentile ${percentile}, above average but with significant room for improvement. In a competitive process, you could lose to candidates with more optimised CVs. Focus on the dimensions with the lowest score to quickly move up.`,
+2704:                    `Tu CV está en el percentil ${percentile}, por encima de la media pero con un margen significativo de mejora. En un proceso competitivo, podrías perder frente a candidatos con CVs más optimizados. Céntrate en las dimensiones con menor puntuación para subir rápidamente de posición.`
+2708:                    `O teu CV está no percentil ${percentile}, abaixo da média do mercado. Isto significa que ${100 - percentile}% dos CVs analisados são mais competitivos. A boa notícia é que há muito espaço para melhoria — segue as recomendações abaixo para subir significativamente o teu posicionamento.`,
+2709:                    `Your CV is in percentile ${percentile}, below the market average. This means that ${100 - percentile}% of analysed CVs are more competitive. The good news is there is plenty of room for improvement — follow the recommendations below to significantly improve your positioning.`,
+2710:                    `Tu CV está en el percentil ${percentile}, por debajo de la media del mercado. Esto significa que el ${100 - percentile}% de los CV analizados son más competitivos. La buena noticia es que hay mucho margen de mejora: sigue las recomendaciones de abajo para mejorar significativamente tu posicionamiento.`
+2716:                  `Para subir para o próximo nível, precisas de aumentar o score global em aproximadamente ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} pontos.`,
+2717:                  `To move to the next level, you need to increase your global score by approximately ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} points.`,
+2718:                  `Para pasar al siguiente nivel, necesitas aumentar la puntuación global en aproximadamente ${percentile >= 90 ? '2-3' : percentile >= 75 ? '5-8' : '10-15'} puntos.`
+2736:{pick(`Desbloquear desde ${CUR}${P.cv}`, `Unlock from ${CUR}${P.cv}`, `Desbloquear desde ${CUR}${P.cv}`)}
+2754:              <p className="text-xs text-muted-foreground mt-1">{t('o_relatrio_completo_inclui_estas')}</p>
+2818:                  const dimensionLabel = resolveDimensionLabel(q, `${pick('Dimensão', 'Dimension', 'Dimensión')} ${idx + 1}`);
+2820:                    <div key={`${dimensionLabel}-${idx}`} className="p-3 bg-muted/20 rounded-lg space-y-2">
+2825:                          <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
+2836:                              `✅ Ponto forte. Estás ${gap} pontos acima do ${t('benchmark_label')} (${q.benchmark}).`,
+2837:                              `✅ Strong point. You are ${gap} points above the ${t('benchmark_label')} (${q.benchmark}).`,
+2838:                              `✅ Punto fuerte. Estás ${gap} puntos por encima del ${t('benchmark_label')} (${q.benchmark}).`
+2842:                              `⚠️ Área de melhoria. Estás ${Math.abs(gap)} pontos abaixo do ${t('benchmark_label')} (${q.benchmark}).`,
+2843:                              `⚠️ Area for improvement. You are ${Math.abs(gap)} points below the ${t('benchmark_label')} (${q.benchmark}).`,
+2844:                              `⚠️ Área de mejora. Estás ${Math.abs(gap)} puntos por debajo del ${t('benchmark_label')} (${q.benchmark}).`
+2848:                              `→ Acima da média. Estás ${gap} pontos acima do ${t('benchmark_label')} (${q.benchmark}).`,
+2849:                              `→ Above average. You are ${gap} points above the ${t('benchmark_label')} (${q.benchmark}).`,
+2850:                              `→ Por encima de la media. Estás ${gap} puntos por encima del ${t('benchmark_label')} (${q.benchmark}).`
+2893:                    <div className="border-r border-b border-border/70 p-3 sm:p-4 bg-red-500/[0.03]">
+2897:                    <div className="border-b border-border/70 p-3 sm:p-4 bg-amber-500/[0.03]">
+2901:                    <div className="border-r border-border/70 p-3 sm:p-4 bg-emerald-500/[0.03]">
+2905:                    <div className="p-3 sm:p-4 bg-slate-500/[0.03]">
+2916:                        key={`${item.actionLetter}-${item.dimension}`}
+2933:                            className={`w-10 h-10 rounded-full text-white shadow-lg border-4 border-background flex items-center justify-center text-sm transition-all duration-200 ${isHighlighted ? 'bg-[#B89547] font-extrabold scale-110 shadow-xl ring-4 ring-[#C9A961]/20' : 'bg-[#C9A961] font-bold hover:bg-[#B89547] hover:scale-105'}`}
+2934:                            aria-label={`${item.actionLetter}: ${item.actionText}`}
+2987:                        key={`${item.actionLetter}-${item.dimension}`}
+2990:                        className={`rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${isHighlighted ? 'border-[#C9A961]/50 bg-[#C9A961]/[0.07] shadow-sm' : 'border-border bg-muted/15 hover:border-[#C9A961]/30'}`}
+2994:                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shrink-0 transition-all duration-200 border-2 ${isHighlighted ? 'bg-[#B89547] text-white shadow-xl scale-110 border-white/20' : 'bg-[#C9A961] text-white border-transparent'}`}>
+2999:                                <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">{item.dimension}</p>
+3000:                                <span className={`text-[10px] font-semibold px-2 py-1 rounded-full border ${impactTone}`}>
+3083:              {/* Header with urgency badge */}
+3096:                  <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">{t('desconto_de_upgrade')}</span>
+3104:                  <p className="text-2xl font-bold text-white/30 line-through">{t('300800')}</p>
+3110:                    <span className="text-sm text-white/40 line-through">{CUR}{P.career}</span>
+3141:                  {t('fazer_upgrade_por_1499')}
+3206:                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${(careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'High') ? 'bg-green-500/10 text-green-600' : (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Medium' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Media') ? 'bg-amber-500/10 text-amber-600' : 'bg-red-500/10 text-red-600'}`}>{t('consistncia')}: {careerPathData.cv_linkedin_cross_analysis.consistency_score}</span>
+3229:                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${(role.timeline?.includes('Curto') || role.timeline?.includes('Short')) ? 'border-green-500/30 text-green-600 bg-green-500/10' : (role.timeline?.includes('Médio') || role.timeline?.includes('Medium')) ? 'border-amber-500/30 text-amber-600 bg-amber-500/10' : 'border-blue-500/30 text-blue-600 bg-blue-500/10'}`}>{role.timeline}</span>
+3232:                            {pick(`${role.fit_percentage}% adequação`, `${role.fit_percentage}% fit`, `${role.fit_percentage}% ajuste`)}
+3248:                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role.role_title)}&location=${t('portugal')}`}
+3254:                            {pick(`Procurar "${role.role_title}" no LinkedIn`, `Search "${role.role_title}" on LinkedIn`, `Buscar "${role.role_title}" en LinkedIn`)}
+3276:                               <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(f.priority === 'Alta' || f.priority === 'High') ? 'bg-red-500/10 text-red-500 border-red-500/20' : (f.priority === 'Média' || f.priority === 'Medium' || f.priority === 'Media') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{f.priority}</span>
+3282:                          href={`https://www.google.com/search?q=${encodeURIComponent(f.name + ' ' + (f.provider || '') + (t('curso')))}`}
+3290:                          href={`https://www.coursera.org/search?query=${encodeURIComponent(f.name)}`}
+3298:                          href={`https://www.udemy.com/courses/search/?q=${encodeURIComponent(f.name)}`}
+3336:                      ? `${platformBase}${encodeURIComponent(query)}`
+3337:                      : `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (fc.platform || '') + (t('curso_gratuito')))}`;
+3350:                          {fc.duration && ` \u00b7 ${fc.duration}`}
+3381:                               <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${(c.priority === 'Alta' || c.priority === 'High') ? 'bg-red-500/10 text-red-500 border-red-500/20' : (c.priority === 'Média' || c.priority === 'Medium' || c.priority === 'Media') ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-green-500/10 text-green-600 border border-green-500/20'}`}>{c.priority}</span>
+3474:          const today = new Date().toLocaleDateString(t('ptpt'), { year: 'numeric', month: 'long' });
+3476:            `Sabes se o teu CV passa nos filtros automáticos de recrutamento (ATS)?\n\nTestei o meu numa ferramenta que simula esses filtros e o resultado surpreendeu-me.\n\n✅ Score de Compatibilidade ATS: ${atsCompat}%\n✅ Score Global: ${Math.round(avgScore)}/100 (Percentil ${percentile})\n✅ Pontos fortes: ${topStrengths.join(' e ')}\n\nA maioria dos CVs é rejeitada antes de um humano sequer os ler. Esta análise mostrou-me exactamente o que corrigir — e o que já estava a funcionar.\n\n🔗 https://share2inspire.pt/cv-analyser\n\nQual seria o score do teu CV?\n\n#AnáliseCV #ATS #Carreira #Share2Inspire`,
+3477:            `Do you know if your CV passes the automatic recruitment filters (ATS)?\n\nI tested mine with a tool that simulates those filters and the result surprised me.\n\n✅ ATS Compatibility Score: ${atsCompat}%\n✅ Overall Score: ${Math.round(avgScore)}/100 (Percentile ${percentile})\n✅ Top strengths: ${topStrengths.join(' & ')}\n\nMost CVs are rejected before a human even reads them. This analysis showed me exactly what to fix — and what was already working.\n\n🔗 https://share2inspire.pt/en/cv-analyser\n\nWhat would your CV score be?\n\n#CVAnalysis #ATS #CareerDevelopment #Share2Inspire`,
+3478:            `¿Sabes si tu CV supera los filtros automáticos de selección (ATS)?\n\nProbé el mío en una herramienta que simula esos filtros y el resultado me sorprendió.\n\n✅ Puntuación de Compatibilidad ATS: ${atsCompat}%\n✅ Puntuación Global: ${Math.round(avgScore)}/100 (Percentil ${percentile})\n✅ Puntos fuertes: ${topStrengths.join(' y ')}\n\nLa mayoría de los CV se rechazan antes de que una persona llegue siquiera a leerlos. Este análisis me mostró exactamente qué debía corregir y qué ya estaba funcionando.\n\n🔗 https://share2inspire.pt/es/cv-analyser\n\n¿Qué puntuación tendría tu CV?\n\n#AnalisisCV #ATS #Carrera #Share2Inspire`
+3523:              { label: pick('Score Global', 'Overall Score', 'Puntuación Global'), value: `${Math.round(avgScore)}/100`, sub: `${t('percentil')} ${percentile}` },
+3524:              { label: t('compatibilidade_ats_2'), value: `${atsCompat}%`, sub: atsCompat >= 70 ? (t('boa')) : (t('a_melhorar')) },
+3570:              ctx.fillText(`${q.score}`, 595, y + 13);
+3600:            ctx.fillText(`${Math.round(avgScore)}`, cx, cy + 16);
+3624:            ctx.fillText(`${pick('CV Analyser', 'CV Analyser', 'CV Analyser')} • ${today}`, 220, 595);
+3798:                    onClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+3816:                    onClick={() => openPaymentModal({ name: t('diagnstico_de_carreira_completo'), price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
+3834:                    <p className="text-[10px] text-[#C9A961]/80 italic">{t('inclui_career_path_baseado_no')}</p>
+3840:                    onClick={() => openPaymentModal({ name: t('diagnstico_de_carreira_completo'), price: P.cp, analyses: 1, voucher_type: 'standard', includes_career_path: true })}
+3843:                    {pick(`Desbloquear Diagnóstico Completo — ${CUR}${P.cp}`, `Unlock Full Diagnosis — ${CUR}${P.cp}`, `Desbloquear Diagnóstico Completo — ${CUR}${P.cp}`)}
+3846:                    onClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+3851:                    {pick(`Ou apenas o Relatório CV — ${CUR}${P.cv}`, `Or just the CV Report — ${CUR}${P.cv}`, `O solo el Informe CV — ${CUR}${P.cv}`)}
+3897:                      analyses: 1,
+3899:                      includes_career_path: false,
+3909:                      analyses: 1,
+3911:                      includes_career_path: true,
+3923:                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+3927:                      } ${(plan as any).popular ? 'ring-1 ring-[#C9A961]/20' : ''}`}
+3931:                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+3947:                            <><span className="text-sm line-through text-slate-400 mr-1">{CUR}{plan.price}</span>{CUR}{getDiscountedPrice(plan.price)}</>
+3965:              {selectedPlan.includes_career_path && (
+3967:                  <p className="text-xs font-semibold text-green-600 mb-1">{t('career_path_includo')}</p>
+3978:                    pt: <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+3979:                    en: <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+3980:                    es: <>Continuar al Pago — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>,
+3983:                  pick(`Continuar para Pagamento — ${CUR}${selectedPlan.price}`, `Continue to Payment — ${CUR}${selectedPlan.price}`, `Continuar al Pago — ${CUR}${selectedPlan.price}`)
+3994:                <div className={`grid gap-3 ${t('gridcols2')}`}>
+3999:                        className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+4010:                        className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+4024:                        className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+4035:                        className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+4090:                      <><span className="line-through text-muted-foreground mr-2">{CUR}{selectedPlan.price}</span><span className="text-green-600">{CUR}{getDiscountedPrice(selectedPlan.price)}</span></>
+4102:                  className={`w-full font-semibold ${
+4192:                {isPaid && selectedPlan.includes_career_path ? (
+4220:                      <p className="text-xs font-semibold text-[#C9A961] mb-1">{t('o_teu_pacote_inclui')}</p>
+4252:                        <p className="text-xs text-muted-foreground mt-1">{pick(`Restam ${storedVoucherRemaining} análise${storedVoucherRemaining === 1 ? '' : 's'}`, `${storedVoucherRemaining} ${storedVoucherRemaining === 1 ? 'analysis' : 'analyses'} remaining`, `Quedan ${storedVoucherRemaining} análisis`)}</p>
+4276:              {!(isPaid && selectedPlan.includes_career_path) && (
+4351:              {pick('Plano de Carreira', 'Career Path', 'Plan de Carrera')} {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('includo')) : careerPathIsUpgrade ? (t('upgrade_1499')) : `— ${CUR}${P.career}`}
+4376:                  className={`w-full font-semibold ${sessionStorage.getItem('careerPathIncluded') === 'true' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#C9A961] hover:bg-[#A88B4E] text-white'}`}
+4378:                  {sessionStorage.getItem('careerPathIncluded') === 'true' ? (t('gerar_career_path_includo_no')) : (t('continuar_para_pagamento'))}
+4398:                        className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'mbway' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
+4405:                      className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'stripe' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
+4411:                      className={`flex-1 p-3 rounded-lg border-2 transition-all ${careerPathPaymentMethod === 'paypal' ? 'border-[#C9A961] bg-[#C9A961]/5' : 'border-border'}`}
+4434:                    : (pick(`Pagar ${CUR}${P.career} e Gerar Plano de Carreira`, `Pay ${CUR}${P.career} and Generate Career Path`, `Pagar ${CUR}${P.career} y Generar Plan de Carrera`))
+
+===== apps/cv-analyser/client/src/pages/BundleHome.tsx =====
+3:// Preço PT: €29,00
+27:pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+35:const PRICE_NUM = 29.00;
+67:  const PRICE = pick('29,00', '29', '29');
+112:  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+144:    return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
+161:    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(pick('Introduz um email válido', 'Enter a valid email', 'Introduce un email válido')); return; }
+248:              'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+317:        const transactionId = sessionStorage.getItem('transactionId') || `BUNDLE-${Date.now()}`;
+318:        fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
+323:            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+345:      trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-${Date.now()}`);
+353:        transaction_id: `BUNDLE-${Date.now()}`
+360:      // Save to user_analyses for area-cliente dashboard
+366:          analysis_id: `bundle-${Date.now()}`,
+392:      const orderId = `BUNDLE-${Date.now()}`;
+394:      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
+405:            ? `${pick('Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path', 'Bundle — CV Analyser + Career Path')} (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')}: ${appliedCoupon.code})`
+427:    window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
+430:    trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-PAYPAL-${Date.now()}`);
+431:    trackAffiliateConversion({ product: 'bundle_cv_career', amount: finalPrice, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
+440:      const orderId = `BUNDLE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+441:      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+450:          description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% ${pick('desconto', 'discount', 'descuento')})` : 'Bundle CV Analyser + Career Path — Share2Inspire',
+452:          success_url: `${window.location.origin}/bundle?paid=true`,
+453:          cancel_url: `${window.location.origin}/bundle`,
+483:        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+534:      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+562:      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+563:        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+576:          trackAffiliateConversion({ product: 'bundle', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+589:      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`, {
+590:        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+595:      if (v.used_analyses >= v.total_analyses) { setDiscountError(pick('Este código já foi totalmente utilizado.', 'This code has been fully used.', 'Este código ya fue totalmente utilizado.')); return; }
+639:            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E8D5A3]">{pick('Bundle mais popular', 'Most popular bundle', 'Bundle más popular')}</p>
+644:            <p className="text-xs text-white/70">{pick('Pagamento único · Sem subscrição', 'One-time payment · No subscription', 'Pago único · Sin suscripción')}</p>
+663:                  <span className="text-2xl line-through text-slate-400">{CUR}{PRICE}</span>
+668:                  <span className="text-lg line-through text-slate-400">{CUR}38</span>
+670:                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">{pick('Poupas 9€', 'Save €9', 'Ahorras 9€')}</span>
+678:              className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] mt-4"
+682:            <p className="text-xs text-slate-400">{pick('Pagamento único · Sem subscrição · Resultados imediatos', 'One-time payment · No subscription · Instant results', 'Pago único · Sin suscripción · Resultados inmediatos')}</p>
+685:          {/* ─── What's included ─── */}
+726:                { num: "2", icon: <CreditCard className="w-5 h-5 text-[#C9A961]" />, title: pick("Pagamento seguro", "Secure payment", "Pago seguro"), desc: pick("Paga via MB WAY ou PayPal. Pagamento único, sem subscrição.", "Pay via card or PayPal. One-time payment, no subscription.", "Paga con tarjeta o PayPal. Pago único, sin suscripción.") },
+745:                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: pick("Poupas 9€", "Save €9", "Ahorras 9€"), desc: pick("Separadamente custariam 38€. Em bundle, pagas apenas 29€.", "Separately they would cost €38. In a bundle, you pay only €29.", "Por separado costarían 38€. En bundle, pagas solo 29€.") },
+783:              className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+796:            <p className="text-xs text-slate-500 mb-4 leading-relaxed">{pick('Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.', 'With a subscription plan, get weekly analyses, exclusive content, personalised job feed and much more — all in one platform.', 'Con un plan de suscripción, tienes análisis incluidos cada semana, contenidos exclusivos, feed de ofertas personalizado y mucho más — todo en una única plataforma.')}</p>
+801:              {pick('Ver planos de subscrição', 'View subscription plans', 'Ver planes de suscripción')} <ArrowRight className="w-4 h-4" />
+803:            <p className="text-[10px] text-slate-400 mt-2">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
+822:              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-[#C9A961] bg-white'}`}>
+958:                <>{pick('Pagar e analisar', 'Pay and analyse', 'Pagar y analizar')} — <span className="line-through text-slate-400 mr-1">{CUR}{PRICE}</span> {CUR}{finalPriceStr}</>
+964:            {/* Discount code link / applied badge */}
+1001:                    style={{ width: `${((analysisProgress + 1) / loadingMessages.length) * 100}%` }}
+1034:                      <span className="text-lg line-through text-slate-400">{PRICE}€</span>
+1035:                      <span className="text-2xl font-bold text-green-600">{finalPriceStr}€</span>
+1038:                    <span className="text-2xl font-bold text-slate-900">{PRICE}€</span>
+1052:                    className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${paymentMethod === m ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+1073:                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${finalPriceStr} ${pick('com MB WAY', 'with MB WAY', 'con MB WAY')}`}
+1084:                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${pick('Pagar', 'Pay', 'Pagar')} ${CUR}${finalPriceStr} ${pick('com Cartão', 'with Card', 'con Tarjeta')}`}
+
+===== apps/cv-analyser/client/src/components/PromoBanner.tsx =====
+12:  const badge = pick("PACK ESTUDANTE", "STUDENT PACK", "PACK ESTUDIANTE");
+14:    "Ferramentas de carreira por 7,99€",
+15:    "Career tools for €7.99",
+16:    "Herramientas de carrera por 7,99€"
+43:          {badge}
+47:          <span className="sm:hidden font-semibold">{badge} — </span>
+
+===== apps/cv-analyser/client/src/components/RotatingPromoBanner.tsx =====
+16:  badge: string;
+34:      badge: pick("NOVO", "NEW", "NUEVO"),
+48:      badge: pick("DESTAQUE", "FEATURED", "DESTACADO"),
+118:                        <span className="inline-flex rounded-full bg-white/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#D8BC74]">
+119:                          {slide.badge}
+127:                                aria-label={`${pick("Ir para slide", "Go to slide", "Ir a la diapositiva")} ${index + 1}`}
+129:                                className={`h-1.5 rounded-full transition-all ${activeIndex === index ? "w-5 bg-[#C9A961]" : "w-1.5 bg-white/30 hover:bg-white/45"}`}
+
+===== apps/cv-analyser/client/src/i18n/translations.ts =====
+33:  'ms_bruto': { pt: '/mês (bruto)', en: '/month (gross)', es: '/mes (bruto)' },
+50:  'bca53fde': { pt: '€', en: '€', es: '€' },
+53:  '999': { pt: '9,99', en: '9.99', es: '9,99' },
+136:  'este_cdigo_j_no_tem': { pt: 'Este código já não tem análises disponíveis', en: 'This code has no analyses remaining', es: 'Este código ya no tiene análisis disponibles' },
+167:  'o_teu_cdigo_para_futuras': { pt: 'O teu código para futuras análises:', en: 'Your code for future analyses:', es: 'Tu código para futuros análisis:' },
+168:  'anlises_restantes': { pt: 'Análises restantes', en: 'Remaining analyses', es: 'Análisis restantes' },
+199:  'o_que_o_teu_relatrio': { pt: 'O que o teu relatório completo inclui:', en: 'What your full report includes:', es: 'Lo que incluye tu informe completo:' },
+231:  'o_relatrio_completo_inclui_estas': { pt: 'O relatório completo inclui estas 4 secções detalhadas. Aqui podes ver o que cada uma cobre.', en: 'The full report includes these 4 detailed sections. Here you can see what each one covers.', es: 'El informe completo incluye estas 4 secciones detalladas. Aquí puedes ver qué cubre cada una.' },
+256:  'desconto_de_upgrade': { pt: 'Desconto de upgrade', en: 'Upgrade discount', es: 'Descuento de upgrade' },
+258:  '300800': { pt: '€300-800', en: '$300-800', es: '€300-800' },
+260:  'career_path_ia_preo_de': { pt: 'Career Path IA — preço de upgrade', en: 'Career Path AI — upgrade price', es: 'Career Path IA — precio de upgrade' },
+261:  '1499': { pt: '€14,99', en: '$14.99', es: '€14,99' },
+269:  'fazer_upgrade_por_1499': { pt: 'Fazer Upgrade por €14,99', en: 'Upgrade for $14.99', es: 'Hacer Upgrade por €14,99' },
+338:  'inclui_career_path_baseado_no': { pt: 'Inclui Career Path baseado no teu LinkedIn', en: 'Includes Career Path from your LinkedIn', es: 'Incluye Career Path basado en tu LinkedIn' },
+348:  'career_path_includo': { pt: 'Career Path incluído!', en: 'Career Path included!', es: '¡Career Path incluido!' },
+362:  'fornece_o_teu_perfil_linkedin': { pt: 'Fornece o teu perfil LinkedIn para lançarmos as duas análises: Relatório CV + Career Path.', en: 'Provide your LinkedIn profile so we can launch both analyses: CV Report + Career Path.', es: 'Proporciona tu perfil de LinkedIn para lanzar ambos análisis: Informe CV + Career Path.' },
+369:  'o_teu_pacote_inclui': { pt: 'O teu pacote inclui:', en: 'Your bundle includes:', es: 'Tu paquete incluye:' },
+372:  'lanar_as_duas_anlises': { pt: 'Lançar as duas análises', en: 'Launch both analyses', es: 'Lanzar ambos análisis' },
+387:  'includo': { pt: '— Incluído', en: '— Included', es: '— Incluido' },
+388:  'upgrade_1499': { pt: '— Upgrade €14,99', en: '— Upgrade $14.99', es: '— Upgrade 14,99 €' },
+390:  'gerar_career_path_includo_no': { pt: 'Gerar Career Path (incluído no pacote)', en: 'Generate Career Path (included in package)', es: 'Generar Career Path (incluido en el paquete)' },
+395:  'pagar_1499_e_gerar_career': { pt: 'Pagar €14,99 e Gerar Career Path', en: 'Pay $14.99 and Generate Career Path', es: 'Pagar 14,99 € y Generar Career Path' },
+427:  '32000': { pt: '32.000€', en: '$38k', es: '32.000€' },
+430:  '45000': { pt: '45.000€', en: '$52k', es: '45.000€' },
+433:  '65000': { pt: '65.000€', en: '$72k', es: '65.000€' },
+436:  'o_que_o_teu_career': { pt: 'O que o teu Career Path completo inclui:', en: 'What your full Career Path includes:', es: 'Lo que incluye tu Career Path completo:' },
+455:  'careerintelligenceupgradecareerpath': { pt: '/career-intelligence?upgrade=careerpath', en: '/en/career-intelligence?upgrade=careerpath', es: '/es/career-intelligence?upgrade=careerpath' },
+458:  'o_cv_analyser_analisa_o': { pt: 'O CV Analyser analisa o teu CV com score ATS, benchmarks e plano de acção', en: 'CV Analyser analyses your CV with ATS score, benchmarks and action plan', es: 'CV Analyser analiza tu CV con puntuación ATS, benchmarks y plan de acción' },
+531:  'career_path_value_statement': { pt: 'O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por {{price}}.', en: 'What others charge €600, Share2Inspire delivers in 30 seconds for {{price}}.', es: 'Lo que otros cobran 600€, Share2Inspire lo entrega en 30 segundos por {{price}}.' },
+541:  'o_que_o_career_intelligence': { pt: 'O que o Career Intelligence inclui:', en: 'What Career Intelligence includes:', es: 'Qué incluye Career Intelligence:' },
+689:  'mes': { pt: '/mês', en: '/month', es: '/mes' },
+734:  'quadrant_experiencia_text': { pt: 'Avalia a descrição das tuas experiências profissionais, incluindo progressão de carreira, relevância dos cargos, clareza das responsabilidades e quantificação de resultados alcançados.', en: 'Evaluates the description of your professional experiences, including career progression, role relevance, clarity of responsibilities and quantification of results achieved.', es: 'Evalúa la descripción de tus experiencias profesionales, incluyendo progresión de carrera, relevancia de los cargos, claridad de las responsabilidades y cuantificación de resultados alcanzados.' },
+736:  'quadrant_conteudo_text': { pt: 'Avalia a qualidade do texto do teu CV, incluindo uso de verbos de acção, quantificação de resultados, clareza, relevância das informações e densidade de palavras-chave do sector.', en: 'Evaluates the quality of your CV text, including use of action verbs, quantification of results, clarity, relevance of information and sector keyword density.', es: 'Evalúa la calidad del texto de tu CV, incluyendo uso de verbos de acción, cuantificación de resultados, claridad, relevancia de la información y densidad de palabras clave del sector.' },
+738:  'quadrant_estrutura_text': { pt: 'Avalia a organização visual do teu CV, incluindo hierarquia de informação, uso de espaço em branco, consistência de formatação, legibilidade e compatibilidade com sistemas ATS.', en: 'Evaluates the visual organisation of your CV, including information hierarchy, use of white space, formatting consistency, readability and ATS compatibility.', es: 'Evalúa la organización visual de tu CV, incluyendo jerarquía de información, uso de espacio en blanco, consistencia de formato, legibilidad y compatibilidad con sistemas ATS.' },
+740:  'quadrant_formacao_text': { pt: 'Avalia a apresentação da tua formação académica e certificações, incluindo relevância para o perfil, actualidade, instituições frequentadas e alinhamento com a trajectória profissional.', en: 'Evaluates the presentation of your academic background and certifications, including relevance to profile, currency, institutions attended and alignment with career trajectory.', es: 'Evalúa la presentación de tu formación académica y certificaciones, incluyendo relevancia para el perfil, actualidad, instituciones frecuentadas y alineación con la trayectoria profesional.' },
+777:  'live_match_badge_realtime': { pt: 'Tempo real', en: 'Real-time', es: 'Tiempo real' },
+872:      text = text.replace(`{${k}}`, v);
+887:  const l = (typeof enOrLang === 'string' && ['pt', 'en', 'es'].includes(enOrLang) ? enOrLang : lang) || getLang();
+

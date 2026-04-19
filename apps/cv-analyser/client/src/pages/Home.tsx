@@ -170,9 +170,9 @@ const buildTestimonials = (pick: PickFn) => [
     name: "Mariana Costa",
     role: pick("Gestora de Projetos", "Project Manager", "Gestora de Proyectos"),
     text: pick(
-      "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
-      "It was worth far more than the €9.99 I paid. The normal-curve positioning was an eye-opener — I realised I was in the 40th percentile and now I’m in the 75th.",
-      "Valía mucho más que los 9,99€ que pagué. El posicionamiento en la curva normal fue revelador: entendí que estaba en el percentil 40 y ahora estoy en el 75."
+      "Valia muito mais do que os €6,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+      "It was worth far more than the €6.99 I paid. The normal-curve positioning was an eye-opener — I realised I was in the 40th percentile and now I’m in the 75th.",
+      "Valía mucho más que los 6,99€ que pagué. El posicionamiento en la curva normal fue revelador: entendí que estaba en el percentil 40 y ahora estoy en el 75."
     ),
     rating: 5,
   },
@@ -181,9 +181,9 @@ const buildTestimonials = (pick: PickFn) => [
 const buildPricingPlans = (pick: PickFn) => [
   {
     name: pick("Essencial", "Essential", "Esencial"),
-    price: pick("9,99", "9.99", "9,99"),
+    price: pick("6,99", "6.99", "6,99"),
     analyses: 1,
-    perUnit: pick("9,99", "9.99", "9,99"),
+    perUnit: pick("6,99", "6.99", "6,99"),
     popular: false,
     badge: null,
     features: [
@@ -244,7 +244,7 @@ const buildComparisonFeatures = (pick: PickFn) => [
   { feature: pick("Career Path (roadmap de carreira)", "Career Path (career roadmap)", "Career Path (roadmap de carrera)"), us: true, competitor1: false, competitor2: false },
   { feature: pick("Certificação LinkedIn partilhável", "Shareable LinkedIn certification", "Certificación de LinkedIn compartible"), us: true, competitor1: false, competitor2: false },
   { feature: pick("Cruzamento CV vs LinkedIn", "CV vs LinkedIn cross-check", "Cruce CV vs LinkedIn"), us: true, competitor1: false, competitor2: false },
-  { feature: pick("Preço", "Price", "Precio"), usText: pick("Desde €9,99", "From €9.99", "Desde 9,99€"), comp1Text: pick("€19,99/mês", "€19.99/month", "19,99€/mes"), comp2Text: pick("€9,99", "€9.99", "9,99€") },
+  { feature: pick("Preço", "Price", "Precio"), usText: pick("Desde €6,99", "From €6.99", "Desde 6,99€"), comp1Text: pick("€19,99/mês", "€19.99/month", "19,99€/mes"), comp2Text: pick("€9,99", "€9.99", "9,99€") },
 ];
 
 export default function Home() {
@@ -2219,7 +2219,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">{pick("Pacotes de Análise Completa", "Full Analysis Packages", "Paquetes de Análisis Completo")}</h2>
-                <p className="text-sm text-muted-foreground">{pick("Desde €9,99 por análise", "From €9.99 per analysis", "Desde 9,99€ por análisis")}</p>
+                <p className="text-sm text-muted-foreground">{pick("Desde €6,99 por análise", "From €6.99 per analysis", "Desde 6,99€ por análisis")}</p>
               </div>
             </div>
             {pricingOpen ? (
@@ -2305,7 +2305,7 @@ export default function Home() {
               { icon: <Target className="w-6 h-6 text-[#C9A961]" />, title: pick("Feito para Portugal", "Made for Your Market", "Hecho para tu Mercado"), desc: pick("Análise adaptada ao mercado português. Relatórios em português de Portugal, com benchmarks locais e referências salariais nacionais.", "Analysis tailored to your local market. Reports in your language, with local benchmarks and salary references.", "Análisis adaptado a tu mercado local. Informes en tu idioma, con benchmarks locales y referencias salariales.") },
               { icon: <TrendingUp className="w-6 h-6 text-[#C9A961]" />, title: pick("Curva Normal Exclusiva", "Exclusive Normal Curve", "Curva Normal Exclusiva"), desc: pick("Vê exactamente onde te posicionas face a outros candidatos. Nenhum outro serviço oferece este nível de comparação visual.", "See exactly where you stand against other candidates. No other service offers this level of visual comparison.", "Ve exactamente dónde te posicionas frente a otros candidatos. Ningún otro servicio ofrece este nivel de comparación visual.") },
               { icon: <Clock className="w-6 h-6 text-[#C9A961]" />, title: pick("Resultados em 30 Segundos", "Results in 30 Seconds", "Resultados en 30 Segundos"), desc: pick("Enquanto outros serviços demoram horas ou dias, o CV Analyser dá-te feedback imediato com IA de última geração.", "While other services take hours or days, CV Analyser gives you immediate feedback with cutting-edge AI.", "Mientras otros servicios tardan horas o días, CV Analyser te da feedback inmediato con IA de última generación.") },
-              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: pick("Preço Justo, Sem Subscrição", "Fair Price, No Subscription", "Precio Justo, Sin Suscripción"), desc: pick("Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.", "Pay only when you need it. No monthly fees, no commitments. From €9.99 per full analysis.", "Paga solo cuando lo necesitas. Sin mensualidades, sin compromisos. Desde €9,99 por análisis completo.") },
+              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: pick("Preço Justo, Sem Subscrição", "Fair Price, No Subscription", "Precio Justo, Sin Suscripción"), desc: pick("Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €6,99 por análise completa.", "Pay only when you need it. No monthly fees, no commitments. From €6.99 per full analysis.", "Paga solo cuando lo necesitas. Sin mensualidades, sin compromisos. Desde €6,99 por análisis completo.") },
             ].map((card, i) => (
               <div key={i} className="bg-card border border-border rounded-xl p-6 space-y-3 flex flex-col min-h-[180px]">
                 <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0">
@@ -2349,7 +2349,7 @@ export default function Home() {
           >
             {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
+          <p className="text-xs text-slate-400 mt-3">{pick('A partir de 7,49€/mês · Cancela quando quiseres', 'From €7.49/month · Cancel anytime', 'Desde 7,49€/mes · Cancela cuando quieras')}</p>
         </div>
 
       </main>

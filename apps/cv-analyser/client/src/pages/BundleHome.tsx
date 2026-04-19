@@ -800,7 +800,7 @@ export default function BundleHome() {
             >
               {pick('Ver planos de subscrição', 'View subscription plans', 'Ver planes de suscripción')} <ArrowRight className="w-4 h-4" />
             </a>
-            <p className="text-[10px] text-slate-400 mt-2">{pick('A partir de 9,99€/mês · Cancela quando quiseres', 'From €9.99/month · Cancel anytime', 'Desde 9,99€/mes · Cancela cuando quieras')}</p>
+            <p className="text-[10px] text-slate-400 mt-2">{pick('A partir de 7,49€/mês · Cancela quando quiseres', 'From €7.49/month · Cancel anytime', 'Desde 7,49€/mes · Cancela cuando quieras')}</p>
           </div>
         </div>
       )}

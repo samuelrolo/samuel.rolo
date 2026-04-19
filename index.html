@@ -7,21 +7,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Share2Inspire</title>
-    <meta name="description" content="Share2Inspire — ferramentas de carreira com IA para CV, LinkedIn, Career Path e Career Intelligence." />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Share2Inspire" />
-    <meta property="og:title" content="Share2Inspire" />
-    <meta property="og:description" content="Ferramentas de carreira com IA para CV, LinkedIn, Career Path e Career Intelligence." />
-    <meta property="og:url" content="https://share2inspire.pt/" />
-    <meta property="og:image" content="https://share2inspire.pt/images/og-share2inspire.png" />
-    <meta property="og:image:secure_url" content="https://share2inspire.pt/images/og-share2inspire.png" />
-    <meta property="og:image:alt" content="Share2Inspire" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Share2Inspire" />
-    <meta name="twitter:description" content="Ferramentas de carreira com IA para CV, LinkedIn, Career Path e Career Intelligence." />
-    <meta name="twitter:image" content="https://share2inspire.pt/images/og-share2inspire.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
@@ -61,133 +46,11 @@ fbq('init', '3865352233767400');
 fbq('track', 'PageView');
 </script>
 
-  <link rel="modulepreload" crossorigin href="/assets/vendor-radix-CD1cfZv9.js">
-<link rel="modulepreload" crossorigin href="/assets/vendor-pdf-BXl3LOEh.js">
-<link rel="modulepreload" crossorigin href="/assets/vendor-charts-DOFVeF4Y.js">
-  <script type="module" crossorigin src="/assets/index-BNbjfMwp.js"></script>
+  <script type="module" crossorigin src="/assets/index-DCqyHOxP.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-radix-C11gGs12.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-pdf-BXl3LOEh.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-charts-CibbPT5n.js">
   <link rel="stylesheet" crossorigin href="/assets/index-DpH1xlTa.css">
-  <style>
-    @keyframes s2iHeroCardIn {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-
-    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
-    #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
-      display: flex;
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: min(100%, 20rem);
-      max-width: 20rem;
-      min-height: 12.75rem;
-      box-sizing: border-box;
-      align-self: stretch;
-      background: rgba(19, 52, 45, 0.78);
-      border: 1px solid rgba(201, 169, 97, 0.42);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      color: #f4efe3;
-      opacity: 0;
-      transform: translateY(18px);
-      animation: s2iHeroCardIn 0.7s ease-out forwards;
-      will-change: opacity, transform;
-    }
-
-    #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
-      animation-delay: 0.12s;
-    }
-
-    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] h3,
-    #root section[style*="hero-samuel-blur"] a[href="/career-path"] h3 {
-      width: 100%;
-      min-height: 3rem;
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 0.5rem;
-      text-align: left;
-      line-height: 1.5rem;
-      color: #f6f1e6;
-    }
-
-    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] p,
-    #root section[style*="hero-samuel-blur"] a[href="/career-path"] p {
-      width: 100%;
-      flex: 1 1 auto;
-      min-height: 3.75rem;
-      margin-bottom: 1rem;
-      text-align: left;
-      line-height: 1.25rem;
-      color: rgba(244, 239, 227, 0.78);
-    }
-
-    #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] span,
-    #root section[style*="hero-samuel-blur"] a[href="/career-path"] span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 2.75rem;
-      margin-top: auto;
-      padding: 0.75rem 1rem;
-      box-sizing: border-box;
-      text-align: center;
-      border: 1px solid rgba(201, 169, 97, 0.42);
-      border-radius: 0.75rem;
-      background: rgba(201, 169, 97, 0.14);
-      color: #f6f1e6;
-    }
-
-    @media (max-width: 768px) {
-      #root section[style*="hero-samuel-blur"] div[class*="flex flex-col"][class*="justify-center"] {
-        gap: 0.625rem;
-      }
-      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
-      #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
-        max-width: 100%;
-        width: 100%;
-        min-height: 10.75rem;
-        height: 10.75rem;
-        padding: 0.875rem 0.875rem 0.75rem;
-        border-radius: 0.875rem;
-      }
-      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] h3,
-      #root section[style*="hero-samuel-blur"] a[href="/career-path"] h3 {
-        min-height: 2.5rem;
-        margin-bottom: 0.375rem;
-        line-height: 1.25rem;
-      }
-      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] p,
-      #root section[style*="hero-samuel-blur"] a[href="/career-path"] p {
-        min-height: 2.75rem;
-        margin-bottom: 0.625rem;
-        line-height: 1.15rem;
-      }
-      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"] span,
-      #root section[style*="hero-samuel-blur"] a[href="/career-path"] span {
-        min-height: 2.5rem;
-        padding: 0.625rem 0.875rem;
-        margin-top: auto;
-        border-radius: 0.625rem;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      #root section[style*="hero-samuel-blur"] a[href="/cv-analyser"],
-      #root section[style*="hero-samuel-blur"] a[href="/career-path"] {
-        opacity: 1;
-        transform: none;
-        animation: none;
-      }
-    }
-  </style>
 </head>
 
   <body>
@@ -199,4 +62,3 @@ fbq('track', 'PageView');
   </body>
 
 </html>
-<!-- redeploy-20260418 -->

@@ -174,7 +174,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
             {
               "@type": "Offer",
               "name": pick("Relatório Completo", "Full Report", "Informe Completo"),
-              "price": "9.99",
+              "price": "6.99",
               "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",
               "url": `${baseUrl}/cv-analyser`,
@@ -208,7 +208,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
           "category": pick("Desenvolvimento de Carreira", "Career Development", "Desarrollo Profesional"),
           "offers": {
             "@type": "Offer",
-            "price": "3.99",
+            "price": "3.49",
             "priceCurrency": "EUR",
             "availability": "https://schema.org/InStock",
             "url": `${baseUrl}/linkedin-roaster`
@@ -240,7 +240,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
           "category": pick("Desenvolvimento de Carreira", "Career Development", "Desarrollo Profesional"),
           "offers": {
             "@type": "Offer",
-            "price": "19.99",
+            "price": "14.99",
             "priceCurrency": "EUR",
             "availability": "https://schema.org/InStock",
             "url": `${baseUrl}/career-path`
@@ -274,7 +274,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
             {
               "@type": "Offer",
               "name": pick("Standard", "Standard", "Standard"),
-              "price": "49.99",
+              "price": "24.99",
               "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",
               "url": `${baseUrl}/career-intelligence`
@@ -282,7 +282,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
             {
               "@type": "Offer",
               "name": pick("Upgrade desde Career Path", "Career Path Upgrade", "Upgrade desde Career Path"),
-              "price": "29.00",
+              "price": "12.49",
               "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",
               "url": `${baseUrl}/career-intelligence`,
@@ -316,7 +316,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
           "category": pick("Desenvolvimento de Carreira", "Career Development", "Desarrollo Profesional"),
           "offers": {
             "@type": "Offer",
-            "price": "7.99",
+            "price": "6.99",
             "priceCurrency": "EUR",
             "availability": "https://schema.org/InStock",
             "url": `${baseUrl}/estudante`,
@@ -349,7 +349,7 @@ function ServicosSchemaLD({ lang }: { lang: string }) {
           "category": pick("Desenvolvimento de Carreira", "Career Development", "Desarrollo Profesional"),
           "offers": {
             "@type": "Offer",
-            "price": "29.00",
+            "price": "12.49",
             "priceCurrency": "EUR",
             "availability": "https://schema.org/InStock",
             "url": `${baseUrl}/bundle`,
@@ -454,11 +454,11 @@ export default function ServicosPage() {
         pick("Recebe um plano de melhoria concreto", "Receive a concrete improvement plan", "Recibe un plan de mejora concreto"),
       ],
       detail: pick(
-        "Diagnóstico instantâneo com IA. Score de maturidade 0-100, taxa de rejeição ATS, relatório PDF com 15+ recomendações. Análise gratuita + relatório completo por 9,99€.",
-        "Instant AI diagnosis. Maturity score 0-100, ATS rejection rate, PDF report with 15+ recommendations. Free analysis + full report for €9.99.",
-        "Diagnóstico instantáneo con IA. Puntuación de madurez 0-100, tasa de rechazo ATS, informe PDF con 15+ recomendaciones. Análisis gratuito + informe completo por 9,99€."
+        "Diagnóstico instantâneo com IA. Score de maturidade 0-100, taxa de rejeição ATS, relatório PDF com 15+ recomendações. Análise gratuita + relatório completo por 6,99€.",
+        "Instant AI diagnosis. Maturity score 0-100, ATS rejection rate, PDF report with 15+ recommendations. Free analysis + full report for €6.99.",
+        "Diagnóstico instantáneo con IA. Puntuación de madurez 0-100, tasa de rechazo ATS, informe PDF con 15+ recomendaciones. Análisis gratuito + informe completo por 6,99€."
       ),
-      price: pick("Grátis / completo 9,99€", "Free / full €9.99", "Gratis / completo 9,99€"),
+      price: pick("Grátis / completo 6,99€", "Free / full €6.99", "Gratis / completo 6,99€"),
       cta: pick("Analisar o meu CV", "Analyse my CV", "Analizar mi CV"),
       link: localePath("/cv-analyser"),
     },
@@ -482,7 +482,7 @@ export default function ServicosPage() {
         "Full LinkedIn profile audit. Visibility score 0-10, critical errors, SEO keywords and priority recommendation.",
         "Auditoría completa de tu perfil LinkedIn. Puntuación de visibilidad 0-10, errores críticos, palabras clave SEO y recomendación prioritaria."
       ),
-      price: "3,99€",
+      price: "3,49€",
       cta: pick("Ver o que está a travar-me", "See what's holding me back", "Ver qué me está frenando"),
       link: localePath("/linkedin-roaster"),
     },
@@ -505,8 +505,8 @@ export default function ServicosPage() {
         pick("Relatório de consistência CV ↔ LinkedIn (exclusivo)", "CV ↔ LinkedIn consistency report (exclusive)", "Informe de consistencia CV ↔ LinkedIn (exclusivo)"),
         pick("Plano de acção integrado por semanas", "Integrated weekly action plan", "Plan de acción integrado por semanas"),
       ],
-      oldPrice: "13,98€",
-      price: "7,99€",
+      oldPrice: "10,48€",
+      price: "6,99€",
       saving: pick("Poupas 43%", "Save 43%", "Ahorras 43%"),
       cta: pick("Quero o Pack Estudante", "I want the Student Pack", "Quiero el Pack Estudiante"),
       link: localePath("/estudante"),
@@ -520,8 +520,8 @@ export default function ServicosPage() {
         "Full diagnosis + personalised roadmap. Everything you need to get started.",
         "Diagnóstico completo + hoja de ruta personalizada. Todo lo que necesitas para empezar."
       ),
-      oldPrice: "38€",
-      price: "29€",
+      oldPrice: "29,98€",
+      price: "15,99€",
       saving: pick("Poupas 9€", "Save €9", "Ahorras 9€"),
       cta: pick("Quero os dois", "I want both", "Quiero los dos"),
       link: localePath("/bundle"),
@@ -549,7 +549,7 @@ export default function ServicosPage() {
         "Personalised career paths, skills gap analysis, salary estimate per stage, recommended training and 30-60-90 day plan.",
         "Trayectorias de carrera personalizadas, análisis de brechas de competencias, estimación salarial por etapa, formaciones recomendadas y plan 30-60-90 días."
       ),
-      price: "19,99€",
+      price: "14,99€",
       cta: pick("Traçar o meu caminho", "Map my path", "Trazar mi camino"),
       link: localePath("/career-path"),
     },
@@ -574,9 +574,9 @@ export default function ServicosPage() {
         "Todo del Career Path + decisión estratégica. 3 caminos con probabilidad de éxito, comparación lado a lado, trade-offs y recomendación final con justificación. Contexto de mercado incluido."
       ),
       upgradeNote: pick(
-        "Ou começa pelo Career Path (19,99€) e faz upgrade por 29€.",
-        "Or start with Career Path (€19.99) and upgrade for €29.",
-        "O empieza por Career Path (19,99€) y haz upgrade por 29€."
+        "Ou começa pelo Career Path (14,99€) e faz upgrade por 12,49€.",
+        "Or start with Career Path (€14.99) and upgrade for €12.49.",
+        "O empieza por Career Path (14,99€) y haz upgrade por 12,49€."
       ),
       cta: pick("Tomar a decisão certa", "Make the right decision", "Tomar la decisión correcta"),
       link: localePath("/career-intelligence"),

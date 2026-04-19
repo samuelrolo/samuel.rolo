@@ -73,9 +73,9 @@ const buildTestimonials = (pick: <T,>(pt: T, en: T, es: T) => T) => [
 ];
 
 /* ─── Pricing (inline) ─── */
-const PRICE_DISPLAY_BASE = '19,99€';
-const PRICE_DISPLAY_GROWTH = '19,99€';
-const PRICE_DISPLAY_PRO = '19,99€';
+const PRICE_DISPLAY_BASE = '14,99€';
+const PRICE_DISPLAY_GROWTH = '14,99€';
+const PRICE_DISPLAY_PRO = '14,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
@@ -234,8 +234,8 @@ export default function CareerPathHome() {
   const isMemberPro = memberTier === 'pro';
   const hasMemberDiscount = isMemberGrowth || isMemberPro;
 
-  const PRICE = pick('19,99', '19.99', '19,99');
-  const PRICE_NUM = 19.99;
+  const PRICE = pick('14,99', '14.99', '14,99');
+  const PRICE_NUM = 14.99;
   const PRICE_DISPLAY = `${CUR}${PRICE}`;
   const memberProductType = 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
@@ -1454,7 +1454,7 @@ export default function CareerPathHome() {
           >
             {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">{pick('Career Path incluído a partir do plano Growth (19,99€/mês)', 'Career Path included from the Growth plan (€19.99/month)', 'Career Path incluido a partir del plan Growth (19,99€/mes)')}</p>
+          <p className="text-xs text-slate-400 mt-3"><span className="flex items-center justify-center gap-2">{pick('Career Path incluído a partir do plano Growth (14,99€/mês)', 'Career Path included from the Growth plan (€14.99/month)', 'Career Path incluido a partir del plan Growth (14,99€/mes)')} <span className="bg-green-500/10 text-green-600 text-[10px] px-1.5 py-0.5 rounded border border-green-500/20">-25%</span></span></p>
         </div>
       </div>
 

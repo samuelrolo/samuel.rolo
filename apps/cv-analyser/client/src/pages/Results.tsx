@@ -373,9 +373,7 @@ export default function Results() {
 
   // Currency & pricing: all locales use EUR
   const CUR = t('bca53fde');
-  const P = isEN
-    ? { cv: '9.99', cp: '19.99', career: '19.99' }
-    : { cv: '9,99', cp: '19,99', career: '19,99' };
+  const P = isEN ? { cv: '6.99', cp: '14.99', career: '14.99' } : { cv: '6,99', cp: '14,99', career: '14,99' };
   const CURRENCY_CODE = 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
@@ -385,7 +383,7 @@ export default function Results() {
   });
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
     name: t('relatrio_cv'),
-    price: t('999'),
+    price: t('699'),
     analyses: 1,
     voucher_type: 'standard',
     includes_career_path: false,
@@ -1337,7 +1335,7 @@ export default function Results() {
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const cpAmount = careerPathIsUpgrade ? '14.99' : '19.99';
+      const cpAmount = careerPathIsUpgrade ? '12.49' : '14.99';
       const cpCurrencyCode = t('eur_2');
 
       if (careerPathPaymentMethod === 'stripe') {

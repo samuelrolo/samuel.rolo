@@ -226,7 +226,7 @@ function LockedPreview({ title, items }: { title: string; items: string[] }) {
 }
 
 /* ─── Plans ─── */
-function getPlans(en: boolean, cur = '€', p = en ? { cv: '19.99', cp: '19.99' } : { cv: '19,99', cp: '19,99' }) {
+function getPlans(en: boolean, cur = '€', p = en ? { cv: '6.99', cp: '14.99' } : { cv: '6,99', cp: '14,99' }) {
   return [
     {
       id: 'career_path',
@@ -301,9 +301,7 @@ export default function CareerPathResults() {
 
   // Currency & pricing for checkout UI only
   const CUR = t('bca53fde');
-  const P = isEN
-    ? { cv: '9.99', cp: '19.99' }
-    : { cv: '9,99', cp: '19,99' };
+  const P = isEN ? { cv: '6.99', cp: '14.99' } : { cv: '6,99', cp: '14,99' };
   const CURRENCY_CODE = t('eur');
 
   /** Format price with correct symbol position per locale, always in EUR */

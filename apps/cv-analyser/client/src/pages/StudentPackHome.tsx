@@ -30,10 +30,10 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
-const PRICE_NUM = 7.99;
-const PRICE_PT = '7,99';
-const PRICE_ORIGINAL_PT = '13,98';
-const PRICE_ORIGINAL_EN = '13.98';
+const PRICE_NUM = 6.99;
+const PRICE_PT = '6,99';
+const PRICE_ORIGINAL_PT = '10,48';
+const PRICE_ORIGINAL_EN = '10.48';
 
 
 async function extractTextFromPDF(file: File): Promise<string> {
@@ -680,7 +680,7 @@ export default function StudentPackHome() {
               <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
                 <div className="flex items-center gap-2 md:gap-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-blue-600" /></div>
-                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("CV Analyser", "CV Analyser", "CV Analyser")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 9,99€", "Value: €9.99", "Valor: €9,99")}</p></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("CV Analyser", "CV Analyser", "CV Analyser")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 6,99€", "Value: €6.99", "Valor: €6,99")}</p></div>
                 </div>
                 <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
                   <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Análise ATS com score", "ATS analysis with score", "Análisis ATS con puntuación")}</span></li>
@@ -692,7 +692,7 @@ export default function StudentPackHome() {
               <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-left space-y-2 md:space-y-3">
                 <div className="flex items-center gap-2 md:gap-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-50 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"><Linkedin className="w-4 h-4 md:w-5 md:h-5 text-purple-600" /></div>
-                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 3,99€", "Value: €3.99", "Valor: €3,99")}</p></div>
+                  <div><h3 className="font-bold text-slate-900 text-sm md:text-base">{pick("LinkedIn Roaster", "LinkedIn Roaster", "LinkedIn Roaster")}</h3><p className="text-[10px] md:text-xs text-slate-400">{pick("Valor: 3,49€", "Value: €3.49", "Valor: €3,49")}</p></div>
                 </div>
                 <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-600">
                   <li className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500 mt-0.5 shrink-0" /> <span>{pick("Auditoria do perfil", "Profile audit", "Auditoría del perfil")}</span></li>

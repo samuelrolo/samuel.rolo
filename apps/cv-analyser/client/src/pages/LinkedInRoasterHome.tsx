@@ -20,7 +20,7 @@ import { couponSupportsProduct } from "@/lib/couponProductCompatibility";
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
 const SUPABASE_EDGE_URL_CONST = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
-const PRICE_NUM = 3.99;
+const PRICE_NUM = 3.49;
 
 /* ─── COMPONENT ─── */
 
@@ -28,7 +28,7 @@ export default function LinkedInRoasterHome() {
   const { pick, lang, localePath: lp } = useTranslation();
   const isPT = lang === 'pt';
 
-  const PRICE = pick('3,99', '3.99', '3.99');
+  const PRICE = pick('3,49', '3.49', '3,49');
   const priceDisplay = pick(`${PRICE}€`, `€${PRICE}`, `€${PRICE}`);
 
   /* ─── i18n data ─── */

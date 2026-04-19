@@ -101,15 +101,15 @@ const buildTestimonials = (pick: <T,>(pt: T, en: T, es: T) => T) => [
   },
 ];
 
-const PRICE_DISPLAY_BASE = '49,99€';
-const PRICE_BASE = '49,99';
-const PRICE_NUM_BASE = 49.99;
-const PRICE_DISPLAY_UPGRADE = '29€';
-const PRICE_UPGRADE = '29,00';
-const PRICE_NUM_UPGRADE = 29.00;
-const PRICE_DISPLAY_MEMBER_PRO = '9,99€';
-const PRICE_MEMBER_PRO = '9,99';
-const PRICE_NUM_MEMBER_PRO = 9.99;
+const PRICE_DISPLAY_BASE = '24,99€';
+const PRICE_BASE = '24,99';
+const PRICE_NUM_BASE = 24.99;
+const PRICE_DISPLAY_UPGRADE = '12,49€';
+const PRICE_UPGRADE = '12,49';
+const PRICE_NUM_UPGRADE = 12.49;
+const PRICE_DISPLAY_MEMBER_PRO = '6,25€';
+const PRICE_MEMBER_PRO = '6,25';
+const PRICE_NUM_MEMBER_PRO = 6.25;
 
 const buildCiHeadlines = (pick: <T,>(pt: T, en: T, es: T) => T) => [
   { text: pick("Toma decisões de carreira com dados,", "Make career decisions with data,", "Toma decisiones de carrera con datos,"), highlight: pick("não com intuição", "not intuition", "no con intuición") },
@@ -122,7 +122,7 @@ export default function CareerIntelligenceHome() {
   const { symbol: CUR } = useCurrency();
   const careerIntelligenceDemoHref = localePath('/career-intelligence/demo');
   const privacyPolicyHref = pick('/politica-privacidade/', '/en/privacy-policy/', '/es/politica-de-privacidad/');
-  const careerPathOfferText = pick('Career Path por 19,99€ →', 'Career Path for €19.99 →', 'Career Path por 19,99€ →');
+  const careerPathOfferText = pick('Career Path por 14,99€', 'Career Path for €14.99', 'Career Path por 14,99€');
   const paymentMethodLabel = (method: 'mbway' | 'stripe' | 'paypal') => method === 'mbway' ? 'MB WAY' : method === 'stripe' ? pick('Cartão', 'Card', 'Tarjeta') : 'PayPal';
   const discountAppliedText = (percent: number) => pick(`Desconto de ${percent}% aplicado!`, `${percent}% discount applied!`, `¡Descuento de ${percent}% aplicado!`);
   const paymentPhonePlaceholder = pick('9XXXXXXXX', '+351 9XXXXXXXX', '6XXXXXXXX');
@@ -1505,7 +1505,7 @@ export default function CareerIntelligenceHome() {
           >
             {pick('Ver planos de subscrição →', 'View subscription plans →', 'Ver planes de suscripción →')}
           </a>
-          <p className="text-xs text-slate-400 mt-3">{pick('Career Intelligence incluído no plano Pro (39,99€/mês)', 'Career Intelligence included in the Pro plan (€39.99/month)', 'Career Intelligence incluido en el plan Pro (39,99€/mes)')}</p>
+          <p className="text-xs text-slate-400 mt-3"><span className="flex items-center justify-center gap-2">{pick('Career Intelligence incluído no plano Pro (29,99€/mês)', 'Career Intelligence included in the Pro plan (€29.99/month)', 'Career Intelligence incluido en el plan Pro (29,99€/mes)')} <span className="bg-green-500/10 text-green-600 text-[10px] px-1.5 py-0.5 rounded border border-green-500/20">-25%</span></span></p>
         </div>
       </div>
 
