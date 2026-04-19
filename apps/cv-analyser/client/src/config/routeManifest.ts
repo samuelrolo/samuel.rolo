@@ -9,6 +9,7 @@ export type PageId =
   | 'bundle'
   | 'estudante'
   | 'conhecimento'
+  | 'blog'
   | 'servicos'
   | 'sobre'
   | 'contactos'
@@ -53,7 +54,7 @@ type FlattenedRouteEntry = {
   menuVisible: boolean;
 };
 
-export const MENU_PAGE_IDS: PageId[] = ['home', 'servicos', 'conhecimento', 'sobre', 'contactos'];
+export const MENU_PAGE_IDS: PageId[] = ['home', 'servicos', 'conhecimento', 'blog', 'sobre', 'contactos'];
 export const SERVICE_PAGE_IDS = new Set<PageId>([
   'cv-analyser',
   'career-path',
@@ -154,6 +155,16 @@ export const routeManifest: RouteDefinition[] = [
       pt: { path: '/servicos', aliases: ['/services'], label: 'Serviços', menuVisible: true },
       en: { path: '/en/services', aliases: ['/en/servicos', '/en/pages/services'], label: 'Services', menuVisible: true },
       es: { path: '/es/servicios', aliases: ['/es/servicos', '/es/services', '/servicios'], label: 'Servicios', menuVisible: true },
+    },
+  },
+  {
+    id: 'blog',
+    group: 'menu',
+    allowChildren: true,
+    localized: {
+      pt: { path: '/blog', label: 'Blog', menuVisible: true },
+      en: { path: '/en/blog', label: 'Blog', menuVisible: true },
+      es: { path: '/es/blog', label: 'Blog', menuVisible: true },
     },
   },
   {

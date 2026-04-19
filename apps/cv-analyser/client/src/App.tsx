@@ -36,6 +36,7 @@ const ServicosPage = lazy(() => import("./pages/ServicosPage"));
 const ServicesPageEN = lazy(() => import("./pages/ServicesPageEN"));
 const KnowledgeHubPage = lazy(() => import("./pages/KnowledgeHubPage"));
 const KnowledgeHubPageEN = lazy(() => import("./pages/en/KnowledgeHubPageEN"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const LegalPage = lazy(() => import("./pages/LegalPage"));
@@ -138,6 +139,13 @@ const pageViews: Record<RoutablePageId, RoutedPageView> = {
       pt: ServicosPage,
       en: ServicesPageEN,
       es: ServicosPage,
+    },
+  },
+  blog: {
+    component: {
+      pt: BlogPage,
+      en: BlogPage,
+      es: BlogPage,
     },
   },
   sobre: {

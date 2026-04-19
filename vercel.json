@@ -397,7 +397,7 @@
       ]
     },
     {
-      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|servicos|conhecimento|contactos|en/about|en/contact|en/services|en/knowledge|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/sobre|es/acerca-de|es/servicios|es/servicos|es/conocimiento|es/contacto|es/contact|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack)(.*)",
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|estudante|area-cliente|sobre|servicos|conhecimento|blog|contactos|en/about|en/contact|en/services|en/knowledge|en/blog|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster|en/student-pack|es/sobre|es/acerca-de|es/servicios|es/servicos|es/conocimiento|es/blog|es/contacto|es/contact|es/cv-analyser|es/career-path|es/career-intelligence|es/bundle|es/linkedin-roaster|es/student-pack)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
