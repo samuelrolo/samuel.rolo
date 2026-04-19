@@ -48,6 +48,8 @@ type RoutedPageView = {
   resultsComponent?: ComponentType;
   testComponent?: ComponentType;
   exampleComponent?: ComponentType;
+  childComponent?: ComponentType;
+  childPath?: string;
 };
 
 type RoutablePageId = Exclude<PageId, "area-cliente">;
@@ -147,6 +149,8 @@ const pageViews: Record<RoutablePageId, RoutedPageView> = {
       en: BlogPage,
       es: BlogPage,
     },
+    childComponent: BlogPage,
+    childPath: "/:slug",
   },
   sobre: {
     component: sharedAboutPages,
@@ -188,12 +192,16 @@ function RoutedSwitch({
   resultsComponent,
   testComponent,
   exampleComponent,
+  childComponent,
+  childPath,
 }: {
   base: string;
   homeComponent: ComponentType;
   resultsComponent?: ComponentType;
   testComponent?: ComponentType;
   exampleComponent?: ComponentType;
+  childComponent?: ComponentType;
+  childPath?: string;
 }) {
   return (
     <Router base={base}>
@@ -202,6 +210,7 @@ function RoutedSwitch({
         {resultsComponent ? <Route path="/results" component={resultsComponent} /> : null}
         {testComponent ? <Route path="/test" component={testComponent} /> : null}
         {exampleComponent ? <Route path="/example" component={exampleComponent} /> : null}
+        {childComponent && childPath ? <Route path={childPath} component={childComponent} /> : null}
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -246,6 +255,8 @@ function AppRouter() {
       resultsComponent={view.resultsComponent}
       testComponent={view.testComponent}
       exampleComponent={view.exampleComponent}
+      childComponent={view.childComponent}
+      childPath={view.childPath}
     />
   );
 }
