@@ -9,12 +9,14 @@ import {
 } from "lucide-react";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
+import EmailResultsGate from "@/components/EmailResultsGate";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
+import { readEmailGateState } from "@/lib/emailGate";
 
 // ─── Helpers ───
 const scoreColor = (s: number, studentScale = false) => {
@@ -404,6 +406,7 @@ export default function StudentPackResults() {
 
   const [isPaid, setIsPaid] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
+  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('student-pack-results'));
 
   useEffect(() => {
     let cancelled = false;
@@ -509,6 +512,94 @@ export default function StudentPackResults() {
   if (!accessChecked || !isPaid) return null;
 
   const hasData = globalScore > 0 || perfil?.nome || Object.keys(auditoria).length > 0;
+  const previewTargetRole = Array.isArray(cargosAlvo) && cargosAlvo.length > 0 ? cargosAlvo[0] : null;
+  const previewKeyword = Array.isArray(keywords?.keywords_presentes) && keywords.keywords_presentes.length > 0
+    ? keywords.keywords_presentes[0]?.keyword || keywords.keywords_presentes[0]
+    : '';
+  const previewAction90 = (plano90 as any)?.dias_30?.acoes?.[0] || (plano90 as any)?.days_30?.acoes?.[0] || (plano90 as any)?.dias30?.acoes?.[0] || recomendacaoPrioritaria || pick('Há um plano cruzado com próximos passos para CV, LinkedIn e candidaturas.', 'There is a cross-checked plan with next steps for CV, LinkedIn and applications.', 'Hay un plan cruzado con próximos pasos para CV, LinkedIn y candidaturas.');
+  const previewMetrics = [
+    {
+      label: pick('Score global', 'Overall score', 'Puntuación global'),
+      value: `${globalScore || 0}/100`,
+      helper: scoreGlobal?.interpretacao || pick('Leitura consolidada de CV + LinkedIn.', 'Consolidated reading of CV + LinkedIn.', 'Lectura consolidada de CV + LinkedIn.'),
+    },
+    {
+      label: pick('Posicionamento', 'Positioning', 'Posicionamiento'),
+      value: nivel || pick('Em definição', 'Being defined', 'En definición'),
+      helper: scoreGlobal?.percentil_estudantes ? pick(`Top ${100 - scoreGlobal.percentil_estudantes}% estudantes.`, `Top ${100 - scoreGlobal.percentil_estudantes}% students.`, `Top ${100 - scoreGlobal.percentil_estudantes}% estudiantes.`) : pick('Comparação com outros perfis de entrada no mercado.', 'Comparison with other early-career profiles.', 'Comparación con otros perfiles de entrada al mercado.'),
+    },
+    {
+      label: pick('Primeiro cargo alvo', 'First target role', 'Primer puesto objetivo'),
+      value: previewTargetRole?.titulo || pick('Cargos prioritários identificados', 'Priority roles identified', 'Puestos prioritarios identificados'),
+      helper: previewTargetRole?.fit_percentagem ? `${previewTargetRole.fit_percentagem}% fit` : pick('Com fit, empresas e gap de competências.', 'With fit, companies and skill gap.', 'Con fit, empresas y gap de habilidades.'),
+    },
+  ];
+  const previewHighlights = [
+    {
+      title: pick('Mensagem de marca pessoal', 'Personal brand signal', 'Señal de marca personal'),
+      description: auditoria?.primeira_impressao_linkedin || auditoria?.primeira_impressao_cv || perfil?.resumo_executivo || pick('O relatório completo cruza percepção, coerência e diferenciação.', 'The full report cross-checks perception, consistency and differentiation.', 'El informe completo cruza percepción, coherencia y diferenciación.'),
+      icon: <Sparkles className="h-4 w-4" />,
+    },
+    {
+      title: previewKeyword ? pick('Keyword com tração', 'Keyword with traction', 'Keyword con tracción') : pick('Estratégia CV + LinkedIn', 'CV + LinkedIn strategy', 'Estrategia CV + LinkedIn'),
+      description: previewKeyword || keywords?.recomendacao_keywords || pick('Existe uma lógica unificada de keywords para melhorar descoberta e candidaturas.', 'There is a unified keyword logic to improve discovery and applications.', 'Existe una lógica unificada de keywords para mejorar visibilidad y candidaturas.'),
+      icon: <Search className="h-4 w-4" />,
+    },
+    {
+      title: pick('Próximo passo acionável', 'Next actionable step', 'Próximo paso accionable'),
+      description: previewAction90,
+      icon: <Calendar className="h-4 w-4" />,
+    },
+  ];
+
+  if (!emailGateState.unlocked) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <S2IHeader activePage="estudante" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-8">
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="relative shrink-0">
+                <ScoreCircle score={globalScore} size={140} strokeWidth={10} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-4xl font-bold">{globalScore}</span>
+                  <span className="text-xs text-emerald-200">/100</span>
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center gap-2 text-emerald-200 text-xs font-bold uppercase tracking-wider mb-4 justify-center md:justify-start">
+                  <GraduationCap className="w-4 h-4" /> {pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')}
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold mb-2">{perfil?.nome || pick('O teu resultado cruzado', 'Your combined result', 'Tu resultado combinado')}</h1>
+                <p className="text-sm md:text-base text-emerald-100 leading-relaxed max-w-2xl">
+                  {perfil?.resumo_executivo || pick('O preview já mostra como o teu CV e o teu LinkedIn se posicionam em conjunto. O relatório completo detalha coerência, cargos-alvo, plano 90 dias e ajustes com maior impacto no arranque de carreira.', 'The preview already shows how your CV and LinkedIn position together. The full report details consistency, target roles, the 90-day plan and the highest-impact adjustments for early career growth.', 'La vista previa ya muestra cómo se posicionan juntos tu CV y tu LinkedIn. El informe completo detalla coherencia, puestos objetivo, plan de 90 días y ajustes de mayor impacto para el inicio de carrera.')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <EmailResultsGate
+            storageKey="student-pack-results"
+            initialEmail={emailGateState.email || sessionStorage.getItem('studentPackEmail') || localStorage.getItem('studentPackEmail') || ''}
+            productLabel={pick('Pack Estudante', 'Student Pack', 'Pack Estudiante')}
+            previewTitle={pick('Tens já uma visão muito clara do teu potencial de entrada no mercado.', 'You already have a very clear view of your early-career potential.', 'Ya tienes una visión muy clara de tu potencial de entrada en el mercado.')}
+            previewDescription={pick('Desbloqueia o relatório completo para veres a leitura cruzada CV + LinkedIn, os cargos-alvo, a estratégia de keywords, a marca pessoal e o plano de execução dos próximos 90 dias.', 'Unlock the full report to see the cross-checked CV + LinkedIn reading, target roles, keyword strategy, personal brand recommendations and the next 90-day execution plan.', 'Desbloquea el informe completo para ver la lectura cruzada CV + LinkedIn, los puestos objetivo, la estrategia de keywords, la marca personal y el plan de ejecución de los próximos 90 días.')}
+            metrics={previewMetrics}
+            highlights={previewHighlights}
+            onUnlocked={async (email) => {
+              sessionStorage.setItem('studentPackEmail', email);
+              localStorage.setItem('studentPackEmail', email);
+              setEmailGateState({ unlocked: true, email });
+            }}
+          />
+        </div>
+
+        <S2IFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">

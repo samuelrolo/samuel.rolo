@@ -1,6 +1,7 @@
 // LinkedIn Roaster — Resultados | Share2Inspire
 // Dashboard completo de auditoria LinkedIn com 10 secções
 import { useState, useEffect, useMemo } from "react";
+import type { ReactNode } from "react";
 import {
   ChevronDown, ChevronUp, Linkedin, Target, Eye, TrendingUp,
   Sparkles, Award, Shield, Zap, FileText, Copy, Check, BarChart3,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 import S2IFooter from "@/components/S2IFooter";
 import S2IHeader from "@/components/S2IHeader";
+import EmailResultsGate from "@/components/EmailResultsGate";
 import { finishAndClean, clearSensitiveData } from "@/lib/storageCleanup";
 import { useLocation } from "wouter";
 import { t, pick, getLang, localePath } from '@/i18n';
@@ -16,6 +18,7 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { normalizeLinkedinRoastPayload } from "@/lib/analysisPayload";
+import { readEmailGateState } from "@/lib/emailGate";
 
 // ─── Types ───
 interface Dimension { score: number; analise: string; }
@@ -263,10 +266,93 @@ export default function LinkedInRoasterResults() {
 
   const [expandedMelhoria, setExpandedMelhoria] = useState<number | null>(null);
   const [seoTab, setSeoTab] = useState('headline');
+  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('linkedin-roaster-results'));
 
   if (!accessChecked || !isPaid) return null;
 
   const hasData = notaGeral > 0 || sumario || Object.keys(dimensoes).length > 0;
+  const strongestDimension = Object.entries(dimensoes)
+    .slice()
+    .sort(([, a], [, b]) => (b?.score || 0) - (a?.score || 0))[0];
+  const weakestSection = Object.entries(scoresSeccao)
+    .slice()
+    .sort(([, a], [, b]) => (a?.score || 0) - (b?.score || 0))[0];
+  const headlinePreview = headlinesSugeridas[0] || '';
+  const missingKeyword = seoLinkedin?.keywords_em_falta?.[0] || '';
+  const percentileValue = benchmarking?.percentil_estimado;
+  const previewMetrics = [
+    { label: pick('Score geral', 'Overall score', 'Puntuación global'), value: `${notaGeral || 0}/10`, helper: hookVendas || pick('Primeira leitura do posicionamento atual do perfil.', 'First reading of the current profile positioning.', 'Primera lectura del posicionamiento actual del perfil.') },
+    { label: pick('Visibilidade', 'Visibility', 'Visibilidad'), value: visibilidade ? visibilidade.split(' ')[0] : pick('Em análise', 'Analysed', 'Analizado'), helper: pick('Mostra como o algoritmo do LinkedIn tende a interpretar o teu perfil.', 'Shows how the LinkedIn algorithm is likely to interpret your profile.', 'Muestra cómo es probable que el algoritmo de LinkedIn interprete tu perfil.') },
+    { label: pick('Benchmark', 'Benchmark', 'Benchmark'), value: percentileValue ? `Top ${100 - percentileValue}%` : pick('Setor identificado', 'Sector identified', 'Sector identificado'), helper: benchmarking?.setor ? pick(`Comparação com ${benchmarking.setor}.`, `Comparison with ${benchmarking.setor}.`, `Comparación con ${benchmarking.setor}.`) : pick('Comparação com perfis semelhantes.', 'Comparison with similar profiles.', 'Comparación con perfiles similares.') },
+  ];
+  const previewHighlights = [
+    strongestDimension ? {
+      title: pick('Dimensão mais forte', 'Strongest dimension', 'Dimensión más fuerte'),
+      description: `${dimensionLabels[strongestDimension[0]] || strongestDimension[0]} · ${strongestDimension[1]?.score || 0}/10`,
+      icon: <TrendingUp className="h-4 w-4" />,
+    } : null,
+    weakestSection ? {
+      title: pick('Secção com maior margem', 'Section with the biggest opportunity', 'Sección con mayor margen'),
+      description: `${sectionLabels[weakestSection[0]] || weakestSection[0]} · ${weakestSection[1]?.score || 0}/10`,
+      icon: <Target className="h-4 w-4" />,
+    } : null,
+    {
+      title: missingKeyword ? pick('Keyword a rever', 'Keyword to review', 'Keyword a revisar') : pick('Headline sugerida', 'Suggested headline', 'Headline sugerido'),
+      description: missingKeyword || headlinePreview || pick('Existe pelo menos uma melhoria rápida com impacto direto na descoberta do perfil.', 'There is at least one quick improvement with direct impact on profile discoverability.', 'Existe al menos una mejora rápida con impacto directo en la visibilidad del perfil.'),
+      icon: missingKeyword ? <Search className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />,
+    },
+  ].filter(Boolean) as Array<{ title: string; description: string; icon?: ReactNode }>;
+
+  if (!emailGateState.unlocked) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <S2IHeader activePage="linkedin-roaster" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-8">
+          <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="relative shrink-0">
+                <ScoreCircle score={notaGeral} size={140} strokeWidth={10} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-4xl font-bold">{notaGeral}</span>
+                  <span className="text-xs text-slate-300">/10</span>
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center gap-2 text-orange-300 text-xs font-bold uppercase tracking-wider mb-4 justify-center md:justify-start">
+                  <Flame className="w-4 h-4" /> {pick('LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}
+                </div>
+                {hookVendas && (
+                  <p className="text-lg md:text-xl font-semibold text-orange-200 mb-3 leading-relaxed">"{hookVendas}"</p>
+                )}
+                <p className="text-sm md:text-base text-slate-200 leading-relaxed max-w-2xl">
+                  {sumario || pick('Já tens sinais claros de posicionamento e visibilidade. Falta desbloquear a leitura completa para ver o que está a aumentar ou a limitar o teu alcance no LinkedIn.', 'You already have clear signals on positioning and visibility. Unlock the full reading to see what is increasing or limiting your reach on LinkedIn.', 'Ya tienes señales claras sobre posicionamiento y visibilidad. Desbloquea la lectura completa para ver qué está aumentando o limitando tu alcance en LinkedIn.')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <EmailResultsGate
+            storageKey="linkedin-roaster-results"
+            initialEmail={emailGateState.email || sessionStorage.getItem('linkedinRoasterEmail') || localStorage.getItem('linkedinRoasterEmail') || ''}
+            productLabel={pick('LinkedIn Roaster', 'LinkedIn Roaster', 'LinkedIn Roaster')}
+            previewTitle={pick('Já tens um diagnóstico forte do teu perfil LinkedIn.', 'You already have a strong diagnosis of your LinkedIn profile.', 'Ya tienes un diagnóstico sólido de tu perfil de LinkedIn.')}
+            previewDescription={sumario || pick('O preview mostra o posicionamento geral, mas o relatório completo detalha secções, benchmark, keywords e ações recomendadas para melhorares a descoberta e a conversão do perfil.', 'The preview shows the overall positioning, but the full report breaks down sections, benchmark, keywords and recommended actions to improve profile discovery and conversion.', 'La vista previa muestra el posicionamiento general, pero el informe completo detalla secciones, benchmark, keywords y acciones recomendadas para mejorar la visibilidad y la conversión del perfil.')}
+            metrics={previewMetrics}
+            highlights={previewHighlights}
+            onUnlocked={async (email) => {
+              sessionStorage.setItem('linkedinRoasterEmail', email);
+              localStorage.setItem('linkedinRoasterEmail', email);
+              setEmailGateState({ unlocked: true, email });
+            }}
+          />
+        </div>
+
+        <S2IFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">

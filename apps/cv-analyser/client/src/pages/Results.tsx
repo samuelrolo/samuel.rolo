@@ -15,6 +15,7 @@ import ScoreGauge from "@/components/ScoreGauge";
 import RecruiterPerception from "@/components/RecruiterPerception";
 import LockedSection from "@/components/LockedSection";
 import ChromeExtensionCallout from "@/components/ChromeExtensionCallout";
+import EmailResultsGate from "@/components/EmailResultsGate";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
@@ -31,6 +32,7 @@ import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
 import { saveToUserAnalyses } from '@/lib/saveToUserAnalyses';
 import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
+import { readEmailGateState } from '@/lib/emailGate';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -357,6 +359,7 @@ export default function Results() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('cv-analyser-results'));
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -1921,6 +1924,104 @@ export default function Results() {
 
   const storedVoucherCode = sessionStorage.getItem('voucherCode');
   const storedVoucherRemaining = sessionStorage.getItem('voucherRemaining');
+  const atsCompatibilityScore = Math.max(0, Math.round(100 - analysisData.atsRejectionRate));
+  const previewMetrics = [
+    {
+      label: pick('Score médio', 'Average score', 'Puntuación media'),
+      value: `${Math.round(avgScore)}/100`,
+      helper: pick('Leitura rápida da qualidade global do teu CV.', 'Quick read of your CV overall quality.', 'Lectura rápida de la calidad global de tu CV.'),
+    },
+    {
+      label: pick('Compatibilidade ATS', 'ATS compatibility', 'Compatibilidad ATS'),
+      value: `${atsCompatibilityScore}%`,
+      helper: analysisData.atsTopFactor || pick('Mostra o risco de rejeição automática no primeiro filtro.', 'Shows the risk of automatic rejection in the first screening.', 'Muestra el riesgo de rechazo automático en el primer filtro.'),
+    },
+    {
+      label: pick('Posicionamento', 'Positioning', 'Posicionamiento'),
+      value: `Top ${100 - percentile}%`,
+      helper: pick('Comparação rápida com a média do mercado analisado.', 'Quick comparison against the analysed market average.', 'Comparación rápida con la media del mercado analizado.'),
+    },
+  ];
+  const previewHighlights = [
+    {
+      title: pick('Força principal', 'Main strength', 'Fortaleza principal'),
+      description: translatedTopStrengths[0] || pick('O teu CV já mostra sinais positivos em pelo menos uma dimensão-chave.', 'Your CV already shows positive signals in at least one key dimension.', 'Tu CV ya muestra señales positivas en al menos una dimensión clave.'),
+      icon: <Sparkles className="h-4 w-4" />,
+    },
+    {
+      title: pick('Segunda alavanca de valor', 'Second value driver', 'Segunda palanca de valor'),
+      description: translatedTopStrengths[1] || pick('Existe uma segunda área com potencial claro para reforçar competitividade.', 'There is a second area with clear potential to reinforce competitiveness.', 'Existe una segunda área con claro potencial para reforzar la competitividad.'),
+      icon: <BarChart3 className="h-4 w-4" />,
+    },
+    {
+      title: pick('Ponto crítico a rever', 'Critical point to review', 'Punto crítico a revisar'),
+      description: analysisData.atsTopFactor || pick('O relatório completo mostra exatamente o que está a travar o teu desempenho no filtro inicial.', 'The full report shows exactly what is holding back your performance in the first screening stage.', 'El informe completo muestra exactamente qué está frenando tu rendimiento en el primer filtro.'),
+      icon: <AlertTriangle className="h-4 w-4" />,
+    },
+  ];
+
+  if (!emailGateState.unlocked) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-foreground/10 px-3 sm:px-6 py-3 sm:py-4 sticky top-0 bg-background/90 backdrop-blur-lg z-50">
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button
+                onClick={() => setLocation(siteHomePath)}
+                className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{t('voltar')}</span>
+              </button>
+              <a href={siteHomePath} className="flex items-center" aria-label="Share2Inspire">
+                <img src="/logo-s2i.webp" alt="Share2Inspire" loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
+              </a>
+            </div>
+            <button
+              onClick={() => finishAndClean(setLocation)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm font-medium text-foreground"
+            >
+              <HomeIcon className="w-4 h-4" />
+            </button>
+          </div>
+        </header>
+
+        <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-6 sm:space-y-8">
+          <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-br from-[#faf8f3] via-white to-[#fffdf8] p-5 sm:p-8">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="flex flex-col items-center gap-3 shrink-0">
+                <ScoreGauge score={atsCompatibilityScore} size={140} strokeWidth={8} />
+                <span className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Preview do CV', 'CV preview', 'Vista previa del CV')}</span>
+              </div>
+              <div className="space-y-3 text-center md:text-left">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{pick('Já tens uma leitura forte do teu CV.', 'You already have a strong reading of your CV.', 'Ya tienes una lectura sólida de tu CV.')}</h1>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
+                  {pick('O preview confirma o teu posicionamento geral e os sinais principais do CV. O relatório completo detalha quadrantes, gaps face ao benchmark, impacto salarial, percepção do recrutador e prioridades accionáveis.', 'The preview confirms your overall positioning and the key signals from your CV. The full report breaks down quadrants, benchmark gaps, salary impact, recruiter perception and actionable priorities.', 'La vista previa confirma tu posicionamiento general y las señales clave del CV. El informe completo detalla cuadrantes, gaps frente al benchmark, impacto salarial, percepción del recruiter y prioridades accionables.')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <EmailResultsGate
+            storageKey="cv-analyser-results"
+            initialEmail={emailGateState.email || email || sessionStorage.getItem('paymentEmail') || localStorage.getItem('paymentEmail') || ''}
+            productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
+            previewTitle={pick('Tens já os sinais certos para perceber o valor do teu resultado.', 'You already have the right signals to understand the value of your result.', 'Ya tienes las señales adecuadas para entender el valor de tu resultado.')}
+            previewDescription={pick('Desbloqueia o relatório completo para veres a leitura por quadrantes, o benchmark completo, a percepção do recrutador, a estimativa salarial e o plano de melhoria priorizado.', 'Unlock the full report to view the quadrant reading, full benchmark, recruiter perception, salary estimate and prioritised improvement plan.', 'Desbloquea el informe completo para ver la lectura por cuadrantes, el benchmark completo, la percepción del recruiter, la estimación salarial y el plan de mejora priorizado.')}
+            metrics={previewMetrics}
+            highlights={previewHighlights}
+            onUnlocked={async (unlockedEmail) => {
+              setEmail(unlockedEmail);
+              sessionStorage.setItem('paymentEmail', unlockedEmail);
+              localStorage.setItem('paymentEmail', unlockedEmail);
+              updateAnalysisEmail(unlockedEmail);
+              setEmailGateState({ unlocked: true, email: unlockedEmail });
+            }}
+          />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

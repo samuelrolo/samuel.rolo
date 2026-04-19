@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import EmailResultsGate from "@/components/EmailResultsGate";
 import {
   Loader2, ArrowLeft, Home as HomeIcon, Compass, Lock, CheckCircle2,
   Ticket, Unlock, Target, Sparkles, Calendar, Rocket, GraduationCap,
@@ -25,6 +26,7 @@ import { pageSeo } from "@/lib/pageSeo";
 import { normalizeCareerPathPayload } from "@/lib/analysisPayload";
 import { fetchPaymentStatus, getFirstStoredValue } from "@/lib/paymentAccess";
 import { saveToUserAnalyses } from "@/lib/saveToUserAnalyses";
+import { readEmailGateState } from "@/lib/emailGate";
 import { couponSupportsProduct } from '@/lib/couponProductCompatibility';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
@@ -288,6 +290,7 @@ export default function CareerPathResults() {
   // Payment modal
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const lang = getLang();
+  const [emailGateState, setEmailGateState] = useState(() => readEmailGateState('career-path-results'));
   const isEN = lang === 'en';
   const careerPathHomePath = '/';
   const isES = lang === 'es';
@@ -979,6 +982,110 @@ export default function CareerPathResults() {
   ) || (t('o_teu_perfil'));
   const currentRole = cpProfile.detected_role || cvAnalysis?.detected_role || cvAnalysis?.current_role || cvAnalysis?.perceivedRole || (t('profissional'));
   const seniority = cpProfile.seniority || cvAnalysis?.seniority || cvAnalysis?.perceivedSeniority || '';
+  const previewScore = careerPathData?.career_potential_score?.overall_score || Math.max(42, Math.min(88, Math.round((cvAnalysis?.overallScore || 62) * 0.9)));
+  const previewNextRole = careerPathData?.next_roles?.[0] || null;
+  const previewAdvantage = careerPathData?.current_positioning?.competitive_advantages?.[0] || currentRole;
+  const previewAction = careerPathData?.immediate_actions?.[0]?.action || pick('Existe uma sequência de acções práticas para os próximos 90 dias.', 'There is a practical action sequence for the next 90 days.', 'Existe una secuencia de acciones prácticas para los próximos 90 días.');
+  const previewMetrics = [
+    {
+      label: pick('Perfil atual', 'Current profile', 'Perfil actual'),
+      value: currentRole,
+      helper: seniority || pick('Base de partida para o roadmap.', 'Starting point for the roadmap.', 'Punto de partida para la hoja de ruta.'),
+    },
+    {
+      label: pick('Career Potential', 'Career Potential', 'Career Potential'),
+      value: `${previewScore}/100`,
+      helper: pick('Sinal rápido do teu potencial de progressão e mobilidade.', 'Quick signal of your progression and mobility potential.', 'Señal rápida de tu potencial de progresión y movilidad.'),
+    },
+    {
+      label: pick('Próximo movimento', 'Next move', 'Próximo movimiento'),
+      value: previewNextRole?.role || previewNextRole?.title || pick('Roadmap definido', 'Roadmap defined', 'Hoja de ruta definida'),
+      helper: previewNextRole?.timeline || pick('Com prioridade, timing e foco sugeridos.', 'With suggested priority, timing and focus.', 'Con prioridad, timing y foco sugeridos.'),
+    },
+  ];
+  const previewHighlights = [
+    {
+      title: pick('Vantagem a potenciar', 'Advantage to amplify', 'Ventaja a potenciar'),
+      description: previewAdvantage,
+      icon: <Sparkles className="h-4 w-4" />,
+    },
+    {
+      title: pick('Direção de progressão', 'Progression direction', 'Dirección de progresión'),
+      description: previewNextRole?.reason || previewNextRole?.why_this_role || pick('O relatório completo mostra os cargos mais alinhados com o teu perfil atual.', 'The full report shows the roles most aligned with your current profile.', 'El informe completo muestra los puestos más alineados con tu perfil actual.'),
+      icon: <Compass className="h-4 w-4" />,
+    },
+    {
+      title: pick('Primeira ação recomendada', 'First recommended action', 'Primera acción recomendada'),
+      description: previewAction,
+      icon: <Calendar className="h-4 w-4" />,
+    },
+  ];
+
+  if (!emailGateState.unlocked) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-30 border-b border-foreground/10 bg-background/95 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button
+                onClick={() => setLocation(careerPathHomePath)}
+                className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{t('voltar')}</span>
+              </button>
+              <a href={localePath('/')} className="flex items-center" aria-label={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')}>
+                <img src="/logo-transparent.webp" alt={pick('Share2Inspire', 'Share2Inspire', 'Share2Inspire')} loading="lazy" decoding="async" width="220" height="48" className="h-10 sm:h-11 w-auto object-contain" />
+              </a>
+            </div>
+            <button
+              onClick={() => finishAndClean(setLocation)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm font-medium text-foreground"
+            >
+              <HomeIcon className="w-4 h-4" />
+            </button>
+          </div>
+        </header>
+
+        <main className="max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-6 sm:space-y-8">
+          <div className="relative overflow-hidden rounded-2xl border border-[#C9A961]/20 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03] px-3 sm:px-8 py-5 sm:py-10">
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
+            <div className="relative space-y-5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#C9A961]" />
+                <span className="text-xs font-semibold text-[#C9A961]">{pick('Preview do Career Path', 'Career Path preview', 'Vista previa del Career Path')}</span>
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1">{profileName}</h1>
+                <p className="text-base sm:text-lg text-muted-foreground font-medium">
+                  {currentRole}
+                  {seniority && <span className="text-[#C9A961] font-semibold"> · {seniority}</span>}
+                </p>
+              </div>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-3xl">
+                {pick('Já existe um caminho promissor traçado para a tua progressão. O preview mostra a direção geral; o relatório completo detalha cargos, timing, competências em falta e ações para acelerares o próximo passo.', 'There is already a promising path mapped for your progression. The preview shows the overall direction; the full report details roles, timing, missing skills and actions to accelerate the next step.', 'Ya existe un camino prometedor para tu progresión. La vista previa muestra la dirección general; el informe completo detalla puestos, timing, habilidades pendientes y acciones para acelerar el siguiente paso.')}
+              </p>
+            </div>
+          </div>
+
+          <EmailResultsGate
+            storageKey="career-path-results"
+            initialEmail={emailGateState.email || localStorage.getItem('cpPaymentEmail') || sessionStorage.getItem('cpPaymentEmail') || ''}
+            productLabel={pick('Career Path', 'Career Path', 'Career Path')}
+            previewTitle={pick('Tens já uma leitura clara do teu potencial e da próxima direção.', 'You already have a clear reading of your potential and next direction.', 'Ya tienes una lectura clara de tu potencial y de la próxima dirección.')}
+            previewDescription={pick('Desbloqueia o relatório completo para veres o roadmap detalhado, os cargos-alvo, as formações recomendadas, a estratégia de networking e o plano de execução por fases.', 'Unlock the full report to view the detailed roadmap, target roles, recommended training, networking strategy and phased execution plan.', 'Desbloquea el informe completo para ver la hoja de ruta detallada, los puestos objetivo, la formación recomendada, la estrategia de networking y el plan de ejecución por fases.')}
+            metrics={previewMetrics}
+            highlights={previewHighlights}
+            onUnlocked={async (email) => {
+              localStorage.setItem('cpPaymentEmail', email);
+              sessionStorage.setItem('cpPaymentEmail', email);
+              setEmailGateState({ unlocked: true, email });
+            }}
+          />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
