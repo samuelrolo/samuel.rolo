@@ -21,7 +21,7 @@ const PRODUCT_ALIAS_GROUPS = {
   ],
   bundle: ['bundle', 'complete', 'bundle cv analyser career path'],
   student_pack: ['student_pack', 'student pack', 'student', 'pack estudante', 'pack estudiante'],
-  linkedin_roaster: ['linkedin_roaster', 'linkedin roaster', 'linkedin_analysis', 'linkedin analysis', 'roaster'],
+  linkedin_roaster: ['linkedin_roaster', 'linkedin roaster', 'linkedin_roast', 'linkedin roast', 'linkedin_analysis', 'linkedin analysis', 'roaster'],
   salary_check: ['salary_check', 'salary check', 'salarycheck', 'salary checker'],
   subscription: ['subscription', 'subscricao', 'subscrição', 'subscricao mensal', 'subscrição mensal']
 } as const;
