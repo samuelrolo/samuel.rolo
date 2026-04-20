@@ -393,7 +393,7 @@ async function generateLinkedinRoastCoupon(email: string, language: string): Pro
     }
 
     const couponPayload = await couponResponse.json().catch(() => null);
-    return couponPayload?.coupon_code || couponPayload?.code || couponPayload?.coupon?.code || null;
+    return couponPayload?.coupon || couponPayload?.coupon_code || couponPayload?.code || null;
   } catch (error) {
     console.warn("Error generating LinkedIn Roast coupon:", error);
     return null;
@@ -814,13 +814,10 @@ Deno.serve(async (req: Request) => {
     let couponCode: string | null = typeof payload?.coupon_code === "string" ? payload.coupon_code : null;
 
     if (type === "linkedin_roaster") {
-      couponCode = await generateLinkedinRoastCoupon(normalizedEmail, language) || couponCode;
-
-      if (!couponCode) {
-        return new Response(
-          JSON.stringify({ success: false, error: "Failed to generate coupon for linkedin_roaster" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      try {
+        couponCode = await generateLinkedinRoastCoupon(normalizedEmail, language) || couponCode;
+      } catch (couponErr) {
+        console.warn('⚠️ Coupon generation failed (non-fatal):', couponErr);
       }
     }
 

@@ -86,7 +86,7 @@ async function generateLinkedinRoastCoupon(email, language) {
 
     const couponPayload = await couponResponse.json().catch(() => null);
 
-    return couponPayload?.coupon_code || couponPayload?.code || couponPayload?.coupon?.code || null;
+    return couponPayload?.coupon || couponPayload?.coupon_code || couponPayload?.code || null;
 
   } catch (couponError) {
 
@@ -9247,25 +9247,17 @@ REGLAS FINALES:
           console.error('⚠️ LinkedIn Roast persistence exception (non-fatal):', persistError);
         }
 
-        const generatedCouponCode = await generateLinkedinRoastCoupon(effectiveEmail, language);
-
-        if (!generatedCouponCode) {
-
-          console.error('❌ Falha ao gerar cupão após LinkedIn Roast bem-sucedido');
-
-          return jsonResponse({
-
-            success: false,
-
-            error: 'Erro ao gerar cupão LinkedIn Roast',
-
-            message: 'Não foi possível gerar o cupão após a análise.'
-
-          }, 500);
-
+        let generatedCouponCode: string | null = null;
+        try {
+          generatedCouponCode = await generateLinkedinRoastCoupon(effectiveEmail, language);
+          if (generatedCouponCode) {
+            console.log('✅ LinkedIn Roast coupon gerado:', generatedCouponCode);
+          } else {
+            console.warn('⚠️ Cupão não gerado (non-fatal) — análise prossegue sem cupão');
+          }
+        } catch (couponErr) {
+          console.warn('⚠️ Erro ao gerar cupão (non-fatal):', couponErr);
         }
-
-        console.log('✅ LinkedIn Roast coupon gerado:', generatedCouponCode);
 
         console.log('✅ LinkedIn Audit gerado:', JSON.stringify(roastAnalysis).substring(0, 300));
 
