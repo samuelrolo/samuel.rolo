@@ -1614,9 +1614,11 @@ serve(async (req)=>{
 
     const mode = typeof rawMode === 'string' ? rawMode.trim().toLowerCase().replace(/-/g, '_') : rawMode;
 
-    // 2. Mandatory Email Validation for analysis modes
-    const analysisModes = ['cv_analysis', 'career_path', 'career_intelligence', 'student_pack', 'cv_extraction'];
-    if (analysisModes.includes(mode)) {
+    // 2. Mandatory Email Validation only for modes that still require it.
+    // cv_analysis and career_path must accept anonymous requests because the frontend
+    // may not always include the email in the payload, even when the user already filled it in.
+    const emailRequiredModes = ['career_intelligence', 'student_pack', 'cv_extraction'];
+    if (emailRequiredModes.includes(mode)) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!userEmail || typeof userEmail !== 'string' || !emailRegex.test(userEmail.trim())) {
         console.error(`❌ Pedido anónimo ou email inválido bloqueado para modo: ${mode}`);
