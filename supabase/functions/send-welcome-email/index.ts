@@ -439,16 +439,16 @@ function linkedinRoasterWelcomeBody(name: string, lang: string, couponCode: stri
 
   if (isEn) {
     return `
-<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Your LinkedIn Roast is ready! 🔥</h1>
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Your LinkedIn profile has been analysed! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Thank you for using the <strong>LinkedIn Roaster</strong>. Your results are now available and already include a clear score plus practical priorities to improve your profile.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">We analysed your LinkedIn profile with the <strong>LinkedIn Roaster</strong>. Your results already include a clear score plus practical priorities to improve your profile.</p>
 ${scoreCard}
 ${highlightsBlock}
-<p style="font-size:15px;color:#333;line-height:1.7;">Open your report now to review the full roast and apply the recommendations to strengthen your LinkedIn presence.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Try the LinkedIn Roaster yourself to see the full analysis and apply the recommendations to strengthen your LinkedIn presence.</p>
 ${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
-  <a href="https://www.share2inspire.pt/en/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">View my LinkedIn Roast</a>
+  <a href="https://www.share2inspire.pt/en/linkedin-roaster" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Try the LinkedIn Roaster</a>
 </div>
 
 <p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">Want to go even further? Explore our other career tools:</p>
@@ -473,16 +473,16 @@ ${couponCallout}
 
   if (isEs) {
     return `
-<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Tu LinkedIn Roast está listo! 🔥</h1>
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">¡Tu perfil de LinkedIn ha sido analizado! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Gracias por usar el <strong>LinkedIn Roaster</strong>. Tus resultados ya están disponibles e incluyen una puntuación clara y prioridades concretas para mejorar tu perfil.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Hemos analizado tu perfil de LinkedIn con el <strong>LinkedIn Roaster</strong>. Los resultados incluyen una puntuación clara y prioridades concretas para mejorar tu perfil.</p>
 ${scoreCard}
 ${highlightsBlock}
-<p style="font-size:15px;color:#333;line-height:1.7;">Abre tu informe ahora para ver el roast completo y aplicar las recomendaciones que pueden reforzar tu presencia en LinkedIn.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Prueba el LinkedIn Roaster tú mismo para ver el análisis completo y aplicar las recomendaciones que pueden reforzar tu presencia en LinkedIn.</p>
 ${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
-  <a href="https://www.share2inspire.pt/es/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver mi LinkedIn Roast</a>
+  <a href="https://www.share2inspire.pt/es/linkedin-roaster" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Probar el LinkedIn Roaster</a>
 </div>
 
 <p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">¿Quieres ir más allá? Explora nuestras otras herramientas de carrera:</p>
@@ -506,16 +506,16 @@ ${couponCallout}
   }
 
   return `
-<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">Os teus resultados do LinkedIn Roaster estão prontos! 🔥</h1>
+<h1 style="font-size:24px;color:#0a1628;margin:0 0 8px 0;font-weight:700;">O teu perfil LinkedIn foi analisado! 🔥</h1>
 <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 20px 0;">${greeting}</p>
-<p style="font-size:15px;color:#333;line-height:1.7;">Obrigado por utilizares o <strong>LinkedIn Roaster</strong>. Os teus resultados já estão disponíveis e incluem o score real do teu perfil, bem como prioridades concretas para o melhorares.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Analisámos o teu perfil LinkedIn com o <strong>LinkedIn Roaster</strong>. Os resultados já incluem o score real do teu perfil, bem como prioridades concretas para o melhorares.</p>
 ${scoreCard}
 ${highlightsBlock}
-<p style="font-size:15px;color:#333;line-height:1.7;">Abre agora o teu relatório completo para veres o roast na íntegra e aplicares as recomendações que podem reforçar a tua presença no LinkedIn.</p>
+<p style="font-size:15px;color:#333;line-height:1.7;">Experimenta o LinkedIn Roaster para veres a análise completa e aplicares as recomendações que podem reforçar a tua presença no LinkedIn.</p>
 ${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
-  <a href="https://www.share2inspire.pt/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver o meu LinkedIn Roast</a>
+  <a href="https://www.share2inspire.pt/linkedin-roaster" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Experimentar o LinkedIn Roaster</a>
 </div>
 
 <p style="font-size:15px;color:#333;line-height:1.7;margin-top:24px;">Queres ir mais longe? Explora as nossas outras ferramentas de carreira:</p>
@@ -837,10 +837,10 @@ Deno.serve(async (req: Request) => {
       bodyHtml = studentPackWelcomeBody(name || "", language);
     } else if (type === "linkedin_roaster") {
       subject = language === "en"
-        ? "Your LinkedIn Roast is ready! 🔥"
+        ? "Your LinkedIn profile has been analysed! 🔥"
         : language === "es"
-          ? "¡Tu LinkedIn Roast está listo! 🔥"
-          : "O teu LinkedIn Roast está pronto! 🔥";
+          ? "¡Tu perfil de LinkedIn ha sido analizado! 🔥"
+          : "O teu perfil LinkedIn foi analisado! 🔥";
       bodyHtml = linkedinRoasterWelcomeBody(name || "", language, couponCode || "", score, results);
     } else if (type === "member_signup") {
       subject = language === "en"
