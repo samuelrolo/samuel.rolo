@@ -2210,6 +2210,36 @@ export default function Results() {
                   </div>
                 )}
 
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <Ticket className="w-4 h-4 text-[#C9A961]" />
+                    {pick('Cupão ou voucher', 'Coupon or voucher', 'Cupón o voucher')}
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountCode}
+                      onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                      placeholder={pick('Inserir código', 'Enter code', 'Insertar código')}
+                      className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono tracking-wider uppercase focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                      onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidation()}
+                    />
+                    <button
+                      onClick={handleDiscountValidation}
+                      disabled={discountLoading || !discountCode.trim()}
+                      className="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
+                    >
+                      {discountLoading ? '...' : pick('Aplicar', 'Apply', 'Aplicar')}
+                    </button>
+                  </div>
+                  {discountError && (
+                    <p className="text-xs text-red-500">{discountError}</p>
+                  )}
+                  {discountSuccess && (
+                    <p className="text-xs text-green-600">{discountSuccess}</p>
+                  )}
+                </div>
+
                 {paymentError && (
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                     <p className="text-sm text-red-500">{paymentError}</p>
