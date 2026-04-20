@@ -362,12 +362,34 @@ export default function LinkedInRoasterResults() {
             pendingOrderStorageKey="linkedinRoasterPendingOrderId"
             verifiedSessionStorageKey="linkedinRoasterVerifiedTransactionId"
             verifiedOrderStorageKey="linkedinRoasterVerifiedOrderId"
-            onPaid={({ email }) => {
+            onPaid={({ email, paymentMethod, amount, couponCode }) => {
               if (email) {
                 sessionStorage.setItem('linkedinRoasterEmail', email);
               }
               sessionStorage.setItem('linkedinRoasterPaid', 'true');
               setIsPaid(true);
+              // --- Post-payment: update DB email + send welcome/promo email ---
+              if (email) {
+                const SB_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+                const SB_KEY = window.__SUPABASE_ANON_KEY__||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+                const linkedinUrl = localStorage.getItem('linkedinRoasterUrl') || '';
+                const profileName = normalizedData?.teaser?.nome || normalizedData?.profile_name || '';
+                const score = normalizedData?.teaser?.nota_geral || 0;
+                // 1. Update DB record with real email + payment info
+                if (linkedinUrl) {
+                  fetch(`${SB_URL}/rest/v1/linkedin_roaster_analyses?linkedin_url=eq.${encodeURIComponent(linkedinUrl)}&user_email=like.anonymous*`, {
+                    method: 'PATCH',
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                    body: JSON.stringify({ user_email: email, payment_status: 'paid', payment_method: paymentMethod || 'coupon', payment_amount: amount || 0, voucher_code: couponCode || null })
+                  }).catch(err => console.warn('Failed to update DB email:', err));
+                }
+                // 2. Send welcome email with promo coupon
+                fetch(`${SB_URL}/functions/v1/send-welcome-email`, {
+                  method: 'POST',
+                  headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, name: profileName, type: 'linkedin_roaster', language: getLang(), score })
+                }).catch(err => console.warn('Failed to send welcome email:', err));
+              }
             }}
           />
         </div>
