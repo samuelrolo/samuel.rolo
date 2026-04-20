@@ -1617,7 +1617,7 @@ serve(async (req)=>{
     // 2. Mandatory Email Validation only for modes that still require it.
     // cv_analysis and career_path must accept anonymous requests because the frontend
     // may not always include the email in the payload, even when the user already filled it in.
-    const emailRequiredModes = ['career_intelligence', 'student_pack', 'cv_extraction'];
+    const emailRequiredModes = ['career_intelligence', 'student_pack'];
     if (emailRequiredModes.includes(mode)) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!userEmail || typeof userEmail !== 'string' || !emailRegex.test(userEmail.trim())) {
@@ -1708,10 +1708,6 @@ serve(async (req)=>{
     }
 
     const analysisModesRequiringEmail = new Set([
-
-      'cv_analysis',
-
-      'career_path',
 
       'career_intelligence',
 
