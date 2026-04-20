@@ -262,6 +262,20 @@ function sanitizeCVText(text) {
 
 }
 
+function extractEmailFromText(text) {
+
+  if (!text || typeof text !== 'string') {
+
+    return '';
+
+  }
+
+  const match = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+
+  return match?.[0]?.trim().toLowerCase() || '';
+
+}
+
 // Helper: Get market context string for EN prompts
 
 function getMarketContext(country, region) {
@@ -8398,7 +8412,7 @@ Regras: devolve SEMPRE uma versão premium e densa. Mínimo 5 next_roles, 4 form
 
       const linkedinUrl = body.linkedin_url || '';
 
-      const candidateEmail = String(body.email || body.user_email || '').trim().toLowerCase();
+      const candidateEmail = String(body.candidate_email || '').trim().toLowerCase();
 
       const targetArea = body.target_area || '';
 
@@ -8502,8 +8516,8 @@ Regras: devolve SEMPRE uma versão premium e densa. Mínimo 5 next_roles, 4 form
         }
       }
 
-      // Email is optional for linkedin_roast — frontend free analysis has no email field
-      const effectiveEmail = (candidateEmail && candidateEmail.includes('@')) ? candidateEmail : 'anonymous-roast@share2inspire.pt';
+      const extractedEmailFromCv = extractEmailFromText(cvText);
+      const effectiveEmail = candidateEmail || extractedEmailFromCv || 'anonymous-roast@share2inspire.pt';
       // REMOVED: Duplicate Apify scrape — frontend already sends linkedin_data and cv_text
 
       const extractedProfileName = String(cvText || '').match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';

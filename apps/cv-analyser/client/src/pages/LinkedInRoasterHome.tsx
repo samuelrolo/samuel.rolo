@@ -270,6 +270,7 @@ export default function LinkedInRoasterHome() {
       let fallbackUserMessage = '';
       let fallbackFinalErrorMessage = publicFallback.final_error_message;
       let scrapeMode: 'full' | 'fallback_public_signals' = 'fallback_public_signals';
+      let scrapedCandidateEmail = '';
 
       try {
         const scrapeResponse = await fetch(LINKEDIN_SCRAPE_URL, {
@@ -286,6 +287,7 @@ export default function LinkedInRoasterHome() {
           linkedinCvText = publicFallback.fallback_cv_text;
         } else {
           scrapeData = await scrapeResponse.json();
+          scrapedCandidateEmail = typeof scrapeData?.profile_email === 'string' ? scrapeData.profile_email.trim().toLowerCase() : '';
           linkedinCvText = typeof scrapeData?.cv_text === 'string' ? scrapeData.cv_text.substring(0, 12000) : '';
           if (linkedinCvText.trim()) {
             scrapeMode = 'full';
@@ -308,6 +310,7 @@ export default function LinkedInRoasterHome() {
       }
 
       const structuredLinkedinData = JSON.stringify(scrapeData || publicFallback, null, 2);
+      const resolvedCandidateEmail = scrapedCandidateEmail || candidateEmail;
 
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
@@ -320,6 +323,7 @@ export default function LinkedInRoasterHome() {
             body: JSON.stringify({
               mode: 'linkedin_roast',
               email: candidateEmail,
+              candidate_email: resolvedCandidateEmail,
               linkedin_url: currentLinkedinUrl,
               linkedin_data: structuredLinkedinData,
               cv_text: linkedinCvText,
@@ -361,9 +365,12 @@ export default function LinkedInRoasterHome() {
           : { ...responseData, fallback_used: true, fallback_note: fallbackUserMessage || publicFallback.note, scrape_status: scrapeData?.scrape_status || 'fallback_public_signals', public_signals: scrapeData?.public_signals || publicFallback.public_signals },
         lang
       );
+      const finalCandidateEmail = typeof responseData?.candidate_email === 'string'
+        ? responseData.candidate_email.trim().toLowerCase()
+        : resolvedCandidateEmail;
       sessionStorage.setItem('linkedinRoasterAnalysis', JSON.stringify(normalizedLinkedinAnalysis));
-      if (candidateEmail) {
-        sessionStorage.setItem('linkedinRoasterEmail', candidateEmail);
+      if (finalCandidateEmail) {
+        sessionStorage.setItem('linkedinRoasterEmail', finalCandidateEmail);
       } else {
         sessionStorage.removeItem('linkedinRoasterEmail');
       }
@@ -374,12 +381,12 @@ export default function LinkedInRoasterHome() {
       sessionStorage.setItem('analysisRegion', localStorage.getItem('analysisRegion') || sessionStorage.getItem('analysisRegion') || '');
 
       // Trigger welcome email only after an email exists
-      if (candidateEmail) {
+      if (finalCandidateEmail) {
         try {
           fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
             method: 'POST',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: candidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
+            body: JSON.stringify({ email: finalCandidateEmail, name: '', type: 'linkedin_roaster', language: lang, score: responseData?.teaser?.nota_geral || responseData?.teaser_score || 0, results: responseData })
           }).catch(() => {});
         } catch (_) {}
       }
