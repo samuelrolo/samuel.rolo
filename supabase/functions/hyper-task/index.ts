@@ -1539,7 +1539,7 @@ serve(async (req)=>{
     const mode = typeof rawMode === 'string' ? rawMode.trim().toLowerCase().replace(/-/g, '_') : rawMode;
 
     // 2. Mandatory Email Validation for analysis modes
-    const analysisModes = ['cv_analysis', 'career_path', 'career_intelligence', 'linkedin_roast', 'student_pack', 'cv_extraction'];
+    const analysisModes = ['cv_analysis', 'career_path', 'career_intelligence', 'student_pack', 'cv_extraction'];
     if (analysisModes.includes(mode)) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!userEmail || typeof userEmail !== 'string' || !emailRegex.test(userEmail.trim())) {
@@ -1636,10 +1636,6 @@ serve(async (req)=>{
       'career_path',
 
       'career_intelligence',
-
-      'linkedin_roast',
-
-      'linkedin_roaster',
 
       'student_pack',
 
@@ -8444,17 +8440,8 @@ Regras: devolve SEMPRE uma versão premium e densa. Mínimo 5 next_roles, 4 form
         }
       }
 
-      if (!candidateEmail || !candidateEmail.includes('@')) {
-
-        return jsonResponse({
-
-          success: false,
-
-          error: isEN ? 'Candidate email is required for LinkedIn Roast.' : isES ? 'El email del candidato es obligatorio para el LinkedIn Roast.' : 'O email do candidato é obrigatório para o LinkedIn Roast.'
-
-        }, 400);
-
-      }
+      // Email is optional for linkedin_roast — frontend free analysis has no email field
+      const effectiveEmail = (candidateEmail && candidateEmail.includes('@')) ? candidateEmail : `anonymous-${Date.now()}@roast.share2inspire.pt`;
       // REMOVED: Duplicate Apify scrape — frontend already sends linkedin_data and cv_text
 
       const extractedProfileName = String(cvText || '').match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';
@@ -9175,7 +9162,7 @@ REGLAS FINALES:
           const { error: roastInsertError } = await supabase.from('linkedin_roaster_analyses').insert({
             linkedin_url: linkedinUrl || null,
             profile_text: cvText || null,
-            user_email: candidateEmail,
+            user_email: effectiveEmail,
             user_name: exactProfileName || null,
             teaser_score: teaserScore,
             analysis_json: roastAnalysis,
@@ -9208,7 +9195,7 @@ REGLAS FINALES:
 
           language,
 
-          candidate_email: candidateEmail,
+          candidate_email: effectiveEmail,
 
           linkedin_roast: roastAnalysis,
 
