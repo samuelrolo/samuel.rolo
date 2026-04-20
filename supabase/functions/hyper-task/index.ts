@@ -36,6 +36,68 @@ function jsonResponse(data, status = 200) {
 
 }
 
+async function generateLinkedinRoastCoupon(email, language) {
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+
+  const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+
+  if (!supabaseUrl || !supabaseServiceRoleKey || !email) {
+
+    return null;
+
+  }
+
+  try {
+
+    const couponResponse = await fetch(`${supabaseUrl}/functions/v1/generate-coupon`, {
+
+      method: 'POST',
+
+      headers: {
+
+        'Content-Type': 'application/json',
+
+        'apikey': supabaseServiceRoleKey,
+
+        'Authorization': `Bearer ${supabaseServiceRoleKey}`
+
+      },
+
+      body: JSON.stringify({
+
+        email,
+
+        analysis_type: 'linkedin_roast',
+
+        language
+
+      })
+
+    });
+
+    if (!couponResponse.ok) {
+
+      console.warn('⚠️ Failed to generate linkedin_roast coupon:', couponResponse.status, await couponResponse.text());
+
+      return null;
+
+    }
+
+    const couponPayload = await couponResponse.json().catch(() => null);
+
+    return couponPayload?.coupon_code || couponPayload?.code || couponPayload?.coupon?.code || null;
+
+  } catch (couponError) {
+
+    console.warn('⚠️ Exception while generating linkedin_roast coupon:', couponError);
+
+    return null;
+
+  }
+
+}
+
 // Helper: Extract text from PDF using Gemini File API
 
 async function extractTextFromFile(base64Data, apiKey, mimeType = 'application/pdf', uploadFilename = 'cv.pdf') {
@@ -8441,7 +8503,7 @@ Regras: devolve SEMPRE uma versão premium e densa. Mínimo 5 next_roles, 4 form
       }
 
       // Email is optional for linkedin_roast — frontend free analysis has no email field
-      const effectiveEmail = (candidateEmail && candidateEmail.includes('@')) ? candidateEmail : `anonymous-${Date.now()}@roast.share2inspire.pt`;
+      const effectiveEmail = (candidateEmail && candidateEmail.includes('@')) ? candidateEmail : 'anonymous-roast@share2inspire.pt';
       // REMOVED: Duplicate Apify scrape — frontend already sends linkedin_data and cv_text
 
       const extractedProfileName = String(cvText || '').match(/(?:^|\n)(?:NOME|NAME|NOMBRE)[ \t]*:[ \t]*([^\n\r]+)/i)?.[1]?.trim() || '';
@@ -9185,6 +9247,26 @@ REGLAS FINALES:
           console.error('⚠️ LinkedIn Roast persistence exception (non-fatal):', persistError);
         }
 
+        const generatedCouponCode = await generateLinkedinRoastCoupon(effectiveEmail, language);
+
+        if (!generatedCouponCode) {
+
+          console.error('❌ Falha ao gerar cupão após LinkedIn Roast bem-sucedido');
+
+          return jsonResponse({
+
+            success: false,
+
+            error: 'Erro ao gerar cupão LinkedIn Roast',
+
+            message: 'Não foi possível gerar o cupão após a análise.'
+
+          }, 500);
+
+        }
+
+        console.log('✅ LinkedIn Roast coupon gerado:', generatedCouponCode);
+
         console.log('✅ LinkedIn Audit gerado:', JSON.stringify(roastAnalysis).substring(0, 300));
 
         return jsonResponse({
@@ -9199,7 +9281,9 @@ REGLAS FINALES:
 
           linkedin_roast: roastAnalysis,
 
-          ...roastAnalysis
+          ...roastAnalysis,
+
+          coupon_code: generatedCouponCode
 
         });
 

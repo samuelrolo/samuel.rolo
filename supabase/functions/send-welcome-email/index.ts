@@ -364,13 +364,60 @@ function renderLinkedinHighlights(highlights: string[]): string {
     .join("")}</ul>`;
 }
 
-function linkedinRoasterWelcomeBody(name: string, lang: string, score?: unknown, results?: any): string {
+async function generateLinkedinRoastCoupon(email: string, language: string): Promise<string | null> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+  if (!supabaseUrl || !supabaseKey || !email) {
+    return null;
+  }
+
+  try {
+    const couponResponse = await fetch(`${supabaseUrl}/functions/v1/generate-coupon`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        email,
+        analysis_type: "linkedin_roast",
+        language,
+      }),
+    });
+
+    if (!couponResponse.ok) {
+      console.warn("Failed to generate LinkedIn Roast coupon:", couponResponse.status, await couponResponse.text());
+      return null;
+    }
+
+    const couponPayload = await couponResponse.json().catch(() => null);
+    return couponPayload?.coupon_code || couponPayload?.code || couponPayload?.coupon?.code || null;
+  } catch (error) {
+    console.warn("Error generating LinkedIn Roast coupon:", error);
+    return null;
+  }
+}
+
+function linkedinRoasterWelcomeBody(name: string, lang: string, couponCode: string, score?: unknown, results?: any): string {
   const isEn = lang === "en";
   const isEs = lang === "es";
   const firstName = name?.split(" ")[0] || (isEn ? "there" : "");
   const greeting = isEn ? `Hi ${firstName},` : isEs ? `Hola ${firstName},` : `Olá ${firstName},`;
   const scoreLabel = normalizeLinkedinScore(score, results);
   const highlights = getLinkedinHighlights(results);
+  const couponCallout = `<div style="background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);border:1px solid #93c5fd;border-radius:10px;padding:18px 20px;margin:24px 0;">
+  <p style="font-size:12px;color:#1d4ed8;margin:0 0 8px 0;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">${isEn ? "Exclusive coupon" : isEs ? "Cupón exclusivo" : "Cupão exclusivo"}</p>
+  <p style="font-size:15px;color:#1e3a8a;margin:0 0 10px 0;line-height:1.7;">${escapeHtml(
+    isEn
+      ? `Use the code ${couponCode} at checkout to unlock your exclusive LinkedIn Roaster offer.`
+      : isEs
+        ? `Usa el código ${couponCode} en el checkout para desbloquear tu oferta exclusiva de LinkedIn Roaster.`
+        : `Usa o código ${couponCode} no checkout para desbloqueares a tua oferta exclusiva do LinkedIn Roaster.`,
+  )}</p>
+  <p style="font-size:24px;color:#0f172a;margin:0;font-weight:800;letter-spacing:.8px;">${escapeHtml(couponCode)}</p>
+</div>`;
   const scoreCard = scoreLabel
     ? `<div style="background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);border:1px solid #fdba74;border-radius:10px;padding:18px 20px;margin:20px 0;">
   <p style="font-size:12px;color:#9a3412;margin:0 0 8px 0;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">${isEn ? "LinkedIn Score" : isEs ? "Puntuación de LinkedIn" : "Score LinkedIn"}</p>
@@ -398,6 +445,7 @@ function linkedinRoasterWelcomeBody(name: string, lang: string, score?: unknown,
 ${scoreCard}
 ${highlightsBlock}
 <p style="font-size:15px;color:#333;line-height:1.7;">Open your report now to review the full roast and apply the recommendations to strengthen your LinkedIn presence.</p>
+${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/en/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">View my LinkedIn Roast</a>
@@ -431,6 +479,7 @@ ${highlightsBlock}
 ${scoreCard}
 ${highlightsBlock}
 <p style="font-size:15px;color:#333;line-height:1.7;">Abre tu informe ahora para ver el roast completo y aplicar las recomendaciones que pueden reforzar tu presencia en LinkedIn.</p>
+${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/es/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver mi LinkedIn Roast</a>
@@ -463,6 +512,7 @@ ${highlightsBlock}
 ${scoreCard}
 ${highlightsBlock}
 <p style="font-size:15px;color:#333;line-height:1.7;">Abre agora o teu relatório completo para veres o roast na íntegra e aplicares as recomendações que podem reforçar a tua presença no LinkedIn.</p>
+${couponCallout}
 
 <div style="text-align:center;margin:24px 0 8px 0;">
   <a href="https://www.share2inspire.pt/linkedin-roaster/results" style="display:inline-block;background:linear-gradient(135deg,#ea580c,#f97316);color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Ver o meu LinkedIn Roast</a>
@@ -761,6 +811,18 @@ Deno.serve(async (req: Request) => {
             : "iscal_cold_email";
     let subject: string;
     let bodyHtml: string;
+    let couponCode: string | null = typeof payload?.coupon_code === "string" ? payload.coupon_code : null;
+
+    if (type === "linkedin_roaster") {
+      couponCode = await generateLinkedinRoastCoupon(normalizedEmail, language) || couponCode;
+
+      if (!couponCode) {
+        return new Response(
+          JSON.stringify({ success: false, error: "Failed to generate coupon for linkedin_roaster" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     if (type === "cv_analysis") {
       subject = language === "en"
@@ -782,7 +844,7 @@ Deno.serve(async (req: Request) => {
         : language === "es"
           ? "¡Tu LinkedIn Roast está listo! 🔥"
           : "O teu LinkedIn Roast está pronto! 🔥";
-      bodyHtml = linkedinRoasterWelcomeBody(name || "", language, score, results);
+      bodyHtml = linkedinRoasterWelcomeBody(name || "", language, couponCode || "", score, results);
     } else if (type === "member_signup") {
       subject = language === "en"
         ? "Welcome to Share2Inspire — Your Account Is Ready!"
