@@ -32,6 +32,7 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const LINKEDIN_SCRAPE_URL = `${BACKEND_URL}/api/services/scrape-linkedin`;
 const PRICE_NUM = 6.99;
 const PRICE_PT = '6,99';
+const EDGE_FUNCTION_TIMEOUT_MS = 180000;
 const PRICE_ORIGINAL_PT = '10,48';
 const PRICE_ORIGINAL_EN = '10.48';
 
@@ -353,7 +354,7 @@ export default function StudentPackHome() {
         // Engine 1: CV extraction
         let cvResponseDataPT: any = null;
         for (let attempt = 0; attempt <= 2; attempt++) {
-          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), EDGE_FUNCTION_TIMEOUT_MS);
           try {
             const body: any = { mode: 'cv_extraction', email: currentEmail.trim().toLowerCase(), language: 'pt', country: currentCountry, region: currentRegion };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = cvFilename; } else { body.cv_text = cvText.substring(0, 8000); }
@@ -368,7 +369,7 @@ export default function StudentPackHome() {
         if (linkedinAvailable) {
           setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
           for (let attempt = 0; attempt <= 2; attempt++) {
-            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), EDGE_FUNCTION_TIMEOUT_MS);
             try {
               const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: 'pt', country: currentCountry, region: currentRegion }), signal: ctrl.signal });
               clearTimeout(tid);
@@ -428,7 +429,7 @@ export default function StudentPackHome() {
         // Engine 1: CV
         let cvResponseData: any = null;
         for (let attempt = 0; attempt <= 2; attempt++) {
-          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+          const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), EDGE_FUNCTION_TIMEOUT_MS);
           try {
             const body: any = { mode: 'cv_extraction', email: currentEmail.trim().toLowerCase(), language: langCode, country: currentCountry, region: currentRegion || undefined };
             if (useServerExtraction && base64Content) { body.file = base64Content; body.filename = cvFilename; } else { body.cv_text = cvText.substring(0, 8000); }
@@ -443,7 +444,7 @@ export default function StudentPackHome() {
         if (linkedinAvailable) {
           setAnalysisMsg(pick("A cruzar com o teu perfil LinkedIn...", "Cross-referencing with your LinkedIn profile...", "Cruzando con tu perfil LinkedIn..."));
           for (let attempt = 0; attempt <= 2; attempt++) {
-            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 120000);
+            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), EDGE_FUNCTION_TIMEOUT_MS);
             try {
               const res = await fetch(SUPABASE_EDGE_URL, { method: 'POST', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'linkedin_roast', email: currentEmail.trim().toLowerCase(), linkedin_url: currentLinkedinUrl, linkedin_data: structuredLinkedinData, cv_text: linkedinCvText, language: langCode, country: currentCountry, region: currentRegion }), signal: ctrl.signal });
               clearTimeout(tid);

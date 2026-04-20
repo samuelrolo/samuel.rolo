@@ -312,7 +312,7 @@ export default function LinkedInRoasterHome() {
       let responseData: any = null;
       for (let attempt = 0; attempt <= 2; attempt++) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000);
+        const timeoutId = setTimeout(() => controller.abort(), 180000);
         try {
           const response = await fetch(SUPABASE_EDGE_URL, {
             method: 'POST',

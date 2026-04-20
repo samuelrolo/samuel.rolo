@@ -39,6 +39,7 @@ export default function LoginModal({ open, onClose, onSuccess }: Props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [couponCode, setCouponCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -61,7 +62,14 @@ export default function LoginModal({ open, onClose, onSuccess }: Props) {
         if (password !== confirmPassword) { setError(t('auth.passwordMismatch')); setLoading(false); return; }
         if (password.length < 6) { setError(pick(lang, 'A palavra-passe deve ter pelo menos 6 caracteres.', 'Password must be at least 6 characters.', 'La contraseña debe tener al menos 6 caracteres.')); setLoading(false); return; }
         const { error } = await signUp(email, password, firstName, lastName);
-        if (error) { setError(error); } else { setSuccess(t('auth.checkEmail')); }
+        if (error) {
+          setError(error);
+        } else {
+          if (couponCode.trim()) {
+            localStorage.setItem('s2i_registration_coupon', couponCode.trim().toUpperCase());
+          }
+          setSuccess(t('auth.checkEmail'));
+        }
       } else {
         const { error } = await resetPassword(email);
         if (error) { setError(error); } else { setSuccess(t('auth.resetSent')); }
@@ -210,6 +218,21 @@ export default function LoginModal({ open, onClose, onSuccess }: Props) {
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
                 className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/60 focus:outline-none transition-colors"
+              />
+            </div>
+          )}
+
+          {mode === 'register' && (
+            <div>
+              <label className="block text-xs text-[#888] font-light mb-1.5">
+                {pick(lang, 'Código de cupão (opcional)', 'Coupon code (optional)', 'Código de cupón (opcional)')}
+              </label>
+              <input
+                type="text"
+                value={couponCode}
+                onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="S2I-FREE-XXXX"
+                className="w-full px-3 py-2.5 bg-[#f5f5f4] border border-[#ddd] rounded text-sm text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/60 focus:outline-none transition-colors uppercase"
               />
             </div>
           )}
