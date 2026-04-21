@@ -469,6 +469,10 @@ export default function Home() {
     trackAnalysisStart('cv_analyser');
     setLoading(true);
     setError(null);
+    // Auto-scroll to progress bar so user sees analysis is happening
+    setTimeout(() => {
+      document.getElementById('analysis-progress')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
     const startTime = Date.now();
 
     try {
@@ -1916,7 +1920,7 @@ export default function Home() {
           )}
 
           {loading && (
-            <div className="space-y-3 animate-in fade-in">
+            <div id="analysis-progress" className="space-y-3 animate-in fade-in">
               <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                 <div className="h-full bg-[#C9A961] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(((loadingStep + 1) / loadingMessages.length) * 100, 95)}%` }} />
               </div>
