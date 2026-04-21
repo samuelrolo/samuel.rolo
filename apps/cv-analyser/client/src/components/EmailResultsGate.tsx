@@ -100,7 +100,7 @@ export default function EmailResultsGate({
               <span className="inline-flex items-center justify-center gap-2 text-center">
                 {isCvAnalyser && discountActive
                   ? pick('Corrigir o meu CV — 50% desconto', 'Fix my CV — 50% off', 'Corregir mi CV — 50% descuento')
-                  : (ctaLabel || pick('Corrigir o meu CV', 'Fix my CV', 'Corregir mi CV'))
+                  : (ctaLabel || pick('Desbloquear relatório completo', 'Unlock full report', 'Desbloquear informe completo'))
                 }
                 <ArrowRight className="h-4 w-4 shrink-0" />
               </span>
