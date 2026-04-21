@@ -1946,40 +1946,53 @@ export default function Results() {
 
   const previewMetrics = [
     {
-      label: pick('Probabilidade estimada de entrevista', 'Estimated interview probability', 'Probabilidad estimada de entrevista'),
+      label: pick('Probabilidade de entrevista', 'Interview probability', 'Probabilidad de entrevista'),
       value: `${ips}%`,
-      helper: pick('Candidatos com este score são frequentemente rejeitados antes de chegarem à fase de entrevista.', 'Candidates with this score are often rejected before reaching interview stage.', 'Candidatos con esta puntuación son frecuentemente rechazados antes de llegar a la fase de entrevista.'),
+      score: ips,
+      helper: ips < 50
+        ? pick('Score crítico — a maioria dos CVs com este valor nunca chega a entrevista.', 'Critical score — most CVs with this value never reach interview.', 'Score crítico — la mayoría de CVs con este valor nunca llegan a entrevista.')
+        : ips < 75
+        ? pick('Score insuficiente — estás a ser filtrado na maioria das candidaturas.', 'Insufficient score — you are being filtered in most applications.', 'Score insuficiente — estás siendo filtrado en la mayoría de candidaturas.')
+        : pick('Score competitivo — tens boas chances de ser chamado.', 'Competitive score — you have good chances of being called.', 'Score competitivo — tienes buenas posibilidades de ser llamado.'),
     },
     {
-      label: pick('Compatibilidade ATS', 'ATS compatibility', 'Compatibilidad ATS'),
+      label: pick('Risco ATS', 'ATS risk', 'Riesgo ATS'),
       value: `${atsCompatibilityScore}%`,
-      helper: atsCompatibilityScore >= 75
-        ? pick('Risco baixo de rejeição automática.', 'Low automatic rejection risk.', 'Riesgo bajo de rechazo automático.')
-        : atsCompatibilityScore >= 50
-        ? pick('Risco moderado de rejeição automática.', 'Moderate automatic rejection risk.', 'Riesgo moderado de rechazo automático.')
-        : pick('Risco elevado de rejeição automática.', 'High automatic rejection risk.', 'Riesgo elevado de rechazo automático.'),
+      score: atsCompatibilityScore,
+      helper: atsCompatibilityScore < 50
+        ? pick('Risco elevado — o teu CV está a ser descartado por robôs antes de ser lido.', 'High risk — your CV is being discarded by bots before being read.', 'Riesgo elevado — tu CV está siendo descartado por robots antes de ser leído.')
+        : atsCompatibilityScore < 75
+        ? pick('Risco moderado — parte das tuas candidaturas está a ser rejeitada automaticamente.', 'Moderate risk — some of your applications are being automatically rejected.', 'Riesgo moderado — parte de tus candidaturas está siendo rechazada automáticamente.')
+        : pick('Risco baixo — o teu CV passa a maioria dos filtros automáticos.', 'Low risk — your CV passes most automatic filters.', 'Riesgo bajo — tu CV pasa la mayoría de los filtros automáticos.'),
     },
     {
-      label: pick('Posicionamento', 'Positioning', 'Posicionamiento'),
+      label: pick('Competitividade', 'Competitiveness', 'Competitividad'),
       value: `Top ${100 - percentile}%`,
-      helper: pick('Comparação com a média do mercado analisado.', 'Comparison against the analysed market average.', 'Comparación con la media del mercado analizado.'),
+      score: percentile,
+      helper: percentile < 50
+        ? pick('Abaixo da média — a maioria dos candidatos tem um CV mais forte que o teu.', 'Below average — most candidates have a stronger CV than yours.', 'Por debajo de la media — la mayoría de candidatos tiene un CV más fuerte que el tuyo.')
+        : percentile < 75
+        ? pick('Na média — não te destacas o suficiente para ser a primeira escolha.', 'Average — you don\'t stand out enough to be the first choice.', 'En la media — no te destacas lo suficiente para ser la primera opción.')
+        : pick('Acima da média — o teu perfil destaca-se face à concorrência.', 'Above average — your profile stands out against the competition.', 'Por encima de la media — tu perfil se destaca frente a la competencia.'),
     },
   ];
   const previewHighlights = [
     {
-      title: pick('Força principal', 'Main strength', 'Fortaleza principal'),
-      description: translatedTopStrengths[0] || pick('O teu CV já mostra sinais positivos em pelo menos uma dimensão-chave.', 'Your CV already shows positive signals in at least one key dimension.', 'Tu CV ya muestra señales positivas en al menos una dimensión clave.'),
-      icon: <Sparkles className="h-4 w-4" />,
+      title: pick('Problema principal', 'Main problem', 'Problema principal'),
+      description: analysisData.atsTopFactor || pick('O relatório completo identifica o bloqueio principal que está a impedir o teu CV de avançar.', 'The full report identifies the main blocker preventing your CV from advancing.', 'El informe completo identifica el bloqueo principal que impide que tu CV avance.'),
+      severity: 'danger' as const,
     },
     {
-      title: pick('Segunda alavanca de valor', 'Second value driver', 'Segunda palanca de valor'),
-      description: translatedTopStrengths[1] || pick('Existe uma segunda área com potencial claro para reforçar competitividade.', 'There is a second area with clear potential to reinforce competitiveness.', 'Existe una segunda área con claro potencial para reforzar la competitividad.'),
-      icon: <BarChart3 className="h-4 w-4" />,
+      title: pick('Risco oculto', 'Hidden risk', 'Riesgo oculto'),
+      description: translatedTopStrengths[1]
+        ? pick(`"${translatedTopStrengths[1]}" — mas sem dados concretos, isto não convence recrutadores.`, `"${translatedTopStrengths[1]}" — but without concrete data, this doesn\'t convince recruiters.`, `"${translatedTopStrengths[1]}" — pero sin datos concretos, esto no convence a reclutadores.`)
+        : pick('Existem sinais positivos no teu CV, mas estão mal posicionados e perdem impacto.', 'There are positive signals in your CV, but they are poorly positioned and lose impact.', 'Hay señales positivas en tu CV, pero están mal posicionadas y pierden impacto.'),
+      severity: 'warning' as const,
     },
     {
-      title: pick('Ponto crítico a rever', 'Critical point to review', 'Punto crítico a revisar'),
-      description: analysisData.atsTopFactor || pick('O relatório completo mostra exatamente o que está a travar o teu desempenho no filtro inicial.', 'The full report shows exactly what is holding back your performance in the first screening stage.', 'El informe completo muestra exactamente qué está frenando tu rendimiento en el primer filtro.'),
-      icon: <AlertTriangle className="h-4 w-4" />,
+      title: pick('O que está a funcionar', 'What is working', 'Lo que está funcionando'),
+      description: translatedTopStrengths[0] || pick('O teu CV tem pelo menos uma dimensão forte — o relatório mostra como a potenciar.', 'Your CV has at least one strong dimension — the report shows how to leverage it.', 'Tu CV tiene al menos una dimensión fuerte — el informe muestra cómo potenciarla.'),
+      severity: 'ok' as const,
     },
   ];
 
