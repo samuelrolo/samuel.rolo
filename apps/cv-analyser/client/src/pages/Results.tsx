@@ -2018,8 +2018,9 @@ export default function Results() {
         <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-6 sm:space-y-8">
           <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-br from-[#faf8f3] via-white to-[#fffdf8] p-5 sm:p-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex flex-col items-center gap-3 shrink-0">
-                <ScoreGauge score={ips} size={140} strokeWidth={8} />
+              <div className="flex flex-col items-center gap-2 shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-500/80">{pick('Risco de Rejeição', 'Rejection Risk', 'Riesgo de Rechazo')}</span>
+                <ScoreGauge score={ips} size={140} strokeWidth={8} colorClass={ips < 75 ? 'text-amber-500' : 'text-[#C9A961]'} />
                 <span className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
               </div>
               <div className="space-y-3 text-center md:text-left">
@@ -2033,14 +2034,15 @@ export default function Results() {
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{pick('Estado', 'Status', 'Estado')}:</span>
                   <span className="text-xs font-bold text-slate-800">{ipsClassification}</span>
                 </div>
-                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 mt-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium text-red-700">{ipsAlert}</p>
+                <div className="flex items-start gap-3 rounded-xl border-2 border-red-300 bg-red-50 p-4 mt-3 shadow-sm">
+                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-sm font-semibold text-red-800 leading-relaxed">{ipsAlert}</p>
                 </div>
               </div>
             </div>
           </div>
 
+          <div className="-mt-2" />
           <EmailResultsGate
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
             previewTitle={pick('Vê exatamente o que está a bloquear o teu CV e como corrigir.', 'See exactly what is blocking your CV and how to fix it.', 'Mira exactamente qué está bloqueando tu CV y cómo corregirlo.')}

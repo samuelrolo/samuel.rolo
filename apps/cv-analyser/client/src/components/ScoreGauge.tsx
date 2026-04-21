@@ -2,9 +2,11 @@ interface ScoreGaugeProps {
   score: number;
   size?: number;
   strokeWidth?: number;
+  /** Override the progress-circle color class (e.g. "text-red-500") */
+  colorClass?: string;
 }
 
-const ScoreGauge = ({ score, size = 120, strokeWidth = 8 }: ScoreGaugeProps) => {
+const ScoreGauge = ({ score, size = 120, strokeWidth = 8, colorClass }: ScoreGaugeProps) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = (score / 100) * circumference;
@@ -33,7 +35,7 @@ const ScoreGauge = ({ score, size = 120, strokeWidth = 8 }: ScoreGaugeProps) => 
           strokeDasharray={circumference}
           strokeDashoffset={circumference - progress}
           strokeLinecap="round"
-          className="text-[#C9A961] transition-all duration-1000 ease-out"
+          className={`${colorClass || 'text-[#C9A961]'} transition-all duration-1000 ease-out`}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">

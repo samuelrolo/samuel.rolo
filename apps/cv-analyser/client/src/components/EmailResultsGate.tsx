@@ -127,7 +127,7 @@ export default function EmailResultsGate({
                 </p>
               </div>
 
-              <Button type="button" onClick={onCtaClick} className="w-full rounded-2xl bg-[#C9A961] py-6 text-sm font-semibold text-white hover:bg-[#B8954F]">
+              <Button type="button" onClick={onCtaClick} className="w-full rounded-2xl bg-[#C9A961] py-7 text-base font-bold text-white hover:bg-[#B8954F] shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all duration-200 ring-2 ring-[#C9A961]/20">
                 <span className="inline-flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />
                   {ctaLabel || pick('Aumentar as minhas chances de entrevista', 'Increase my chances of getting interviews', 'Aumentar mis oportunidades de entrevista')}
