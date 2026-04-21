@@ -1510,6 +1510,13 @@ export default function Results() {
     }
   };
 
+  // Track result_viewed once (must be before ALL conditional returns to respect React hooks rules)
+  useEffect(() => {
+    if (!isPaid && analysisData) {
+      trackEvent('result_viewed', { event_category: 'engagement' });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!analysisHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -1527,13 +1534,6 @@ export default function Results() {
       (Array.isArray(analysisData.keywords) && analysisData.keywords.length > 0)
     )
   );
-
-  // Track result_viewed once (must be before any conditional return to respect React hooks rules)
-  useEffect(() => {
-    if (!isPaid && analysisData) {
-      trackEvent('result_viewed', { event_category: 'engagement' });
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!analysisData || !hasRenderableResults) {
     return (
