@@ -1944,37 +1944,40 @@ export default function Results() {
     ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
     : pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal');
 
-  const previewMetrics: any[] = []; // metrics now shown inline in hero, not in separate cards
-  const previewHighlights = [
-    {
-      title: pick('Problema identificado', 'Identified problem', 'Problema identificado'),
-      description: analysisData.atsTopFactor || pick('O relatório completo identifica o bloqueio principal que está a impedir o teu CV de avançar.', 'The full report identifies the main blocker preventing your CV from advancing.', 'El informe completo identifica el bloqueo principal que impide que tu CV avance.'),
-      severity: 'danger' as const,
-    },
-  ];
+  const previewMetrics: any[] = [];
+  const previewHighlights: any[] = [];
 
-  // Smart contextual message based on actual score
-  const nextThreshold = ips <= 40 ? 61 : ips <= 60 ? 61 : ips <= 75 ? 76 : ips <= 90 ? 91 : 100;
-  const pointsToNext = Math.max(0, nextThreshold - ips);
-  const nextLabel = ips <= 40
-    ? pick('Candidato Filtrado', 'Filtered Candidate', 'Candidato Filtrado')
-    : ips <= 60
-    ? pick('Candidato Considerado', 'Considered Candidate', 'Candidato Considerado')
-    : ips <= 75
-    ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
-    : ips <= 90
-    ? pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal')
-    : '';
+  // Negative-framing: always show the risk side
+  const rejectionChance = 100 - ips;
+  const atsRejectionPct = analysisData.atsRejectionRate ?? 50;
+  const competitivePosition = 100 - (percentile || 50);
 
-  const ipsContextMessage = ips >= 91
-    ? pick('O teu CV está no topo. O relatório mostra como manter esta vantagem.', 'Your CV is at the top. The report shows how to maintain this advantage.', 'Tu CV está en el tope. El informe muestra cómo mantener esta ventaja.')
-    : ips >= 76
-    ? pick(`Estás perto do topo. Faltam ${pointsToNext} pontos para ${nextLabel}.`, `You\'re close to the top. ${pointsToNext} points to ${nextLabel}.`, `Estás cerca del tope. Faltan ${pointsToNext} puntos para ${nextLabel}.`)
-    : ips >= 61
-    ? pick(`Tens potencial, mas não o suficiente para garantir entrevistas. Faltam ${pointsToNext} pontos para ${nextLabel}.`, `You have potential, but not enough to guarantee interviews. ${pointsToNext} points to ${nextLabel}.`, `Tienes potencial, pero no lo suficiente para garantizar entrevistas. Faltan ${pointsToNext} puntos para ${nextLabel}.`)
-    : ips >= 41
-    ? pick(`O teu CV está a ser filtrado antes de chegar a recrutadores. Faltam ${pointsToNext} pontos para começares a ser considerado.`, `Your CV is being filtered before reaching recruiters. ${pointsToNext} points to start being considered.`, `Tu CV está siendo filtrado antes de llegar a reclutadores. Faltan ${pointsToNext} puntos para empezar a ser considerado.`)
-    : pick('O teu CV é invisível para a maioria dos recrutadores. Precisa de mudanças urgentes.', 'Your CV is invisible to most recruiters. It needs urgent changes.', 'Tu CV es invisible para la mayoría de los reclutadores. Necesita cambios urgentes.');
+  // 3 tension bullets — critical, no detail, no positive, no solution
+  const tensionBullets: string[] = [];
+  // Bullet 1: ATS rejection — always show, frame as fact
+  tensionBullets.push(
+    pick(
+      `${atsRejectionPct}% de probabilidade de ser descartado por robôs antes de um humano ver o teu CV`,
+      `${atsRejectionPct}% probability of being discarded by bots before a human sees your CV`,
+      `${atsRejectionPct}% de probabilidad de ser descartado por robots antes de que un humano vea tu CV`
+    )
+  );
+  // Bullet 2: Competitive positioning — frame as being behind
+  tensionBullets.push(
+    pick(
+      `${competitivePosition - 1} em cada 100 candidatos apresentam um CV mais competitivo que o teu`,
+      `${competitivePosition - 1} out of 100 candidates present a more competitive CV than yours`,
+      `${competitivePosition - 1} de cada 100 candidatos presentan un CV más competitivo que el tuyo`
+    )
+  );
+  // Bullet 3: Overall — frame as wasted applications
+  tensionBullets.push(
+    pick(
+      `Em ${rejectionChance} de cada 100 candidaturas, este CV não chega sequer à fase de entrevista`,
+      `In ${rejectionChance} out of 100 applications, this CV doesn't even reach interview stage`,
+      `En ${rejectionChance} de cada 100 candidaturas, este CV ni siquiera llega a la fase de entrevista`
+    )
+  );
 
   if (!isPaid) {
     return (
@@ -2002,8 +2005,8 @@ export default function Results() {
           </div>
         </header>
 
-        <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-6 sm:space-y-8">
-          {/* ── Clean scorecard ── */}
+        <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-5">
+          {/* ── Scorecard ── */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="flex flex-col items-center gap-1 shrink-0">
@@ -2011,21 +2014,36 @@ export default function Results() {
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
               </div>
               <div className="space-y-3 text-center sm:text-left flex-1">
+                <p className="text-lg sm:text-xl font-bold text-slate-800">
+                  {pick(`${ips}% de probabilidade de entrevista`, `${ips}% interview probability`, `${ips}% de probabilidad de entrevista`)}
+                </p>
                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
                   <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{ipsClassification}</span>
                 </div>
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  {ipsContextMessage}
-                </p>
               </div>
             </div>
           </div>
 
+          {/* ── Tension bullets — what this score means ── */}
+          {tensionBullets.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">{pick('O que este score significa', 'What this score means', 'Qué significa este score')}</p>
+              <ul className="space-y-2.5">
+                {tensionBullets.map((bullet, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                    <span className="text-sm text-slate-700 leading-relaxed">{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="-mt-2" />
           <EmailResultsGate
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
-            previewTitle={pick('Vê exatamente o que está a bloquear o teu CV e como corrigir.', 'See exactly what is blocking your CV and how to fix it.', 'Mira exactamente qué está bloqueando tu CV y cómo corregirlo.')}
-            previewDescription={pick('O relatório completo mostra o que está a impedir que o teu CV passe os filtros, como os recrutadores o percecionam e as ações concretas para aumentar a tua probabilidade de entrevista.', 'The full report shows what is preventing your CV from passing filters, how recruiters perceive it, and the concrete actions to increase your interview probability.', 'El informe completo muestra qué está impidiendo que tu CV pase los filtros, cómo lo perciben los reclutadores y las acciones concretas para aumentar tu probabilidad de entrevista.')}
+            previewTitle={pick('Enquanto não corrigires, cada candidatura é uma oportunidade perdida.', 'Until you fix this, every application is a wasted opportunity.', 'Hasta que no lo corrijas, cada candidatura es una oportunidad perdida.')}
+            previewDescription={pick('O relatório identifica exatamente o que está a travar o teu CV e o que tens de mudar primeiro.', 'The report identifies exactly what is holding your CV back and what you need to change first.', 'El informe identifica exactamente qué está frenando tu CV y qué necesitas cambiar primero.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
             ctaLabel={pick('Aumentar as minhas chances de entrevista', 'Increase my chances of getting interviews', 'Aumentar mis oportunidades de entrevista')}
