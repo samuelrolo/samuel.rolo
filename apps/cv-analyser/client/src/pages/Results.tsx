@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
 import type { AnalysisData } from "@/types/analysis";
-import { trackPurchase } from "@/lib/gtag";
+import { trackPurchase, trackEvent } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { getValidatedMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
@@ -630,6 +630,7 @@ export default function Results() {
             const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 9.99;
             const productName = restoredPlan?.includes_career_path ? 'bundle' : 'cv_analyser';
             trackPurchase(productName, priceVal, `CV-STRIPE-${sessionId}`);
+            trackEvent('purchase_completed', { event_category: 'conversion', product: productName, value: priceVal, method: 'stripe' });
             if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceVal, currency: t('eur')});
             trackAffiliateConversion({ product: productName, amount: priceVal, currency: t('eur'), payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
             updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
@@ -839,6 +840,7 @@ export default function Results() {
   }, [isEN]);
 
   const openPaymentModal = (plan?: { name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }) => {
+    trackEvent('cta_upgrade_clicked', { event_category: 'conversion', product: plan?.name || 'cv_analyser' });
     if (plan) {
       setSelectedPlan(plan);
     }
@@ -1979,6 +1981,13 @@ export default function Results() {
     'This CV may be costing you real interview opportunities.',
     'Este CV puede estar costándote oportunidades reales de entrevista.'
   );
+
+  // Track result_viewed once
+  useEffect(() => {
+    if (!isPaid) {
+      trackEvent('result_viewed', { event_category: 'engagement', ips_score: ips, classification: ipsClassification });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isPaid) {
     return (
