@@ -374,6 +374,7 @@ export default function Results() {
   // Currency & pricing: all locales use EUR
   const CUR = t('bca53fde');
   const P = isEN ? { cv: '6.99', cp: '14.99', career: '14.99' } : { cv: '6,99', cp: '14,99', career: '14,99' };
+  const P_HALF = isEN ? { cv: '3.49' } : { cv: '3,49' };
   const CURRENCY_CODE = 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
@@ -1935,14 +1936,14 @@ export default function Results() {
   const safeAvgScore = isNaN(avgScore) ? 50 : avgScore;
   const ips = Math.round((Math.round(safeAvgScore) * 0.4) + (atsCompatibilityScore * 0.4) + (positioningNormalized * 0.2));
   const ipsClassification = ips <= 40
-    ? pick('Candidato Invisível', 'Invisible Candidate', 'Candidato Invisible')
+    ? pick('Risco elevado — CV invisível', 'High risk — invisible CV', 'Riesgo elevado — CV invisible')
     : ips <= 60
-    ? pick('Candidato Filtrado', 'Filtered Candidate', 'Candidato Filtrado')
+    ? pick('Risco alto — CV filtrado automaticamente', 'High risk — CV auto-filtered', 'Riesgo alto — CV filtrado automáticamente')
     : ips <= 75
-    ? pick('Candidato Considerado', 'Considered Candidate', 'Candidato Considerado')
+    ? pick('Risco moderado — sem garantia de entrevista', 'Moderate risk — no interview guarantee', 'Riesgo moderado — sin garantía de entrevista')
     : ips <= 90
-    ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
-    : pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal');
+    ? pick('Risco baixo — competitivo', 'Low risk — competitive', 'Riesgo bajo — competitivo')
+    : pick('Risco mínimo — top talent', 'Minimal risk — top talent', 'Riesgo mínimo — top talent');
 
   const previewMetrics: any[] = [];
   const previewHighlights: any[] = [];
@@ -2046,8 +2047,9 @@ export default function Results() {
             previewDescription={pick('O relatório identifica exatamente o que está a travar o teu CV e o que tens de mudar primeiro.', 'The report identifies exactly what is holding your CV back and what you need to change first.', 'El informe identifica exactamente qué está frenando tu CV y qué necesitas cambiar primero.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            ctaLabel={pick('Aumentar as minhas chances de entrevista', 'Increase my chances of getting interviews', 'Aumentar mis oportunidades de entrevista')}
+            ctaLabel={pick('Corrigir o meu CV', 'Fix my CV', 'Corregir mi CV')}
             onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
+            onDiscountCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P_HALF.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
           />
         </main>
 
