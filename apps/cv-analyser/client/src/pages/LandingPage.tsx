@@ -242,6 +242,8 @@ export default function LandingPage() {
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-white to-transparent" />
       </section>
 
+      <MentionedIn />
+
       {/* ─── TRUST BADGES ─── */}
       <section className="py-10 px-6">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
@@ -416,8 +418,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      <MentionedIn />
 
       <S2IFooter />
     </div>
