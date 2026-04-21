@@ -1944,64 +1944,37 @@ export default function Results() {
     ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
     : pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal');
 
-  const previewMetrics = [
-    {
-      label: pick('Probabilidade de entrevista', 'Interview probability', 'Probabilidad de entrevista'),
-      value: `${ips}%`,
-      score: ips,
-      helper: ips < 50
-        ? pick('Score crítico — a maioria dos CVs com este valor nunca chega a entrevista.', 'Critical score — most CVs with this value never reach interview.', 'Score crítico — la mayoría de CVs con este valor nunca llegan a entrevista.')
-        : ips < 75
-        ? pick('Score insuficiente — estás a ser filtrado na maioria das candidaturas.', 'Insufficient score — you are being filtered in most applications.', 'Score insuficiente — estás siendo filtrado en la mayoría de candidaturas.')
-        : pick('Score competitivo — tens boas chances de ser chamado.', 'Competitive score — you have good chances of being called.', 'Score competitivo — tienes buenas posibilidades de ser llamado.'),
-    },
-    {
-      label: pick('Risco ATS', 'ATS risk', 'Riesgo ATS'),
-      value: `${atsCompatibilityScore}%`,
-      score: atsCompatibilityScore,
-      helper: atsCompatibilityScore < 50
-        ? pick('Risco elevado — o teu CV está a ser descartado por robôs antes de ser lido.', 'High risk — your CV is being discarded by bots before being read.', 'Riesgo elevado — tu CV está siendo descartado por robots antes de ser leído.')
-        : atsCompatibilityScore < 75
-        ? pick('Risco moderado — parte das tuas candidaturas está a ser rejeitada automaticamente.', 'Moderate risk — some of your applications are being automatically rejected.', 'Riesgo moderado — parte de tus candidaturas está siendo rechazada automáticamente.')
-        : pick('Risco baixo — o teu CV passa a maioria dos filtros automáticos.', 'Low risk — your CV passes most automatic filters.', 'Riesgo bajo — tu CV pasa la mayoría de los filtros automáticos.'),
-    },
-    {
-      label: pick('Competitividade', 'Competitiveness', 'Competitividad'),
-      value: `Top ${100 - percentile}%`,
-      score: percentile,
-      helper: percentile < 50
-        ? pick('Abaixo da média — a maioria dos candidatos tem um CV mais forte que o teu.', 'Below average — most candidates have a stronger CV than yours.', 'Por debajo de la media — la mayoría de candidatos tiene un CV más fuerte que el tuyo.')
-        : percentile < 75
-        ? pick('Na média — não te destacas o suficiente para ser a primeira escolha.', 'Average — you don\'t stand out enough to be the first choice.', 'En la media — no te destacas lo suficiente para ser la primera opción.')
-        : pick('Acima da média — o teu perfil destaca-se face à concorrência.', 'Above average — your profile stands out against the competition.', 'Por encima de la media — tu perfil se destaca frente a la competencia.'),
-    },
-  ];
+  const previewMetrics: any[] = []; // metrics now shown inline in hero, not in separate cards
   const previewHighlights = [
     {
-      title: pick('Problema principal', 'Main problem', 'Problema principal'),
+      title: pick('Problema identificado', 'Identified problem', 'Problema identificado'),
       description: analysisData.atsTopFactor || pick('O relatório completo identifica o bloqueio principal que está a impedir o teu CV de avançar.', 'The full report identifies the main blocker preventing your CV from advancing.', 'El informe completo identifica el bloqueo principal que impide que tu CV avance.'),
       severity: 'danger' as const,
     },
-    {
-      title: pick('Risco oculto', 'Hidden risk', 'Riesgo oculto'),
-      description: translatedTopStrengths[1]
-        ? pick(`"${translatedTopStrengths[1]}" — mas sem dados concretos, isto não convence recrutadores.`, `"${translatedTopStrengths[1]}" — but without concrete data, this doesn\'t convince recruiters.`, `"${translatedTopStrengths[1]}" — pero sin datos concretos, esto no convence a reclutadores.`)
-        : pick('Existem sinais positivos no teu CV, mas estão mal posicionados e perdem impacto.', 'There are positive signals in your CV, but they are poorly positioned and lose impact.', 'Hay señales positivas en tu CV, pero están mal posicionadas y pierden impacto.'),
-      severity: 'warning' as const,
-    },
-    {
-      title: pick('O que está a funcionar', 'What is working', 'Lo que está funcionando'),
-      description: translatedTopStrengths[0] || pick('O teu CV tem pelo menos uma dimensão forte — o relatório mostra como a potenciar.', 'Your CV has at least one strong dimension — the report shows how to leverage it.', 'Tu CV tiene al menos una dimensión fuerte — el informe muestra cómo potenciarla.'),
-      severity: 'ok' as const,
-    },
   ];
 
-  // IPS alert message
-  const ipsAlert = pick(
-    'Este CV pode estar a custar-te oportunidades reais de entrevista.',
-    'This CV may be costing you real interview opportunities.',
-    'Este CV puede estar costándote oportunidades reales de entrevista.'
-  );
+  // Smart contextual message based on actual score
+  const nextThreshold = ips <= 40 ? 61 : ips <= 60 ? 61 : ips <= 75 ? 76 : ips <= 90 ? 91 : 100;
+  const pointsToNext = Math.max(0, nextThreshold - ips);
+  const nextLabel = ips <= 40
+    ? pick('Candidato Filtrado', 'Filtered Candidate', 'Candidato Filtrado')
+    : ips <= 60
+    ? pick('Candidato Considerado', 'Considered Candidate', 'Candidato Considerado')
+    : ips <= 75
+    ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
+    : ips <= 90
+    ? pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal')
+    : '';
+
+  const ipsContextMessage = ips >= 91
+    ? pick('O teu CV está no topo. O relatório mostra como manter esta vantagem.', 'Your CV is at the top. The report shows how to maintain this advantage.', 'Tu CV está en el tope. El informe muestra cómo mantener esta ventaja.')
+    : ips >= 76
+    ? pick(`Estás perto do topo. Faltam ${pointsToNext} pontos para ${nextLabel}.`, `You\'re close to the top. ${pointsToNext} points to ${nextLabel}.`, `Estás cerca del tope. Faltan ${pointsToNext} puntos para ${nextLabel}.`)
+    : ips >= 61
+    ? pick(`Tens potencial, mas não o suficiente para garantir entrevistas. Faltam ${pointsToNext} pontos para ${nextLabel}.`, `You have potential, but not enough to guarantee interviews. ${pointsToNext} points to ${nextLabel}.`, `Tienes potencial, pero no lo suficiente para garantizar entrevistas. Faltan ${pointsToNext} puntos para ${nextLabel}.`)
+    : ips >= 41
+    ? pick(`O teu CV está a ser filtrado antes de chegar a recrutadores. Faltam ${pointsToNext} pontos para começares a ser considerado.`, `Your CV is being filtered before reaching recruiters. ${pointsToNext} points to start being considered.`, `Tu CV está siendo filtrado antes de llegar a reclutadores. Faltan ${pointsToNext} puntos para empezar a ser considerado.`)
+    : pick('O teu CV é invisível para a maioria dos recrutadores. Precisa de mudanças urgentes.', 'Your CV is invisible to most recruiters. It needs urgent changes.', 'Tu CV es invisible para la mayoría de los reclutadores. Necesita cambios urgentes.');
 
   if (!isPaid) {
     return (
@@ -2030,28 +2003,20 @@ export default function Results() {
         </header>
 
         <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-6 sm:space-y-8">
-          <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-br from-[#faf8f3] via-white to-[#fffdf8] p-5 sm:p-8">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex flex-col items-center gap-2 shrink-0">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-500/80">{pick('Risco de Rejeição', 'Rejection Risk', 'Riesgo de Rechazo')}</span>
-                <ScoreGauge score={ips} size={140} strokeWidth={8} colorClass={ips < 75 ? 'text-amber-500' : 'text-[#C9A961]'} />
-                <span className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
+          {/* ── Clean scorecard ── */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="flex flex-col items-center gap-1 shrink-0">
+                <ScoreGauge score={ips} size={120} strokeWidth={6} />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
               </div>
-              <div className="space-y-3 text-center md:text-left">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                  {pick('Probabilidade estimada de entrevista:', 'Estimated interview probability:', 'Probabilidad estimada de entrevista:')} {ips}%
-                </h1>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-                  {pick('Candidatos com este score são frequentemente rejeitados antes de chegarem à fase de entrevista.', 'Candidates with this score are often rejected before reaching interview stage.', 'Candidatos con esta puntuación son frecuentemente rechazados antes de llegar a la fase de entrevista.')}
+              <div className="space-y-3 text-center sm:text-left flex-1">
+                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{ipsClassification}</span>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  {ipsContextMessage}
                 </p>
-                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{pick('Estado', 'Status', 'Estado')}:</span>
-                  <span className="text-xs font-bold text-slate-800">{ipsClassification}</span>
-                </div>
-                <div className="flex items-start gap-3 rounded-xl border-2 border-red-300 bg-red-50 p-4 mt-3 shadow-sm">
-                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <p className="text-sm font-semibold text-red-800 leading-relaxed">{ipsAlert}</p>
-                </div>
               </div>
             </div>
           </div>
