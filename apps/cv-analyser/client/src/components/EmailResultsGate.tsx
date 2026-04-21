@@ -5,6 +5,7 @@ import { pick } from '@/i18n';
 
 interface EmailResultsGateProps {
   productLabel: string;
+  product?: string;
   previewTitle: string;
   previewDescription: string;
   metrics?: any[];
@@ -15,12 +16,14 @@ interface EmailResultsGateProps {
 }
 
 export default function EmailResultsGate({
+  product,
   previewTitle,
   previewDescription,
   ctaLabel,
   onCtaClick,
   onDiscountCtaClick,
 }: EmailResultsGateProps) {
+  const isCvAnalyser = product === 'cv-analyser';
   const DISCOUNT_SECONDS = 5 * 60; // 5 minutes
   const startRef = useRef<number>(() => {
     const stored = sessionStorage.getItem('ips_discount_start');
@@ -60,7 +63,7 @@ export default function EmailResultsGate({
   return (
     <div className="space-y-4">
       {/* Discount countdown banner */}
-      {discountActive && (
+      {isCvAnalyser && discountActive && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Clock className="h-4 w-4 text-red-500" />
@@ -81,7 +84,7 @@ export default function EmailResultsGate({
           <h3 className="text-lg sm:text-xl font-bold text-slate-900">{previewTitle}</h3>
           <p className="text-sm leading-relaxed text-slate-500">{previewDescription}</p>
 
-          {discountActive && (
+          {isCvAnalyser && discountActive && (
             <div className="flex items-center justify-center gap-3">
               <span className="text-lg text-slate-400 line-through">€6,99</span>
               <span className="text-2xl font-bold text-red-600">€3,49</span>
@@ -91,11 +94,11 @@ export default function EmailResultsGate({
           <div className="pt-1">
             <Button
               type="button"
-              onClick={discountActive && onDiscountCtaClick ? onDiscountCtaClick : onCtaClick}
+              onClick={isCvAnalyser && discountActive && onDiscountCtaClick ? onDiscountCtaClick : onCtaClick}
               className="w-full rounded-xl bg-[#C9A961] py-6 text-sm sm:text-base font-bold text-white hover:bg-[#B8954F] shadow-md shadow-[#C9A961]/20 hover:shadow-lg transition-all duration-200"
             >
               <span className="inline-flex items-center justify-center gap-2 text-center">
-                {discountActive
+                {isCvAnalyser && discountActive
                   ? pick('Corrigir o meu CV — 50% desconto', 'Fix my CV — 50% off', 'Corregir mi CV — 50% descuento')
                   : (ctaLabel || pick('Corrigir o meu CV', 'Fix my CV', 'Corregir mi CV'))
                 }

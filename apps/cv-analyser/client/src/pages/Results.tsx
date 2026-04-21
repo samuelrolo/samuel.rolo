@@ -2108,6 +2108,7 @@ export default function Results() {
 
           {/* ── CTA ── */}
           <EmailResultsGate
+            product="cv-analyser"
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
             previewTitle={funnelGateTitle}
             previewDescription={funnelGateDesc}
