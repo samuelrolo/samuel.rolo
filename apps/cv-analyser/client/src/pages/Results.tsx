@@ -1528,6 +1528,13 @@ export default function Results() {
     )
   );
 
+  // Track result_viewed once (must be before any conditional return to respect React hooks rules)
+  useEffect(() => {
+    if (!isPaid && analysisData) {
+      trackEvent('result_viewed', { event_category: 'engagement' });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!analysisData || !hasRenderableResults) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -1982,13 +1989,6 @@ export default function Results() {
     'This CV may be costing you real interview opportunities.',
     'Este CV puede estar costándote oportunidades reales de entrevista.'
   );
-
-  // Track result_viewed once
-  useEffect(() => {
-    if (!isPaid) {
-      trackEvent('result_viewed', { event_category: 'engagement', ips_score: ips, classification: ipsClassification });
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isPaid) {
     return (
