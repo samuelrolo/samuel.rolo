@@ -135,7 +135,7 @@ export default function EmailResultsGate({
               </Button>
 
               <p className="text-xs leading-relaxed text-slate-500">
-                {pick('Serás encaminhado para o fluxo de pagamento seguro do produto e, após confirmação, o relatório completo ficará disponível normalmente.', 'You will be taken to the product secure payment flow and, after confirmation, the full report will become available as usual.', 'Serás llevado al flujo de pago seguro del producto y, tras la confirmación, el informe completo quedará disponible normalmente.')}
+                {pick('Vê exatamente o que está a bloquear o teu CV e como corrigir.', 'See exactly what is blocking your CV and how to fix it.', 'Mira exactamente qué está bloqueando tu CV y cómo corregirlo.')}
               </p>
             </div>
           </div>

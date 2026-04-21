@@ -1921,21 +1921,38 @@ export default function Results() {
   const storedVoucherCode = sessionStorage.getItem('voucherCode');
   const storedVoucherRemaining = sessionStorage.getItem('voucherRemaining');
   const atsCompatibilityScore = Math.max(0, Math.round(100 - analysisData.atsRejectionRate));
+  // ── IPS (Interview Probability Score) ──
+  const positioningNormalized = percentile; // percentile already = 100 - X internally
+  const ips = Math.round((Math.round(avgScore) * 0.4) + (atsCompatibilityScore * 0.4) + (positioningNormalized * 0.2));
+  const ipsClassification = ips <= 40
+    ? pick('Candidato Invisível', 'Invisible Candidate', 'Candidato Invisible')
+    : ips <= 60
+    ? pick('Candidato Filtrado', 'Filtered Candidate', 'Candidato Filtrado')
+    : ips <= 75
+    ? pick('Candidato Considerado', 'Considered Candidate', 'Candidato Considerado')
+    : ips <= 90
+    ? pick('Pronto para Entrevista', 'Interview Ready', 'Listo para Entrevista')
+    : pick('Top Talent Signal', 'Top Talent Signal', 'Top Talent Signal');
+
   const previewMetrics = [
     {
-      label: pick('Score médio', 'Average score', 'Puntuación media'),
-      value: `${Math.round(avgScore)}/100`,
-      helper: pick('Leitura rápida da qualidade global do teu CV.', 'Quick read of your CV overall quality.', 'Lectura rápida de la calidad global de tu CV.'),
+      label: pick('Probabilidade estimada de entrevista', 'Estimated interview probability', 'Probabilidad estimada de entrevista'),
+      value: `${ips}%`,
+      helper: pick('Candidatos com este score são frequentemente rejeitados antes de chegarem à fase de entrevista.', 'Candidates with this score are often rejected before reaching interview stage.', 'Candidatos con esta puntuación son frecuentemente rechazados antes de llegar a la fase de entrevista.'),
     },
     {
       label: pick('Compatibilidade ATS', 'ATS compatibility', 'Compatibilidad ATS'),
       value: `${atsCompatibilityScore}%`,
-      helper: analysisData.atsTopFactor || pick('Mostra o risco de rejeição automática no primeiro filtro.', 'Shows the risk of automatic rejection in the first screening.', 'Muestra el riesgo de rechazo automático en el primer filtro.'),
+      helper: atsCompatibilityScore >= 75
+        ? pick('Risco baixo de rejeição automática.', 'Low automatic rejection risk.', 'Riesgo bajo de rechazo automático.')
+        : atsCompatibilityScore >= 50
+        ? pick('Risco moderado de rejeição automática.', 'Moderate automatic rejection risk.', 'Riesgo moderado de rechazo automático.')
+        : pick('Risco elevado de rejeição automática.', 'High automatic rejection risk.', 'Riesgo elevado de rechazo automático.'),
     },
     {
       label: pick('Posicionamento', 'Positioning', 'Posicionamiento'),
       value: `Top ${100 - percentile}%`,
-      helper: pick('Comparação rápida com a média do mercado analisado.', 'Quick comparison against the analysed market average.', 'Comparación rápida con la media del mercado analizado.'),
+      helper: pick('Comparação com a média do mercado analisado.', 'Comparison against the analysed market average.', 'Comparación con la media del mercado analizado.'),
     },
   ];
   const previewHighlights = [
@@ -1955,6 +1972,13 @@ export default function Results() {
       icon: <AlertTriangle className="h-4 w-4" />,
     },
   ];
+
+  // IPS alert message
+  const ipsAlert = pick(
+    'Este CV pode estar a custar-te oportunidades reais de entrevista.',
+    'This CV may be costing you real interview opportunities.',
+    'Este CV puede estar costándote oportunidades reales de entrevista.'
+  );
 
   if (!isPaid) {
     return (
@@ -1986,24 +2010,35 @@ export default function Results() {
           <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-br from-[#faf8f3] via-white to-[#fffdf8] p-5 sm:p-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex flex-col items-center gap-3 shrink-0">
-                <ScoreGauge score={atsCompatibilityScore} size={140} strokeWidth={8} />
-                <span className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Preview do CV', 'CV preview', 'Vista previa del CV')}</span>
+                <ScoreGauge score={ips} size={140} strokeWidth={8} />
+                <span className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
               </div>
               <div className="space-y-3 text-center md:text-left">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{pick('Já tens uma leitura forte do teu CV.', 'You already have a strong reading of your CV.', 'Ya tienes una lectura sólida de tu CV.')}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                  {pick('Probabilidade estimada de entrevista:', 'Estimated interview probability:', 'Probabilidad estimada de entrevista:')} {ips}%
+                </h1>
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-                  {pick('O preview confirma o teu posicionamento geral e os sinais principais do CV. O relatório completo detalha quadrantes, gaps face ao benchmark, impacto salarial, percepção do recrutador e prioridades accionáveis.', 'The preview confirms your overall positioning and the key signals from your CV. The full report breaks down quadrants, benchmark gaps, salary impact, recruiter perception and actionable priorities.', 'La vista previa confirma tu posicionamiento general y las señales clave del CV. El informe completo detalla cuadrantes, gaps frente al benchmark, impacto salarial, percepción del recruiter y prioridades accionables.')}
+                  {pick('Candidatos com este score são frequentemente rejeitados antes de chegarem à fase de entrevista.', 'Candidates with this score are often rejected before reaching interview stage.', 'Candidatos con esta puntuación son frecuentemente rechazados antes de llegar a la fase de entrevista.')}
                 </p>
+                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{pick('Estado', 'Status', 'Estado')}:</span>
+                  <span className="text-xs font-bold text-slate-800">{ipsClassification}</span>
+                </div>
+                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 mt-2">
+                  <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                  <p className="text-sm font-medium text-red-700">{ipsAlert}</p>
+                </div>
               </div>
             </div>
           </div>
 
           <EmailResultsGate
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
-            previewTitle={pick('Tens já os sinais certos para perceber o valor do teu resultado.', 'You already have the right signals to understand the value of your result.', 'Ya tienes las señales adecuadas para entender el valor de tu resultado.')}
-            previewDescription={pick('Desbloqueia o relatório completo para veres a leitura por quadrantes, o benchmark completo, a percepção do recrutador, a estimativa salarial e o plano de melhoria priorizado.', 'Unlock the full report to view the quadrant reading, full benchmark, recruiter perception, salary estimate and prioritised improvement plan.', 'Desbloquea el informe completo para ver la lectura por cuadrantes, el benchmark completo, la percepción del recruiter, la estimación salarial y el plan de mejora priorizado.')}
+            previewTitle={pick('Vê exatamente o que está a bloquear o teu CV e como corrigir.', 'See exactly what is blocking your CV and how to fix it.', 'Mira exactamente qué está bloqueando tu CV y cómo corregirlo.')}
+            previewDescription={pick('O relatório completo mostra o que está a impedir que o teu CV passe os filtros, como os recrutadores o percecionam e as ações concretas para aumentar a tua probabilidade de entrevista.', 'The full report shows what is preventing your CV from passing filters, how recruiters perceive it, and the concrete actions to increase your interview probability.', 'El informe completo muestra qué está impidiendo que tu CV pase los filtros, cómo lo perciben los reclutadores y las acciones concretas para aumentar tu probabilidad de entrevista.')}
             metrics={previewMetrics}
             highlights={previewHighlights}
+            ctaLabel={pick('Aumentar as minhas chances de entrevista', 'Increase my chances of getting interviews', 'Aumentar mis oportunidades de entrevista')}
             onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
           />
         </main>
