@@ -2252,17 +2252,20 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">
-            {pick('Pronto para melhorar o teu CV?', 'Ready to improve your CV?', '¿Listo para mejorar tu CV?')}
+            {pick('O teu CV pode estar a ser ignorado', 'Your CV may be getting ignored', 'Tu CV puede estar siendo ignorado')}
           </h2>
           <p className="text-white/80 max-w-lg mx-auto">
-            {pick('Começa com a análise gratuita. Sem cartão de crédito, sem compromisso. Descobre o que os recrutadores realmente pensam.', 'Start with the free analysis. No credit card, no commitment. Find out what recruiters really think.', 'Empieza con el análisis gratuito. Sin tarjeta de crédito, sin compromiso. Descubre lo que los reclutadores realmente piensan.')}
+            {pick('Descobre em segundos se estás a ser rejeitado antes de chegar a um recrutador.', 'Find out in seconds if you are being rejected before reaching a recruiter.', 'Descubre en segundos si estás siendo rechazado antes de llegar a un reclutador.')}
           </p>
           <Button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="bg-white text-[#C9A961] hover:bg-white/90 font-semibold px-8 py-3 text-base"
           >
-            {pick('Começar Análise Gratuita', 'Start Free Analysis', 'Comenzar Análisis Gratuito')}
+            {pick('Descobrir a minha probabilidade de entrevista', 'Discover my interview probability', 'Descubrir mi probabilidad de entrevista')}
           </Button>
+          <p className="text-xs text-white/60 mt-2">
+            {pick('Sem custo. Resultado imediato.', 'No cost. Instant result.', 'Sin coste. Resultado inmediato.')}
+          </p>
         </div>
 
         {/* ─── Member Area CTA ─── */}
