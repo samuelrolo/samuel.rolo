@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
+import MentionedIn from "@/components/MentionedIn";
+import Colaboracoes from "@/components/Colaboracoes";
 import useTranslation from "@/i18n/useTranslation";
 import { usePageSEO } from "@/lib/seo";
 import { pageSeo } from "@/lib/pageSeo";
@@ -494,6 +496,10 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
+
+      <MentionedIn />
+
+      <Colaboracoes />
 
       <S2IFooter />
     </div>

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { FileText, Linkedin, Route, Zap, GraduationCap, Rocket, Clock, CheckSquare, BarChart3, User, ArrowRightLeft, Timer, ArrowRight } from "lucide-react";
 import S2IHeader from "@/components/S2IHeader";
 import S2IFooter from "@/components/S2IFooter";
+import MentionedIn from "@/components/MentionedIn";
 import RotatingPromoBanner from "@/components/RotatingPromoBanner";
 import useTranslation from "@/i18n/useTranslation";
 import { usePageSEO } from "@/lib/seo";
@@ -415,6 +416,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <MentionedIn />
 
       <S2IFooter />
     </div>
