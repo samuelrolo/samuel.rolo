@@ -1922,10 +1922,11 @@ export default function Results() {
 
   const storedVoucherCode = sessionStorage.getItem('voucherCode');
   const storedVoucherRemaining = sessionStorage.getItem('voucherRemaining');
-  const atsCompatibilityScore = Math.max(0, Math.round(100 - analysisData.atsRejectionRate));
+  const atsCompatibilityScore = Math.max(0, Math.round(100 - (analysisData.atsRejectionRate ?? 50)));
   // ── IPS (Interview Probability Score) ──
-  const positioningNormalized = percentile; // percentile already = 100 - X internally
-  const ips = Math.round((Math.round(avgScore) * 0.4) + (atsCompatibilityScore * 0.4) + (positioningNormalized * 0.2));
+  const positioningNormalized = percentile || 50; // percentile already = 100 - X internally
+  const safeAvgScore = isNaN(avgScore) ? 50 : avgScore;
+  const ips = Math.round((Math.round(safeAvgScore) * 0.4) + (atsCompatibilityScore * 0.4) + (positioningNormalized * 0.2));
   const ipsClassification = ips <= 40
     ? pick('Candidato Invisível', 'Invisible Candidate', 'Candidato Invisible')
     : ips <= 60
