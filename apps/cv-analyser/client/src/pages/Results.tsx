@@ -1935,27 +1935,68 @@ export default function Results() {
   const positioningNormalized = percentile || 50; // percentile already = 100 - X internally
   const safeAvgScore = isNaN(avgScore) ? 50 : avgScore;
   const ips = Math.round((Math.round(safeAvgScore) * 0.4) + (atsCompatibilityScore * 0.4) + (positioningNormalized * 0.2));
-  const ipsClassification = ips <= 40
-    ? pick('Risco elevado — CV invisível', 'High risk — invisible CV', 'Riesgo elevado — CV invisible')
-    : ips <= 60
-    ? pick('Risco alto — CV filtrado automaticamente', 'High risk — CV auto-filtered', 'Riesgo alto — CV filtrado automáticamente')
-    : ips <= 75
-    ? pick('Risco moderado — sem garantia de entrevista', 'Moderate risk — no interview guarantee', 'Riesgo moderado — sin garantía de entrevista')
-    : ips <= 90
-    ? pick('Risco baixo — competitivo', 'Low risk — competitive', 'Riesgo bajo — competitivo')
-    : pick('Risco mínimo — top talent', 'Minimal risk — top talent', 'Riesgo mínimo — top talent');
-
-  const previewMetrics: any[] = [];
-  const previewHighlights: any[] = [];
-
-  // Negative-framing: always show the risk side
-  const rejectionChance = 100 - ips;
+  // ── FUNNEL BY BAND ──
   const atsRejectionPct = analysisData.atsRejectionRate ?? 50;
   const competitivePosition = 100 - (percentile || 50);
+  const rejectionChance = 100 - ips;
 
-  // 3 tension bullets — critical, no detail, no positive, no solution
+  // Improvement potential calculation
+  const atsGain = atsCompatibilityScore < 70 ? 12 : atsCompatibilityScore <= 85 ? 7 : 3;
+  const impactGain = (analysisData.atsTopFactor && analysisData.atsTopFactor.length > 30) ? 15 : 8;
+  const structureGain = ips < 60 ? 9 : ips < 75 ? 5 : 3;
+  const potentialGain = atsGain + impactGain + structureGain;
+  const targetScore = Math.min(92, ips + potentialGain);
+
+  // Band-specific messaging
+  const funnelBand = ips < 40 ? 'rescue' : ips < 60 ? 'correction' : ips < 70 ? 'discovery' : ips < 80 ? 'almost' : ips < 90 ? 'optimization' : 'refinement';
+
+  const funnelClassification = {
+    rescue: pick('Risco crítico — CV bloqueado', 'Critical risk — CV blocked', 'Riesgo crítico — CV bloqueado'),
+    correction: pick('Risco alto — CV não competitivo', 'High risk — CV not competitive', 'Riesgo alto — CV no competitivo'),
+    discovery: pick('Risco moderado — filtrado mais do que imaginas', 'Moderate risk — filtered more than you think', 'Riesgo moderado — filtrado más de lo que imaginas'),
+    almost: pick('Quase lá — pequenos ajustes fazem a diferença', 'Almost there — small tweaks make the difference', 'Casi — pequeños ajustes marcan la diferencia'),
+    optimization: pick('Competitivo — mas ainda não maximizado', 'Competitive — but not yet maximised', 'Competitivo — pero aún no maximizado'),
+    refinement: pick('Forte — otimizar detalhe', 'Strong — optimise detail', 'Fuerte — optimizar detalle'),
+  }[funnelBand];
+
+  const funnelMessage = {
+    rescue: pick('Há problemas estruturais a bloquear completamente o teu CV.', 'There are structural problems completely blocking your CV.', 'Hay problemas estructurales bloqueando completamente tu CV.'),
+    correction: pick('O teu CV não está a competir no mercado atual.', 'Your CV is not competing in the current market.', 'Tu CV no está compitiendo en el mercado actual.'),
+    discovery: pick('Estás a ser filtrado mais vezes do que imaginas.', 'You are being filtered more often than you think.', 'Estás siendo filtrado más veces de lo que imaginas.'),
+    almost: pick('Pequenos ajustes podem fazer a diferença entre seres ignorado ou chamado.', 'Small tweaks can make the difference between being ignored or called.', 'Pequeños ajustes pueden marcar la diferencia entre ser ignorado o llamado.'),
+    optimization: pick('Já és competitivo, mas ainda não estás a maximizar resultados.', 'You are already competitive, but not yet maximising results.', 'Ya eres competitivo, pero aún no estás maximizando resultados.'),
+    refinement: pick('O teu CV já está ao nível certo, agora é otimizar detalhe.', 'Your CV is already at the right level, now it\'s about optimising detail.', 'Tu CV ya está al nivel correcto, ahora es optimizar detalle.'),
+  }[funnelBand];
+
+  const funnelCta = {
+    rescue: pick('Corrigir urgentemente o meu CV', 'Urgently fix my CV', 'Corregir urgentemente mi CV'),
+    correction: pick('Melhorar o meu CV agora', 'Improve my CV now', 'Mejorar mi CV ahora'),
+    discovery: pick('Perceber o que me está a bloquear', 'Understand what is blocking me', 'Entender qué me está bloqueando'),
+    almost: pick('Dar o salto para entrevistas', 'Make the leap to interviews', 'Dar el salto a entrevistas'),
+    optimization: pick('Aumentar a minha taxa de resposta', 'Increase my response rate', 'Aumentar mi tasa de respuesta'),
+    refinement: pick('Otimizar ao máximo o meu CV', 'Maximise my CV', 'Optimizar al máximo mi CV'),
+  }[funnelBand];
+
+  const funnelGateTitle = {
+    rescue: pick('Este CV precisa de intervenção imediata.', 'This CV needs immediate intervention.', 'Este CV necesita intervención inmediata.'),
+    correction: pick('Cada candidatura com este CV é uma oportunidade desperdiçada.', 'Every application with this CV is a wasted opportunity.', 'Cada candidatura con este CV es una oportunidad desperdiciada.'),
+    discovery: pick('Tens problemas invisíveis que só o relatório completo revela.', 'You have invisible problems that only the full report reveals.', 'Tienes problemas invisibles que solo el informe completo revela.'),
+    almost: pick(`+${potentialGain}% pode mudar tudo. Vê exatamente o que corrigir.`, `+${potentialGain}% can change everything. See exactly what to fix.`, `+${potentialGain}% puede cambiarlo todo. Mira exactamente qué corregir.`),
+    optimization: pick('Vê onde estás a perder pontos e como recuperá-los.', 'See where you are losing points and how to recover them.', 'Mira dónde estás perdiendo puntos y cómo recuperarlos.'),
+    refinement: pick('Descobre os últimos detalhes que separam o bom do excelente.', 'Discover the last details that separate good from excellent.', 'Descubre los últimos detalles que separan lo bueno de lo excelente.'),
+  }[funnelBand];
+
+  const funnelGateDesc = {
+    rescue: pick('O relatório mostra os bloqueios e o plano de correção prioritário.', 'The report shows the blockers and the priority correction plan.', 'El informe muestra los bloqueos y el plan de corrección prioritario.'),
+    correction: pick('Identifica os erros concretos em keywords, estrutura e impacto.', 'Identifies concrete errors in keywords, structure and impact.', 'Identifica los errores concretos en keywords, estructura e impacto.'),
+    discovery: pick('Descobre o que os filtros automáticos estão a rejeitar no teu CV.', 'Discover what automatic filters are rejecting in your CV.', 'Descubre qué están rechazando los filtros automáticos en tu CV.'),
+    almost: pick('Mostra exatamente os ajustes que te separam das entrevistas.', 'Shows exactly the tweaks that separate you from interviews.', 'Muestra exactamente los ajustes que te separan de las entrevistas.'),
+    optimization: pick('Foco em performance e taxa de resposta, não em correção.', 'Focus on performance and response rate, not correction.', 'Enfoque en rendimiento y tasa de respuesta, no en corrección.'),
+    refinement: pick('Detalhes de otimização para maximizar o teu posicionamento.', 'Optimisation details to maximise your positioning.', 'Detalles de optimización para maximizar tu posicionamiento.'),
+  }[funnelBand];
+
+  // 3 tension bullets per band
   const tensionBullets: string[] = [];
-  // Bullet 1: ATS rejection — always show, frame as fact
   tensionBullets.push(
     pick(
       `${atsRejectionPct}% de probabilidade de ser descartado por robôs antes de um humano ver o teu CV`,
@@ -1963,7 +2004,6 @@ export default function Results() {
       `${atsRejectionPct}% de probabilidad de ser descartado por robots antes de que un humano vea tu CV`
     )
   );
-  // Bullet 2: Competitive positioning — frame as being behind
   tensionBullets.push(
     pick(
       `${competitivePosition - 1} em cada 100 candidatos apresentam um CV mais competitivo que o teu`,
@@ -1971,7 +2011,6 @@ export default function Results() {
       `${competitivePosition - 1} de cada 100 candidatos presentan un CV más competitivo que el tuyo`
     )
   );
-  // Bullet 3: Overall — frame as wasted applications
   tensionBullets.push(
     pick(
       `Em ${rejectionChance} de cada 100 candidaturas, este CV não chega sequer à fase de entrevista`,
@@ -1979,6 +2018,9 @@ export default function Results() {
       `En ${rejectionChance} de cada 100 candidaturas, este CV ni siquiera llega a la fase de entrevista`
     )
   );
+
+  const previewMetrics: any[] = [];
+  const previewHighlights: any[] = [];
 
   if (!isPaid) {
     return (
@@ -2015,39 +2057,63 @@ export default function Results() {
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">{pick('Probabilidade de Entrevista', 'Interview Probability', 'Probabilidad de Entrevista')}</span>
               </div>
               <div className="space-y-3 text-center sm:text-left flex-1">
-                <p className="text-lg sm:text-xl font-bold text-slate-800">
-                  {pick(`${ips}% de probabilidade de entrevista`, `${ips}% interview probability`, `${ips}% de probabilidad de entrevista`)}
-                </p>
+                <p className="text-lg sm:text-xl font-bold text-slate-800">{funnelMessage}</p>
                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{ipsClassification}</span>
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{funnelClassification}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ── Tension bullets — what this score means ── */}
-          {tensionBullets.length > 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">{pick('O que este score significa', 'What this score means', 'Qué significa este score')}</p>
-              <ul className="space-y-2.5">
-                {tensionBullets.map((bullet, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
-                    <span className="text-sm text-slate-700 leading-relaxed">{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* ── Tension bullets ── */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">{pick('O que este score significa', 'What this score means', 'Qué significa este score')}</p>
+            <ul className="space-y-2.5">
+              {tensionBullets.map((bullet, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                  <span className="text-sm text-slate-700 leading-relaxed">{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <div className="-mt-2" />
+          {/* ── Improvement potential bar ── */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-4">{pick('Potencial de melhoria', 'Improvement potential', 'Potencial de mejora')}</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-500">{pick('Score atual', 'Current score', 'Score actual')}</span>
+                <span className="font-bold text-slate-800">{ips}%</span>
+              </div>
+              <div className="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                <div className="absolute inset-y-0 left-0 rounded-full bg-slate-300 transition-all duration-700" style={{ width: `${ips}%` }} />
+                <div className="absolute inset-y-0 left-0 rounded-full bg-emerald-400/40 transition-all duration-1000" style={{ width: `${targetScore}%` }} />
+                <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-700" style={{ width: `${ips}%`, background: ips < 50 ? '#ef4444' : ips < 70 ? '#f97316' : ips < 80 ? '#eab308' : '#22c55e' }} />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-500">{pick('Com melhorias', 'With improvements', 'Con mejoras')}</span>
+                <span className="font-bold text-emerald-600">{pick(`até ${targetScore}%`, `up to ${targetScore}%`, `hasta ${targetScore}%`)}</span>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-400 leading-relaxed">
+              {funnelBand === 'almost'
+                ? pick(`+${potentialGain}% pode mudar tudo. Pequenos ajustes colocam-te onde começam as entrevistas.`, `+${potentialGain}% can change everything. Small tweaks put you where interviews begin.`, `+${potentialGain}% puede cambiarlo todo. Pequeños ajustes te colocan donde comienzan las entrevistas.`)
+                : funnelBand === 'discovery'
+                ? pick(`Se corrigires os problemas invisíveis, podes subir até ${targetScore}%.`, `If you fix the invisible problems, you can reach up to ${targetScore}%.`, `Si corriges los problemas invisibles, puedes subir hasta ${targetScore}%.`)
+                : pick(`Pequenos ajustes podem colocar-te no nível onde começam as entrevistas.`, `Small tweaks can put you at the level where interviews begin.`, `Pequeños ajustes pueden colocarte en el nivel donde comienzan las entrevistas.`)
+              }
+            </p>
+          </div>
+
+          {/* ── CTA ── */}
           <EmailResultsGate
             productLabel={pick('CV Analyser', 'CV Analyser', 'CV Analyser')}
-            previewTitle={pick('Enquanto não corrigires, cada candidatura é uma oportunidade perdida.', 'Until you fix this, every application is a wasted opportunity.', 'Hasta que no lo corrijas, cada candidatura es una oportunidad perdida.')}
-            previewDescription={pick('O relatório identifica exatamente o que está a travar o teu CV e o que tens de mudar primeiro.', 'The report identifies exactly what is holding your CV back and what you need to change first.', 'El informe identifica exactamente qué está frenando tu CV y qué necesitas cambiar primero.')}
+            previewTitle={funnelGateTitle}
+            previewDescription={funnelGateDesc}
             metrics={previewMetrics}
             highlights={previewHighlights}
-            ctaLabel={pick('Corrigir o meu CV', 'Fix my CV', 'Corregir mi CV')}
+            ctaLabel={funnelCta}
             onCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
             onDiscountCtaClick={() => openPaymentModal({ name: t('relatrio_cv'), price: P_HALF.cv, analyses: 1, voucher_type: 'standard', includes_career_path: false })}
           />
